@@ -84,7 +84,7 @@
 
 | Budget | Target |
 |---|---|
-| Tabular scrolling at 500k+ rows | 60 FPS, p95 frame ≤ 16.7 ms; mounted DOM rows ≤ 50 |
+| Tabular scrolling at 500k+ rows | 60 FPS by the composite gate of criterion #40 (median ≤ 16.7 ms, dropped ≤ 1%, single-vsync ≥ 95%); mounted DOM rows ≤ 50 | **[Amended by CR-019, D-019]**
 | Heartbeat cadence / overhead | Every 2 s; < 1% CPU overhead |
 | Status-bar freshness | ≤ 2 s from backend sample to display |
 | Compact action | < 5 s typical; before/after snapshot returned |
@@ -188,3 +188,8 @@ Normalized slices: settings, projects, audits, windowed URL/finding/link/n-gram 
 Replaced text in §8.9:
 
 > - Permissive open-source license compliance; a local attribution file ships with the bundle.
+### CR-019 (2026-11-17; D-019)
+
+Replaced text in §7.5 performance budgets (scrolling row):
+
+> | Tabular scrolling at 500k+ rows | 60 FPS, p95 frame ≤ 16.7 ms; mounted DOM rows ≤ 50 |

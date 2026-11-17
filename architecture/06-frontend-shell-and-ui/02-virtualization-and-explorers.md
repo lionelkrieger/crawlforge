@@ -123,7 +123,7 @@ Performance and data-windowing contract:
 
 | Requirement | Contract |
 |---|---|
-| Scroll performance | Sustained **60 FPS at 500,000+ rows** (p95 frame time ≤ 16.7 ms during continuous scrolling) on commodity desktop hardware (§13) |
+| Scroll performance | Sustained **60 FPS at 500,000+ rows** on commodity desktop hardware (§13), verified by the composite gate of criterion #40 (median ≤ 16.7 ms, dropped ≤ 1%, single-vsync ≥ 95%, DOM rows ≤ 50) | **[Amended by CR-019, D-019]**
 | Server-side windowing | Rows fetched via offset/limit pagination (§10.1); default page size 200; resident client cache ≤ 20 pages (≈ 4,000 rows) with LRU eviction; total row count from pagination metadata; the full dataset is never held client-side |
 | Row geometry | Estimated row heights with a bounded dynamic-measurement cache; scroll-position ↔ offset mapping stays stable under measurement updates |
 | Horizontal virtualization | Wide dynamic-column datasets (§7.9 busiest-page expansion) render only visible columns plus overscan; pinned columns always mounted, pin count bounded (default ≤ 4) |
@@ -264,3 +264,8 @@ A new report surface, additive to the §8.2 catalog:
 Replaced text in §8.5 (destination classes):
 
 > - **Off by default;** no destination exists until the user creates one. Destination classes: a cloud drive/spreadsheet service, an object-storage endpoint, and a notification webhook — all addressed with the **user's own credentials**, never vendor accounts.
+### CR-019 (2026-11-17; D-019)
+
+Replaced text in virtualization scroll-performance row:
+
+> | Scroll performance | Sustained **60 FPS at 500,000+ rows** (p95 frame time ≤ 16.7 ms during continuous scrolling) on commodity desktop hardware (§13) |

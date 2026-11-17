@@ -22,3 +22,4 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 | CR-016 | Out-of-scope records | amendment | applied | D-006, D-013, D-009 | H-187, H-189, H-191 | 01/01 new §1.5; 06/02 §8.5 | 2026-11-17 |
 | CR-017 | Scope decisions for unspecified checklist capabilities | decision request | applied | D-017 | 30 capabilities | various | 2026-11-17 |
 | CR-018 | UI surface map and capability UI bindings | addition | applied | D-018 | all in scope | 06/04 (new); 07/03 §2; checker | 2026-11-17 |
+| CR-019 | Criterion #40 composite scrolling gate | amendment | applied | D-019 | none (acceptance criterion) | 07/01 #40; 06/01 §7.5; 06/02 §7.1/§8.3 table | 2026-11-18 |
