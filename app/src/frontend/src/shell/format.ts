@@ -43,6 +43,12 @@ export function formatRate(rate: number | null | undefined): string {
   return `${rate.toFixed(1)}/s`;
 }
 
+/** Formats a millisecond measurement; missing/invalid values render as a dash. */
+export function formatMs(value: number | null | undefined, digits = 0): string {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '—';
+  return `${value.toFixed(digits)} ms`;
+}
+
 /** Formats an integer with thousands separators. */
 export function formatCount(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return '—';

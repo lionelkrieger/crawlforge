@@ -26,6 +26,7 @@ import { useShell, useStoreSelector } from './ShellContext';
 import { useLiveProgress } from '../store/liveProgress';
 import { selectActiveAudit, selectAudits, selectHostStates } from '../store/selectors';
 import { STATE_COLORS } from './HubDashboard';
+import { formatMs } from './format';
 import {
   IconSpider,
   IconPlay,
@@ -276,9 +277,9 @@ export function ReportView() {
                 {hosts.map((host) => (
                   <Table.Tr key={host.host}>
                     <Table.Td><Text size="sm" ff="monospace">{host.host}</Text></Table.Td>
-                    <Table.Td className="cf-compact-delta">{formatRate(host.effectiveRate)}</Table.Td>
-                    <Table.Td className="cf-compact-delta">{host.concurrency}</Table.Td>
-                    <Table.Td className="cf-compact-delta">{host.ttfbEwmaMs !== null ? `${host.ttfbEwmaMs.toFixed(0)} ms` : '—'}</Table.Td>
+                    <Table.Td className="cf-compact-delta">{typeof host.effectiveRate === 'number' && Number.isFinite(host.effectiveRate) ? formatRate(host.effectiveRate) : '—'}</Table.Td>
+                    <Table.Td className="cf-compact-delta">{typeof host.concurrency === 'number' && Number.isFinite(host.concurrency) ? host.concurrency : '—'}</Table.Td>
+                    <Table.Td className="cf-compact-delta">{formatMs(host.ttfbEwmaMs)}</Table.Td>
                     <Table.Td>
                       <Badge size="xs" variant="light" color={host.throttled ? 'yellow' : 'green'}>
                         {host.throttled ? 'throttled' : 'nominal'}

@@ -171,6 +171,11 @@ function AuditRow({ audit, onOpen }: { audit: AuditSummary; onOpen: (id: string)
         <Badge size="sm" variant="light" color={STATE_COLORS[audit.state] ?? 'steel'} data-testid={`audit-state-${audit.id}`}>
           {audit.state}
         </Badge>
+        {audit.state === 'failed' && audit.errorMessage ? (
+          <Text size="xs" c="var(--cf-danger)" data-testid={`audit-error-${audit.id}`} lineClamp={2}>
+            {audit.errorMessage}
+          </Text>
+        ) : null}
       </Table.Td>
       <Table.Td><Text size="sm" c="dimmed">{audit.phase}</Text></Table.Td>
       <Table.Td className="cf-compact-delta">{formatCount(audit.counters.fetched)}</Table.Td>

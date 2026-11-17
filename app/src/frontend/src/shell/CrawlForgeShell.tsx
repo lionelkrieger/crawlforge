@@ -27,6 +27,7 @@ import { HubDashboard } from './HubDashboard';
 import { AuditsView, ReportView } from './AuditViews';
 import { ToolsView } from './ToolsView';
 import { SettingsSurface } from './SettingsSurface';
+import { SurfaceErrorBoundary } from './ErrorBoundary';
 import { useLiveProgress } from '../store/liveProgress';
 import type { ShellView } from './windowState';
 
@@ -182,7 +183,9 @@ function ShellFrame() {
                   </Tooltip>
                 </div>
                 <div className="cf-pane-body cf-scroll" data-testid="view-content">
-                  <ViewContent view={navigation.view} />
+                  <SurfaceErrorBoundary label={`${navigation.view} view`} key={navigation.view}>
+                    <ViewContent view={navigation.view} />
+                  </SurfaceErrorBoundary>
                 </div>
               </div>
             }

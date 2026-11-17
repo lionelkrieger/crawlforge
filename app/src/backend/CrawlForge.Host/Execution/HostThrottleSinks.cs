@@ -61,17 +61,22 @@ public sealed class HubHostThrottleSink : IHostThrottleAdjustmentSink
     public void Emit(HostThrottleAdjustment adjustment)
     {
         ArgumentNullException.ThrowIfNull(adjustment);
+        // Wire names are locked by the frontend hub contract
+        // (contracts/hub/events.ts HostThrottlePayload and contracts/api/hosts.ts):
+        // rateBefore/After, concurrencyBefore/After, ttfbSampleMs,
+        // rollingBaselineRate. The previous names matched no consumer and left
+        // ttfbEwmaMs undefined in the run view (HOTFIX-01).
         var payload = JsonSerializer.Serialize(new
         {
             auditId = adjustment.AuditId,
             host = adjustment.Host,
             trigger = adjustment.Trigger,
-            previousRate = adjustment.PreviousRate,
-            newRate = adjustment.NewRate,
-            previousConcurrency = adjustment.PreviousConcurrency,
-            newConcurrency = adjustment.NewConcurrency,
-            ttfbSampleMilliseconds = adjustment.TtfbSampleMilliseconds,
-            rollingBaselineMilliseconds = adjustment.RollingBaselineMilliseconds,
+            rateBefore = adjustment.PreviousRate,
+            rateAfter = adjustment.NewRate,
+            concurrencyBefore = adjustment.PreviousConcurrency,
+            concurrencyAfter = adjustment.NewConcurrency,
+            ttfbSampleMs = adjustment.TtfbSampleMilliseconds,
+            rollingBaselineRate = adjustment.RollingBaselineMilliseconds ?? 0d,
             timestamp = adjustment.Timestamp
         }, PayloadJson);
         _ = PublishAsync(payload);

@@ -8,6 +8,10 @@
     <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
+    <!-- HOTFIX-01: contract-conformance tests serialise the real wire producer. -->
+    <InternalsVisibleTo Include="CrawlForge.Host.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
     <ProjectReference Include="..\CrawlForge.Audit\CrawlForge.Audit.csproj" />
     <ProjectReference Include="..\CrawlForge.Crawler\CrawlForge.Crawler.csproj" />

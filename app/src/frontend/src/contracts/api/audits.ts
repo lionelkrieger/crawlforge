@@ -69,6 +69,8 @@ export interface AuditSummary {
   readonly startedAt: IsoTimestamp;
   readonly completedAt: IsoTimestamp | null;
   readonly counters: AuditCounters;
+  /** HOTFIX-01: failure reason persisted with the run, when present. */
+  readonly errorMessage?: string | null;
 }
 
 /** GET /api/audits — project filter, status filter, pagination. */

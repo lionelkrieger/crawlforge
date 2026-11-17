@@ -82,6 +82,11 @@ function activityAuditId(payload: unknown): string | null {
   return null;
 }
 
+/** HOTFIX-01: terminal audit states must not be overwritten by live progress. */
+function isTerminalState(state: string | undefined): boolean {
+  return state === 'completed' || state === 'failed' || state === 'cancelled';
+}
+
 /**
  * Creates the demultiplexer. `ingest(event)` is the single entry point used
  * by the SignalR adapter; `handlers` exposes the typed per-event surface.
@@ -118,7 +123,9 @@ export function createHubDemux(options: HubDemuxOptions) {
               ...existing,
               counters: payload.counters,
               phase: payload.phase,
-              state: 'running'
+              // HOTFIX-01: a late/coalesced progress event must not resurrect
+              // an audit that already reached a terminal state.
+              state: isTerminalState(existing.state) ? existing.state : 'running'
             })
           }
         };
@@ -173,7 +180,9 @@ export function createHubDemux(options: HubDemuxOptions) {
             ...state.audits,
             entities: upsertEntity(state.audits.entities, {
               ...base,
-              state: 'completed',
+              // HOTFIX-01: reportReady=false means a non-success terminal
+              // finalize (e.g. cancelled); do not present it as completed.
+              state: payload.reportReady ? 'completed' : 'cancelled',
               counters: payload.finalCounters,
               completedAt: now()
             })
@@ -188,11 +197,25 @@ export function createHubDemux(options: HubDemuxOptions) {
     'audit-failed': (payload: AuditFailedPayload) => {
       store.setState((state) => {
         const existing = state.audits.entities.byId[payload.auditId];
-        if (!existing) return state;
+        const base = existing ?? {
+          id: payload.auditId,
+          projectId: '',
+          configurationId: '',
+          state: 'running' as const,
+          phase: 'finalizing',
+          startedAt: now(),
+          completedAt: null,
+          counters: { queued: 0, fetched: 0, error: 0, blocked: 0 }
+        };
         return {
           audits: {
             ...state.audits,
-            entities: upsertEntity(state.audits.entities, { ...existing, state: 'failed' })
+            entities: upsertEntity(state.audits.entities, {
+              ...base,
+              state: 'failed',
+              completedAt: now(),
+              errorMessage: payload.message
+            })
           }
         };
       });

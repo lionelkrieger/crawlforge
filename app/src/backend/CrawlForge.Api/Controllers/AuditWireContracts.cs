@@ -39,7 +39,11 @@ public sealed record AuditSummaryWire(
     string Phase,
     DateTimeOffset? StartedAt,
     DateTimeOffset? CompletedAt,
-    AuditCountersWire Counters);
+    AuditCountersWire Counters)
+{
+    /// <summary>HOTFIX-01: failure reason persisted with the run, when present.</summary>
+    public string? ErrorMessage { get; init; }
+}
 
 /// <summary>Wire audit detail with derived progress fields.</summary>
 /// <param name="Id">Audit identifier.</param>
@@ -64,7 +68,11 @@ public sealed record AuditDetailWire(
     AuditCountersWire Counters,
     double ElapsedSeconds,
     double ThroughputPerSecond,
-    double? EstimatedRemainderSeconds);
+    double? EstimatedRemainderSeconds)
+{
+    /// <summary>HOTFIX-01: failure reason persisted with the run, when present.</summary>
+    public string? ErrorMessage { get; init; }
+}
 
 /// <summary>Lifecycle transition response.</summary>
 /// <param name="AuditId">Audit identifier.</param>

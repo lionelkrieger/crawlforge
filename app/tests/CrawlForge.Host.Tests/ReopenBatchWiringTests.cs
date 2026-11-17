@@ -66,7 +66,9 @@ public sealed class ReopenBatchWiringTests
             using var payload = JsonDocument.Parse(throttleEvents[0].PayloadJson);
             Assert.Equal(auditId, payload.RootElement.GetProperty("auditId").GetInt64());
             Assert.False(string.IsNullOrWhiteSpace(payload.RootElement.GetProperty("host").GetString()));
-            Assert.True(payload.RootElement.TryGetProperty("newRate", out _));
+            // HOTFIX-01: wire names follow the frontend hub contract.
+            Assert.True(payload.RootElement.TryGetProperty("rateAfter", out _));
+            Assert.True(payload.RootElement.TryGetProperty("ttfbSampleMs", out _));
 
             // Completion summary under the locked metric key.
             var metrics = await backend.App.Services.GetRequiredService<IReadRepository<MetricSummaryDto>>()

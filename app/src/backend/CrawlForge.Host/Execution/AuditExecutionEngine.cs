@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using CrawlForge.Api.Controllers;
 using CrawlForge.Audit.LinkGraph;
 using CrawlForge.Audit.Pipeline;
@@ -521,7 +522,7 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         catch (Exception ex)
         {
             _logger.LogError(ex, "Audit {AuditId} failed.", auditId);
-            await TryFinalizeAsync(auditId, state, AuditStatus.Failed);
+            await TryFinalizeAsync(auditId, state, AuditStatus.Failed, ex.Message);
         }
         finally
         {
@@ -563,20 +564,20 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
             ResolvedThroughputCeiling = resolvedLimits.RequestsPerSecond,
             WorkerConcurrencyCeiling = resolvedLimits.MaxConcurrency
         };
-        if (!string.IsNullOrWhiteSpace(configuration.PolitenessJson))
+        // Politeness payloads exist in two stored shapes: the REST/storage shape
+        // ({"aimd":{...}}) written by ProjectWireMapper and the legacy flat shape
+        // written by first-run seeding. The parser accepts both and falls back to
+        // the §3.3 defaults for invalid values, so a stored row can never fail
+        // the audit at start (HOTFIX-01).
+        var politeness = AimdSettingsParser.Parse(configuration.PolitenessJson);
+        aimdOptions = AimdControllerOptions.FromSettings(politeness.Settings, resolvedLimits);
+        foreach (var note in politeness.Fallbacks)
         {
-            try
-            {
-                var settings = JsonSerializer.Deserialize<AimdSettings>(configuration.PolitenessJson, PayloadJson);
-                if (settings is not null)
-                {
-                    aimdOptions = AimdControllerOptions.FromSettings(settings, resolvedLimits);
-                }
-            }
-            catch (JsonException)
-            {
-                // Malformed politeness payload degrades to the local defaults.
-            }
+            _logger.LogWarning(
+                "Audit {AuditId}: politeness configuration fallback ({Shape}) - {Note}",
+                auditId,
+                politeness.Shape,
+                note);
         }
 
         // AIMD observability (criterion #36): per-audit composite sink — the
@@ -1011,7 +1012,7 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         catch (Exception ex)
         {
             _logger.LogError(ex, "Re-audit {AuditId} failed.", newAuditId);
-            await TryFinalizeAsync(newAuditId, state, AuditStatus.Failed);
+            await TryFinalizeAsync(newAuditId, state, AuditStatus.Failed, ex.Message);
         }
         finally
         {
@@ -1232,12 +1233,26 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         }
     }
 
-    private async Task FinalizeAsync(long auditId, AuditRunState state, AuditStatus status, CancellationToken ct)
+    private async Task FinalizeAsync(
+        long auditId,
+        AuditRunState state,
+        AuditStatus status,
+        CancellationToken ct,
+        string? errorMessage = null)
     {
         var audit = await RequireAuditAsync(auditId, ct);
+        var previousState = audit.Status;
         if (audit.Status is AuditStatus.Completed or AuditStatus.Cancelled or AuditStatus.Failed)
         {
             status = audit.Status;
+        }
+
+        // HOTFIX-01: keep the failure reason with the audit so REST/UI can show
+        // "failed" plus the message even when the hub event arrives early.
+        var counters = JsonSerializer.SerializeToNode(state.Counters.ToPayload(), PayloadJson) as JsonObject ?? [];
+        if (status == AuditStatus.Failed && !string.IsNullOrWhiteSpace(errorMessage))
+        {
+            counters["errorMessage"] = errorMessage;
         }
 
         await PersistPhaseAsync(auditId, AuditPhase.Finalizing, ct);
@@ -1246,25 +1261,44 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
             Status = status,
             Phase = AuditPhase.Finalizing,
             FinishedAt = DateTimeOffset.UtcNow,
-            CountersJson = JsonSerializer.Serialize(state.Counters.ToPayload(), PayloadJson)
+            CountersJson = counters.ToJsonString()
         }, ct);
-        await PublishStageAsync(auditId, status, AuditPhase.Finalizing, ct);
-        await _hub.PublishAsync(new HubEvent(
-            "audit-completed",
-            JsonSerializer.Serialize(new
-            {
-                auditId,
-                status = status.ToString().ToLowerInvariant(),
-                counters = state.Counters.ToPayload()
-            }, PayloadJson)), ct);
+        await PublishStageAsync(auditId, status, AuditPhase.Finalizing, ct, previousState);
+
+        if (status == AuditStatus.Failed)
+        {
+            await _hub.PublishAsync(new HubEvent(
+                "audit-failed",
+                JsonSerializer.Serialize(new
+                {
+                    auditId,
+                    errorCode = "audit-failed",
+                    message = errorMessage ?? "The audit failed. See local diagnostics for details."
+                }, PayloadJson)), ct);
+        }
+        else
+        {
+            await _hub.PublishAsync(new HubEvent(
+                "audit-completed",
+                JsonSerializer.Serialize(new
+                {
+                    auditId,
+                    finalCounters = state.Counters.ToPayload(),
+                    reportReady = status == AuditStatus.Completed
+                }, PayloadJson)), ct);
+        }
     }
 
-    private async Task TryFinalizeAsync(long auditId, AuditRunState state, AuditStatus status)
+    private async Task TryFinalizeAsync(
+        long auditId,
+        AuditRunState state,
+        AuditStatus status,
+        string? errorMessage = null)
     {
         try
         {
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            await FinalizeAsync(auditId, state, status, cts.Token);
+            await FinalizeAsync(auditId, state, status, cts.Token, errorMessage);
         }
         catch (Exception ex)
         {
@@ -1610,13 +1644,19 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         await _auditWrites.UpdateAsync(audit with { Phase = phase }, ct);
     }
 
-    private Task PublishStageAsync(long auditId, AuditStatus status, AuditPhase phase, CancellationToken ct) =>
+    private Task PublishStageAsync(
+        long auditId,
+        AuditStatus status,
+        AuditPhase phase,
+        CancellationToken ct,
+        AuditStatus? previousState = null) =>
         _hub.PublishAsync(new HubEvent(
             "stage-changed",
             JsonSerializer.Serialize(new
             {
                 auditId,
-                status = status.ToString().ToLowerInvariant(),
+                previousState = (previousState ?? status).ToString().ToLowerInvariant(),
+                newState = status.ToString().ToLowerInvariant(),
                 phase = phase.ToString().ToLowerInvariant()
             }, PayloadJson)), ct);
 

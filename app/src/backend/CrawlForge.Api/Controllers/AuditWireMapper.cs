@@ -30,6 +30,10 @@ internal static class AuditWireMapper
             counters["wafBlocked"]?.GetValue<long>());
     }
 
+    /// <summary>HOTFIX-01: reads the failure reason stored in the counters payload.</summary>
+    private static string? ErrorMessage(string? countersJson) =>
+        ProjectWireMapper.ParseObject(countersJson)["errorMessage"]?.GetValue<string>();
+
     public static AuditSummaryWire ToSummary(AuditDto audit) =>
         new(
             audit.Id.ToString(),
@@ -39,7 +43,10 @@ internal static class AuditWireMapper
             PhaseWire(audit.Phase),
             audit.StartedAt,
             audit.FinishedAt,
-            ParseCounters(audit.CountersJson));
+            ParseCounters(audit.CountersJson))
+        {
+            ErrorMessage = ErrorMessage(audit.CountersJson)
+        };
 
     public static AuditDetailWire ToDetail(AuditDto audit)
     {
@@ -60,7 +67,10 @@ internal static class AuditWireMapper
             counters,
             Math.Round(elapsed, 3),
             Math.Round(throughput, 3),
-            remainder is { } value ? Math.Round(value, 3) : null);
+            remainder is { } value ? Math.Round(value, 3) : null)
+        {
+            ErrorMessage = ErrorMessage(audit.CountersJson)
+        };
     }
 
     public static FindingWire ToFinding(FindingDto finding)
