@@ -3,7 +3,7 @@
 | Item | Value |
 |---|---|
 | Date | 2026-11-17 |
-| Scope | Two runtime blockers found by `audit-work/runtime-probe/RUNTIME-PROBE.md` (repo HEAD at probe time `18c53da`, working HEAD `603cc83`) |
+| Scope | Two runtime blockers found by `audit-work/history/runtime-probe-1/RUNTIME-PROBE.md` (repo HEAD at probe time `18c53da`, working HEAD `603cc83`) |
 | Rules obeyed | Bounded fix only; no refactor, no other missing features, no spec change; read-only w.r.t. prior audit work |
 
 ## 1. Root causes
@@ -55,8 +55,8 @@ Existing rows need no manual edit: `AimdSettingsParser` accepts the legacy flat 
 
 **Setup.** Fixture site already running at `http://127.0.0.1:47311/` (`206`/`200` on `/robots.txt`; `/__fixture/reset` called before the UI audit). App launched with `launch-crawlforge.ps1` equivalent (fresh built DLLs, CDP on 9223 because the probe's old process left 9222 in `CLOSE_WAIT`).
 
-**Step 3 — UI.** Created project **3 "HOTFIX verification"** with start URL `http://127.0.0.1:47311/`, pressed **Start audit** on the main hub → **audit 6**, state RUNNING. After 3 s: **2 fetched**; after ~40 s: **105 fetched**; host-throttle updates arrived repeatedly (`127.0.0.1`, 2.5→6.0/s, TTFB EWMA 1 ms) and the run view **stayed mounted** (no `surface-error`, no blank window). Cancelled via UI → final **CANCELLED**, **126–127 URLs fetched**; main hub showed `CANCELLED` after refresh. Screenshots: `audit-work/hotfix-01-runview.png`, `hotfix-01-runview-after-20s.png`, `hotfix-01-hub-after-cancel.png`.
-Failure visibility: MCP-started **audit 10** (invalid `maxConcurrency:0`) failed at start; REST returned `state=failed` and `errorMessage="The worker concurrency ceiling must be at least 1. (Parameter 'WorkerConcurrencyCeiling') …"`; after reload the main hub showed badge **`failed`** and the full message (`data-testid=audit-error-10`). Screenshot: `audit-work/hotfix-01-failed-visible.png`.
+**Step 3 — UI.** Created project **3 "HOTFIX verification"** with start URL `http://127.0.0.1:47311/`, pressed **Start audit** on the main hub → **audit 6**, state RUNNING. After 3 s: **2 fetched**; after ~40 s: **105 fetched**; host-throttle updates arrived repeatedly (`127.0.0.1`, 2.5→6.0/s, TTFB EWMA 1 ms) and the run view **stayed mounted** (no `surface-error`, no blank window). Cancelled via UI → final **CANCELLED**, **126–127 URLs fetched**; main hub showed `CANCELLED` after refresh. Screenshots: `audit-work/reports/hotfix-01/hotfix-01-runview.png`, `hotfix-01-runview-after-20s.png`, `hotfix-01-hub-after-cancel.png`.
+Failure visibility: MCP-started **audit 10** (invalid `maxConcurrency:0`) failed at start; REST returned `state=failed` and `errorMessage="The worker concurrency ceiling must be at least 1. (Parameter 'WorkerConcurrencyCeiling') …"`; after reload the main hub showed badge **`failed`** and the full message (`data-testid=audit-error-10`). Screenshot: `audit-work/reports/hotfix-01/hotfix-01-failed-visible.png`.
 
 **Step 4 — REST and MCP.**
 - REST `POST /api/audits` with `configurationId=6`, `maxUrls=12` → **audit 7**, crawled **12 URLs**, reached `completed`.

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(architecture/**)",
+      "Write(architecture/**)",
+      "Edit(buildplan/**)",
+      "Write(buildplan/**)",
+      "Edit(audit-work/register/**)",
+      "Write(audit-work/register/**)",
+      "Edit(audit-work/decisions-log.md)",
+      "Edit(audit-work/SOURCE-OF-TRUTH-LOOP.md)",
+      "Edit(app/tests/fixture-site/expected-results.json)",
+      "Write(app/tests/fixture-site/expected-results.json)"
+    ]
+  }
+}

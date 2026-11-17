@@ -1,0 +1,1442 @@
+
+[backend:stdout] info: CrawlForge.Host.Composition.MigrationLifecycleParticipant[0]
+      Schema migrations applied; schema version 4.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant MigrationLifecycleParticipant started.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant UserDictionaryLifecycleParticipant started.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant WafCatalogueInitializationParticipant started.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant AuditExecutionEngine started.
+[backend:stdout] info: CrawlForge.Host.Composition.SchedulerLifecycleParticipant[0]
+      Local scheduler started.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant SchedulerLifecycleParticipant started.
+[backend:stdout] info: CrawlForge.Host.Composition.McpLifecycleParticipant[0]
+      MCP loopback server listening at http://127.0.0.1:63520/mcp.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant McpLifecycleParticipant started.
+[backend:stdout] info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:63497
+[backend:stdout] info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+[backend:stdout] info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: E:\Crawlforge\app\src\backend\CrawlForge.Host\bin\Debug\net10.0
+[backend:stdout] info: CrawlForge.Host.CrawlForgeBackend[0]
+      CrawlForge backend ready at http://127.0.0.1:63497 (first run: False).
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 17.313ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 86.8953ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/audits - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/plugins - - -
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/projects - - -
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/settings - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.SettingsController.GetSettingsAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.ProjectsController.ListProjectsAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.AuditsController.ListAuditsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.PluginsController.ListAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "List", controller = "Plugins"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] ListAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.PluginsController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ListProjects", controller = "Projects"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] ListProjectsAsync(System.String, Int32, Int32, System.String, System.String, System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.ProjectsController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ListAudits", controller = "Audits"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] ListAuditsAsync(System.String, System.String, Int32, Int32, System.String, System.String, System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.AuditsController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[System.Collections.Generic.List`1[[CrawlForge.Api.Controllers.PluginRegistryEntryWire, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.PluginsController.ListAsync (CrawlForge.Api) in 15.9348ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.PluginsController.ListAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/plugins - 200 - application/json;+charset=utf-8 45.7073ms
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetSettings", controller = "Settings"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetSettingsAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.SettingsController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[System.Collections.Generic.List`1[[CrawlForge.Api.Controllers.ProjectSummaryWire, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[System.Collections.Generic.List`1[[CrawlForge.Api.Controllers.AuditSummaryWire, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.ProjectsController.ListProjectsAsync (CrawlForge.Api) in 51.2564ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.ProjectsController.ListProjectsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/projects - 200 - application/json;+charset=utf-8 80.4531ms
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.AuditsController.ListAuditsAsync (CrawlForge.Api) in 55.3064ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.AuditsController.ListAuditsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/audits - 200 - application/json;+charset=utf-8 86.9928ms
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.AppSettingsWire, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.SettingsController.GetSettingsAsync (CrawlForge.Api) in 68.3341ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.SettingsController.GetSettingsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/settings - 200 - application/json;+charset=utf-8 115.0862ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:63497/hubs/realtime/negotiate?negotiateVersion=1 - - 0
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint '/hubs/realtime/negotiate'
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint '/hubs/realtime/negotiate'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:63497/hubs/realtime/negotiate?negotiateVersion=1 - 200 316 application/json 20.5771ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/hubs/realtime?id=mQyRHkWVG9vqbQG8WuFR6A&access_token=rNu00nsAxPCPM7EF-Xdu6Ezm1hPOyIgf7jXtCqKeJfU - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint '/hubs/realtime'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7378ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.5204ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.6741ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.9756ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7605ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.3549ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5876ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.7012ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5816ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.0520ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7409ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.8833ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7065ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.8312ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5805ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.6998ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.857ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.0260ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.557ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.6647ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.608ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.7050ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.6678ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.1317ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5485ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5429ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5023ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5269ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4952ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.0277ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.6244ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.6801ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 1.0092ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.6340ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.72ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.4501ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5161ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.3788ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5641ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.9274ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5095ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.5650ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.754ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.3495ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5356ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5382ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5076ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.4813ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.6454ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.3103ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 1.8503ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.9119ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7887ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 5.9151ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4695ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.7637ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4778ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.6774ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4934ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5179ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.6641ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.7214ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.451ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5292ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4578ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.4199ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4859ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.3743ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4139ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.4205ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5111ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5444ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4727ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.4413ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4453ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.9822ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4536ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.7692ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4417ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.3865ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4582ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5442ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5899ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.5430ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4483ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.4105ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5011ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.8859ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5031ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.4702ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4127ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.2717ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.3952ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.1384ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5018ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.6312ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/diagnostics/artifacts - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.DiagnosticsController.ListArtifactsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ListArtifacts", controller = "Diagnostics"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] ListArtifactsAsync(System.String, System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.DiagnosticsController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[System.Collections.Generic.List`1[[CrawlForge.Api.Controllers.DiagnosticArtifactWire, Cra
+[backend:stdout] wlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.DiagnosticsController.ListArtifactsAsync (CrawlForge.Api) in 12.1085ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.DiagnosticsController.ListArtifactsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/diagnostics/artifacts - 200 - application/json;+charset=utf-8 23.8409ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4267ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.8604ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 1.4337ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 5.0699ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5994ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.0378ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.8639ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 5.2224ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4367ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5086ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5046ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.9369ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.471ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5926ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4777ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.4340ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4256ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.1756ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4157ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.2659ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.8981ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.6403ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 2.5713ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.8098ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.6746ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.8105ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:63497/api/system/compact - - 0
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.SystemController.CompactAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "Compact", controller = "System"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] CompactAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.SystemController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.SystemCompactResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.SystemController.CompactAsync (CrawlForge.Api) in 102.359ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.SystemController.CompactAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:63497/api/system/compact - 200 - application/json;+charset=utf-8 111.2757ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5724ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.2715ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5244ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.7997ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 1.7892ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 5.5492ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7888ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 6.1491ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5776ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.0246ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4811ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.1574ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4458ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.4919ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7619ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.5856ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.3877ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5103ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5486ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.3405ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 1.0132ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.2850ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7345ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.6564ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4034ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.6795ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4094ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.6310ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4471ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.8507ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.8845ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.9231ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4488ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 5.0279ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.6527ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.8868ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4015ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.9210ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.6457ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.3577ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7187ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 5.3367ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.3951ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 3.2341ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4088ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.1059ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7182ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.3366ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4961ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.9287ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.3936ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.4533ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.3907ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.4958ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.404ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5397ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4195ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.5884ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.4677ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.7101ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.3957ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 2.6667ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:63497/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5634ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:63497/api/health - 200 - application/json;+charset=utf-8 4.0651ms

@@ -1,0 +1,46 @@
+**********************
+PowerShell transcript start
+Start time: 20261117190304
+Username: LIONEL-DESKTOP\lione
+RunAs User: LIONEL-DESKTOP\lione
+Configuration Name: 
+Machine: LIONEL-DESKTOP (Microsoft Windows NT 10.0.26300.0)
+Host Application: C:\Program Files\WindowsApps\Microsoft.PowerShell_7.7.0.0_x64__8wekyb3d8bbwe\pwsh.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command $__claudeCodeScript = $env:CLAUDE_CODE_SHELL_LAUNCHER_SCRIPT; $env:CLAUDE_CODE_SHELL_LAUNCHER_SCRIPT = $null; Invoke-Expression -Command $__claudeCodeScript
+Process ID: 30364
+PSVersion: 7.7.0
+PSEdition: Core
+GitCommitId: 7.7.0
+OS: Microsoft Windows 10.0.26300
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+
+[build] Checking Electron binary
+  OK
+
+[build] Checking .NET backend
+  up to date
+  OK
+
+[build] Checking frontend bundle
+  up to date
+  OK
+
+[build] Checking Electron shell
+  up to date
+  OK
+
+[build] Launching CrawlForge desktop shell
+  CF_UI_ROOT              = E:\Crawlforge\app\src\frontend\dist
+  ELECTRON_OVERRIDE_DIST  = E:\Crawlforge\app\packaging\vendor\electron
+  CF_BACKEND_COMMAND      = dotnet
+  CF_BACKEND_ARGS         = E:\Crawlforge\app\src\backend\CrawlForge.Host\bin\Debug\net10.0\CrawlForge.Host.dll
+  Electron entry          = E:\Crawlforge\app\src\electron\dist\main.js
+
+**********************
+PowerShell transcript end
+End time: 20261117190305
+**********************

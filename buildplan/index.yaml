@@ -4,7 +4,7 @@
 # blocker_reason, blocked_at, status_summary counts, phase status, and criterion status.
 #
 # v2.0 replaces the v1.1 completion claims. v1.1 declared 43/43 workpieces and 48/48
-# criteria complete while 16/24 UI surfaces were unreachable (audit-work/runtime-probe-2).
+# criteria complete while 16/24 UI surfaces were unreachable (audit-work/reports/runtime-probe-2).
 # v2.0 is generated from the living architecture (v2.0, CR-001..CR-018 applied) and the
 # measured capability baseline (capability-baseline.yaml). A workpiece is completed only
 # when its done_when fixture-harness run and UI path walk pass — never on unit tests alone.
@@ -24,10 +24,10 @@ metadata:
   strategy: "End-to-end flows crossing engine/wiring/API/UI; contract-first parallel waves; contracts locked at end of phase-00 (v1.1) and amended only via serialized WP-<phase>-A<n> workpieces"
   operating_manual: "AGENT-INSTRUCTIONS.md"
   evidence_basis:
-    - "audit-work/runtime-probe-2/RUNTIME-PROBE.md (strongest; normal entry points, HEAD fc9ac0f)"
-    - "audit-work/hotfix-01-report.md (HOTFIX-01, commit db53378)"
-    - "audit-work/UNDERBUILD-AUDIT.md (G01-G29)"
-    - "audit-work/05-functionality-audit-results.md, audit-work/ux-api-gap-audit.md (secondary)"
+    - "audit-work/reports/runtime-probe-2/RUNTIME-PROBE.md (strongest; normal entry points, HEAD fc9ac0f)"
+    - "audit-work/reports/hotfix-01/hotfix-01-report.md (HOTFIX-01, commit db53378)"
+    - "audit-work/reports/UNDERBUILD-AUDIT.md (G01-G29)"
+    - "audit-work/history/05-functionality-audit-results.md, audit-work/history/ux-api-gap-audit.md (secondary)"
   orchestration:
     mode: "centralized-ledger"
     ledger_writer: "orchestrator-only"

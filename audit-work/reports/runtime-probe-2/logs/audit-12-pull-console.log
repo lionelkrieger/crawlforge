@@ -1,0 +1,40 @@
+{
+ "urls": 29,
+ "links": 48,
+ "findings": 194,
+ "byRule": {
+  "accessibility.color-contrast": 26,
+  "accessibility.landmark-main": 25,
+  "content.spelling": 4,
+  "content.metrics": 26,
+  "mobile.responsive-signals-missing": 26,
+  "mobile.render-required": 26,
+  "canonical.missing": 23,
+  "indexability.indexable": 25,
+  "indexability.noindex": 1,
+  "canonical.mismatch": 1,
+  "canonical.header-html-conflict": 1,
+  "content.thin-text": 4,
+  "canonical.self-reference": 1,
+  "indexability.soft-404": 2,
+  "accessibility.image-alt": 1,
+  "i18n.hreflang-valid": 1,
+  "content.keyword-cannibalization": 1
+ },
+ "fixture": {
+  "nonGet": 0,
+  "tagHits": 0
+ },
+ "sampleUrl": {
+  "id": "2959",
+  "canonicalUrl": "http://127.0.0.1:47311/",
+  "statusCode": 200,
+  "statusClass": "2xx",
+  "contentType": "text/html; charset=utf-8",
+  "depth": 0,
+  "indexable": true,
+  "title": "CrawlForge fixture home",
+  "blockReason": null,
+  "wafProvider": null
+ }
+}

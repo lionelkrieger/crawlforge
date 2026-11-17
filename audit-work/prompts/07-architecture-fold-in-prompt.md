@@ -13,7 +13,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 1. `E:\Crawlforge\audit-work\SOURCE-OF-TRUTH-LOOP.md`: the operating rules. Sections 4, 5 and 6 define exactly what you are doing. Follow them.
 2. `E:\Crawlforge\audit-work\decisions-log.md`: owner decisions D-001 to D-015.
 3. `E:\Crawlforge\audit-work\register\capabilities.yaml` (275 capabilities: 213 checklist rows plus 62 extras in sections A to L) and `register\README.md`.
-4. `E:\Crawlforge\audit-work\project-configuration-review.md`: the detailed rationale behind the configuration, rendering and site-type decisions (sections 3, 4, 5).
+4. `E:\Crawlforge\audit-work\history\project-configuration-review.md`: the detailed rationale behind the configuration, rendering and site-type decisions (sections 3, 4, 5).
 5. `E:\Crawlforge\architecture\README.md` and `FIDELITY-AUDIT-REPORT.md`, then every domain file under `architecture\01-...` to `07-...`.
 
 ## Hard rules
@@ -28,7 +28,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 
 1. Create `architecture\changes\` with `INDEX.md` (table: CR, title, type, status, decisions, capabilities, files, approved date) and `CR-001.md`.
 2. `git mv` the two root master documents into `architecture\baseline\`: `functional-specification.md` (FS-CRAWL-001 v1.4) and `crawlforge-extensions-and-ui-stack.md` (FS-CRAWL-002 v1.1). Do not change their content. Add `architecture\baseline\README.md`: "Historical baseline. Superseded by the living architecture from v2.0. Do not edit."
-3. Update path references to those two files **inside `architecture\` and `audit-work\` only**. References in `buildplan\AGENT-INSTRUCTIONS.md` and `build_plan_orchestration_prompt.md` must **not** be edited; list them in CR-001 under "Downstream references to update in the build-plan extension".
+3. Update path references to those two files **inside `architecture\` and `audit-work\` only**. References in `buildplan\AGENT-INSTRUCTIONS.md` and `buildplan/v1.1/build_plan_orchestration_prompt.md` must **not** be edited; list them in CR-001 under "Downstream references to update in the build-plan extension".
 4. Update `architecture\README.md` document control: identifier `FS-CRAWL-ARCH`, version **2.0**, status **Master (living)**, and replace the "immutable sources / verbatim and unabridged" statements with the wording given in SOURCE-OF-TRUTH-LOOP.md section 4 step 2. Add a short "Change protocol" section summarising section 5 of the loop document and pointing to `changes\INDEX.md`. Keep the rest of the README, including the existing source-section traceability matrix.
 5. Mark CR-001 `applied` (type: clarification, approved by the owner on 2026-11-17 as part of adopting the loop) and commit: `CR-001: promote architecture to living master v2.0`.
 

@@ -1,6 +1,6 @@
 # Task: Fix the two blockers that stop CrawlForge audits from running (workpiece HOTFIX-01)
 
-CrawlForge is a desktop website crawler and SEO auditor at `E:\Crawlforge\app` (.NET 10 backend in `app\src\backend`, Electron shell in `app\src\electron`, React frontend in `app\src\frontend`). The repository `E:\Crawlforge` is a git repository. The specification is `E:\Crawlforge\architecture\` v2.0. A runtime probe (`E:\Crawlforge\audit-work\runtime-probe\RUNTIME-PROBE.md` and `runtime-probe.json`) measured the current build against a local fixture site and found two blockers. Read the probe report first.
+CrawlForge is a desktop website crawler and SEO auditor at `E:\Crawlforge\app` (.NET 10 backend in `app\src\backend`, Electron shell in `app\src\electron`, React frontend in `app\src\frontend`). The repository `E:\Crawlforge` is a git repository. The specification is `E:\Crawlforge\architecture\` v2.0. A runtime probe (`E:\Crawlforge\audit-work\history\runtime-probe-1\RUNTIME-PROBE.md` and `runtime-probe.json`) measured the current build against a local fixture site and found two blockers. Read the probe report first.
 
 This is a **small, bounded fix**. Fix only what is listed. Do not refactor, do not implement other missing features, do not change the specification.
 
@@ -44,7 +44,7 @@ If the fixture crawl runs long because of the calendar and filter crawler traps 
 
 - Change only code needed for these two blockers, their contract tests, and the failed-state visibility. Record anything else you notice in the report instead of fixing it.
 - Commit once, message starting `HOTFIX-01:`, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
-- Write `E:\Crawlforge\audit-work\hotfix-01-report.md`: root causes, files changed, which side of each contract was changed and why, the contract tests added, acceptance evidence for each of steps 3 to 6 (audit IDs, URL counts, states, screenshots path if taken), and anything noticed but not fixed.
+- Write `E:\Crawlforge\audit-work\reports\hotfix-01\hotfix-01-report.md`: root causes, files changed, which side of each contract was changed and why, the contract tests added, acceptance evidence for each of steps 3 to 6 (audit IDs, URL counts, states, screenshots path if taken), and anything noticed but not fixed.
 
 ## Final reply
 

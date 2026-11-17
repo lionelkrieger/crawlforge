@@ -13,8 +13,8 @@ The v1.1 plan declared 43/43 workpieces and 48/48 acceptance criteria complete w
 3. `E:\Crawlforge\architecture\06-frontend-shell-and-ui\04-ui-surface-map.md`: surfaces UI-01 to UI-24 and the configure/trigger/view binding for every in-scope capability.
 4. `E:\Crawlforge\architecture\TRACEABILITY.md` and `E:\Crawlforge\audit-work\register\capabilities.yaml`, `untagged.yaml`: 275 capabilities; 251 in scope; 24 deferred, out of scope or via MCP (not planned).
 5. `E:\Crawlforge\architecture\07-quality-and-verification\` (acceptance criteria #1 to #58, fixture site and acceptance rule) and `E:\Crawlforge\app\tests\fixture-site\expected-results.json` (31 traps).
-6. **Measured state, strongest evidence:** `E:\Crawlforge\audit-work\runtime-probe-2\` (clean normal-entry-point probe). If it does not exist, stop and report that probe-2 must run first. Also `audit-work\hotfix-01-report.md` and `audit-work\runtime-probe\RUNTIME-PROBE.md` (first probe, diagnostic workaround runs, use as secondary).
-7. Code-level gap evidence: `audit-work\UNDERBUILD-AUDIT.md` (gap IDs G01 to G29), `audit-work\05-functionality-audit-results.md`, `audit-work\ux-api-gap-audit.md`.
+6. **Measured state, strongest evidence:** `E:\Crawlforge\audit-work\reports\runtime-probe-2\` (clean normal-entry-point probe). If it does not exist, stop and report that probe-2 must run first. Also `audit-work\reports\hotfix-01\hotfix-01-report.md` and `audit-work\history\runtime-probe-1\RUNTIME-PROBE.md` (first probe, diagnostic workaround runs, use as secondary).
+7. Code-level gap evidence: `audit-work\reports\UNDERBUILD-AUDIT.md` (gap IDs G01 to G29), `audit-work\history\05-functionality-audit-results.md`, `audit-work\history\ux-api-gap-audit.md`.
 8. The v1.1 plan: `E:\Crawlforge\buildplan\index.yaml`, `buildplan\phases\*.yaml`, `buildplan\AGENT-INSTRUCTIONS.md`, `E:\Crawlforge\build_plan_orchestration_prompt.md`. Keep its YAML format, orchestration model, file-ownership and wave rules so the existing orchestration approach still works.
 9. `E:\Crawlforge\audit-work\decisions-log.md` (D-001 to D-018).
 

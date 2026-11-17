@@ -1,0 +1,160 @@
+
+[backend:stdout] info: CrawlForge.Host.Composition.MigrationLifecycleParticipant[0]
+      Schema migrations applied; schema version 4.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant MigrationLifecycleParticipant started.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant UserDictionaryLifecycleParticipant started.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant WafCatalogueInitializationParticipant started.
+info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant AuditExecutionEngine started.
+info: CrawlForge.Host.Composition.SchedulerLifecycleParticipant[0]
+      Local scheduler started.
+info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant SchedulerLifecycleParticipant started.
+[backend:stdout] info: CrawlForge.Host.Composition.McpLifecycleParticipant[0]
+      MCP loopback server listening at http://127.0.0.1:61222/mcp.
+[backend:stdout] info: CrawlForge.Host.Hosting.BackendLifecycleCoordinator[0]
+      Lifecycle participant McpLifecycleParticipant started.
+[backend:stdout] info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:61219
+[backend:stdout] info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+[backend:stdout] info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: E:\Crawlforge\app\src\backend\CrawlForge.Host\bin\Debug\net10.0
+[backend:stdout] info: CrawlForge.Host.CrawlForgeBackend[0]
+      CrawlForge backend ready at http://127.0.0.1:61219 (first run: False).
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:61219/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 15.3873ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:61219/api/health - 200 - application/json;+charset=utf-8 74.2826ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:61219/api/diagnostics/artifacts - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:61219/api/projects - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:61219/api/settings - - -
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:61219/api/plugins - - -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:61219/api/audits - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.ProjectsController.ListProjectsAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.SettingsController.GetSettingsAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.AuditsController.ListAuditsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.PluginsController.ListAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.DiagnosticsController.ListArtifactsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "List", controller = "Plugins"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] ListAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.PluginsController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ListAudits", controller = "Audits"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] ListAuditsAsync(System.String, System.String, Int32, Int32, System.String, System.String, System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.AuditsController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ListArtifacts", controller = "Diagnostics"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] ListArtifactsAsync(System.String, System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.DiagnosticsController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetSettings", controller = "Settings"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetSettingsAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.SettingsController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "ListProjects", controller = "Projects"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] ListProjectsAsync(System.String, Int32, Int32, System.String, System.String, System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.ProjectsController (CrawlForge.Api).
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[System.Collections.Generic.List`1[[CrawlForge.Api.Controllers.PluginRegistryEntryWire, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[System.Collections.Generic.List`1[[CrawlForge.Api.Controllers.AuditSummaryWire, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[System.Collections.Generic.List`1[[CrawlForge.Api.Controllers.DiagnosticArtifactWire, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.PluginsController.ListAsync (CrawlForge.Api) in 17.6959ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.PluginsController.ListAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.AuditsController.ListAuditsAsync (CrawlForge.Api) in 17.8173ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:61219/api/plugins - 200 - application/json;+charset=utf-8 31.9333ms
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.DiagnosticsController.ListArtifactsAsync (CrawlForge.Api) in 18.6467ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.AuditsController.ListAuditsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:61219/api/audits - 200 - application/json;+charset=utf-8 33.8754ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.DiagnosticsController.ListArtifactsAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:61219/api/diagnostics/artifacts - 200 - application/json;+charset=utf-8 34.5546ms
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[System.Collections.Generic.List`1[[CrawlForge.Api.Controllers.ProjectSummaryWire, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.ProjectsController.ListProjectsAsync (CrawlForge.Api) in 27.1512ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.ProjectsController.ListProjectsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:61219/api/projects - 200 - application/json;+charset=utf-8 45.1240ms
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.AppSettingsWire, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.SettingsController.GetSettingsAsync (CrawlForge.Api) in 49.4661ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.SettingsController.GetSettingsAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:61219/api/settings - 200 - application/json;+charset=utf-8 66.8412ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:61219/hubs/realtime/negotiate?negotiateVersion=1 - - 0
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint '/hubs/realtime/negotiate'
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint '/hubs/realtime/negotiate'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:61219/hubs/realtime/negotiate?negotiateVersion=1 - 200 316 application/json 14.2922ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:61219/hubs/realtime?id=8ZDta1tHwmPmX-jRmcM1eg&access_token=vZXE7tAhGuf_FM4z9xPFLkH8Yfq-8SFSL_8ExN8f17g - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint '/hubs/realtime'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:61219/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.7692ms
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:61219/api/health - 200 - application/json;+charset=utf-8 4.3690ms
+[backend:stdout] info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:61219/api/health - - -
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api)'
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[102]
+      Route matched with {action = "GetHealth", controller = "Health"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ObjectResult] GetHealthAsync(System.Threading.CancellationToken) on controller CrawlForge.Api.Controllers.HealthController (CrawlForge.Api).
+[backend:stdout] info: Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor[1]
+      Executing ObjectResult, writing value of type 'CrawlForge.Contracts.Common.ApiEnvelope`1[[CrawlForge.Api.Controllers.HealthResponse, CrawlForge.Api, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null]]'.
+info: Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker[105]
+      Executed action CrawlForge.Api.Controllers.HealthController.GetHealthAsync (CrawlForge.Api) in 0.5836ms
+[backend:stdout] info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+... [trimmed] ...
+1127:[backend:stdout] fail: CrawlForge.Host.Execution.AuditExecutionEngine[0]
+1128:      Audit 1 failed.
+1129:      System.ArgumentOutOfRangeException: The initial rate must be a positive finite number. (Parameter 'InitialRate')
+1682:[backend:stdout] fail: CrawlForge.Host.Execution.AuditExecutionEngine[0]
+1683:      Audit 2 failed.
+1684:      System.ArgumentOutOfRangeException: The initial rate must be a positive finite number. (Parameter 'InitialRate')
+8804:[backend:stdout] fail: CrawlForge.Host.Execution.AuditExecutionEngine[0]
+8805:      Audit 4 failed.
+8806:      System.ArgumentOutOfRangeException: The initial rate must be a positive finite number. (Parameter 'InitialRate')

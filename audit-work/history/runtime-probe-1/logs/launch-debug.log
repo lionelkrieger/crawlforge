@@ -1,0 +1,23 @@
+
+[build] Checking Electron binary
+  OK
+
+[build] Checking .NET backend
+  up to date
+  OK
+
+[build] Checking frontend bundle
+  up to date
+  OK
+
+[build] Checking Electron shell
+  up to date
+  OK
+
+[build] Launching CrawlForge desktop shell
+  CF_UI_ROOT              = E:\Crawlforge\app\src\frontend\dist
+  ELECTRON_OVERRIDE_DIST  = E:\Crawlforge\app\packaging\vendor\electron
+  CF_BACKEND_COMMAND      = dotnet
+  CF_BACKEND_ARGS         = E:\Crawlforge\app\src\backend\CrawlForge.Host\bin\Debug\net10.0\CrawlForge.Host.dll
+  Electron entry          = E:\Crawlforge\app\src\electron\dist\main.js
+

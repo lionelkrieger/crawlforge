@@ -7,15 +7,15 @@ You are measuring what the **current** CrawlForge desktop app actually does, as 
 - Repository: `E:\Crawlforge` (git; tags `baseline-v1`, `architecture-v2.0`). The app is `E:\Crawlforge\app`: .NET 10 backend (`app\src\backend`), Electron shell (`app\src\electron`), React frontend (`app\src\frontend`), MCP stdio adapter (`app\src\mcp-stdio-adapter`). Launch script: `app\launch-crawlforge.ps1` (builds stale components, then launches Electron).
 - Specification (living master): `E:\Crawlforge\architecture\` v2.0. Read `07-quality-and-verification\03-fixture-site.md`, `07-quality-and-verification\01-master-acceptance-criteria.md` §10 (#49 to #58), and `06-frontend-shell-and-ui\04-ui-surface-map.md` (surfaces UI-01 to UI-24 and their navigation paths).
 - Fixture site: `E:\Crawlforge\app\tests\fixture-site\`. Read its `README.md` and `expected-results.json` (31 traps, each with URLs, capabilities, criteria, expected outcome and required capture mode).
-- Known from earlier audits (`E:\Crawlforge\audit-work\UNDERBUILD-AUDIT.md`): rendering may be inert in full audits, many report surfaces may be unmounted, and there is no configuration editor UI (only a New project dialog and a Start audit button on the main hub). Do not assume these are true; measure them.
+- Known from earlier audits (`E:\Crawlforge\audit-work\reports\UNDERBUILD-AUDIT.md`): rendering may be inert in full audits, many report surfaces may be unmounted, and there is no configuration editor UI (only a New project dialog and a Start audit button on the main hub). Do not assume these are true; measure them.
 
 ## Hard rules
 
 1. **Do not modify any file under `app\src`, `app\tests` (except outputs listed below), `architecture\`, `buildplan\` or `audit-work\register\`.** No bug fixes, no workarounds in product code. Building via the launch script is allowed.
-2. Tools you install for probing (for example `playwright-core`) go into a scratch folder **outside** `app\`, for example `E:\Crawlforge\audit-work\runtime-probe\tools\`. Do not add dependencies to the app.
+2. Tools you install for probing (for example `playwright-core`) go into a scratch folder **outside** `app\`, for example `E:\Crawlforge\audit-work\history\runtime-probe-1\tools\`. Do not add dependencies to the app.
 3. Never trigger the fixture site's "Place bet", "Deposit" or "Logout" controls yourself. The point is to see whether CrawlForge does.
 4. Time-box each step. If a step is blocked (for example the app will not start), record the blocker with logs and continue with what can still be measured.
-5. Outputs go only to `E:\Crawlforge\audit-work\runtime-probe\`. Commit them at the end with one commit; end the message with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+5. Outputs go only to `E:\Crawlforge\audit-work\history\runtime-probe-1\`. Commit them at the end with one commit; end the message with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 
 ## Steps
 
@@ -40,7 +40,7 @@ Using the MCP stdio adapter the way an external client (Claude, VS Code) would: 
 ### 7. Acceptance criteria snapshot
 For criteria #49 to #58, and for #1 to #48 where they can be exercised against the fixture site in this session, record pass / partial / fail / not testable with a one-line reason. Do not spend more than a few minutes per criterion.
 
-## Outputs (in `E:\Crawlforge\audit-work\runtime-probe\`)
+## Outputs (in `E:\Crawlforge\audit-work\history\runtime-probe-1\`)
 
 - `RUNTIME-PROBE.md`: summary first (what works end to end today, what does not, top blockers), then sections for steps 2 to 7.
 - `runtime-probe.json`: machine-readable results with these top-level keys:

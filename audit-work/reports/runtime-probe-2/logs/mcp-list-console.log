@@ -1,0 +1,328 @@
+{
+ "server": {
+  "name": "crawlforge",
+  "version": "1.0.0"
+ },
+ "capabilities": {
+  "prompts": {},
+  "resources": {},
+  "tools": {}
+ },
+ "tools": {
+  "tools": [
+   {
+    "name": "start-audit",
+    "description": "Starts an audit exactly as the REST start operation (configuration reference; optional limit overrides).",
+    "inputSchema": {
+     "type": "object",
+     "properties": {
+      "projectId": {
+       "type": "integer",
+       "description": "Owning project identifier"
+      },
+      "configurationId": {
+       "type": "integer",
+       "description": "Crawl configuration to snapshot"
+      },
+      "limitOverrides": {
+       "type": "object",
+       "description": "Optional per-audit limit overrides"
+      }
+     },
+     "required": [
+      "projectId",
+      "configurationId"
+     ]
+    }
+   },
+   {
+    "name": "pause-audit",
+    "description": "Checkpoints and pauses a running audit.",
+    "inputSchema": {
+     "type": "object",
+     "properties": {
+      "auditId": {
+       "type": "integer",
+       "description": "Audit identifier"
+      }
+     },
+     "required": [
+      "auditId"
+     ]
+    }
+   },
+   {
+    "name": "resume-audit",
+    "description": "Rehydrates and resumes a paused audit.",
+    "inputSchema": {
+     "type": "object",
+     "properties": {
+      "auditId": {
+       "type": "integer",
+       "description": "Audit identifier"
+      }
+     },
+     "required": [
+      "auditId"
+     ]
+    }
+   },
+   {
+    "name": "cancel-audit",
+    "description": "Drains workers and finalizes partial data.",
+    "inputSchema": {
+     "type": "object",
+     "properties": {
+      "auditId": {
+       "type": "integer",
+       "description": "Audit identifier"
+      }
+     },
+     "required": [
+      "auditId"
+     ]
+    }
+   },
+   {
+    "name": "re-audit",
+    "description": "Triggers a follow-up analysis pass over the same dataset; returns the new audit identifier.",
+    "inputSchema": {
+     "type": "object",
+     "properties": {
+      "auditId": {
+       "type": "integer",
+       "description": "Audit to re-analyze"
+      },
+      "refresh": {
+       "type": "boolean",
+       "description": "Refresh stored content first (default false)"
+      }
+     },
+     "required": [
+      "auditId"
+     ]
+    }
+   },
+   {
+    "name": "analyze-single-page",
+    "description": "Ad-hoc single-page audit: findings and element inventory for one URL.",
+    "inputSchema": {
+     "type": "object",
+     "properties": {
+      "url": {
+       "type": "string",
+       "description": "Target URL"
+      },
+      "render": {
+       "type": "boolean",
+       "description": "Render before analysis (default false)"
+      },
+      "ruleKeys": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       },
+       "description": "Optional rule filter"
+      }
+     },
+     "required": [
+      "url"
+     ]
+    }
+   },
+   {
+    "name": "run-schedule-now",
+    "description": "Manual trigger of a schedule; returns the started audit identifier.",
+    "inputSchema": {
+     "type": "object",
+     "properties": {
+      "scheduleId": {
+       "type": "integer",
+       "description": "Schedule definition identifier"
+      }
+     },
+     "required": [
+      "scheduleId"
+     ]
+    }
+   },
+   {
+    "name": "get-audit-progress",
+    "description": "Reads live progress for an audit (status, phase, counters).",
+    "inputSchema": {
+     "type": "object",
+     "properties": {
+      "auditId": {
+       "type": "integer",
+       "description": "Audit identifier"
+      }
+     },
+     "required": [
+      "auditId"
+     ]
+    }
+   }
+  ]
+ },
+ "resources": {
+  "resources": [
+   {
+    "name": "audit-summary",
+    "uri": "crawlforge://audits/{auditId}/summary",
+    "description": "Audit overview: status, scores, metric summaries, finding counts, WAF counts.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "high-severity-findings",
+    "uri": "crawlforge://audits/{auditId}/high-severity-findings",
+    "description": "Error and Warning findings with evidence and recommendations.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "url-detail",
+    "uri": "crawlforge://audits/{auditId}/urls/{urlId}",
+    "description": "URL record with findings, WAF detection, scope diagnostics, top n-grams, SERP metrics, semantic relations.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "audit-list",
+    "uri": "crawlforge://audits",
+    "description": "All audits with status and phase.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "schedule-status",
+    "uri": "crawlforge://schedules",
+    "description": "Schedule definitions with next-due and recent runs.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "crawl-progress",
+    "uri": "crawlforge://audits/{auditId}/progress",
+    "description": "Live progress with throttle summary and redirect-matrix counters.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "extracted-content",
+    "uri": "crawlforge://audits/{auditId}/urls/{urlId}/content",
+    "description": "Custom extraction values and stored body text for one URL.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "ngram-analysis",
+    "uri": "crawlforge://audits/{auditId}/ngrams",
+    "description": "N-gram site summaries and per-URL frequencies (zone/order filters).",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "waf-blocks",
+    "uri": "crawlforge://audits/{auditId}/waf-blocks",
+    "description": "WAF detections with provider, challenge class, and evidence.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "host-throttle",
+    "uri": "crawlforge://audits/{auditId}/host-throttle",
+    "description": "Per-host AIMD throttle history.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "redirect-matrix-results",
+    "uri": "crawlforge://audits/{auditId}/redirect-matrix",
+    "description": "Redirect matrix rows and counters.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "log-correlation",
+    "uri": "crawlforge://audits/{auditId}/log-correlation?import={logImportId}",
+    "description": "True orphans, budget waste, and uncrawled indexable URLs for a log import.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "semantic-link-opportunities",
+    "uri": "crawlforge://audits/{auditId}/semantic-links",
+    "description": "Semantic link opportunities and cannibalization clusters (suggestions only).",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "geo-readiness",
+    "uri": "crawlforge://audits/{auditId}/geo-readiness",
+    "description": "llms.txt validation results and AI-bot governance summary.",
+    "mimeType": "application/json"
+   },
+   {
+    "name": "analytics-coverage",
+    "uri": "crawlforge://audits/{auditId}/analytics-coverage",
+    "description": "Per-container analytics coverage across indexable pages.",
+    "mimeType": "application/json"
+   }
+  ]
+ },
+ "resourceTemplates": {
+  "error": "MCP error -32601: Method not found"
+ },
+ "prompts": {
+  "prompts": [
+   {
+    "name": "audit-health-briefing",
+    "description": "Composes the audit summary into an agent-ready health briefing; no side effects.",
+    "arguments": [
+     {
+      "name": "auditId",
+      "description": "Audit identifier",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "high-severity-triage",
+    "description": "Composes high-severity findings into a triage briefing; no side effects.",
+    "arguments": [
+     {
+      "name": "auditId",
+      "description": "Audit identifier",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "audit-delta-briefing",
+    "description": "Composes a cross-audit comparison into a delta briefing; no side effects.",
+    "arguments": [
+     {
+      "name": "baseAuditId",
+      "description": "Earlier audit identifier",
+      "required": true
+     },
+     {
+      "name": "targetAuditId",
+      "description": "Later audit identifier",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "ngram-topical-briefing",
+    "description": "Composes ngram-analysis + audit-summary into a topical briefing; no side effects.",
+    "arguments": [
+     {
+      "name": "auditId",
+      "description": "Audit identifier",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "semantic-topical-briefing",
+    "description": "Composes semantic-link-opportunities + audit-summary into a topical briefing; no side effects.",
+    "arguments": [
+     {
+      "name": "auditId",
+      "description": "Audit identifier",
+      "required": true
+     }
+    ]
+   }
+  ]
+ }
+}

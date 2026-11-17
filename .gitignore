@@ -30,9 +30,16 @@ audit-work/.bak/
 # Logs, except audit evidence logs
 *.log
 !audit-work/*.log
+!audit-work/**/*.log
 
 # Generated benchmark/test run artifacts (databases, exports, logs)
 app/tests/**/artifacts/
 *.db
 *.db-wal
 *.db-shm
+
+# Local helper agent workspace (WorkBuddy); not part of the project
+.workbuddy-ai/
+
+# Session scratch files kept for reference only
+audit-work/history/scratch/
