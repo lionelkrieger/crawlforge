@@ -1,0 +1,92 @@
+# CrawlForge Build Plan v2.0 — Phase 16: Distribution (Unscheduled)
+# Release-time work per architecture 09-distribution. NOT scheduled until the owner
+# accepts the phase-15 sign-off package. Listed for completeness only; its citations
+# are validated by check_buildplan.py but do not count toward build coverage.
+phase_id: "phase-16"
+name: "Distribution (Unscheduled)"
+status: "unscheduled"
+depends_on_phases: ["phase-15"]
+max_parallel_agents: 2
+parallel_waves:
+  - wave_id: "wave-16A"
+    workpiece_ids: ["WP-16-01", "WP-16-02"]
+gated_acceptance_criteria: []
+
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Release"
+    - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
+    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
+  after_waves:
+    wave-16A:
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode http --traps noindex"
+
+workpieces:
+  - workpiece_id: "WP-16-01"
+    title: "Packaging & Installer — Pinned Runtime Bundle, Signing, Large Assets"
+    phase_id: "phase-16"
+    status: "pending"
+    parallel_group: "wave-16A"
+    depends_on_workpieces: ["WP-15-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\09-distribution\\01-packaging-and-release.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\09-distribution\\01-packaging-and-release.md"
+        sections: ["1", "2", "6", "7"]
+    capabilities:
+      - { id: "CAP-L-X01", baseline_state: "partial" }   # packaged shell lifecycle parity
+    ui_surfaces: []   # release engineering; no new UI surface
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "installed app launches via the packaged entry point and passes the same fixture smoke audit as the dev launch"
+        test: "PackagedLaunchParityTests"
+    reopens:
+      - workpiece_id: "WP-07-03"
+        evidence: "G28: stdio MCP adapter not bundled; distribution never built or verified in v1.1"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\packaging\\build\\"
+      - "E:\\Crawlforge\\app\\installer\\"
+    deliverables:
+      - "Windows installer bundling the pinned .NET runtime, pinned Chrome for Testing, Electron vendor binary, frontend bundle and stdio MCP adapter (G28); code signing per §2; large-asset handling per §7 (browser bundle download/verify with checksums); install/uninstall/upgrade paths"
+      - "Packaged-app smoke: launch installed build, run a fixture audit through the UI, compare with dev-launch results"
+    verification_commands:
+      - "dotnet publish E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Release"
+    done_when: "Installer produces a working installed app on a clean Windows profile; packaged launch passes the fixture smoke audit; browser bundle checksum verified; no dev-tree paths required at runtime."
+    acceptance_criteria_refs: []
+
+  - workpiece_id: "WP-16-02"
+    title: "Release Channel, Local Crash Reporting & Licence Audit"
+    phase_id: "phase-16"
+    status: "pending"
+    parallel_group: "wave-16A"
+    depends_on_workpieces: ["WP-15-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\09-distribution\\01-packaging-and-release.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\09-distribution\\01-packaging-and-release.md"
+        sections: ["3", "4", "5"]
+      - file: "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+        sections: ["6.8"]
+    capabilities:
+      - { id: "CAP-L-X06", baseline_state: "partial" }   # release check / diagnostics parity in packaged app
+    ui_surfaces: ["UI-21"]   # release channel + crash report viewer live in settings/diagnostics
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "release check is local-only (manifest on user-configured endpoint, off by default); crash reports stay local unless the user exports them"
+        test: "ReleaseBoundaryConformanceTests"
+    reopens:
+      - workpiece_id: "WP-07-03"
+        evidence: "O-006: release/crash/licence work never started; G15 minidump viewer delivered in WP-12-14 must work in the packaged app"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\packaging\\release\\"
+      - "E:\\Crawlforge\\app\\tools\\licence-audit\\"
+    deliverables:
+      - "Release channel manifest + local-only update check (off by default, user-configured endpoint); crash reporting pipeline keeping minidumps local with user-initiated export only; licence audit of all bundled dependencies (incl. Chrome for Testing, ONNX models, npm/NuGet trees) with a generated attribution file"
+    verification_commands:
+      - "python E:\\Crawlforge\\app\\tools\\licence-audit\\run_licence_audit.py"
+    done_when: "Licence audit passes with attribution file generated; packaged app's release check makes zero network calls by default; a forced crash in the packaged app writes a local minidump visible in diagnostics and nothing leaves the machine."
+    acceptance_criteria_refs: []

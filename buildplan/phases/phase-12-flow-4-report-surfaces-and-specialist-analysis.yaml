@@ -1,0 +1,831 @@
+# CrawlForge Build Plan v2.0 — Phase 12: Flow 4 — Report Surfaces and Specialist Analysis
+# Proves: every remaining report surface renders real fixture-audit data — specialist
+# explorers, visualizations, comparisons, templates, segments, clients, schedules, logs,
+# plugins — and the engine gaps behind them (CWV, security, graph, semantics, hub, shell).
+# Shared wiring (Host/Execution/, Host/Composition/, Audit/Pipeline/, App.tsx, store/,
+# explorers/specialist shared index files) owned only by WP-12-16.
+phase_id: "phase-12"
+name: "Flow 4 — Report Surfaces and Specialist Analysis"
+status: "pending"
+depends_on_phases: ["phase-08", "phase-09", "phase-10", "phase-11"]
+max_parallel_agents: 7
+parallel_waves:
+  - wave_id: "wave-12A"
+    workpiece_ids: ["WP-12-01", "WP-12-03", "WP-12-04", "WP-12-05", "WP-12-06", "WP-12-11", "WP-12-12"]
+  - wave_id: "wave-12B"
+    workpiece_ids: ["WP-12-02", "WP-12-07", "WP-12-08", "WP-12-09", "WP-12-10", "WP-12-13", "WP-12-14", "WP-12-15"]
+  - wave_id: "wave-12C"
+    workpiece_ids: ["WP-12-16"]
+gated_acceptance_criteria: []
+
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
+    - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
+    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
+  after_waves:
+    wave-12C:
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode dual --traps noindex,duplicate-titles,thin-page,missing-alt,orphan,broken-links,structured-data-errors,consent-banner,script-injected-content"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-05,UI-06,UI-07,UI-08,UI-09,UI-14,UI-15,UI-16,UI-17,UI-19,UI-21,UI-22,UI-23,UI-24"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --tls --traps mixed-content"
+
+workpieces:
+  - workpiece_id: "WP-12-01"
+    title: "Rendered Performance & Core Web Vitals Pipeline — Lab Probe, Budgets, Coverage, Composition"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12A"
+    depends_on_workpieces: ["WP-10-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\03-accessibility-and-cwv-performance.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\04-metrics-and-diagnostics.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\03-accessibility-and-cwv-performance.md"
+        sections: ["7.11"]
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\04-metrics-and-diagnostics.md"
+        sections: ["7.3"]
+    capabilities:
+      - { id: "CAP-C-082", baseline_state: "unwired" }
+      - { id: "CAP-C-083", baseline_state: "unwired" }
+      - { id: "CAP-C-084", baseline_state: "unwired" }
+      - { id: "CAP-C-085", baseline_state: "unwired" }
+      - { id: "CAP-C-086", baseline_state: "unwired" }
+      - { id: "CAP-C-087", baseline_state: "missing_engine" }
+      - { id: "CAP-C-088", baseline_state: "unwired" }
+      - { id: "CAP-C-089", baseline_state: "unwired" }
+      - { id: "CAP-C-090", baseline_state: "unwired" }
+      - { id: "CAP-C-091", baseline_state: "unwired" }
+      - { id: "CAP-C-092", baseline_state: "unwired" }
+      - { id: "CAP-C-095", baseline_state: "unwired" }
+      - { id: "CAP-C-096", baseline_state: "unwired" }
+      - { id: "CAP-C-097", baseline_state: "unwired" }
+      - { id: "CAP-C-098", baseline_state: "unwired" }
+      - { id: "CAP-C-X02", baseline_state: "unwired" }
+      - { id: "CAP-C-X03", baseline_state: "unwired" }
+      - { id: "CAP-C-X04", baseline_state: "unwired" }
+    ui_surfaces: ["UI-13", "UI-16"]
+    fixture_traps: ["live-websocket", "script-injected-content"]
+    contract_tests:
+      - payload: "per-URL lab CWV row (LCP/INP/CLS/TTFB) + budget exceedance findings + coverage/composition metrics"
+        test: "LabVitalsConformanceTests"
+      - payload: "performance metric contributions into metric_summaries (G06 families)"
+        test: "PerformanceMetricConformanceTests"
+    reopens:
+      - workpiece_id: "WP-03-06"
+        evidence: "G04: five performance analyzers are dead code — never invoked, no TTFB measurement; probe-2 produced no CWV data"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Performance\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Performance\\"
+    deliverables:
+      - "Local lab rendering probe driven by the CDP pool: LCP, INP, CLS, TTFB per page; resource waterfall from the proxy capture; unused CSS/JS via CDP coverage; render-blocking, compression, caching checks; page weight, resource counts, slow-server detection; large-image detection"
+      - "Performance budgets evaluated per configuration with exceedance findings; page composition metrics; URL-level results persisted; metric families recorded (registration in WP-12-16)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Performance"
+    done_when: "Phase-gate fixture run (dual): every rendered fixture page has lab CWV values; /live/odds.html produces vitals without hitting the wait cap; budget exceedance findings appear for configured budgets; UI walk: UI-16 Performance surface shows per-URL vitals."
+    acceptance_criteria_refs: [26]
+
+  - workpiece_id: "WP-12-02"
+    title: "Accessibility Engine Completion & Accessibility/Performance/Mobile Specialist Surfaces"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12B"
+    depends_on_workpieces: ["WP-12-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\03-accessibility-and-cwv-performance.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\03-accessibility-and-cwv-performance.md"
+        sections: ["7.10", "7.11"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.2"]
+    capabilities:
+      - { id: "CAP-D1-100", baseline_state: "missing_ui" }
+      - { id: "CAP-D1-101", baseline_state: "missing_ui" }
+      - { id: "CAP-D1-102", baseline_state: "missing_ui" }
+      - { id: "CAP-D1-103", baseline_state: "unwired" }
+      - { id: "CAP-D1-104", baseline_state: "missing_ui" }
+      - { id: "CAP-D1-105", baseline_state: "missing_ui" }
+      - { id: "CAP-D1-107", baseline_state: "missing_ui" }
+      - { id: "CAP-D1-108", baseline_state: "missing_ui" }
+      - { id: "CAP-D1-109", baseline_state: "missing_ui" }
+      - { id: "CAP-D1-110", baseline_state: "missing_ui" }
+      - { id: "CAP-D1-X01", baseline_state: "missing_ui" }
+      - { id: "CAP-C-093", baseline_state: "missing_ui" }
+      - { id: "CAP-C-094", baseline_state: "missing_ui" }
+      - { id: "CAP-C-X01", baseline_state: "missing_ui" }
+    ui_surfaces: ["UI-16", "UI-13", "UI-04"]
+    fixture_traps: ["missing-alt", "live-websocket"]
+    contract_tests:
+      - payload: "accessibility violation rows (rule, locator, remediation, machine-detectable vs human-assessment flag)"
+        test: "AccessibilityFindingConformanceTests"
+      - payload: "accessibility rule-set configuration/versioning DTO"
+        test: "AccessibilityRuleSetConfigTests"
+    reopens:
+      - workpiece_id: "WP-03-06"
+        evidence: "probe-2: missing-alt passes at engine level but no accessibility surface exists (G01); ColorContrastRule never invoked with rendered styles"
+      - workpiece_id: "WP-06-03"
+        evidence: "G01: specialist surfaces unmounted"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Accessibility\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\specialist\\accessibility\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Accessibility\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\accessibility\\"
+    deliverables:
+      - "Accessibility engine completed: WCAG 2.2 AA automatable checks, colour contrast from rendered styles, form labels, heading/landmark structure, accessible names, link purpose, ARIA misuse; machine-detectable vs human-assessment distinction; rule-set configuration and versioning"
+      - "UI-16 Accessibility surface: violations with locators/remediation, aggregation by rule, score impact; Performance surface: per-URL vitals, budgets, coverage/composition; mobile-friendliness rule set with viewport/responsive checks"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Accessibility"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate UI walk: UI-16 Accessibility lists the missing-alt violation on /pages/images.html with locator and remediation (empty-alt decorative image treated per rule set); Performance surface shows fixture CWV; rule-set toggles change results on re-run."
+    acceptance_criteria_refs: [25, 26]
+
+  - workpiece_id: "WP-12-03"
+    title: "Security Rules — HTTPS, Certificates, Headers, Mixed Content, Cookies, TLS"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12A"
+    depends_on_workpieces: ["WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+        sections: ["7.4"]
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+        sections: ["7.19"]
+    capabilities:
+      - { id: "CAP-D2-111", baseline_state: "missing_engine" }
+      - { id: "CAP-D2-112", baseline_state: "missing_engine" }
+      - { id: "CAP-D2-113", baseline_state: "missing_engine" }
+      - { id: "CAP-D2-114", baseline_state: "missing_engine" }
+      - { id: "CAP-D2-115", baseline_state: "missing_engine" }
+      - { id: "CAP-D2-116", baseline_state: "missing_engine" }
+      - { id: "CAP-D2-117", baseline_state: "missing_engine" }
+      - { id: "CAP-D2-118", baseline_state: "missing_engine" }
+      - { id: "CAP-D2-X01", baseline_state: "partial" }   # WAF specialist view binding
+    ui_surfaces: ["UI-12", "UI-13", "UI-16"]
+    fixture_traps: ["mixed-content"]
+    contract_tests:
+      - payload: "security findings (https, certificate, headers, mixed-content, cookie-attributes, insecure-resource, disclosure, tls)"
+        test: "SecurityFindingConformanceTests"
+    reopens:
+      - workpiece_id: "WP-03-02"
+        evidence: "G12: no Images/Security rule families in the audit taxonomy; probe-2 mixed-content not_testable (needs TLS fixture)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Security\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Security\\"
+    deliverables:
+      - "Security rule family: HTTPS usage, certificate validity, HTTP security headers, mixed content (HTTPS-served pages referencing insecure resources), cookie security attributes (from the flow-1 cookie jar), insecure external resources, information disclosure, basic TLS configuration checks"
+      - "WAF specialist surface data: detections with provider, confidence, facets (view binding; detection engine fixed in WP-09-02)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Security"
+    done_when: "Phase-gate fixture run with --tls: mixed-content passes (insecure image on /pages/mixed-content.html reported); security header findings present for fixture pages; UI walk: UI-16 WAF surface shows detection rows."
+    acceptance_criteria_refs: [35, 49]
+
+  - workpiece_id: "WP-12-04"
+    title: "Link Graph, DOM-Zone Classification & Weighted Equity — Engine Completion"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12A"
+    depends_on_workpieces: ["WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+        sections: ["15.1", "15.2"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.2"]
+    capabilities:
+      - { id: "CAP-E-119", baseline_state: "missing_ui" }
+      - { id: "CAP-E-120", baseline_state: "missing_ui" }
+      - { id: "CAP-E-121", baseline_state: "missing_ui" }
+      - { id: "CAP-E-123", baseline_state: "missing_ui" }
+      - { id: "CAP-E-124", baseline_state: "missing_ui" }
+      - { id: "CAP-E-125", baseline_state: "missing_ui" }
+      - { id: "CAP-E-126", baseline_state: "missing_ui" }
+      - { id: "CAP-E-127", baseline_state: "missing_ui" }
+      - { id: "CAP-E-132", baseline_state: "missing_ui" }
+      - { id: "CAP-E-X02", baseline_state: "missing_ui" }
+      - { id: "CAP-E-X03", baseline_state: "unwired" }
+    ui_surfaces: ["UI-13", "UI-14", "UI-16"]
+    fixture_traps: ["orphan", "broken-links"]
+    contract_tests:
+      - payload: "link_edges.dom_zone on every edge; weighted equity scores; graph aggregate analytics payload"
+        test: "LinkGraphConformanceTests — dom_zone non-null invariant"
+    reopens:
+      - workpiece_id: "WP-03-04"
+        evidence: "probe-2 #48 partial: dom_zone/equity computed but not surfaced; whole-graph aggregates unwired (E-X03)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\LinkGraph\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\LinkGraph\\"
+    deliverables:
+      - "DOM-zone classification on every link edge (in-content, nav, header, footer, sidebar, breadcrumb); weighted PageRank/link equity; click depth, crawl depth, inlink/outlink counts, anchor-text analysis, navigation and breadcrumb analysis"
+      - "Whole-graph aggregate analytics (component counts, depth distribution, zone distribution) persisted for the visualization window; internal link graph read model complete"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~LinkGraph"
+    done_when: "Phase-gate fixture run: every link_edge has dom_zone; equity scores present; orphan/broken-link evidence consistent with the graph; UI walk: UI-13 shows inlinks/outlinks with zones and anchors."
+    acceptance_criteria_refs: [48]
+
+  - workpiece_id: "WP-12-05"
+    title: "Template Identification, Segments, Custom Issue Rules & Finding Prioritisation"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12A"
+    depends_on_workpieces: ["WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+        sections: ["7.20", "7.5", "7.6"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.7", "8.2"]
+    capabilities:
+      - { id: "CAP-E-128", baseline_state: "missing_engine" }
+      - { id: "CAP-I-197", baseline_state: "missing_engine" }
+      - { id: "CAP-B2-080", baseline_state: "missing_engine" }
+      - { id: "CAP-C-099", baseline_state: "missing_engine" }
+      - { id: "CAP-H-171", baseline_state: "missing_engine" }
+      - { id: "CAP-H-172", baseline_state: "missing_engine" }
+      - { id: "CAP-I-194", baseline_state: "missing_engine" }
+      - { id: "CAP-I-196", baseline_state: "missing_engine" }
+    ui_surfaces: ["UI-06", "UI-16", "UI-12"]
+    fixture_traps: ["structured-data-errors", "duplicate-titles"]
+    contract_tests:
+      - payload: "template rows + template-level issue groups + template-level performance aggregates"
+        test: "TemplateGroupingConformanceTests"
+      - payload: "segment definition CRUD + segment-filtered report queries"
+        test: "SegmentConformanceTests"
+      - payload: "custom issue rule definition -> findings with rule evidence"
+        test: "CustomIssueRuleConformanceTests"
+    reopens:
+      - workpiece_id: "WP-03-01"
+        evidence: "§7.20 template identification added by CR-012 after v1.1; no implementation exists"
+      - workpiece_id: "WP-03-08"
+        evidence: "finding model lacks business-importance/remediation-effort prioritisation (I-194/I-196 missing_engine)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Templates\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Segmentation\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Templates\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Segmentation\\"
+    deliverables:
+      - "Template identification (§7.20): DOM-structure clustering of pages into templates; template-level issue grouping (shared problems), structured-data errors grouped by template/entity type, performance results at template level"
+      - "Segments: saved URL sets by rule/query, segment picker contract for every report surface; custom issue rules executed through the rule host with evidence"
+      - "Finding prioritisation by business importance and remediation effort per §7.5. If the locked finding-model contract lacks these fields, STOP and raise a contract amendment (WP-12-A<n>) per AGENT-INSTRUCTIONS §11 — do not mutate CrawlForge.Contracts"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter \"FullyQualifiedName~Templates|FullyQualifiedName~Segmentation\""
+    done_when: "Phase-gate fixture run: fixture pages grouped into templates; duplicate-title and structured-data issues grouped at template level; a segment containing /pages/*.html filters every report surface; UI walk: UI-06 segments CRUD works and the segment picker appears in report surfaces."
+    acceptance_criteria_refs: [27, 32]
+
+  - workpiece_id: "WP-12-06"
+    title: "Content Intelligence — N-Grams, Vector Semantics Bands, Content Metrics, Scoping Enforcement"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12A"
+    depends_on_workpieces: ["WP-10-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\05-ngrams-and-vector-semantics.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\05-ngrams-and-vector-semantics.md"
+        sections: ["5.4", "5.5", "5.6", "12.4", "12.5", "12.6"]
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+        sections: ["4.3", "4.4"]
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+        sections: ["7.12", "7.8"]
+    capabilities:
+      - { id: "CAP-F-141", baseline_state: "missing_ui" }
+      - { id: "CAP-F-142", baseline_state: "missing_ui" }
+      - { id: "CAP-F-143", baseline_state: "missing_ui" }
+      - { id: "CAP-F-144", baseline_state: "missing_ui" }
+      - { id: "CAP-F-146", baseline_state: "unwired" }
+      - { id: "CAP-F-149", baseline_state: "missing_ui" }
+      - { id: "CAP-F-X01", baseline_state: "missing_ui" }
+      - { id: "CAP-F-X02", baseline_state: "missing_ui" }
+      - { id: "CAP-F-X03", baseline_state: "missing_engine" }
+      - { id: "CAP-E-129", baseline_state: "unwired" }
+      - { id: "CAP-G-162", baseline_state: "missing_ui" }
+      - { id: "CAP-G-163", baseline_state: "missing_ui" }
+    ui_surfaces: ["UI-13", "UI-16", "UI-21"]
+    fixture_traps: ["thin-page", "duplicate-titles"]
+    contract_tests:
+      - payload: "ngram_frequencies/ngram_site_summaries rows + cannibalization cluster evidence"
+        test: "NGramConformanceTests"
+      - payload: "url_embeddings rows + semantic bands (>=0.88 cannibalization, 0.75-0.87 opportunities, <0.35 low-relevance)"
+        test: "SemanticBandConformanceTests — regression for G22 (band 0.5, in-memory cosine, sync endpoint)"
+      - payload: "scoped visible text tree drives word count/duplicates/n-grams; unconfigured baseline identical"
+        test: "ScopingEnforcementConformanceTests (G24)"
+    reopens:
+      - workpiece_id: "WP-04-01"
+        evidence: "probe-2 #38 partial: n-gram data present but cannibalization evidence incomplete"
+      - workpiece_id: "WP-04-02"
+        evidence: "G22: semantic endpoint synchronous, band threshold 0.5 instead of the specified bands, in-memory cosine instead of the vector store"
+      - workpiece_id: "WP-03-01"
+        evidence: "G24: content-scope validation unenforced; G23 near-duplicate detector dead (fixed in WP-09-05)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\NGrams\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\Embeddings\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Scoping\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\NGrams\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\Embeddings\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Scoping\\"
+    deliverables:
+      - "N-gram analyzer: 4-zone frequencies, topical density, keyword cannibalization with cluster evidence, topical gaps, bounds discard-and-count; site summaries view populated"
+      - "Vector semantics: async embedding pipeline (bundled ONNX + loopback-only daemon validator), url_embeddings populated, specified similarity bands, semantic cannibalization/link opportunities/low-relevance findings; failure never fails the audit"
+      - "Content metrics from scoped visible text: word count, text density, keyword/phrase extraction, missing content coverage, optional sentiment scoring; spelling/readability honoring language + user dictionary; main-content extraction drives all content metrics (scoping validation enforced)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests --filter \"FullyQualifiedName~NGrams|FullyQualifiedName~Embeddings\""
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Scoping"
+    done_when: "Phase-gate fixture run: n-gram tables populated for the fixture; semantic bands produce findings at the specified thresholds on a seeded embedding set; scoped word counts match the fixture's thin-page expectation; UI walk: UI-16 N-grams and Semantic linking surfaces show real data."
+    acceptance_criteria_refs: [13, 37, 38, 45]
+
+  - workpiece_id: "WP-12-07"
+    title: "Custom Extraction, Search & JS Snippets — Configuration UI, Dynamic Columns, Tools"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12B"
+    depends_on_workpieces: ["WP-10-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\04-custom-extraction-search-js.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\04-custom-extraction-search-js.md"
+        sections: ["7.9", "7.16", "7.17"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.2", "8.7"]
+    capabilities:
+      - { id: "CAP-G-153", baseline_state: "missing_ui" }
+      - { id: "CAP-G-154", baseline_state: "missing_ui" }
+      - { id: "CAP-G-155", baseline_state: "missing_ui" }
+      - { id: "CAP-G-156", baseline_state: "missing_ui" }
+      - { id: "CAP-G-158", baseline_state: "missing_ui" }
+      - { id: "CAP-G-159", baseline_state: "missing_ui" }
+      - { id: "CAP-G-160", baseline_state: "missing_ui" }
+      - { id: "CAP-G-161", baseline_state: "missing_ui" }
+      - { id: "CAP-G-166", baseline_state: "unwired" }
+      - { id: "CAP-G-167", baseline_state: "missing_ui" }
+    ui_surfaces: ["UI-04", "UI-16", "UI-19", "UI-13", "UI-20"]
+    fixture_traps: ["script-injected-content", "js-only-link"]
+    contract_tests:
+      - payload: "extraction/search/snippet rule DTOs (typed values, bounds, source raw/rendered/both) <-> REST"
+        test: "CustomRuleConfigConformanceTests"
+      - payload: "dynamic extraction columns in URL explorer queries and exports"
+        test: "DynamicColumnConformanceTests"
+    reopens:
+      - workpiece_id: "WP-03-07"
+        evidence: "G13: custom search/JS options unreachable from any UI; extraction engines exist but configuration UI absent"
+      - workpiece_id: "WP-06-05"
+        evidence: "Finder selector picker exists in tools but no send-to-extraction/scoping path"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Custom\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\specialist\\extraction\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Custom\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\extraction\\"
+    deliverables:
+      - "UI-04 Extraction and search tab: extraction rules (CSS/XPath/regex, output types, multiple matches, source raw/rendered/both, bounds), custom search (positive/negative terms, path scoping), JS snippets (timeout, isolation); test-rule-against-single-URL before crawling"
+      - "UI-16 Custom extraction / Custom search / Snippet results surfaces with counts, snippets, typed dynamic columns usable as filters and included in exports; offline re-extraction from stored bodies"
+      - "UI-19 query builder + Finder picker: point-and-click resilient CSS selector with XPath alternative, match-count preview, send to extraction/scoping"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Custom"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate UI walk: an extraction rule created in UI-04 produces a dynamic column in UI-13 with values from the rendered DOM of /pages/js-content.html; custom search finds the fixture's injected text; a snippet result column appears; the Finder picker sends a selector into a new extraction rule; exports include the columns."
+    acceptance_criteria_refs: [24, 30, 31, 33, 42]
+
+  - workpiece_id: "WP-12-08"
+    title: "Content & SEO Specialist Surfaces — N-Grams, Semantic, Structured Data, Technology, Scores, Suppressed, Equity, Matrix, WAF"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12B"
+    depends_on_workpieces: ["WP-12-04", "WP-12-05", "WP-12-06"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.2", "7.1"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+        sections: ["1", "4"]
+    capabilities:
+      - { id: "CAP-E-X01", baseline_state: "missing_ui" }
+      - { id: "CAP-B-067", baseline_state: "unwired" }   # view binding
+      - { id: "CAP-B-068", baseline_state: "unwired" }   # view binding
+      - { id: "CAP-I-X01", baseline_state: "missing_ui" } # view binding
+      - { id: "CAP-I-X02", baseline_state: "missing_ui" } # view binding
+      - { id: "CAP-E-X02", baseline_state: "missing_ui" } # view binding
+      - { id: "CAP-B-X01", baseline_state: "partial" }    # view binding
+      - { id: "CAP-F-143", baseline_state: "missing_ui" } # view binding
+      - { id: "CAP-F-X01", baseline_state: "missing_ui" } # view binding
+      - { id: "CAP-E-129", baseline_state: "unwired" }    # view binding
+      - { id: "CAP-F-146", baseline_state: "unwired" }    # view binding
+    ui_surfaces: ["UI-16", "UI-13"]
+    fixture_traps: ["structured-data-errors", "duplicate-titles", "thin-page"]
+    contract_tests:
+      - payload: "specialist surface queries (structured-data entities, technology detections with confidence, scores, suppressed findings, equity, matrix verdicts, WAF detections, n-grams, semantic links)"
+        test: "SpecialistSurfaceConformanceTests"
+    reopens:
+      - workpiece_id: "WP-06-03"
+        evidence: "G01: 10/16 report surfaces had no component; UI-16 specialist surfaces absent in probe-2"
+      - workpiece_id: "WP-03-05"
+        evidence: "technology detection engine exists but no surface shows it (E-X01 missing_ui)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\specialist\\content\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\specialist\\"
+    deliverables:
+      - "UI-16 specialist surfaces with real data and virtualized grids: N-grams (4-zone frequencies, cannibalization clusters), Semantic linking (bands, opportunities), Structured data (entities, errors by template), Technology (bundled-catalogue detections with confidence), Scores (category/overall, recompute), Suppressed findings, Link equity (zone-weighted), List mode and redirect matrix (5-tier verdicts), WAF (detections, block rate)"
+      - "Every surface drills down to URL detail; segment picker present"
+    verification_commands:
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+      - "cd E:\\Crawlforge\\app && npm run test -- --run tests/frontend/specialist"
+    done_when: "Phase-gate UI walk: each listed UI-16 surface renders fixture data (structured-data errors on /pages/structured-data.html, duplicate-title group, thin-page, matrix verdicts from a list-mode run); grids keep <=50 DOM rows at fixture scale and scroll smoothly."
+    acceptance_criteria_refs: [27, 29, 32, 35, 38, 40, 43, 45, 48]
+
+  - workpiece_id: "WP-12-09"
+    title: "Comparisons, Audit History, Trends & Change Detection"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12B"
+    depends_on_workpieces: ["WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\03-content-store-and-retention.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.2"]
+      - file: "E:\\Crawlforge\\architecture\\02-data-and-persistence\\03-content-store-and-retention.md"
+        sections: ["9.5", "9.6"]
+    capabilities:
+      - { id: "CAP-H-178", baseline_state: "missing_ui" }
+      - { id: "CAP-H-179", baseline_state: "partial" }
+      - { id: "CAP-H-180", baseline_state: "unwired" }
+      - { id: "CAP-I-199", baseline_state: "missing_ui" }
+      - { id: "CAP-I-200", baseline_state: "missing_ui" }
+      - { id: "CAP-I-201", baseline_state: "missing_ui" }
+      - { id: "CAP-I-202", baseline_state: "missing_ui" }
+    ui_surfaces: ["UI-15", "UI-07", "UI-14"]
+    fixture_traps: ["noindex", "duplicate-titles"]
+    contract_tests:
+      - payload: "audit comparison payload (resolved/remaining/new issues, structural changes, content deltas, health trend)"
+        test: "ComparisonConformanceTests"
+      - payload: "content comparison from stored bodies (offline re-audit reuse)"
+        test: "ContentComparisonConformanceTests"
+    reopens:
+      - workpiece_id: "WP-01-04"
+        evidence: "probe-2 #15 partial: stored bodies exist but comparison UI absent (H-178 missing_ui)"
+      - workpiece_id: "WP-03-08"
+        evidence: "AuditComparisonReader exists; trend/change-detection surfaces unwired (H-180, I-199..202)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Scoring\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\comparison\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Scoring\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\comparison\\"
+    deliverables:
+      - "UI-15 comparison: select two audits (or staging-vs-production host-mapped by path), issue trend (resolved/remaining/newly introduced), structural changes, disappearing content, deteriorating health; content comparison offline from stored bodies"
+      - "UI-07 audit history with retention reporting; historical audit storage complete; score trend over time"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Scoring"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate: two fixture audits (second after suppressing/fixing a finding via configuration) compared in UI-15 show the delta correctly; content comparison runs offline; UI-07 lists both audits with retention info."
+    acceptance_criteria_refs: [15, 32]
+
+  - workpiece_id: "WP-12-10"
+    title: "Schedules, Clients, Retention, Provider Switching & Settings Surfaces"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12B"
+    depends_on_workpieces: ["WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\04-scheduled-audits.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\01-database-providers-and-cqrs.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\04-scheduled-audits.md"
+        sections: ["6.1", "6.2", "6.3", "6.4", "6.5"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.8", "8.5"]
+      - file: "E:\\Crawlforge\\architecture\\02-data-and-persistence\\01-database-providers-and-cqrs.md"
+        sections: ["2.4"]
+    capabilities:
+      - { id: "CAP-H-188", baseline_state: "missing_ui" }
+      - { id: "CAP-K-X04", baseline_state: "missing_engine" }
+      - { id: "CAP-K-X05", baseline_state: "missing_ui" }
+      - { id: "CAP-L-X02", baseline_state: "missing_ui" }
+      - { id: "CAP-L-X03", baseline_state: "partial" }
+      - { id: "CAP-H-X02", baseline_state: "missing_ui" }   # settings-side destination management
+      - { id: "CAP-A-024", baseline_state: "unwired" }      # proxy settings UI
+      - { id: "CAP-A-X06", baseline_state: "unwired" }      # rewrite rules settings UI
+      - { id: "CAP-A-X11", baseline_state: "partial" }      # browser settings UI
+      - { id: "CAP-F-X02", baseline_state: "missing_ui" }   # user dictionary settings UI
+    ui_surfaces: ["UI-08", "UI-09", "UI-07", "UI-21", "UI-02"]
+    fixture_traps: ["noindex", "cookie-gate"]
+    contract_tests:
+      - payload: "schedule definition CRUD + schedule_runs history + catch-up run record"
+        test: "ScheduleConformanceTests"
+      - payload: "client context CRUD + project association"
+        test: "ClientContextConformanceTests"
+      - payload: "provider switch + archive export/import round-trip; MySQL schema authority parity"
+        test: "ProviderParityConformanceTests (G16)"
+    reopens:
+      - workpiece_id: "WP-02-07"
+        evidence: "probe-2: schedules engine exists but UI-09 unreachable (H-188 missing_ui)"
+      - workpiece_id: "WP-01-02"
+        evidence: "G16: MySQL schema authority divergent from the migration catalog"
+      - workpiece_id: "WP-06-02"
+        evidence: "probe-2: UI-08 clients absent; K-X04 client context has no engine"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Scheduling\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.MySql\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.Migrations\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\settings\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\clients\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\schedules\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Scheduling\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Data.MySql.Tests\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\settings\\"
+    deliverables:
+      - "UI-09 schedules: CRUD, recurrence, enabled flag, limit overrides, run history, catch-up indicator, completion actions (local export / user-configured notification endpoints only); a scheduled fixture audit fires unattended"
+      - "UI-08 clients + client context on projects (K-X04 engine + UI); UI-07 retention/storage reporting per project"
+      - "UI-21 settings sections: database (provider switch, connection test, archive export/import), proxy, browser (pinned bundle), user dictionary, export destinations, configuration templates, language, release check (local-only)"
+      - "MySQL schema authority aligned with the migration catalog; parity audit green"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Scheduling"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Data.MySql.Tests"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate: a schedule created in UI-09 fires a fixture audit unattended with a schedule_runs entry; a missed schedule catches up exactly once after restart; archive export/import round-trips a project; UI walk reaches UI-08/UI-09/UI-21 sections with real data."
+    acceptance_criteria_refs: [11, 12, 14, 18]
+
+  - workpiece_id: "WP-12-11"
+    title: "Log File Analyzer & GEO Surfaces — Import, Bot Verification, Correlation, llms.txt"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12A"
+    depends_on_workpieces: ["WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\07-log-file-analyzer.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\06-ai-geo-and-martech-auditing.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\07-log-file-analyzer.md"
+        sections: ["11.2", "11.3", "11.4", "11.5", "11.9"]
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\06-ai-geo-and-martech-auditing.md"
+        sections: ["13.1", "13.2", "13.3", "13.6"]
+    capabilities:
+      - { id: "CAP-H-X05", baseline_state: "missing_ui" }
+      - { id: "CAP-J-X01", baseline_state: "unwired" }
+      - { id: "CAP-J-X02", baseline_state: "missing_ui" }
+    ui_surfaces: ["UI-17", "UI-16", "UI-19"]
+    fixture_traps: ["orphan"]
+    contract_tests:
+      - payload: "log import (4 formats, gzip) -> parsed rows; CIDR bot verification verdicts; correlation views (true orphans, budget waste, uncrawled indexable)"
+        test: "LogAnalyzerConformanceTests"
+      - payload: "llms.txt/llms-full.txt probe + validation verdicts; governance matrix rows"
+        test: "GeoConformanceTests"
+    reopens:
+      - workpiece_id: "WP-04-05"
+        evidence: "probe-2 #44 partial: log engine exists, UI-17 unreachable"
+      - workpiece_id: "WP-04-03"
+        evidence: "G14: llms.txt crawl-time probe absent; generator tool exists but validation unwired (J-X01)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\LogAnalyzer\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\Geo\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\logs\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\geo\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\LogAnalyzer\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\Geo\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\logs\\"
+    deliverables:
+      - "UI-17 log analyzer: streaming import (4 formats + gzip), bundled CIDR bot verification, optional consented DNS check only, aggregation, three correlation views against the fixture audit (true orphans incl. /pages/orphan.html, budget waste, uncrawled indexable)"
+      - "GEO: crawl-time llms.txt/llms-full.txt probe + validator, AI-bot governance matrix verdicts surfaced in UI-16 AI search readiness; UI-19 llms.txt generator/validator tool completed"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests --filter \"FullyQualifiedName~LogAnalyzer|FullyQualifiedName~Geo\""
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate: a synthetic log file containing Googlebot hits to /pages/orphan.html imports and correlates (true-orphan view flags it); llms.txt probe verdicts appear for the fixture; UI walk reaches UI-17 and UI-16 AI search readiness; zero outbound except consented DNS."
+    acceptance_criteria_refs: [44, 46]
+
+  - workpiece_id: "WP-12-12"
+    title: "MarTech & Analytics Explorer — Tag Inventory, dataLayer, Consent Mode v2"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12A"
+    depends_on_workpieces: ["WP-11-05"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\06-ai-geo-and-martech-auditing.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\06-ai-geo-and-martech-auditing.md"
+        sections: ["14.1", "14.2", "14.3", "14.6"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.2"]
+    capabilities:
+      - { id: "CAP-H-X06", baseline_state: "partial" }
+    ui_surfaces: ["UI-16", "UI-13"]
+    fixture_traps: ["consent-banner"]
+    contract_tests:
+      - payload: "tag/container inventory rows; dataLayer events; Consent Mode v2 gcs/gcd states; four analytics rule findings"
+        test: "MarTechConformanceTests"
+    reopens:
+      - workpiece_id: "WP-04-04"
+        evidence: "probe-2 #47 partial: MarTechAuditor injected but rendering inert so dataLayer/consent capture empty; UI-16 Analytics and tagging absent"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\MarTech\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\martech\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\MarTech\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\martech\\"
+    deliverables:
+      - "Tag/container inventory (GTM/GA4/Ads/Pixel/Clarity) from rendered captures; window.dataLayer events and Consent Mode v2 (gcs/gcd) inspection; four analytics rules; tag-before-consent finding from flow-3 capture surfaced with evidence"
+      - "UI-16 Analytics and tagging explorer: inventory, events, consent states, findings; MCP resource parity"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests --filter FullyQualifiedName~MarTech"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate UI walk: UI-16 Analytics and tagging shows the fixture's /collect tag hit with consent=none and the tag-before-consent finding; dataLayer events listed for /pages/consent.html."
+    acceptance_criteria_refs: [47]
+
+  - workpiece_id: "WP-12-13"
+    title: "Plugin System Activation — Scanner, Manifest Validation, Sandboxed Bridge, Lifecycle Hooks"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12B"
+    depends_on_workpieces: ["WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\03-local-ui-plugin-system.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\03-local-ui-plugin-system.md"
+        sections: ["6.2", "6.3", "6.4", "6.5", "6.6", "6.7", "6.8"]
+    capabilities:
+      - { id: "CAP-L-X04", baseline_state: "unwired" }
+    ui_surfaces: ["UI-22", "UI-21"]
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "plugin.json manifest validation; sandboxed iframe bridge messages; lifecycle hook invocations (onLoad/onTabActivate/onDataUpdate/onCrawlComplete)"
+        test: "PluginLifecycleConformanceTests"
+    reopens:
+      - workpiece_id: "WP-06-06"
+        evidence: "G02: main.ts:300 null plugin delegate, signalHydrated has zero callers; G19 plugin capabilities incomplete"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\electron\\src\\plugins\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\plugins\\"
+      - "E:\\Crawlforge\\app\\tests\\electron\\plugins\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\plugins\\"
+    deliverables:
+      - "Directory scanner + plugin.json validator; sandboxed iframe bridge with capability contract; deterministic lifecycle hooks fired from the Zustand store (onLoad, onTabActivate, onDataUpdate, onCrawlComplete); zero network by default; per-plugin failure isolation"
+      - "UI-22 plugin manager: install/enable/disable/remove local plugins, capability display, error state; a sample local plugin receives onCrawlComplete after a fixture audit"
+    verification_commands:
+      - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate UI walk: Settings › Plugins reaches UI-22; a bundled sample plugin loads, its tab activates, and it receives onCrawlComplete with the fixture audit summary; a deliberately failing plugin does not affect the app; plugin network attempts blocked by default."
+    acceptance_criteria_refs: [39]
+
+  - workpiece_id: "WP-12-14"
+    title: "Hub Events, Metrics Families, Shell Windows, Recovery Screen & Diagnostics Completion"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12B"
+    depends_on_workpieces: ["WP-09-06"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\04-metrics-and-diagnostics.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\01-electron-shell-and-ui-stack.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+        sections: ["10.3", "7.2"]
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\04-metrics-and-diagnostics.md"
+        sections: ["10.5"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\01-electron-shell-and-ui-stack.md"
+        sections: ["12", "7.2", "7.4"]
+      - file: "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+        sections: ["6.8"]
+    capabilities:
+      - { id: "CAP-L-X01", baseline_state: "partial" }
+      - { id: "CAP-L-X05", baseline_state: "partial" }
+      - { id: "CAP-L-X06", baseline_state: "partial" }
+      - { id: "CAP-A-034", baseline_state: "partial" }   # recovery screen binding
+    ui_surfaces: ["UI-23", "UI-24", "UI-21", "UI-10"]
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "all 19 hub events published during a fixture audit (incl. backend-lifecycle, waf-blocks, embedding-progress, embedding-completed)"
+        test: "HubEventCoverageConformanceTests (G05 remainder)"
+      - payload: "all metric families recorded and exposed at /metrics with hub parity"
+        test: "MetricsFamilyConformanceTests (G06)"
+      - payload: "system-health 2 s heartbeat; JS heap in status bar; Compact/Trim + WAL checkpoint action"
+        test: "SystemHealthConformanceTests"
+      - payload: "window catalog routing (?route=), recovery screen trigger, minidump creation on abnormal termination"
+        test: "ShellDiagnosticsConformanceTests (G15/G20/G21/G29)"
+    reopens:
+      - workpiece_id: "WP-05-02"
+        evidence: "G05: 7/19 hub events unpublished; G06: 10/15 metric families unrecorded"
+      - workpiece_id: "WP-06-01"
+        evidence: "G20 window routes unused; G21 CSP unenforced; G15 native minidump missing; G29 misc (MAX_WINDOWED_PAGES, /api/version hardcoded)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Api\\Hubs\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Api\\Metrics\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Diagnostics\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Security\\"
+      - "E:\\Crawlforge\\app\\src\\electron\\src\\windows\\"
+      - "E:\\Crawlforge\\app\\src\\electron\\src\\recovery\\"
+      - "E:\\Crawlforge\\app\\src\\electron\\src\\startup\\"
+      - "E:\\Crawlforge\\app\\src\\electron\\src\\supervisor\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\shell\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Host.Tests\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Security.Tests\\"
+      - "E:\\Crawlforge\\app\\tests\\electron\\shell\\"
+    deliverables:
+      - "Remaining hub events published with contract shapes; all metric families recorded; /metrics parity with hub; 2 s system-health heartbeat; status bar shows memory/GC/WAL + JS heap; Compact/Trim + WAL checkpoint works"
+      - "Window catalog routes honored (?route=); recovery screen appears after repeated backend failures and recovers; native minidump written locally on abnormal termination, viewable/purgeable in UI-21 diagnostics, never transmitted; CSP enforced; /api/version real; MAX_WINDOWED_PAGES per spec"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Host.Tests"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Security.Tests"
+      - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
+    done_when: "Phase-gate: hub event coverage test sees all 19 events during a fixture audit; /metrics exposes all families; status bar live during the run; killing the backend twice shows UI-24 and recovers; a forced crash produces a local minidump visible in diagnostics."
+    acceptance_criteria_refs: [2, 19, 20, 21, 36, 41]
+
+  - workpiece_id: "WP-12-15"
+    title: "Visualization Window — Link Graph, Relationship Graph, Taxonomy & Content Sections"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12B"
+    depends_on_workpieces: ["WP-12-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\01-electron-shell-and-ui-stack.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\01-electron-shell-and-ui-stack.md"
+        sections: ["8.4", "8.5"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.2"]
+    capabilities:
+      - { id: "CAP-E-138", baseline_state: "unwired" }
+      - { id: "CAP-E-130", baseline_state: "unwired" }
+      - { id: "CAP-E-137", baseline_state: "unwired" }
+      - { id: "CAP-E-X03", baseline_state: "unwired" }   # view binding
+      - { id: "CAP-E-119", baseline_state: "missing_ui" } # view binding
+      - { id: "CAP-I-202", baseline_state: "missing_ui" } # view binding (health trend chart)
+    ui_surfaces: ["UI-14"]
+    fixture_traps: ["orphan", "broken-links"]
+    contract_tests:
+      - payload: "graph payload (nodes/edges with zones, templates, entities) for Sigma.js + Graphology worker; ECharts dashboard series"
+        test: "VisualizationPayloadConformanceTests"
+    reopens:
+      - workpiece_id: "WP-06-04"
+        evidence: "probe-2: UI-14 not reachable; VisualizationSurface.tsx exists but unmounted (G01/G20)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\graphs\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\charts\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\graphs\\"
+    deliverables:
+      - "UI-14 visualization window: force-directed internal link graph (Sigma.js + Graphology in a Web Worker) with zone coloring and orphan highlighting; site relationship graph (pages, links, entities, templates) with visual navigation; URL taxonomy and primary content sections views; whole-graph aggregates; health-trend chart (ECharts canvas)"
+      - "Graph interactions: node click drills to URL detail; layout runs off the UI thread"
+    verification_commands:
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+      - "cd E:\\Crawlforge\\app && npm run test -- --run tests/frontend/graphs"
+    done_when: "Phase-gate UI walk: Report window › Visualizations opens UI-14; the fixture link graph renders with /pages/orphan.html highlighted as orphan; clicking a node opens URL detail; taxonomy/sections views show fixture structure."
+    acceptance_criteria_refs: [40, 48]
+
+  - workpiece_id: "WP-12-16"
+    title: "Phase 12 Serial Wiring — Engine Registration, Surface Navigation & Flow-4 Gate"
+    phase_id: "phase-12"
+    status: "pending"
+    parallel_group: "wave-12C"
+    depends_on_workpieces: ["WP-12-01", "WP-12-02", "WP-12-03", "WP-12-04", "WP-12-05", "WP-12-06", "WP-12-07", "WP-12-08", "WP-12-09", "WP-12-10", "WP-12-11", "WP-12-12", "WP-12-13", "WP-12-14", "WP-12-15"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+        sections: ["1", "3"]
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+        sections: ["2"]
+    capabilities:
+      - { id: "CAP-L-X05", baseline_state: "partial" }   # made reachable end to end
+      - { id: "CAP-H-190", baseline_state: "works" }
+    ui_surfaces: ["UI-06", "UI-07", "UI-08", "UI-09", "UI-14", "UI-15", "UI-16", "UI-17", "UI-21", "UI-22", "UI-23", "UI-24"]
+    fixture_traps: ["noindex", "duplicate-titles", "thin-page", "missing-alt", "orphan", "structured-data-errors", "consent-banner"]
+    contract_tests:
+      - payload: "every UI-16 specialist surface reachable and rendering fixture data"
+        test: "Flow4SurfaceReachabilityTests (harness UI walker)"
+    reopens:
+      - workpiece_id: "WP-06-03"
+        evidence: "G01: report surfaces unmounted — the central v1.1 UI defect"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Execution\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Composition\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Pipeline\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\App.tsx"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\store\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\explorers\\ExplorerHost.tsx"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\explorers\\explorerTypes.ts"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\explorers\\index.ts"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\specialist\\index.ts"
+    deliverables:
+      - "Pipeline/DI registration of performance, security, graph, template, segment, n-gram, semantic, log, GEO, MarTech components; hub/metrics wiring"
+      - "Report window navigation to every specialist surface; visualization/comparison/log/settings/client/schedule/plugin routes per the UI map; segment picker in every report surface; flow-4 gate execution and evidence"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-06,UI-07,UI-08,UI-09,UI-14,UI-15,UI-16,UI-17,UI-21,UI-22,UI-23,UI-24"
+    done_when: "UI walker reaches every phase-12 surface through its stated navigation path with real fixture data (no placeholders); all wave-12A/12B done_when checks pass at the gate; /__fixture/requests nonGet == []."
+    acceptance_criteria_refs: [7, 40]

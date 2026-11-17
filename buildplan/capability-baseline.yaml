@@ -1,0 +1,1538 @@
+# CrawlForge build plan v2.0 - capability as-built baseline (Step 2).
+# Generated 2026-11-17 from runtime-probe-2 + hotfix-01 + direct code verification.
+# Runtime evidence beats code; code beats claims. "works" requires runtime proof
+# through the bound UI surface (or MCP/API for exempt capabilities).
+metadata:
+  version: '2.0'
+  generated: '2026-11-17'
+  basis: runtime-probe-2 (normal entry points, HEAD after HOTFIX-01/01b), hotfix-01-report.md, UNDERBUILD-AUDIT.md G01-G29, and direct code verification of E:\Crawlforge\app\src on 2026-11-17
+  state_definitions:
+    works: runtime evidence through the bound UI surface (or MCP/API for exempt capabilities)
+    partial: runtime evidence of partial delivery (facets missing or defective)
+    unwired: implementation exists but is not invoked/mounted in the production path
+    missing_ui: engine/API delivered (runtime or code evidence); bound UI surface absent
+    missing_engine: no implementation of the capability
+    defect: implementation runs but produces wrong results on the fixture
+  evidence_levels:
+    runtime: probe-2 or HOTFIX-01 runtime observation (strongest)
+    code: verified by reading app/src code on 2026-11-17
+    claim: audit document assertion only (none used; all claims upgraded)
+  totals:
+    in_scope: 251
+  counts_by_state:
+    defect: 2
+    missing_engine: 62
+    missing_ui: 87
+    partial: 37
+    unwired: 59
+    works: 4
+  counts_by_evidence_level:
+    code: 163
+    runtime: 88
+capabilities:
+- id: CAP-A-001
+  title: HTTP and HTTPS crawling
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 audit 11 (REST entry) crawled 183 URLs to completion; UI-04 config editor and UI-13 URL explorer not reachable
+  probe2_result: absent
+- id: CAP-A-002
+  title: HTML link discovery
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 audit 11 recorded 1641 links via REST /links; UI-13/UI-14 not reachable
+  probe2_result: absent
+- id: CAP-A-003
+  title: Internal and external link analysis
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 broken-links partial: internal 404 recorded as URL status, external links not checked, no broken-link findings'
+  probe2_result: absent
+- id: CAP-A-004
+  title: JavaScript-rendered crawling (Chromium)
+  state: unwired
+  evidence_level: runtime
+  evidence: 'probe-2 js run: "no rendered tree is available" on every page; AuditExecutionEngine.cs has no IRenderingPool/RenderedDocument reference (G03)'
+  probe2_result: absent
+- id: CAP-A-005
+  title: Configurable user agents, including Googlebot simulation
+  state: missing_engine
+  evidence_level: code
+  evidence: no userAgent field in AuditConfigurationWire (ProjectWireContracts.cs:158) or fetch-options wire path; UA not configurable
+  probe2_result: absent
+- id: CAP-A-006
+  title: robots.txt handling
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 robots-blocked partial: disallowed URLs not fetched but blockReason null and no finding'
+  probe2_result: partial
+- id: CAP-A-007
+  title: Meta robots handling
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 noindex pass (indexability.noindex); UI-12 issue explorer not reachable
+  probe2_result: works
+- id: CAP-A-008
+  title: XML sitemap discovery and crawling
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 orphan fail (sitemap never used); no sitemap ingestion anywhere in CrawlForge.Crawler (G08)
+  probe2_result: absent
+- id: CAP-A-009
+  title: Canonical URL detection
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 canonical-conflict pass (canonical.header-html-conflict, canonical.mismatch); UI-12/UI-13 not reachable
+  probe2_result: absent
+- id: CAP-A-010
+  title: Redirect chain detection
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 redirect-chain partial: source stored as 200 with empty redirectChain; recorder not persisted (G27)'
+  probe2_result: partial
+- id: CAP-A-011
+  title: Redirect loop detection
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 redirect-loop partial: FetchError status 0, crawl did not hang, no loop finding'
+  probe2_result: partial
+- id: CAP-A-012
+  title: Query parameter handling
+  state: unwired
+  evidence_level: code
+  evidence: per-audit canonicalization/validation options ignored by the engine (G27); default UrlCanonicalizer only
+  probe2_result: absent
+- id: CAP-A-013
+  title: URL normalisation
+  state: missing_engine
+  evidence_level: runtime
+  evidence: 'probe-2 cookieless-session fail: (S(...)) segment retained; no session-segment normalization in UrlCanonicalizer'
+  probe2_result: fails
+- id: CAP-A-014
+  title: Pagination handling
+  state: missing_engine
+  evidence_level: code
+  evidence: no pagination crawl handling; rel=next only extracted as an element (ElementInventoryExtractor.cs:369)
+  probe2_result: absent
+- id: CAP-A-015
+  title: Infinite-scroll handling
+  state: unwired
+  evidence_level: code
+  evidence: infinite-scroll support lives in the rendering pool only; pool never invoked in audits (G03)
+  probe2_result: absent
+- id: CAP-A-016
+  title: Crawl depth limit
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 maxDepth=6 override enforced via REST; UI-04 editor not reachable
+  probe2_result: absent
+- id: CAP-A-017
+  title: URL count limit
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 maxUrls=220 override enforced via REST; UI-04 not reachable
+  probe2_result: absent
+- id: CAP-A-018
+  title: Crawl time limit
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 maxDurationSeconds=180 override enforced via REST; UI-04 not reachable
+  probe2_result: absent
+- id: CAP-A-019
+  title: Configurable concurrency
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 audit 10 rejected maxConcurrency=0 (validation works); UI-04 not reachable
+  probe2_result: absent
+- id: CAP-A-020
+  title: Configurable request rate
+  state: missing_ui
+  evidence_level: runtime
+  evidence: HOTFIX-01 AimdSettingsParser accepts the REST politeness shape and audits run with stored rates; UI-04 not reachable
+  probe2_result: absent
+- id: CAP-A-021
+  title: Authentication support
+  state: unwired
+  evidence_level: code
+  evidence: SignedRequestHandler registered in DI but engine fetcher constructed without it (AuditExecutionEngine.cs:603-605, G09/G27)
+  probe2_result: absent
+- id: CAP-A-022
+  title: Cookie support
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 cookie-gate fail (FetchError status 0); no CookieContainer/CookieJar anywhere in the backend
+  probe2_result: absent
+- id: CAP-A-023
+  title: Custom request headers
+  state: missing_engine
+  evidence_level: code
+  evidence: no customHeaders field in AuditConfigurationWire or the fetch-options wire path
+  probe2_result: absent
+- id: CAP-A-024
+  title: Proxy support
+  state: unwired
+  evidence_level: code
+  evidence: intercepting proxy exists but CrawlTargetHttpClientFactory builds a plain handler; engine constructs HttpFetcher without proxy/signed handlers (AuditExecutionEngine.cs:603-605, G09)
+  probe2_result: absent
+- id: CAP-A-025
+  title: 'Asset discovery: CSS'
+  state: missing_ui
+  evidence_level: code
+  evidence: asset URLs extracted by ElementInventoryExtractor.cs (inventory per architecture 04/01 §7.3); explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-A-026
+  title: 'Asset discovery: JS'
+  state: missing_ui
+  evidence_level: code
+  evidence: asset URLs extracted by ElementInventoryExtractor.cs (inventory per architecture 04/01 §7.3); explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-A-027
+  title: 'Asset discovery: images'
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 missing-alt pass proves image inventory; image list view UI-13 not reachable
+  probe2_result: absent
+- id: CAP-A-028
+  title: 'Asset discovery: fonts'
+  state: missing_ui
+  evidence_level: code
+  evidence: asset URLs extracted by ElementInventoryExtractor.cs (inventory per architecture 04/01 §7.3); explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-A-029
+  title: 'Asset discovery: PDFs and other documents'
+  state: missing_ui
+  evidence_level: code
+  evidence: asset URLs extracted by ElementInventoryExtractor.cs (inventory per architecture 04/01 §7.3); explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-A-030
+  title: Crawl inclusion rules
+  state: missing_engine
+  evidence_level: code
+  evidence: no include/exclude pattern fields in AuditConfigurationWire and no frontier filter implementation
+  probe2_result: absent
+- id: CAP-A-031
+  title: Crawl exclusion rules
+  state: missing_engine
+  evidence_level: code
+  evidence: no include/exclude pattern fields in AuditConfigurationWire and no frontier filter implementation
+  probe2_result: absent
+- id: CAP-A-032
+  title: Crawl pause
+  state: partial
+  evidence_level: runtime
+  evidence: HOTFIX-01 UI cancel preserved counters/data; probe-2 did not exercise pause; UI-10 Pause control renders
+  probe2_result: absent
+- id: CAP-A-033
+  title: Crawl resume
+  state: partial
+  evidence_level: code
+  evidence: resume path + checkpointing exist in the engine (v1.1 WP-02-02); not exercised in probe-2; UI-10 control renders
+  probe2_result: absent
+- id: CAP-A-034
+  title: Interruption recovery
+  state: partial
+  evidence_level: code
+  evidence: crash recovery orphans running audits to Paused at Host startup; UI-24 recovery screen not induced (probe-2)
+  probe2_result: absent
+- id: CAP-A-035
+  title: Original HTML response vs rendered DOM comparison (what the server delivered and what JavaScript changed)
+  state: unwired
+  evidence_level: runtime
+  evidence: probe-2 late-meta-change not_testable; ResponseRenderedComparer.cs exists but no dual capture (AuditExecutionEngine.cs has no IRenderingPool/RenderedDocument reference (G03))
+  probe2_result: absent
+- id: CAP-A-X01
+  title: AIMD adaptive per-host throttle
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 UI-10 host-throttle panel live after HOTFIX-01 (rate updates observed); criterion 36 partial
+  probe2_result: absent
+- id: CAP-A-X02
+  title: Pre-crawl start-URL validation
+  state: unwired
+  evidence_level: code
+  evidence: IPreCrawlValidator registered but never invoked (G27)
+  probe2_result: absent
+- id: CAP-A-X03
+  title: Loopback intercepting proxy (network capture)
+  state: unwired
+  evidence_level: code
+  evidence: LoopbackInterceptingProxy exists; engine constructs HttpFetcher without proxy/signed handlers (AuditExecutionEngine.cs:603-605, G09)
+  probe2_result: absent
+- id: CAP-A-X04
+  title: Stealth rendering profile
+  state: unwired
+  evidence_level: code
+  evidence: stealth profile lives in the rendering pool; pool inert in audits (G03); Render Tester works standalone
+  probe2_result: absent
+- id: CAP-A-X05
+  title: List Mode (URL-list seeds)
+  state: unwired
+  evidence_level: code
+  evidence: 'List Mode ingestion broken: AuditsController.cs:140 starts the audit before UrlListJson is persisted (G10)'
+  probe2_result: absent
+- id: CAP-A-X06
+  title: URL rewrite and host-mapping rules
+  state: unwired
+  evidence_level: code
+  evidence: URL rewriter/host-mapping engines exist; per-audit canonicalization/validation options ignored by the engine (G27)
+  probe2_result: absent
+- id: CAP-A-X07
+  title: Sample-crawl mode
+  state: unwired
+  evidence_level: code
+  evidence: sample/pre-crawl validation mode not invoked from any entry point (G27)
+  probe2_result: absent
+- id: CAP-A-X08
+  title: GSC/GA4 export import as crawl source
+  state: missing_engine
+  evidence_level: code
+  evidence: no GSC/GA4 CSV import mapping; integrations absent entirely (architecture 08/01 §6)
+  probe2_result: absent
+- id: CAP-A-X09
+  title: Capture modes (non-JS / JS / dual / adaptive)
+  state: missing_engine
+  evidence_level: runtime
+  evidence: 'probe-2 criteria 51/52 fail: REST wire has no dual/adaptive capture modes (CR-006)'
+  probe2_result: absent
+- id: CAP-A-X10
+  title: Direct CDP rendering layer
+  state: missing_engine
+  evidence_level: code
+  evidence: rendering uses PuppeteerSharp high-level API; no direct CDP control layer (D-002, architecture 03/03 §5.6.2)
+  probe2_result: absent
+- id: CAP-A-X11
+  title: Pinned bundled browser
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 Render Tester rendered via local Chrome/Edge fallback; no pinned Chrome-for-Testing bundle (D-003)
+  probe2_result: partial
+- id: CAP-A-X12
+  title: Per-audit cookie jar
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 cookie-gate fail; no per-audit cookie jar (architecture 03/02 §5.11)
+  probe2_result: fails
+- id: CAP-A-X13
+  title: Crawler-trap detection
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 crawler-trap-filter/calendar fail (144 filter URLs; calendar stopped only by duration cap); no trap detector (§5.14)
+  probe2_result: fails
+- id: CAP-A-X14
+  title: User-agent comparison
+  state: missing_engine
+  evidence_level: code
+  evidence: no UA-comparison crawl mode (architecture 03/02 §5.15, CR-009)
+  probe2_result: absent
+- id: CAP-A-X15
+  title: Postback navigation detection
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 postback-links fail; no __doPostBack/ViewState analysis anywhere
+  probe2_result: fails
+- id: CAP-A-X16
+  title: Hash-route handling
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 hash-route not_testable; no hash-route handling in Crawler/Audit
+  probe2_result: absent
+- id: CAP-A-X17
+  title: Non-crawlable navigation inventory
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 click-only-navigation not_testable; no click discovery (architecture 03/03 §5.6.4)
+  probe2_result: absent
+- id: CAP-A-X18
+  title: Service-worker bypass and detection
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 service-worker not_testable; no service-worker detection code
+  probe2_result: absent
+- id: CAP-A-X19
+  title: Consent-state rendering
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 consent-banner not_testable; no consent-state capture (architecture 04/06 §14.2.1)
+  probe2_result: absent
+- id: CAP-A-X20
+  title: Custom JS snippets during rendering
+  state: missing_engine
+  evidence_level: code
+  evidence: Jint snippets run offline only; rendering-time execution requires the absent CDP layer
+  probe2_result: absent
+- id: CAP-A-X21
+  title: Directive-handling toggles
+  state: missing_engine
+  evidence_level: code
+  evidence: no directive-handling toggles (architecture 03/02 §5.12, CR-009)
+  probe2_result: absent
+- id: CAP-A-X22
+  title: Resource and external scope toggles
+  state: missing_engine
+  evidence_level: code
+  evidence: no resource/external-scope toggles (architecture 03/02 §5.13, CR-009)
+  probe2_result: absent
+- id: CAP-B-036
+  title: 'Indexability: noindex'
+  state: missing_ui
+  evidence_level: runtime
+  evidence: 'probe-2 noindex pass; UI-12 not reachable (URL row still says indexable=true: display defect tracked with UI-13)'
+  probe2_result: works
+- id: CAP-B-037
+  title: 'Indexability: robots restrictions'
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 robots-blocked partial: NotCrawled/Disallowed in CSV but blockReason null, no finding'
+  probe2_result: partial
+- id: CAP-B-038
+  title: 'Indexability: canonical conflicts'
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 canonical-conflict pass; UI-12 not reachable
+  probe2_result: works
+- id: CAP-B-039
+  title: 'Metadata: missing titles'
+  state: missing_ui
+  evidence_level: code
+  evidence: title/description rules in ContentQualityAnalyzer.cs; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-B-040
+  title: 'Metadata: duplicate titles'
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 duplicate-titles partial: only a content.keyword-cannibalization cluster, no duplicate-title finding'
+  probe2_result: partial
+- id: CAP-B-041
+  title: 'Metadata: missing descriptions'
+  state: missing_ui
+  evidence_level: code
+  evidence: title/description rules in ContentQualityAnalyzer.cs; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-B-042
+  title: 'Metadata: duplicate descriptions'
+  state: missing_ui
+  evidence_level: code
+  evidence: title/description rules in ContentQualityAnalyzer.cs; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-B-043
+  title: 'Headings: H1/H2 hierarchy'
+  state: missing_ui
+  evidence_level: code
+  evidence: heading rules in ContentQualityAnalyzer.cs; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-B-044
+  title: 'Headings: missing headings'
+  state: missing_ui
+  evidence_level: code
+  evidence: heading rules in ContentQualityAnalyzer.cs; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-B-045
+  title: 'Headings: duplicated headings'
+  state: missing_ui
+  evidence_level: code
+  evidence: heading rules in ContentQualityAnalyzer.cs; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-B-046
+  title: 'Links: broken internal links'
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 broken-links partial: internal 404 recorded as status, no broken-link finding'
+  probe2_result: partial
+- id: CAP-B-047
+  title: 'Links: broken external links'
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 broken-links partial: external links not checked'
+  probe2_result: partial
+- id: CAP-B-048
+  title: 'Links: orphan pages'
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 orphan fail; no sitemap ingestion anywhere in CrawlForge.Crawler (G08)
+  probe2_result: fails
+- id: CAP-B-049
+  title: 'Redirects: 3xx chains'
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 redirect-chain partial: only final target kept, no hops (G27)'
+  probe2_result: partial
+- id: CAP-B-050
+  title: 'Redirects: loops'
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 redirect-loop partial: FetchError status 0, no loop finding'
+  probe2_result: partial
+- id: CAP-B-051
+  title: 'Redirects: inappropriate redirects'
+  state: unwired
+  evidence_level: code
+  evidence: redirect-type rules depend on hop persistence; RedirectChainRecorder created fresh and not persisted (G27)
+  probe2_result: absent
+- id: CAP-B-052
+  title: 'Sitemaps: missing URLs'
+  state: missing_engine
+  evidence_level: code
+  evidence: no sitemap ingestion anywhere in CrawlForge.Crawler (G08); no sitemap-coverage/conflict rules
+  probe2_result: absent
+- id: CAP-B-053
+  title: 'Sitemaps: non-indexable URLs listed'
+  state: missing_engine
+  evidence_level: code
+  evidence: no sitemap ingestion anywhere in CrawlForge.Crawler (G08); no sitemap-coverage/conflict rules
+  probe2_result: absent
+- id: CAP-B-054
+  title: 'Sitemaps: redirecting URLs listed'
+  state: missing_engine
+  evidence_level: code
+  evidence: no sitemap ingestion anywhere in CrawlForge.Crawler (G08); no sitemap-coverage/conflict rules
+  probe2_result: absent
+- id: CAP-B-055
+  title: 'Images: missing alt text'
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 missing-alt pass (accessibility.image-alt); UI-12/UI-13 not reachable
+  probe2_result: works
+- id: CAP-B-056
+  title: 'Images: oversized images'
+  state: missing_engine
+  evidence_level: code
+  evidence: no image-size/format rules; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-B-057
+  title: 'Images: format checks'
+  state: missing_engine
+  evidence_level: code
+  evidence: no image-size/format rules; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-B-058
+  title: 'International: hreflang validation'
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 audit 11 emitted i18n.hreflang-valid; UI-12 not reachable
+  probe2_result: absent
+- id: CAP-B-059
+  title: 'International: language declarations'
+  state: missing_ui
+  evidence_level: code
+  evidence: language-declaration checks in the Hreflang/Indexability family (wired, hreflang rule fired at runtime); explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-B-060
+  title: 'International: reciprocal hreflang references'
+  state: unwired
+  evidence_level: runtime
+  evidence: probe-2 hreflang-no-return fail (reports pass); HreflangReciprocityValidator.cs exists but has zero callers
+  probe2_result: fails
+- id: CAP-B-061
+  title: 'Content: thin content'
+  state: defect
+  evidence_level: runtime
+  evidence: 'probe-2 thin-page fail: word count 6 but no content.thin-text on thin.html (rule fired on 5 other pages in probe-1)'
+  probe2_result: fails
+- id: CAP-B-062
+  title: 'Content: duplicate content'
+  state: unwired
+  evidence_level: code
+  evidence: duplicate/near-duplicate models in ContentQualityModels.cs; ShingleNearDuplicateDetector has no production caller (G23)
+  probe2_result: absent
+- id: CAP-B-063
+  title: 'Content: near-duplicate content'
+  state: unwired
+  evidence_level: code
+  evidence: duplicate/near-duplicate models in ContentQualityModels.cs; ShingleNearDuplicateDetector has no production caller (G23)
+  probe2_result: absent
+- id: CAP-B-064
+  title: 'URL structure: parameters'
+  state: missing_engine
+  evidence_level: code
+  evidence: no URL-structure rule implementation (parameters/trailing-slash/duplicate-URL rules absent from Audit)
+  probe2_result: absent
+- id: CAP-B-065
+  title: 'URL structure: inconsistent trailing slashes'
+  state: missing_engine
+  evidence_level: code
+  evidence: no URL-structure rule implementation (parameters/trailing-slash/duplicate-URL rules absent from Audit)
+  probe2_result: absent
+- id: CAP-B-066
+  title: 'URL structure: duplicate URLs'
+  state: missing_engine
+  evidence_level: code
+  evidence: no URL-structure rule implementation (parameters/trailing-slash/duplicate-URL rules absent from Audit)
+  probe2_result: absent
+- id: CAP-B-067
+  title: 'Structured data: Schema.org validation'
+  state: unwired
+  evidence_level: runtime
+  evidence: probe-2 structured-data-errors fail; StructuredDataValidator called only by ToolsController + DI, never by the audit pipeline (G11)
+  probe2_result: fails
+- id: CAP-B-068
+  title: 'Structured data: Google rich-result eligibility'
+  state: unwired
+  evidence_level: code
+  evidence: rich-result validation in StructuredDataValidator.cs; StructuredDataValidator called only by ToolsController + DI, never by the audit pipeline (G11)
+  probe2_result: absent
+- id: CAP-B-X01
+  title: Redirect migration matrix
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 redirect-matrix partial (criterion 41 partial); 5-tier verdict engine exists (D-004)
+  probe2_result: partial
+- id: CAP-B-X02
+  title: Header/HTML directive equivalency
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 canonical-conflict pass (header-vs-HTML); X-Robots-Tag and hreflang header facets unexercised; criterion 48 partial
+  probe2_result: works
+- id: CAP-B-X03
+  title: Soft-404 detection
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 soft-404-server pass (emitted twice for same URL); soft-404-client-route not_testable (rendering inert)
+  probe2_result: works
+- id: CAP-B-X04
+  title: SERP pixel measurement
+  state: missing_ui
+  evidence_level: code
+  evidence: SerpPixelMeasurer.cs wired in pipeline (v1.1 WP-03-04); pixel preview UI absent; not exercised in probe-2
+  probe2_result: absent
+- id: CAP-B-X05
+  title: Client-side redirect detection
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 client-side-redirect not_testable; no meta-refresh/JS-redirect detection in IndexabilityAnalyzer
+  probe2_result: absent
+- id: CAP-B2-069
+  title: Extract JSON-LD
+  state: unwired
+  evidence_level: code
+  evidence: StructuredDataValidator.cs + StructuredDataVocabulary.cs exist; StructuredDataValidator called only by ToolsController + DI, never by the audit pipeline (G11)
+  probe2_result: absent
+- id: CAP-B2-070
+  title: Extract Microdata
+  state: unwired
+  evidence_level: code
+  evidence: StructuredDataValidator.cs + StructuredDataVocabulary.cs exist; StructuredDataValidator called only by ToolsController + DI, never by the audit pipeline (G11)
+  probe2_result: absent
+- id: CAP-B2-071
+  title: Extract RDFa
+  state: missing_engine
+  evidence_level: code
+  evidence: StructuredDataValidator handles JSON-LD/Microdata only; RDFa support (CR-017) not implemented
+  probe2_result: absent
+- id: CAP-B2-072
+  title: Parse multiple entities per page
+  state: unwired
+  evidence_level: code
+  evidence: StructuredDataValidator.cs + StructuredDataVocabulary.cs exist; StructuredDataValidator called only by ToolsController + DI, never by the audit pipeline (G11)
+  probe2_result: absent
+- id: CAP-B2-073
+  title: Identify entity types and relationships
+  state: unwired
+  evidence_level: code
+  evidence: StructuredDataValidator.cs + StructuredDataVocabulary.cs exist; StructuredDataValidator called only by ToolsController + DI, never by the audit pipeline (G11)
+  probe2_result: absent
+- id: CAP-B2-074
+  title: Validate properties against Schema.org
+  state: unwired
+  evidence_level: code
+  evidence: StructuredDataValidator.cs + StructuredDataVocabulary.cs exist; StructuredDataValidator called only by ToolsController + DI, never by the audit pipeline (G11)
+  probe2_result: absent
+- id: CAP-B2-075
+  title: Identify missing required properties
+  state: unwired
+  evidence_level: runtime
+  evidence: probe-2 structured-data-errors fail (no structured-data findings in audits); StructuredDataValidator called only by ToolsController + DI, never by the audit pipeline (G11)
+  probe2_result: fails
+- id: CAP-B2-076
+  title: Identify missing recommended properties
+  state: unwired
+  evidence_level: code
+  evidence: StructuredDataValidator.cs + StructuredDataVocabulary.cs exist; StructuredDataValidator called only by ToolsController + DI, never by the audit pipeline (G11)
+  probe2_result: absent
+- id: CAP-B2-080
+  title: Group errors by template and entity type
+  state: missing_engine
+  evidence_level: code
+  evidence: template identification (architecture 04/01 §7.20, CR-017) not implemented
+  probe2_result: absent
+- id: CAP-C-081
+  title: Lighthouse integration
+  state: missing_engine
+  evidence_level: code
+  evidence: no PSI/Lighthouse API integration (architecture 08/01 §3; integrations absent)
+  probe2_result: absent
+- id: CAP-C-082
+  title: 'Core Web Vitals: LCP'
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-083
+  title: 'Core Web Vitals: INP'
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-084
+  title: 'Core Web Vitals: CLS'
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-085
+  title: Time to First Byte
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-086
+  title: Resource loading waterfalls
+  state: unwired
+  evidence_level: code
+  evidence: waterfall capture lives in the intercepting proxy; proxy not wired into the fetcher (G09)
+  probe2_result: absent
+- id: CAP-C-087
+  title: Large image detection
+  state: missing_engine
+  evidence_level: code
+  evidence: no oversized-image rule; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-C-088
+  title: Unused CSS
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-089
+  title: Unused JavaScript
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-090
+  title: Render-blocking resources
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-091
+  title: Compression checks
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-092
+  title: Caching checks
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-093
+  title: Mobile viewport checks
+  state: missing_ui
+  evidence_level: code
+  evidence: MobileFriendlinessAnalyzer.cs in the wired i18n/mobile family (hreflang rule fired at runtime); UI-16 unmounted (G01)
+  probe2_result: absent
+- id: CAP-C-094
+  title: Responsive checks
+  state: missing_ui
+  evidence_level: code
+  evidence: MobileFriendlinessAnalyzer.cs in the wired i18n/mobile family (hreflang rule fired at runtime); UI-16 unmounted (G01)
+  probe2_result: absent
+- id: CAP-C-095
+  title: Page weight
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-096
+  title: Resource counts
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-097
+  title: Slow server response detection
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-098
+  title: Performance results at URL level
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-099
+  title: Performance results at template level
+  state: missing_engine
+  evidence_level: code
+  evidence: template-level aggregation needs template identification (§7.20, absent); performance analyzers dead code (G04)
+  probe2_result: absent
+- id: CAP-C-X01
+  title: Mobile-friendliness rule set
+  state: missing_ui
+  evidence_level: code
+  evidence: MobileFriendlinessAnalyzer.cs in the wired i18n/mobile family (hreflang rule fired at runtime); UI-16 unmounted (G01)
+  probe2_result: absent
+- id: CAP-C-X02
+  title: Performance budgets
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-X03
+  title: Local lab rendering probe
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-X04
+  title: Page composition metrics
+  state: unwired
+  evidence_level: code
+  evidence: CoreWebVitalsAnalyzer.cs/LabRenderingProbe.cs exist (incl. INP in LabVitalsContracts); CWV/Performance analyzers exist with no Host caller (G04)
+  probe2_result: absent
+- id: CAP-C-X05
+  title: ViewState weight measurement
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 large-viewstate fail; no ViewState size analysis
+  probe2_result: fails
+- id: CAP-D1-100
+  title: WCAG 2.2 AA checks (where automatable)
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 missing-alt pass proves the a11y engine runs in audits; UI-16 not reachable
+  probe2_result: absent
+- id: CAP-D1-101
+  title: Missing image alternatives
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 missing-alt pass (accessibility.image-alt error); UI-12/UI-16 not reachable
+  probe2_result: works
+- id: CAP-D1-102
+  title: Form labels
+  state: missing_ui
+  evidence_level: code
+  evidence: AccessibilityAnalyzer.cs + AccessibilityRuleSet.cs wired in pipeline; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-D1-103
+  title: Colour contrast
+  state: unwired
+  evidence_level: runtime
+  evidence: 'probe-2: accessibility.color-contrast reports "no rendered tree is available" on every page (G03)'
+  probe2_result: absent
+- id: CAP-D1-104
+  title: Heading structure
+  state: missing_ui
+  evidence_level: code
+  evidence: AccessibilityAnalyzer.cs + AccessibilityRuleSet.cs wired in pipeline; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-D1-105
+  title: Landmark structure
+  state: missing_ui
+  evidence_level: code
+  evidence: AccessibilityAnalyzer.cs + AccessibilityRuleSet.cs wired in pipeline; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-D1-107
+  title: Accessible names
+  state: missing_ui
+  evidence_level: code
+  evidence: AccessibilityAnalyzer.cs + AccessibilityRuleSet.cs wired in pipeline; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-D1-108
+  title: Link purpose
+  state: missing_ui
+  evidence_level: code
+  evidence: AccessibilityAnalyzer.cs + AccessibilityRuleSet.cs wired in pipeline; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-D1-109
+  title: ARIA misuse
+  state: missing_ui
+  evidence_level: code
+  evidence: AccessibilityAnalyzer.cs + AccessibilityRuleSet.cs wired in pipeline; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-D1-110
+  title: Distinguish machine-detectable violations from issues needing human assessment
+  state: missing_ui
+  evidence_level: code
+  evidence: AccessibilityAnalyzer.cs + AccessibilityRuleSet.cs wired in pipeline; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-D1-X01
+  title: Accessibility rule-set configuration and versioning
+  state: missing_ui
+  evidence_level: code
+  evidence: AccessibilityAnalyzerOptions.cs exists; rule-set/version configuration only via REST; UI-04 absent
+  probe2_result: absent
+- id: CAP-D2-111
+  title: HTTPS usage
+  state: missing_engine
+  evidence_level: code
+  evidence: no Security rule category; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-D2-112
+  title: Certificate validity
+  state: missing_engine
+  evidence_level: code
+  evidence: no Security rule category; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-D2-113
+  title: HTTP security headers
+  state: missing_engine
+  evidence_level: code
+  evidence: no Security rule category; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-D2-114
+  title: Mixed content
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 mixed-content not_testable (needs TLS fixture); no mixed-content rule (G12)
+  probe2_result: absent
+- id: CAP-D2-115
+  title: Cookie security attributes
+  state: missing_engine
+  evidence_level: code
+  evidence: no Security rule category; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-D2-116
+  title: Insecure external resources
+  state: missing_engine
+  evidence_level: code
+  evidence: no Security rule category; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-D2-117
+  title: Information disclosure
+  state: missing_engine
+  evidence_level: code
+  evidence: no Security rule category; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-D2-118
+  title: Basic TLS configuration checks
+  state: missing_engine
+  evidence_level: code
+  evidence: no Security rule category; no Images/Security rule categories in the audit pipeline (G12)
+  probe2_result: absent
+- id: CAP-D2-X01
+  title: WAF detection and fingerprinting
+  state: partial
+  evidence_level: code
+  evidence: 'WafDetectionRecorder wired into the engine (sweep fix); G26: 3 facets vs 5; no fixture WAF trap exercised; UI-16 absent'
+  probe2_result: absent
+- id: CAP-E-119
+  title: Internal link graph
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 REST /links returned 1641 edges; graph surface UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-120
+  title: Click depth
+  state: missing_ui
+  evidence_level: code
+  evidence: crawl depth persisted per URL; click-depth view needs the link-graph surface; UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-121
+  title: Crawl depth
+  state: missing_ui
+  evidence_level: code
+  evidence: crawl depth persisted per URL; click-depth view needs the link-graph surface; UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-122
+  title: Orphan page identification
+  state: missing_engine
+  evidence_level: runtime
+  evidence: probe-2 orphan fail; no sitemap ingestion anywhere in CrawlForge.Crawler (G08)
+  probe2_result: fails
+- id: CAP-E-123
+  title: Inlink counts
+  state: missing_ui
+  evidence_level: code
+  evidence: in/out-link aggregates in the link read model (v1.1 WP-03-04); UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-124
+  title: Outlink counts
+  state: missing_ui
+  evidence_level: code
+  evidence: in/out-link aggregates in the link read model (v1.1 WP-03-04); UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-125
+  title: Anchor-text analysis
+  state: missing_ui
+  evidence_level: code
+  evidence: anchor_text persisted (D15 fix); anchor explorer UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-126
+  title: Navigation analysis
+  state: missing_ui
+  evidence_level: code
+  evidence: LinkZoneInventoryService.cs DOM-zone classification wired (D15); UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-127
+  title: Breadcrumb analysis
+  state: missing_ui
+  evidence_level: code
+  evidence: LinkZoneInventoryService.cs DOM-zone classification wired (D15); UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-128
+  title: Page template identification
+  state: missing_engine
+  evidence_level: code
+  evidence: template identification (architecture 04/01 §7.20, CR-017) not implemented
+  probe2_result: absent
+- id: CAP-E-129
+  title: Content clustering
+  state: unwired
+  evidence_level: code
+  evidence: semantic clustering via the embeddings pipeline; G22 drift (sync endpoint, 0.5 band, in-memory cosine); UI-14 absent
+  probe2_result: absent
+- id: CAP-E-130
+  title: URL taxonomy
+  state: unwired
+  evidence_level: code
+  evidence: graph/visualization components exist under frontend/src/surfaces; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-E-132
+  title: Internal PageRank / link equity modelling
+  state: missing_ui
+  evidence_level: code
+  evidence: WeightedLinkEquityCalculator wired (D15); UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-137
+  title: Primary content sections of the site
+  state: unwired
+  evidence_level: code
+  evidence: graph/visualization components exist under frontend/src/surfaces; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-E-138
+  title: Site relationship graph (pages, links, entities, templates) with visual navigation
+  state: unwired
+  evidence_level: code
+  evidence: graph/visualization components exist under frontend/src/surfaces; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-E-X01
+  title: Technology detection
+  state: missing_ui
+  evidence_level: code
+  evidence: TechnologyDetector + locked fingerprint catalogue wired in pipeline; UI-16 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-X02
+  title: DOM-zone link classification
+  state: missing_ui
+  evidence_level: code
+  evidence: LinkZoneInventoryService.cs DOM-zone classification wired (D15); UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-E-X03
+  title: Whole-graph aggregate analytics
+  state: unwired
+  evidence_level: code
+  evidence: whole-graph aggregates in the graph read model; G22 drift; UI-14 unmounted (G01)
+  probe2_result: absent
+- id: CAP-F-139
+  title: Duplicate content detection
+  state: unwired
+  evidence_level: code
+  evidence: duplicate-content models in ContentQualityModels.cs; ShingleNearDuplicateDetector has no production caller (G23)
+  probe2_result: absent
+- id: CAP-F-140
+  title: Near-duplicate content detection
+  state: unwired
+  evidence_level: code
+  evidence: ShingleNearDuplicateDetector has no production caller (G23)
+  probe2_result: absent
+- id: CAP-F-141
+  title: Word count
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 REST url detail includes word count; UI-13 not reachable
+  probe2_result: absent
+- id: CAP-F-142
+  title: Text density
+  state: missing_ui
+  evidence_level: runtime
+  evidence: 'probe-2 criterion 28 pass: readability/text metrics computed; UI-13/UI-16 not reachable'
+  probe2_result: absent
+- id: CAP-F-143
+  title: N-gram analysis
+  state: missing_ui
+  evidence_level: code
+  evidence: NGram site pass injected into AuditExecutionEngine (ctor lines 103-170); MCP ngram-analysis resource listed; UI-16 unmounted (G01)
+  probe2_result: absent
+- id: CAP-F-144
+  title: Keyword and phrase extraction
+  state: missing_ui
+  evidence_level: code
+  evidence: NGram site pass injected into AuditExecutionEngine (ctor lines 103-170); MCP ngram-analysis resource listed; UI-16 unmounted (G01)
+  probe2_result: absent
+- id: CAP-F-146
+  title: Topic clustering
+  state: unwired
+  evidence_level: code
+  evidence: topical clustering via embeddings pipeline (G22 drift); UI-16 unmounted (G01)
+  probe2_result: absent
+- id: CAP-F-148
+  title: Thin content detection
+  state: defect
+  evidence_level: runtime
+  evidence: 'probe-2 thin-page fail: word count 6, no content.thin-text on thin.html (fires on other pages)'
+  probe2_result: fails
+- id: CAP-F-149
+  title: Missing content coverage
+  state: missing_ui
+  evidence_level: code
+  evidence: NGram site pass injected into AuditExecutionEngine (ctor lines 103-170); MCP ngram-analysis resource listed; UI-16 unmounted (G01)
+  probe2_result: absent
+- id: CAP-F-X01
+  title: Keyword cannibalization and topical-gap findings
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 audit 11 emitted content.keyword-cannibalization; UI-16 not reachable
+  probe2_result: absent
+- id: CAP-F-X02
+  title: Spelling and readability analysis
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 criterion 28 pass (readability); HunspellSpellingChecker wired (D13); UI-16 not reachable
+  probe2_result: absent
+- id: CAP-F-X03
+  title: Sentiment scoring (optional)
+  state: missing_engine
+  evidence_level: code
+  evidence: no sentiment analyzer (optional category, architecture 04/01 §7.4); not implemented
+  probe2_result: absent
+- id: CAP-G-153
+  title: 'Custom extraction: CSS selectors'
+  state: missing_ui
+  evidence_level: code
+  evidence: custom extraction family wired (D5 fix); UI-04 config tabs and UI-16 explorer unmounted (G01/G13)
+  probe2_result: absent
+- id: CAP-G-154
+  title: 'Custom extraction: XPath'
+  state: missing_ui
+  evidence_level: code
+  evidence: custom extraction family wired (D5 fix); UI-04 config tabs and UI-16 explorer unmounted (G01/G13)
+  probe2_result: absent
+- id: CAP-G-155
+  title: 'Custom extraction: regex'
+  state: missing_ui
+  evidence_level: code
+  evidence: custom extraction family wired (D5 fix); UI-04 config tabs and UI-16 explorer unmounted (G01/G13)
+  probe2_result: absent
+- id: CAP-G-156
+  title: 'Extraction output types: inner text, inner HTML, whole element, specific attribute'
+  state: missing_ui
+  evidence_level: code
+  evidence: custom extraction family wired (D5 fix); UI-04 config tabs and UI-16 explorer unmounted (G01/G13)
+  probe2_result: absent
+- id: CAP-G-157
+  title: 'Extraction source selectable: raw HTML, rendered DOM, or both'
+  state: unwired
+  evidence_level: code
+  evidence: 'rendered-source extraction unavailable: rendering inert in audits (G03); raw-source path wired'
+  probe2_result: absent
+- id: CAP-G-158
+  title: Multiple matches per page per rule
+  state: missing_ui
+  evidence_level: code
+  evidence: custom extraction family wired (D5 fix); UI-04 config tabs and UI-16 explorer unmounted (G01/G13)
+  probe2_result: absent
+- id: CAP-G-159
+  title: Test extraction rule against a single URL before crawling
+  state: missing_ui
+  evidence_level: code
+  evidence: no rule-test route; extraction-rule staging is local copyable JSON only (v1.1 WP-06-05); UI-19 absent
+  probe2_result: absent
+- id: CAP-G-160
+  title: 'Custom search: pages containing a text or regex'
+  state: missing_ui
+  evidence_level: code
+  evidence: custom content search wired (D5 fix); UI-04 config and results explorer unmounted (G13/G01)
+  probe2_result: absent
+- id: CAP-G-161
+  title: 'Custom search: pages not containing a text or regex'
+  state: missing_ui
+  evidence_level: code
+  evidence: custom content search wired (D5 fix); UI-04 config and results explorer unmounted (G13/G01)
+  probe2_result: absent
+- id: CAP-G-162
+  title: Main content extraction (boilerplate removal of navigation, header, footer)
+  state: missing_ui
+  evidence_level: code
+  evidence: 'ContentScopeResolver wired; G24: scope validation unenforced; UI-04 scoping tab absent'
+  probe2_result: absent
+- id: CAP-G-163
+  title: Analysis on main content (word count, duplicates, n-grams use extracted main content)
+  state: missing_ui
+  evidence_level: code
+  evidence: 'ContentScopeResolver wired; G24: scope validation unenforced; UI-04 scoping tab absent'
+  probe2_result: absent
+- id: CAP-G-164
+  title: Full page text export (plain text)
+  state: missing_engine
+  evidence_level: code
+  evidence: Export/Writers contains Csv/Excel/Html/Pdf/Sitemap only; no text/Markdown writer
+  probe2_result: absent
+- id: CAP-G-165
+  title: Full page content export (Markdown)
+  state: missing_engine
+  evidence_level: code
+  evidence: Export/Writers contains Csv/Excel/Html/Pdf/Sitemap only; no text/Markdown writer
+  probe2_result: absent
+- id: CAP-G-166
+  title: Extracted values usable as filters
+  state: unwired
+  evidence_level: code
+  evidence: query-builder dynamic columns exist (v1.1 WP-06-03); explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-G-167
+  title: Extracted values included in exports
+  state: missing_ui
+  evidence_level: code
+  evidence: export engine supports dynamic extraction columns (v1.1 WP-05-03); UI-20 export dialog absent
+  probe2_result: absent
+- id: CAP-G-X01
+  title: Single-page analysis and render testing tools
+  state: works
+  evidence_level: runtime
+  evidence: probe-2 UI-18 Single-Page Analyzer and UI-19 tools functional; MCP analyze-single-page works without a project
+  probe2_result: works
+- id: CAP-H-168
+  title: Interactive dashboard
+  state: unwired
+  evidence_level: runtime
+  evidence: probe-2 UI-11 placeholder ("report surfaces mount from workpieces"); AuditDashboard.tsx etc. exist unmounted (G01)
+  probe2_result: partial
+- id: CAP-H-169
+  title: Searchable URL inventory
+  state: unwired
+  evidence_level: runtime
+  evidence: probe-2 REST /urls readable; ExplorerHost.tsx unmounted (G01)
+  probe2_result: absent
+- id: CAP-H-170
+  title: Advanced filtering
+  state: unwired
+  evidence_level: code
+  evidence: query builder + filtering exist in frontend; explorer/dashboard components exist but are unmounted (UNDERBUILD G01; NavigationRail.tsx has 5 entries)
+  probe2_result: absent
+- id: CAP-H-171
+  title: Segmentation
+  state: missing_engine
+  evidence_level: code
+  evidence: segments (CR-017) not implemented; no segment entity or controller
+  probe2_result: absent
+- id: CAP-H-172
+  title: Custom issue rules
+  state: missing_engine
+  evidence_level: code
+  evidence: no custom issue-rule engine; user-defined rules/thresholds absent
+  probe2_result: absent
+- id: CAP-H-173
+  title: CSV export
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 REST CSV export produced a valid zip; UI-20 export dialog absent
+  probe2_result: partial
+- id: CAP-H-174
+  title: XLSX export
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 REST XLSX export valid; UI-20 absent
+  probe2_result: partial
+- id: CAP-H-175
+  title: JSON export
+  state: missing_engine
+  evidence_level: code
+  evidence: no JSON export writer in Export/Writers
+  probe2_result: absent
+- id: CAP-H-177
+  title: PDF reports
+  state: missing_ui
+  evidence_level: code
+  evidence: PdfSummaryWriter exists; UI-20 absent; not exercised in probe-2
+  probe2_result: absent
+- id: CAP-H-178
+  title: Crawl comparison
+  state: missing_ui
+  evidence_level: code
+  evidence: REST /compare exists; UI-15 comparison surface absent; not exercised in probe-2
+  probe2_result: absent
+- id: CAP-H-179
+  title: Historical audit storage
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 audit history readable via REST; UI-07 history/retention surface absent
+  probe2_result: partial
+- id: CAP-H-180
+  title: Issue trend over time (resolved, remaining, newly introduced)
+  state: unwired
+  evidence_level: code
+  evidence: ScoreTrendSurface.tsx exists unmounted (G01)
+  probe2_result: absent
+- id: CAP-H-181
+  title: Google Search Console integration
+  state: missing_engine
+  evidence_level: runtime
+  evidence: 'probe-2 criterion 58 fail: no integration endpoints or UI-05 surface'
+  probe2_result: absent
+- id: CAP-H-182
+  title: Google Analytics 4 integration
+  state: missing_engine
+  evidence_level: runtime
+  evidence: 'probe-2 criterion 58 fail: no integration endpoints or UI-05 surface'
+  probe2_result: absent
+- id: CAP-H-183
+  title: PageSpeed Insights integration
+  state: missing_engine
+  evidence_level: runtime
+  evidence: 'probe-2 criterion 58 fail: no integration endpoints or UI-05 surface'
+  probe2_result: absent
+- id: CAP-H-184
+  title: API access
+  state: works
+  evidence_level: runtime
+  evidence: 'probe-2 REST surface exercised end to end (exempt capability: API-only binding)'
+  probe2_result: works
+- id: CAP-H-185
+  title: MCP server access
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 MCP stdio handshake/listing/start/poll work; re-audit fails on $.id; no paging; templates/list -32601
+  probe2_result: partial
+- id: CAP-H-186
+  title: Structured JSON output for other systems and agents
+  state: works
+  evidence_level: runtime
+  evidence: 'probe-2 MCP JSON resources readable with evidence (exempt capability: MCP-only binding)'
+  probe2_result: works
+- id: CAP-H-188
+  title: Scheduled crawls
+  state: missing_ui
+  evidence_level: code
+  evidence: SchedulesController + scheduler service exist; UI-09 absent; MCP run-schedule-now listed
+  probe2_result: absent
+- id: CAP-H-190
+  title: Multi-project management
+  state: works
+  evidence_level: runtime
+  evidence: probe-2 UI-01 project create/list/start audit functional
+  probe2_result: works
+- id: CAP-H-X02
+  title: Multi-protocol export destinations
+  state: missing_ui
+  evidence_level: code
+  evidence: Export/Delivery (FluentFTP/SSH.NET) exists; UI-20/UI-21 destination configuration absent
+  probe2_result: absent
+- id: CAP-H-X03
+  title: XML sitemap generation
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 sitemap generator tool renders in UI-19; generation not executed
+  probe2_result: partial
+- id: CAP-H-X04
+  title: Automation action log
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 MCP action log written; no read endpoint; UI-21 action-log tab absent
+  probe2_result: partial
+- id: CAP-H-X05
+  title: Server log import and correlation
+  state: missing_ui
+  evidence_level: code
+  evidence: LogsController + LogCorrelationEngine wired; UI-17 log analyzer absent
+  probe2_result: absent
+- id: CAP-H-X06
+  title: MarTech and consent coverage analysis
+  state: partial
+  evidence_level: code
+  evidence: MarTechAuditor injected into AuditExecutionEngine; dataLayer/Consent-Mode capture needs rendering (G03); UI-16 absent
+  probe2_result: absent
+- id: CAP-I-192
+  title: Prioritise findings by severity
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 findings carry severity via REST /findings; UI-12 not reachable
+  probe2_result: absent
+- id: CAP-I-193
+  title: Prioritise by number of affected URLs
+  state: missing_ui
+  evidence_level: code
+  evidence: affected-URL counts in the finding read model; UI-12 unmounted (G01)
+  probe2_result: absent
+- id: CAP-I-194
+  title: Prioritise by business importance
+  state: missing_engine
+  evidence_level: code
+  evidence: business-importance weighting (segments, CR-017) not implemented
+  probe2_result: absent
+- id: CAP-I-196
+  title: Prioritise by remediation effort
+  state: missing_engine
+  evidence_level: code
+  evidence: no effort field in the finding model (CrawlForge.Contracts); architecture 04/01 §7.5 requires remediation effort
+  probe2_result: absent
+- id: CAP-I-197
+  title: Template-level issue grouping (shared problems across a template)
+  state: missing_engine
+  evidence_level: code
+  evidence: template grouping needs template identification (§7.20, CR-017, absent)
+  probe2_result: absent
+- id: CAP-I-199
+  title: 'Change detection between crawls: structural changes'
+  state: missing_ui
+  evidence_level: code
+  evidence: compare REST + content comparison exist (v1.1 WP-05-01); UI-15 unmounted; not exercised in probe-2
+  probe2_result: absent
+- id: CAP-I-200
+  title: 'Change detection between crawls: newly introduced problems'
+  state: missing_ui
+  evidence_level: code
+  evidence: compare REST + content comparison exist (v1.1 WP-05-01); UI-15 unmounted; not exercised in probe-2
+  probe2_result: absent
+- id: CAP-I-201
+  title: 'Change detection between crawls: disappearing content'
+  state: missing_ui
+  evidence_level: code
+  evidence: compare REST + content comparison exist (v1.1 WP-05-01); UI-15 unmounted; not exercised in probe-2
+  probe2_result: absent
+- id: CAP-I-202
+  title: 'Change detection between crawls: deteriorating technical health'
+  state: missing_ui
+  evidence_level: code
+  evidence: compare REST + content comparison exist (v1.1 WP-05-01); UI-15 unmounted; not exercised in probe-2
+  probe2_result: absent
+- id: CAP-I-X01
+  title: Finding suppression
+  state: missing_ui
+  evidence_level: code
+  evidence: finding suppression wired (D13); UI-12 suppression controls absent
+  probe2_result: absent
+- id: CAP-I-X02
+  title: Audit scoring and recompute
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 REST /scores readable; UI-11/UI-12 not reachable
+  probe2_result: absent
+- id: CAP-J-203
+  title: Website overview (structure, purpose, content, technical architecture)
+  state: partial
+  evidence_level: code
+  evidence: McpPromptSurface.cs:42 audit-health-briefing composes the audit summary only; no site structure/purpose overview (§11.4)
+  probe2_result: MISSING
+- id: CAP-J-204
+  title: Plain-language explanation of individual findings
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 audit-summary resource readable; summary-first paging contract absent
+  probe2_result: partial
+- id: CAP-J-207
+  title: Recommendations for interventions
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 high-severity-findings readable with evidence JSON; no paging
+  probe2_result: partial
+- id: CAP-J-208
+  title: 'Evidence references: every recommendation links to affected URLs and underlying data'
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 url-detail resource readable
+  probe2_result: partial
+- id: CAP-J-209
+  title: 'Custom investigations: operator questions about the crawl'
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 prompts render; analyze-single-page works; steering/query tools (§11.3.1) absent
+  probe2_result: partial
+- id: CAP-J-210
+  title: Change analysis between crawls
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 audit-delta-briefing prompt listed; compare route unexercised (exempt capability: MCP-only)'
+  probe2_result: partial
+- id: CAP-J-212
+  title: Machine-readable findings export
+  state: missing_engine
+  evidence_level: code
+  evidence: no JSON/JSONL findings export writer (Export/Writers); D-014 bulk contract unimplemented
+  probe2_result: MISSING
+- id: CAP-J-213
+  title: 'Constraint: AI only interprets collected crawl data; never invents findings'
+  state: partial
+  evidence_level: code
+  evidence: evidence refs present in MCP findings; paged/stable-cursor contract (§11.7/§11.8) absent (McpResourceSurface.cs has no cursor/pageSize)
+  probe2_result: absent
+- id: CAP-J-X01
+  title: GEO llms.txt generation and validation
+  state: unwired
+  evidence_level: code
+  evidence: llms.txt analyzer reads stored records only; crawl-time probe absent (G14); generator tool exists
+  probe2_result: absent
+- id: CAP-J-X02
+  title: AI-bot governance matrix
+  state: missing_ui
+  evidence_level: code
+  evidence: AI-bot governance recorder wired (sweep fix); UI-16 governance matrix absent
+  probe2_result: absent
+- id: CAP-K-X01
+  title: Configuration editor
+  state: missing_ui
+  evidence_level: runtime
+  evidence: probe-2 UI-03/UI-04 absent (0 of 13 editor tabs); REST configuration CRUD works
+  probe2_result: absent
+- id: CAP-K-X02
+  title: Per-configuration analysis category toggles
+  state: missing_ui
+  evidence_level: code
+  evidence: enabledCategories convention in engine config; UI-04 categories tab absent
+  probe2_result: absent
+- id: CAP-K-X03
+  title: Per-project issue thresholds
+  state: missing_ui
+  evidence_level: code
+  evidence: per-project thresholds in config DTO (soft-404 options etc.); UI-04 thresholds tab absent
+  probe2_result: absent
+- id: CAP-K-X04
+  title: Client context
+  state: missing_engine
+  evidence_level: code
+  evidence: client context (CR-017) not implemented; no client entity
+  probe2_result: absent
+- id: CAP-K-X05
+  title: Per-project retention and storage reporting
+  state: missing_ui
+  evidence_level: code
+  evidence: retention pruner exists; UI-07 retention controls absent
+  probe2_result: absent
+- id: CAP-L-X01
+  title: Platform security and diagnostics infrastructure
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 UI-21 diagnostics present; security-posture checks incomplete (G21 no CSP, G29 plaintext tokens after crash)
+  probe2_result: partial
+- id: CAP-L-X02
+  title: Project archive export/import and provider switching
+  state: missing_ui
+  evidence_level: code
+  evidence: archive export/import + provider switch wired (v1.1 D12); UI-07/UI-21 controls absent
+  probe2_result: absent
+- id: CAP-L-X03
+  title: MySQL provider parity and schema authority
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 MySQL provider connects; schema parity drift (G16)
+  probe2_result: partial
+- id: CAP-L-X04
+  title: Local plugin system
+  state: unwired
+  evidence_level: code
+  evidence: PluginScanner null/inert (G02); capabilities 6 vs 11, no timeouts/quarantine (G19); UI-22 absent
+  probe2_result: absent
+- id: CAP-L-X05
+  title: Real-time hub events and metrics observability
+  state: partial
+  evidence_level: runtime
+  evidence: 'probe-2 UI-23 status bar + /metrics work; G05/G06: 7 hub events and 10 metric families never published'
+  probe2_result: works
+- id: CAP-L-X06
+  title: Electron native shell integration
+  state: partial
+  evidence_level: runtime
+  evidence: probe-2 shell launches with hydration-timeout warning; window routes unused (G20); no main-renderer CSP (G21)
+  probe2_result: partial

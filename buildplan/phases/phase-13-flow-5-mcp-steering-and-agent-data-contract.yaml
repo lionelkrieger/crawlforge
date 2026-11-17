@@ -1,0 +1,192 @@
+# CrawlForge Build Plan v2.0 — Phase 13: Flow 5 — MCP Steering and Agent Data Contract
+# Proves: an external AI client can steer the whole product over MCP — create a project
+# and configuration, run an audit, page through findings with evidence — and the agent
+# data contract (JSONL export, resources, prompts, action log) is complete.
+# Acceptance criterion #57 passes only through a real MCP client session against the fixture.
+phase_id: "phase-13"
+name: "Flow 5 — MCP Steering and Agent Data Contract"
+status: "pending"
+depends_on_phases: ["phase-09", "phase-12"]
+max_parallel_agents: 3
+parallel_waves:
+  - wave_id: "wave-13A"
+    workpiece_ids: ["WP-13-01", "WP-13-02", "WP-13-03"]
+  - wave_id: "wave-13B"
+    workpiece_ids: ["WP-13-04"]
+gated_acceptance_criteria: [57]
+
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
+    - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
+    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
+  after_waves:
+    wave-13B:
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mcp --traps noindex,duplicate-titles,orphan"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-21"
+
+workpieces:
+  - workpiece_id: "WP-13-01"
+    title: "MCP Steering Tools — Project, Configuration, Audit Lifecycle over MCP"
+    phase_id: "phase-13"
+    status: "pending"
+    parallel_group: "wave-13A"
+    depends_on_workpieces: ["WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+        sections: ["11.3", "11.3.1", "11.5"]
+    capabilities:
+      - { id: "CAP-H-185", baseline_state: "partial" }
+      - { id: "CAP-J-209", baseline_state: "partial" }
+    ui_surfaces: ["UI-21"]   # steering tools visible/enabled in MCP settings; MCP itself exempt from UI
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "MCP tool schemas (create project/config, start/pause/resume/cancel audit, status) <-> REST equivalents"
+        test: "McpSteeringToolConformanceTests — same engine path as REST, no parallel implementation"
+      - payload: "MCP tool error envelopes and pagination arguments"
+        test: "McpToolErrorConformanceTests"
+    reopens:
+      - workpiece_id: "WP-05-04"
+        evidence: "probe-2 #57 partial: read tools work; steering tools incomplete — cannot create project/config or run an audit end to end over MCP"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Mcp\\McpToolSurface\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Mcp.Tests\\Tools\\"
+    deliverables:
+      - "Complete steering tool set per §11.3.1: project CRUD, configuration create/update (all 13 tabs' fields), audit start/pause/resume/cancel, run status, export trigger; every tool delegates to the same application services as REST (no parallel logic)"
+      - "Tool schemas, argument validation, error envelopes, pagination conventions per the agent data contract"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Mcp.Tests --filter FullyQualifiedName~Tools"
+    done_when: "Phase-gate MCP session: an MCP client creates a fixture project + config, starts an audit, polls status to completion, and cancels a second run mid-crawl; every mutation also visible through REST and the UI."
+    acceptance_criteria_refs: [57]
+
+  - workpiece_id: "WP-13-02"
+    title: "Agent Data Contract — JSONL Export, Resources, Evidence-Paged Findings"
+    phase_id: "phase-13"
+    status: "pending"
+    parallel_group: "wave-13A"
+    depends_on_workpieces: ["WP-09-10"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+        sections: ["11.7", "11.8", "11.4"]
+    capabilities:
+      - { id: "CAP-J-212", baseline_state: "missing_engine" }
+      - { id: "CAP-J-208", baseline_state: "partial" }
+      - { id: "CAP-J-213", baseline_state: "partial" }
+      - { id: "CAP-H-186", baseline_state: "works" }   # resource reads preserved while extending
+    ui_surfaces: []   # MCP-exempt capability (agent data contract); no UI binding required
+    fixture_traps: ["noindex", "duplicate-titles"]
+    contract_tests:
+      - payload: "agent JSONL export: one record per URL/finding with evidence, stable schema version, byte-identical to MCP resource reads"
+        test: "AgentDataContractConformanceTests — REST export, MCP resource, JSONL file agree"
+      - payload: "paged findings with evidence locators over MCP resources"
+        test: "McpResourcePaginationConformanceTests"
+    reopens:
+      - workpiece_id: "WP-05-04"
+        evidence: "J-212 agent data contract has no engine (code-level); J-208/J-213 resource coverage partial per probe-2 #57"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Mcp\\McpResourceSurface\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Mcp\\AgentContract\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Mcp.Tests\\Resources\\"
+    deliverables:
+      - "Agent data contract per §11.7/11.8: versioned JSONL record schema (URLs, findings with evidence locators, scores, graph summaries); deterministic ordering; pagination tokens; export writer shared with the export engine"
+      - "MCP resources expose the same records; evidence locators resolve to stored bodies/rendered captures"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Mcp.Tests --filter FullyQualifiedName~Resources"
+    done_when: "Phase-gate MCP session: client pages through all fixture findings with evidence, exports agent JSONL, and the file matches MCP resource reads byte-for-byte; schema version present; no finding lacks an evidence locator."
+    acceptance_criteria_refs: [57]
+
+  - workpiece_id: "WP-13-03"
+    title: "MCP Settings UI, Prompt Surface, Token Service & Automation Action Log"
+    phase_id: "phase-13"
+    status: "pending"
+    parallel_group: "wave-13A"
+    depends_on_workpieces: ["WP-12-10"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+        sections: ["11.6", "11.4"]
+      - file: "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+        sections: ["6.4"]
+    capabilities:
+      - { id: "CAP-H-X04", baseline_state: "partial" }
+      - { id: "CAP-J-203", baseline_state: "partial" }
+      - { id: "CAP-J-204", baseline_state: "partial" }
+      - { id: "CAP-J-207", baseline_state: "partial" }
+      - { id: "CAP-J-210", baseline_state: "partial" }
+    ui_surfaces: ["UI-21"]
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "MCP token issue/revoke/rotate; per-token capability scopes enforced"
+        test: "McpTokenConformanceTests"
+      - payload: "automation action log rows for every MCP mutation (actor, tool, arguments digest, outcome)"
+        test: "AutomationActionLogConformanceTests (G17)"
+      - payload: "prompt surface templates rendered with live audit data"
+        test: "McpPromptConformanceTests"
+    reopens:
+      - workpiece_id: "WP-05-04"
+        evidence: "G17: MCP mutations not recorded in the automation action log; token service partial; settings MCP section unreachable in probe-2"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Mcp\\McpPromptSurface\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Mcp\\McpTokenService\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Mcp\\AutomationActionLog\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\settings\\mcp\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Mcp.Tests\\Security\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\mcp\\"
+    deliverables:
+      - "UI-21 MCP settings section: server status, endpoint/transport info, token issue/revoke/rotate with scopes, enabled tool groups, action-log viewer"
+      - "Prompt surface: audit-summary, issue-triage, remediation prompts rendered from live data; token scopes enforced on every tool/resource; every MCP mutation logged with actor and outcome"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Mcp.Tests --filter FullyQualifiedName~Security"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate UI walk: Settings › MCP reaches the section; issuing a scoped token and calling a tool outside its scope is rejected and logged; the action log shows every steering mutation from WP-13-01's session."
+    acceptance_criteria_refs: [57]
+
+  - workpiece_id: "WP-13-04"
+    title: "Phase 13 Serial Wiring — MCP Host Integration & Criterion #57 Gate"
+    phase_id: "phase-13"
+    status: "pending"
+    parallel_group: "wave-13B"
+    depends_on_workpieces: ["WP-13-01", "WP-13-02", "WP-13-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+        sections: ["11.2", "11.3.1"]
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+        sections: ["10"]
+    capabilities:
+      - { id: "CAP-H-185", baseline_state: "partial" }
+      - { id: "CAP-J-212", baseline_state: "missing_engine" }
+    ui_surfaces: ["UI-21"]
+    fixture_traps: ["noindex", "duplicate-titles", "orphan"]
+    contract_tests:
+      - payload: "stdio + loopback HTTP transports expose identical tool/resource/prompt surfaces"
+        test: "McpTransportParityConformanceTests"
+    reopens:
+      - workpiece_id: "WP-05-04"
+        evidence: "criterion #57 never verified end to end in v1.1"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Execution\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Composition\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Mcp\\McpServerHost.cs"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\App.tsx"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\store\\"
+    deliverables:
+      - "MCP host registration (DI, transports, token middleware); settings route wiring; criterion #57 gate execution: full MCP steering session against the fixture with recorded evidence"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mcp --traps noindex,duplicate-titles,orphan"
+    done_when: "Criterion #57 passes: an MCP client creates project+config, runs a fixture audit to completion, pages findings with evidence, exports agent JSONL, and every mutation appears in the action log and the UI; /__fixture/requests nonGet == []."
+    acceptance_criteria_refs: [57]

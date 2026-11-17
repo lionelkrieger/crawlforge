@@ -1,0 +1,194 @@
+# CrawlForge Build Plan v2.0 — Phase 14: Flow 6 — Google Integrations
+# Proves: Search Console / GA4 / PageSpeed Insights connections with bring-your-own OAuth,
+# sync + cache + toggles, audit uses (GSC-informed indexability, PSI field data), and the
+# recorded-response test double so criterion #58 passes offline and deterministically.
+# Network boundary: Google endpoints only when the user connects and toggles them on.
+phase_id: "phase-14"
+name: "Flow 6 — Google Integrations"
+status: "pending"
+depends_on_phases: ["phase-09", "phase-12"]
+max_parallel_agents: 3
+parallel_waves:
+  - wave_id: "wave-14A"
+    workpiece_ids: ["WP-14-01"]
+  - wave_id: "wave-14B"
+    workpiece_ids: ["WP-14-02", "WP-14-03"]
+  - wave_id: "wave-14C"
+    workpiece_ids: ["WP-14-04"]
+gated_acceptance_criteria: [58]
+
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
+    - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
+    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
+  after_waves:
+    wave-14C:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Integrations.Tests"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode http --traps noindex"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-05,UI-21"
+
+workpieces:
+  - workpiece_id: "WP-14-01"
+    title: "Google Connections — Bring-Your-Own OAuth, Property Binding, Credential Storage"
+    phase_id: "phase-14"
+    status: "pending"
+    parallel_group: "wave-14A"
+    depends_on_workpieces: ["WP-12-16"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\08-integrations\\01-google-integrations.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\08-integrations\\01-google-integrations.md"
+        sections: ["1", "2", "7"]
+      - file: "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+        sections: ["6.4"]
+    capabilities:
+      - { id: "CAP-H-181", baseline_state: "missing_engine" }
+      - { id: "CAP-H-182", baseline_state: "missing_engine" }
+      - { id: "CAP-H-183", baseline_state: "missing_engine" }
+    ui_surfaces: ["UI-05", "UI-21"]
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "connection CRUD + OAuth token storage (DPAPI-encrypted) + property binding DTOs <-> REST"
+        test: "GoogleConnectionConformanceTests"
+      - payload: "network-boundary allowlist: Google endpoints reachable only when a connection exists and its toggle is on"
+        test: "IntegrationBoundaryConformanceTests"
+    reopens:
+      - workpiece_id: "WP-07-01"
+        evidence: "probe-2: UI-05 unreachable; no Google connection engine exists (H-181/182/183 missing_engine)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Integrations\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\integrations\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\integrations\\"
+    deliverables:
+      - "New CrawlForge.Integrations project: user-supplied OAuth client (bring-your-own), consent flow via system browser + loopback redirect, DPAPI-encrypted token storage, refresh/revoke; Search Console / GA4 / PSI connection types"
+      - "Property binding per project (GSC property, GA4 property, PSI strategy); UI-05 integrations surface: connect/disconnect, status, property picker, per-integration toggles; credentials section in UI-21"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Integrations"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate UI walk: UI-05 reachable; a connection can be created against the test double (WP-14-03), tokens stored encrypted, property bound to the fixture project, disconnect revokes; with no connection, zero Google endpoints in the allowlist."
+    acceptance_criteria_refs: [58]
+
+  - workpiece_id: "WP-14-02"
+    title: "Google Sync, Cache, Toggles & Audit Uses — GSC Indexability, PSI Field Data, GA4 Signals"
+    phase_id: "phase-14"
+    status: "pending"
+    parallel_group: "wave-14B"
+    depends_on_workpieces: ["WP-14-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\08-integrations\\01-google-integrations.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\03-accessibility-and-cwv-performance.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\08-integrations\\01-google-integrations.md"
+        sections: ["3", "4", "5", "6"]
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\03-accessibility-and-cwv-performance.md"
+        sections: ["7.11"]
+    capabilities:
+      - { id: "CAP-A-X08", baseline_state: "missing_engine" }
+      - { id: "CAP-C-081", baseline_state: "missing_engine" }
+      - { id: "CAP-C-083", baseline_state: "unwired" }   # field-data (CrUX via PSI) complement to WP-12-01 lab INP
+    ui_surfaces: ["UI-05", "UI-13", "UI-16"]
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "sync job records (quota-aware backoff, incremental windows) + cached API rows with staleness flags"
+        test: "GoogleSyncConformanceTests"
+      - payload: "GSC URL-inspection/index-coverage rows joined to audit URLs; PSI field LCP/INP/CLS merged with lab values, labelled by source"
+        test: "GoogleAuditUseConformanceTests"
+      - payload: "CSV fallback import produces the same row shapes as live sync"
+        test: "GoogleCsvFallbackConformanceTests"
+    reopens:
+      - workpiece_id: "WP-07-01"
+        evidence: "A-X08 GSC-informed indexability and C-081 PSI data have no engine; v1.1 never delivered integration data paths"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Integrations\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\IntegrationUses\\"
+    deliverables:
+      - "Sync engine: quota-aware scheduling, incremental windows, cached responses with staleness flags, per-integration toggles honored; offline fallback to cached data and CSV import (GSC export, PSI CSV) with identical row shapes"
+      - "Audit uses: GSC index-coverage/URL-inspection evidence attached to indexability findings (A-X08); PSI field data (CrUX) merged with lab CWV labelled lab vs field (C-081, C-083); GA4 engagement signals on URL detail; every use degrades gracefully when disconnected"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Integrations.Tests --filter FullyQualifiedName~Sync"
+    done_when: "Phase-gate: with the test double connected, a fixture audit shows GSC-derived indexability evidence and PSI field values labelled by source; disconnecting falls back to cache/CSV with identical shapes; toggles off means zero Google requests."
+    acceptance_criteria_refs: [26, 58]
+
+  - workpiece_id: "WP-14-03"
+    title: "Google Test Double — Recorded Responses, Deterministic Replay, Quota/Failure Scenarios"
+    phase_id: "phase-14"
+    status: "pending"
+    parallel_group: "wave-14B"
+    depends_on_workpieces: ["WP-14-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\08-integrations\\01-google-integrations.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\08-integrations\\01-google-integrations.md"
+        sections: ["7"]
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+        sections: ["10"]
+    capabilities:
+      - { id: "CAP-H-181", baseline_state: "missing_engine" }   # proven through the double
+      - { id: "CAP-H-182", baseline_state: "missing_engine" }
+      - { id: "CAP-H-183", baseline_state: "missing_engine" }
+    ui_surfaces: []   # test infrastructure; surfaces proven via WP-14-01/02/04
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "recorded GSC/GA4/PSI responses replayed byte-identically through the same HTTP client pipeline as live calls"
+        test: "GoogleTestDoubleConformanceTests"
+      - payload: "quota-exceeded, token-expired, partial-failure scenarios produce specified degradation, never audit failure"
+        test: "GoogleFailureScenarioConformanceTests"
+    reopens:
+      - workpiece_id: "WP-07-01"
+        evidence: "criterion #58 requires a test double with recorded responses; none exists"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Integrations.Tests\\"
+      - "E:\\Crawlforge\\app\\tests\\fixtures\\google-recorded\\"
+    deliverables:
+      - "Loopback test double serving recorded Search Console / GA4 / PSI responses (sanitized, versioned fixtures); scenario switch for quota exceeded, expired token, partial failure; deterministic replay used by all integration tests and the acceptance harness"
+      - "Recorded-response catalogue with provenance notes; no real Google credentials in the repository"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Integrations.Tests"
+    done_when: "Full integration suite runs offline against the double and passes, including failure scenarios; replayed responses match recorded bytes; the fixture acceptance harness can run the Google flow with the double enabled."
+    acceptance_criteria_refs: [58]
+
+  - workpiece_id: "WP-14-04"
+    title: "Phase 14 Serial Wiring — Integration Host Registration & Criterion #58 Gate"
+    phase_id: "phase-14"
+    status: "pending"
+    parallel_group: "wave-14C"
+    depends_on_workpieces: ["WP-14-02", "WP-14-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\08-integrations\\01-google-integrations.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\08-integrations\\01-google-integrations.md"
+        sections: ["1", "5", "6"]
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+        sections: ["10"]
+    capabilities:
+      - { id: "CAP-H-181", baseline_state: "missing_engine" }
+      - { id: "CAP-A-X08", baseline_state: "missing_engine" }
+    ui_surfaces: ["UI-05", "UI-21", "UI-13"]
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "integration data visible identically over REST, hub refresh events and MCP resources"
+        test: "IntegrationCrossLayerConformanceTests"
+    reopens:
+      - workpiece_id: "WP-07-01"
+        evidence: "criterion #58 never verified in v1.1"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Execution\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Composition\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\App.tsx"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\store\\"
+    deliverables:
+      - "DI/host registration for integrations, sync scheduler, boundary allowlist entries; UI-05 route and settings wiring; criterion #58 gate execution with the test double: connect, sync, audit uses, toggle off, offline fallback — recorded evidence"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-05,UI-21"
+    done_when: "Criterion #58 passes end to end against the test double through the UI: connection created, data synced and used in a fixture audit, toggles honored, offline fallback identical; with integrations off the fixture audit is unchanged and /__fixture/requests nonGet == []."
+    acceptance_criteria_refs: [58]

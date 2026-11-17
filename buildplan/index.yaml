@@ -1,0 +1,201 @@
+# CrawlForge — Master Build Status Ledger, Dependency DAG & Phase Tracker (v2.0)
+# Ledger writes are ORCHESTRATOR-ONLY (AGENT-INSTRUCTIONS.md §5). Builder agents never
+# edit buildplan files. Allowed fields: status, assigned_agent, started_at, completed_at,
+# blocker_reason, blocked_at, status_summary counts, phase status, and criterion status.
+#
+# v2.0 replaces the v1.1 completion claims. v1.1 declared 43/43 workpieces and 48/48
+# criteria complete while 16/24 UI surfaces were unreachable (audit-work/runtime-probe-2).
+# v2.0 is generated from the living architecture (v2.0, CR-001..CR-018 applied) and the
+# measured capability baseline (capability-baseline.yaml). A workpiece is completed only
+# when its done_when fixture-harness run and UI path walk pass — never on unit tests alone.
+metadata:
+  project_name: "CrawlForge"
+  build_root: "E:\\Crawlforge\\app"
+  architecture_root: "E:\\Crawlforge\\architecture"
+  buildplan_root: "E:\\Crawlforge\\buildplan"
+  version: "2.0"
+  generated: "2026-11-17"
+  supersedes: "v1.1 (frozen under buildplan/v1.1/, commit 281a9ae)"
+  total_phases: 9              # phase-08 .. phase-16 (continues v1.1 numbering)
+  total_workpieces: 54
+  total_acceptance_criteria: 58
+  capability_baseline: "capability-baseline.yaml"
+  in_scope_capabilities: 251
+  strategy: "End-to-end flows crossing engine/wiring/API/UI; contract-first parallel waves; contracts locked at end of phase-00 (v1.1) and amended only via serialized WP-<phase>-A<n> workpieces"
+  operating_manual: "AGENT-INSTRUCTIONS.md"
+  evidence_basis:
+    - "audit-work/runtime-probe-2/RUNTIME-PROBE.md (strongest; normal entry points, HEAD fc9ac0f)"
+    - "audit-work/hotfix-01-report.md (HOTFIX-01, commit db53378)"
+    - "audit-work/UNDERBUILD-AUDIT.md (G01-G29)"
+    - "audit-work/05-functionality-audit-results.md, audit-work/ux-api-gap-audit.md (secondary)"
+  orchestration:
+    mode: "centralized-ledger"
+    ledger_writer: "orchestrator-only"
+    agent_naming: "cf-wp-xx-yy per workpiece where slots allow; under the runtime team-member cap (8) idle builders are reused and assigned_agent records the actual teammate"
+    build_isolation: "CF_AGENT_ID-scoped obj/bin via Directory.Build.props (AGENT-INSTRUCTIONS.md §10.2)"
+    wave_gates: "orchestrator_gates in each phase file; canonical surface, CF_AGENT_ID unset (§5.5)"
+    amendment_protocol: "serialized contract/dependency workpieces WP-<phase>-A<n> / WP-<phase>-D<n> (§11)"
+    completion_rule: "in_progress -> verifying when the builder finishes; completed only after done_when (fixture acceptance harness + UI path walk) passes, run by the orchestrator after the phase's serial wiring workpiece (AGENT-INSTRUCTIONS.md §5.6)"
+    discovery_protocol: "builders stop the affected item and raise a discovery per audit-work/SOURCE-OF-TRUTH-LOOP.md §8; never edit architecture or buildplan files"
+
+status_summary:
+  phases:
+    pending: 8
+    in_progress: 0
+    completed: 0
+    blocked: 0
+    unscheduled: 1
+  workpieces:
+    pending: 52
+    in_progress: 0
+    verifying: 0
+    completed: 2
+    blocked: 0
+  acceptance_criteria:
+    pending: 58
+    completed: 0
+
+phases:
+  - phase_id: "phase-08"
+    name: "Hotfix Record and Foundations"
+    file: "phases/phase-08-hotfix-record-and-foundations.yaml"
+    status: "pending"
+    depends_on_phases: []      # v1.1 phases are history, not verified dependencies
+    max_parallel_agents: 2
+    workpiece_ids: ["WP-08-01", "WP-08-02", "WP-08-03", "WP-08-04", "WP-08-05"]
+    gated_acceptance_criteria: []   # enables verification of all criteria; proves none alone
+
+  - phase_id: "phase-09"
+    name: "Flow 1 — HTTP Audit End to End"
+    file: "phases/phase-09-flow-1-http-audit-end-to-end.yaml"
+    status: "pending"
+    depends_on_phases: ["phase-08"]
+    max_parallel_agents: 5
+    workpiece_ids: ["WP-09-01", "WP-09-02", "WP-09-03", "WP-09-04", "WP-09-05", "WP-09-06", "WP-09-07", "WP-09-08", "WP-09-09", "WP-09-10", "WP-09-11"]
+    gated_acceptance_criteria: [49, 55, 56]
+
+  - phase_id: "phase-10"
+    name: "Flow 2 — Rendering and Capture Modes"
+    file: "phases/phase-10-flow-2-rendering-and-capture-modes.yaml"
+    status: "pending"
+    depends_on_phases: ["phase-08", "phase-09"]
+    max_parallel_agents: 3
+    workpiece_ids: ["WP-10-01", "WP-10-02", "WP-10-03", "WP-10-04"]
+    gated_acceptance_criteria: [50, 51, 52]
+
+  - phase_id: "phase-11"
+    name: "Flow 3 — Site Types, SPA and Crawl Safety"
+    file: "phases/phase-11-flow-3-site-types-spa-and-safety.yaml"
+    status: "pending"
+    depends_on_phases: ["phase-08", "phase-09", "phase-10"]
+    max_parallel_agents: 3
+    workpiece_ids: ["WP-11-01", "WP-11-02", "WP-11-03", "WP-11-04", "WP-11-05"]
+    gated_acceptance_criteria: [53, 54]
+
+  - phase_id: "phase-12"
+    name: "Flow 4 — Report Surfaces and Specialist Analysis"
+    file: "phases/phase-12-flow-4-report-surfaces-and-specialist-analysis.yaml"
+    status: "pending"
+    depends_on_phases: ["phase-08", "phase-09", "phase-10", "phase-11"]
+    max_parallel_agents: 7
+    workpiece_ids: ["WP-12-01", "WP-12-02", "WP-12-03", "WP-12-04", "WP-12-05", "WP-12-06", "WP-12-07", "WP-12-08", "WP-12-09", "WP-12-10", "WP-12-11", "WP-12-12", "WP-12-13", "WP-12-14", "WP-12-15", "WP-12-16"]
+    gated_acceptance_criteria: []   # re-delivers the v1.1 surfaces; criteria re-verified in phase-15
+
+  - phase_id: "phase-13"
+    name: "Flow 5 — MCP Steering and Agent Data Contract"
+    file: "phases/phase-13-flow-5-mcp-steering-and-agent-data.yaml"
+    status: "pending"
+    depends_on_phases: ["phase-08", "phase-09", "phase-12"]
+    max_parallel_agents: 3
+    workpiece_ids: ["WP-13-01", "WP-13-02", "WP-13-03", "WP-13-04"]
+    gated_acceptance_criteria: [57]
+
+  - phase_id: "phase-14"
+    name: "Flow 6 — Google Integrations"
+    file: "phases/phase-14-flow-6-google-integrations.yaml"
+    status: "pending"
+    depends_on_phases: ["phase-08", "phase-09", "phase-12"]
+    max_parallel_agents: 3
+    workpiece_ids: ["WP-14-01", "WP-14-02", "WP-14-03", "WP-14-04"]
+    gated_acceptance_criteria: [58]
+
+  - phase_id: "phase-15"
+    name: "Re-baselining and Acceptance"
+    file: "phases/phase-15-re-baselining-and-acceptance.yaml"
+    status: "pending"
+    depends_on_phases: ["phase-08", "phase-09", "phase-10", "phase-11", "phase-12", "phase-13", "phase-14"]
+    max_parallel_agents: 1
+    workpiece_ids: ["WP-15-01", "WP-15-02", "WP-15-03"]
+    gated_acceptance_criteria: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58]
+
+  - phase_id: "phase-16"
+    name: "Distribution (Unscheduled)"
+    file: "phases/phase-16-distribution-unscheduled.yaml"
+    status: "unscheduled"      # release-time work only; runs after phase-15 sign-off, on owner instruction
+    depends_on_phases: ["phase-15"]
+    max_parallel_agents: 2
+    workpiece_ids: ["WP-16-01", "WP-16-02"]
+    gated_acceptance_criteria: []
+
+# Criteria #1-#48 were declared complete by v1.1 without runtime verification; they are
+# re-owned by the phase-15 re-baselining pass. #49-#58 (CR-015) are owned by the flow
+# that first proves them and re-verified in phase-15.
+acceptance_criteria_ledger:
+  - { criterion_id: 1,  title: "Offline first launch completes initialization and opens main hub", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 2,  title: "No OS identity stores read at any point", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 3,  title: "Outbound traffic confined to user-configured classes; zero idle outbound", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 4,  title: "Fresh audit runs with unlimited page ceilings by default", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 5,  title: "No license/account/entitlement concept in any payload, settings row, or screen", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 6,  title: "Pause/resume/cancel/crash recovery preserve data; checkpoint resume", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 7,  title: "Report surfaces render offline; exports produce valid local files", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 8,  title: "All features available without remote resolution; local-only toggles", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 9,  title: "Idempotent versioned migrations; deterministic settings defaults after fresh install", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 10, title: "Single-page analysis returns findings without a crawl project", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 11, title: "Scheduled audit fires unattended with run history; survives restarts", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 12, title: "Missed schedule runs exactly once as catch-up", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 13, title: "Spelling findings with token evidence, language honoring, dictionary suppression", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 14, title: "Destination export with user credentials only; disabling restores zero non-crawl outbound", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 15, title: "Cross-audit content comparison offline; re-audit reuses stored bodies", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 16, title: "MCP handshake on SSE + stdio; token rejection/rotation; loopback-only", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 17, title: "All five credential classes encrypted at rest; never hardware/OS-derived", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 18, title: "External DB parity audit; archive revert; connection test before first use", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 19, title: "Server GC profile verifiable via version/diagnostics surface", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 20, title: "/metrics standardized exposition, loopback-only, no identity, no push", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 21, title: "Local native minidump on abnormal termination; never auto-transmitted; viewable/purgeable", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 22, title: "Proxy routing honored; intercepting proxy captures waterfall; no non-loopback listener", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 23, title: "Delegated MCP flow end-to-end with every invocation in the action log", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 24, title: "Custom extraction typed values, caps, dynamic columns, offline re-extraction, failure isolation", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 25, title: "Accessibility violations with locators/remediation, aggregation, scoring; render flags", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 26, title: "Lab CWV per page, budget exceedance findings, coverage/composition; offline", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 27, title: "JSON-LD/Microdata parsing, required properties, rich-result eligibility, error taxonomy", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 28, title: "Readability/reading-time/text-to-HTML from visible text; soft-404 distinct from hard errors", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 29, title: "Technology detection from bundled catalogue only, with confidence, no remote fetch", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 30, title: "Custom search positive/negative terms, path scoping, counts/snippets, offline re-run", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 31, title: "JS snippets timeout + isolated wrapper, typed dynamic columns, per-page failure isolation", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 32, title: "Category/overall scores exclude suppressed findings, comparable; suppression reversible", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 33, title: "Standalone tools without full audit: robots tester, sitemap generator, nested query builder", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 34, title: "Signed requests in-scope only with expiry + encryption; sample crawl, virtual robots, pre-crawl validation", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 35, title: "WAF 200 OK detection: blocked/waf-challenge + provider, no false findings, offline catalogue, corroboration guard", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 36, title: "AIMD adaptation: alpha increase to ceiling, beta halving on triggers, hub stream, state preserved, disable reverts", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 37, title: "Boilerplate scoping: scoped text drives all content metrics; head/links unchanged; baseline identical unconfigured", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 38, title: "N-gram cannibalization with cluster evidence; frequencies/summaries populated; REST + MCP; bounds discard-and-count", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 39, title: "Local plugin lifecycle: onLoad/onTabActivate/onDataUpdate/onCrawlComplete; zero network default; failure isolation", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 40, title: "60 FPS composite gate at 500k+ rows (p50<=16.7ms, dropped<=1%, single-vsync>=95%, DOM<=50); sorting/filtering/pinning/dynamic columns; keyboard + ARIA", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 41, title: "2s system-health heartbeat; JS heap in status bar; Compact/Trim + WAL checkpoint; /metrics parity; no off-machine telemetry", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 42, title: "Point-and-click resilient CSS selector + XPath alternative, match-count preview, send to extraction/scoping, offline", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 43, title: "List Mode ingestion/modes; migration matrix 5-tier verdicts; deterministic rewriting; host mapping by path", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 44, title: "Offline log import (4 formats, gzip); CIDR bot verification; consented DNS only; three correlation views; MCP resource", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 45, title: "Local embeddings populate url_embeddings; loopback-only providers; 0.88/0.75-0.87/0.35 bands; failure never fails audit", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 46, title: "llms.txt/llms-full.txt probe + validation; governance matrix verdicts; local-only generator tool", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 47, title: "Tag/container inventory; dataLayer + Consent Mode v2 with gcs/gcd; four analytics rules; explorer + MCP resource", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 48, title: "dom_zone on every link_edge; weighted equity; pixel truncation findings + preview; header/HTML conflict Errors with dual evidence", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
+  - { criterion_id: 49, title: "HTTP flow e2e: redirect chain/loop, noindex, robots-blocked, broken links, duplicate titles, thin page, orphan, structured data, hreflang, missing alt", phase_id: "phase-09", workpiece_id: "WP-09-11", status: "pending" }
+  - { criterion_id: 50, title: "Rendered flow e2e: js-only link, script-injected content, consent banner tag-before-consent", phase_id: "phase-10", workpiece_id: "WP-10-04", status: "pending" }
+  - { criterion_id: 51, title: "Dual capture e2e: late meta change, raw-vs-rendered content difference", phase_id: "phase-10", workpiece_id: "WP-10-04", status: "pending" }
+  - { criterion_id: 52, title: "Adaptive capture e2e: per-pattern capture overrides honored", phase_id: "phase-10", workpiece_id: "WP-10-04", status: "pending" }
+  - { criterion_id: 53, title: "Site types e2e: hash route, client-side redirect, postback, cookieless session, ViewState, rendered soft 404, service worker", phase_id: "phase-11", workpiece_id: "WP-11-05", status: "pending" }
+  - { criterion_id: 54, title: "SPA/click e2e: websocket settle, click-only navigation, never Place bet, nonGet empty", phase_id: "phase-11", workpiece_id: "WP-11-05", status: "pending" }
+  - { criterion_id: 55, title: "Crawl safety e2e: parameter/calendar traps detected and throttled, cookie-gate redirect handled", phase_id: "phase-09", workpiece_id: "WP-09-11", status: "pending" }
+  - { criterion_id: 56, title: "Configuration editor changes audit behavior through the UI", phase_id: "phase-09", workpiece_id: "WP-09-07", status: "pending" }
+  - { criterion_id: 57, title: "MCP creates project+config, runs audit, reads paged findings with evidence", phase_id: "phase-13", workpiece_id: "WP-13-04", status: "pending" }
+  - { criterion_id: 58, title: "Google integrations against recorded test double; CSV fallback parity", phase_id: "phase-14", workpiece_id: "WP-14-04", status: "pending" }

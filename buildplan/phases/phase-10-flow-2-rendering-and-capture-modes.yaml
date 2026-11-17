@@ -1,0 +1,224 @@
+# CrawlForge Build Plan v2.0 — Phase 10: Flow 2 — Rendering and Capture Modes
+# Proves: JS-rendered crawling through direct CDP with the pinned bundled browser, capture
+# modes (non-JS/JS/dual/adaptive) selectable in the configuration editor, rendered documents
+# in full audits, and raw-vs-rendered comparison (criteria #50, #51, #52).
+# Shared wiring (Host/Execution/, Host/Composition/, Audit/Pipeline/, frontend shell) is owned
+# only by WP-10-04. Rendering pool internals are owned by WP-10-01; the audit-engine integration
+# of rendered documents is delivered by WP-10-02 against the pool contract and connected in wiring.
+phase_id: "phase-10"
+name: "Flow 2 — Rendering and Capture Modes"
+status: "pending"
+depends_on_phases: ["phase-08", "phase-09"]
+max_parallel_agents: 3
+parallel_waves:
+  - wave_id: "wave-10A"
+    workpiece_ids: ["WP-10-01", "WP-10-02"]
+  - wave_id: "wave-10B"
+    workpiece_ids: ["WP-10-03"]
+  - wave_id: "wave-10C"
+    workpiece_ids: ["WP-10-04"]
+gated_acceptance_criteria: [50, 51, 52]
+
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
+    - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
+    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
+  after_waves:
+    wave-10C:
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode js --traps js-only-link,script-injected-content,soft-404-client-route,service-worker"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode dual --traps late-meta-change,script-injected-content"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode adaptive --traps js-only-link,late-meta-change"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-04,UI-10,UI-13,UI-16,UI-19"
+
+workpieces:
+  - workpiece_id: "WP-10-01"
+    title: "Direct CDP Rendering Layer, Pinned Bundled Browser & Loopback Proxy Capture"
+    phase_id: "phase-10"
+    status: "pending"
+    parallel_group: "wave-10A"
+    depends_on_workpieces: ["WP-08-03", "WP-08-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+        sections: ["5.6.2", "5.6.3", "5.9"]
+      - file: "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+        sections: ["2.6"]
+    capabilities:
+      - { id: "CAP-A-X10", baseline_state: "missing_engine" }
+      - { id: "CAP-A-X11", baseline_state: "partial" }
+      - { id: "CAP-A-X04", baseline_state: "unwired" }
+      - { id: "CAP-A-X03", baseline_state: "unwired" }
+      - { id: "CAP-A-015", baseline_state: "unwired" }
+    ui_surfaces: ["UI-19", "UI-21"]
+    fixture_traps: ["js-only-link", "script-injected-content"]
+    contract_tests:
+      - payload: "render result: rendered DOM, screenshot, console log, network waterfall (storage content_artifacts + REST render-tester response)"
+        test: "RenderResultConformanceTests"
+      - payload: "CDP session lifecycle commands (Target/Page/Network domains) vs the rendering control-layer contract"
+        test: "CdpControlLayerConformanceTests"
+      - payload: "browser provisioning: pinned Chrome for Testing bundle resolution, no runtime download"
+        test: "BrowserProvisioningConformanceTests"
+    reopens:
+      - workpiece_id: "WP-02-06"
+        evidence: "G03: IRenderingPool never injected; probe-2 js audit inert ('no rendered tree is available'); D-002/CR-006 replaces PuppeteerSharp with direct CDP; D-003/CR-007 pins the browser bundle"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Rendering\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Proxy\\"
+      - "E:\\Crawlforge\\app\\assets\\browser\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Rendering\\"
+    deliverables:
+      - "Direct CDP control layer (D-002): WebSocket CDP client, Target/Page/Network/Runtime domains, navigation + wait rule, screenshot, console capture, infinite-scroll handling; PuppeteerSharp removed from the rendering path"
+      - "Pinned Chrome for Testing bundle (D-003): local-only resolution from packaged assets, version pin recorded, no remote driver/browser download at runtime; browser settings section in UI-21 shows the pinned version"
+      - "Stealth rendering profile applied; bounded concurrency pool; render timeout/failure isolation"
+      - "Loopback intercepting proxy effective for rendered traffic: waterfall capture into the content store, resource blocking rules, upstream proxy chaining; no non-loopback listener"
+      - "Render tester (UI-19) drives the new pool: rendered DOM + screenshot + waterfall for a fixture URL"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Rendering"
+    done_when: "Fixture harness render-tester entry: /pages/js-link.html rendered DOM contains /pages/js-only-target.html; /pages/js-content.html rendered word count ~200 vs raw ~0; waterfall captured through the loopback proxy; UI walk: UI-19 render tester shows the rendered result, UI-21 browser section shows the pinned bundle."
+    acceptance_criteria_refs: [22, 50]
+
+  - workpiece_id: "WP-10-02"
+    title: "Capture Modes & Rendered Documents in Full Audits — Dual/Adaptive, Raw-vs-Rendered Engine"
+    phase_id: "phase-10"
+    status: "pending"
+    parallel_group: "wave-10A"
+    depends_on_workpieces: ["WP-08-03", "WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\04-custom-extraction-search-js.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+        sections: ["5.6", "5.6.1"]
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+        sections: ["7.18"]
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\04-custom-extraction-search-js.md"
+        sections: ["7.9", "7.17"]
+    capabilities:
+      - { id: "CAP-A-004", baseline_state: "unwired" }
+      - { id: "CAP-A-X09", baseline_state: "missing_engine" }
+      - { id: "CAP-A-035", baseline_state: "unwired" }
+      - { id: "CAP-A-X18", baseline_state: "missing_engine" }
+      - { id: "CAP-A-X20", baseline_state: "missing_engine" }
+      - { id: "CAP-G-157", baseline_state: "unwired" }
+    ui_surfaces: ["UI-04", "UI-10", "UI-13"]
+    fixture_traps: ["js-only-link", "script-injected-content", "late-meta-change", "service-worker"]
+    contract_tests:
+      - payload: "audit config captureMode (non-JS/JS/dual/adaptive) + per-pattern overrides (REST + storage + engine)"
+        test: "CaptureModeConformanceTests"
+      - payload: "rendered document row per URL (content_artifacts) + response-vs-rendered comparison findings"
+        test: "RenderedDocumentConformanceTests"
+      - payload: "rendered-only noindex/title/canonical change findings with dual evidence (raw + rendered)"
+        test: "RawRenderedDiffFindingTests"
+    reopens:
+      - workpiece_id: "WP-02-06"
+        evidence: "G03: AuditExecutionEngine.cs RenderedDocument always null; rendering.enabled=true had no effect (probe-2 audit 12)"
+      - workpiece_id: "WP-03-02"
+        evidence: "ResponseRenderedComparer.cs exists but never receives a rendered document; probe-2 late-meta-change not_testable"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Indexability\\ResponseRenderedComparer.cs"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Indexability\\RenderedComparison\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Capture\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\RenderedComparison\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\CaptureModes\\"
+    deliverables:
+      - "Capture-mode execution contract: non-JS (fetch only), JS (render every in-scope page), dual (both + comparison), adaptive (per-URL-pattern overrides deciding capture); mode honored end to end from configuration"
+      - "Rendered document persisted per URL and fed to the analysis pipeline; JS-only links discovered from rendered DOM and recorded as discovered-by-render; rendered word count vs raw word count difference reported"
+      - "Response-vs-rendered comparison: title/canonical/meta-robots changes, rendered-only noindex reported as critical with dual evidence; service-worker registration detected and reported as informational, renders bypass it"
+      - "Custom JS snippets executed during rendering with timeout + isolated wrapper; extraction source selectable raw/rendered/both"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~RenderedComparison"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~CaptureModes"
+    done_when: "Phase-gate fixture runs: js mode passes js-only-link + script-injected-content; dual mode passes late-meta-change (raw title vs rendered title, canonical change, rendered-only noindex critical); adaptive mode applies per-pattern overrides; service-worker informational finding present; UI walk: UI-04 Crawl-as-and-capture tab selects the mode and UI-13 rendered tab shows the rendered DOM."
+    acceptance_criteria_refs: [50, 51, 52]
+
+  - workpiece_id: "WP-10-03"
+    title: "Rendered Comparison UI — Rendered Tab, Comparison Surface, Render Artifacts"
+    phase_id: "phase-10"
+    status: "pending"
+    parallel_group: "wave-10B"
+    depends_on_workpieces: ["WP-10-01", "WP-10-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.2"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+        sections: ["1", "4"]
+    capabilities:
+      - { id: "CAP-A-035", baseline_state: "unwired" }   # view binding delivered here
+      - { id: "CAP-A-004", baseline_state: "unwired" }   # view binding delivered here
+      - { id: "CAP-A-015", baseline_state: "unwired" }   # view binding delivered here
+    ui_surfaces: ["UI-13", "UI-16", "UI-19", "UI-12"]
+    fixture_traps: ["late-meta-change", "script-injected-content", "js-only-link"]
+    contract_tests:
+      - payload: "URL detail rendered tab payload (rendered DOM, screenshot URL, console, waterfall, raw-vs-rendered diff)"
+        test: "RenderedTabWireConformanceTests"
+      - payload: "Rendered comparison specialist surface query (changed titles/canonicals/noindex across the audit)"
+        test: "RenderedComparisonSurfaceTests"
+    reopens:
+      - workpiece_id: "WP-06-05"
+        evidence: "probe-2: UI-18/UI-19 functional but render testing inert because the pool was inert; rendered comparison surface absent (G01)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\explorers\\rendered\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\single-page\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\rendered\\"
+    deliverables:
+      - "UI-13 rendered tab: rendered DOM viewer, screenshot, console log, network waterfall, raw-vs-rendered diff (title/canonical/noindex/word count) with dual evidence"
+      - "UI-16 Rendered comparison specialist surface: all pages with response-vs-rendered differences, severity-sorted"
+      - "UI-18/UI-19 render tester shows real rendered output from the new CDP pool; capture-mode indicator in UI-10"
+    verification_commands:
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+      - "cd E:\\Crawlforge\\app && npm run test -- --run tests/frontend/rendered"
+    done_when: "Phase-gate UI walk: URL detail for /pages/late-meta.html shows raw title 'Raw title before script' vs rendered 'Rendered title after script' and the canonical change; /pages/js-content.html shows ~0 vs ~200 word counts; Rendered comparison surface lists both pages."
+    acceptance_criteria_refs: [50, 51]
+
+  - workpiece_id: "WP-10-04"
+    title: "Phase 10 Serial Wiring — Rendering DI, Pipeline Integration & Flow-2 Gate"
+    phase_id: "phase-10"
+    status: "pending"
+    parallel_group: "wave-10C"
+    depends_on_workpieces: ["WP-10-01", "WP-10-02", "WP-10-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+        sections: ["5.6"]
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+        sections: ["2"]
+    capabilities:
+      - { id: "CAP-A-004", baseline_state: "unwired" }   # made reachable end to end
+      - { id: "CAP-A-X09", baseline_state: "missing_engine" }
+    ui_surfaces: ["UI-04", "UI-10", "UI-13", "UI-16", "UI-19"]
+    fixture_traps: ["js-only-link", "script-injected-content", "late-meta-change", "service-worker", "soft-404-client-route"]
+    contract_tests:
+      - payload: "full js/dual/adaptive audits through the UI entry point"
+        test: "Flow2EndToEndConformanceTests (harness-driven)"
+    reopens:
+      - workpiece_id: "WP-02-06"
+        evidence: "G03: rendering pool never injected into AuditExecutionEngine — the central v1.1 inert-rendering defect"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Execution\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Composition\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Pipeline\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\App.tsx"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\store\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\shell\\"
+    deliverables:
+      - "IRenderingPool injected into AuditExecutionEngine; capture-mode dispatch in the crawl loop; rendered documents stored and fed to analysers; proxy routing active for rendered traffic"
+      - "Frontend wiring for rendered tab/comparison surface; flow-2 gate execution and evidence capture"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode dual --traps late-meta-change,script-injected-content,js-only-link"
+    done_when: "Criteria #50/#51/#52 pass through UI-started audits in js/dual/adaptive modes; soft-404-client-route renders 'Page not found' and is reported from the rendered document (site-type verdict finalized in phase-11); /__fixture/requests nonGet == []."
+    acceptance_criteria_refs: [50, 51, 52]

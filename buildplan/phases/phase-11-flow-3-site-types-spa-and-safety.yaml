@@ -1,0 +1,240 @@
+# CrawlForge Build Plan v2.0 — Phase 11: Flow 3 — Site Types, SPA and Crawl Safety
+# Proves: site-type rules (hash routes, client-side redirects, postbacks, ViewState, rendered
+# soft-404), click discovery with its safety rules (never Place bet / Deposit / Logout),
+# consent-state rendering, and the websocket-tolerant wait rule (criteria #53, #54).
+# Shared wiring owned only by WP-11-05.
+phase_id: "phase-11"
+name: "Flow 3 — Site Types, SPA and Crawl Safety"
+status: "pending"
+depends_on_phases: ["phase-08", "phase-09", "phase-10"]
+max_parallel_agents: 3
+parallel_waves:
+  - wave_id: "wave-11A"
+    workpiece_ids: ["WP-11-01", "WP-11-02", "WP-11-03"]
+  - wave_id: "wave-11B"
+    workpiece_ids: ["WP-11-04"]
+  - wave_id: "wave-11C"
+    workpiece_ids: ["WP-11-05"]
+gated_acceptance_criteria: [53, 54]
+
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
+    - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
+    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
+  after_waves:
+    wave-11C:
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode js --traps soft-404-client-route,hash-route,client-side-redirect,postback-links,cookieless-session,large-viewstate,live-websocket,click-only-navigation,never-place-bet,consent-banner,service-worker"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-04,UI-10,UI-12,UI-13,UI-16"
+
+workpieces:
+  - workpiece_id: "WP-11-01"
+    title: "Site-Type Rules — Hash Routes, Client Redirects, Postbacks, ViewState, Rendered Soft-404"
+    phase_id: "phase-11"
+    status: "pending"
+    parallel_group: "wave-11A"
+    depends_on_workpieces: ["WP-10-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+        sections: ["7.19", "7.12"]
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+        sections: ["5.2"]
+    capabilities:
+      - { id: "CAP-B-X03", baseline_state: "partial" }
+      - { id: "CAP-B-X05", baseline_state: "missing_engine" }
+      - { id: "CAP-A-X15", baseline_state: "missing_engine" }
+      - { id: "CAP-A-X16", baseline_state: "missing_engine" }
+      - { id: "CAP-C-X05", baseline_state: "missing_engine" }
+    ui_surfaces: ["UI-12", "UI-13", "UI-16"]
+    fixture_traps: ["soft-404-client-route", "hash-route", "client-side-redirect", "postback-links", "large-viewstate", "cookieless-session"]
+    contract_tests:
+      - payload: "site-type findings: spa.hash-route, redirect.client-side, navigation.postback, performance.viewstate-weight, content.soft-404 (rendered)"
+        test: "SiteTypeFindingConformanceTests"
+      - payload: "hash-route capture: distinct routes (#/products, #!/about) as separate route rows"
+        test: "HashRouteCaptureConformanceTests"
+    reopens:
+      - workpiece_id: "WP-03-02"
+        evidence: "probe-2: hash-route/client-side-redirect/postback-links/large-viewstate/soft-404-client-route all fail or not_testable; no site-type analysis exists (CR-009 §7.19)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Indexability\\SiteTypes\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\SiteTypes\\"
+    deliverables:
+      - "Hash-route handling: #/ and #!/ routing detected and reported; with hash-route mode on, both fixture routes captured as distinct routes"
+      - "Client-side redirect detection: meta-refresh and JS location changes (300 ms fixture redirect) recorded as client-side redirects with target evidence"
+      - "Postback navigation detection: __doPostBack/ViewState postback links recorded as uncrawlable navigation, never followed"
+      - "ViewState weight measurement: __VIEWSTATE ~150 KB reported above the 100 KB threshold"
+      - "Rendered soft-404: SPA shell returning 200 but rendering 'Page not found' reported as soft 404 from the rendered document, distinct from server soft-404"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~SiteTypes"
+    done_when: "Phase-gate fixture run (js): soft-404-client-route, hash-route, client-side-redirect, postback-links, large-viewstate pass per expected-results.json; cookieless-session remains pass from flow 1; UI walk: UI-12 shows each site-type finding with evidence."
+    acceptance_criteria_refs: [53]
+
+  - workpiece_id: "WP-11-02"
+    title: "Click Discovery & Safety Rules — Non-Crawlable Navigation Inventory"
+    phase_id: "phase-11"
+    status: "pending"
+    parallel_group: "wave-11A"
+    depends_on_workpieces: ["WP-10-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+        sections: ["5.6.4"]
+    capabilities:
+      - { id: "CAP-A-X17", baseline_state: "missing_engine" }
+    ui_surfaces: ["UI-04", "UI-13", "UI-16"]
+    fixture_traps: ["click-only-navigation", "never-place-bet"]
+    contract_tests:
+      - payload: "discovered-by-click URL rows (discovery source click) + non-crawlable navigation inventory rows"
+        test: "ClickDiscoveryConformanceTests"
+      - payload: "safety gate: no non-GET/HEAD request triggered by click discovery; destructive-action controls never activated"
+        test: "ClickSafetyConformanceTests — asserts GET /__fixture/requests nonGet == [] and no Place bet/Deposit/Logout activation"
+    reopens:
+      - workpiece_id: "WP-02-06"
+        evidence: "probe-2: click-only-navigation not_testable; no click discovery exists (D-016/CR-009 §5.6.4)"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Rendering\\ClickDiscovery\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\ClickDiscovery\\"
+    deliverables:
+      - "Click discovery (opt-in per configuration): click-only SPA navigation discovered as 'discovered by click' (/spa/markets, /spa/promotions, /spa/results); without it, the same controls reported as non-crawlable navigation"
+      - "Safety rules enforced: only GET/HEAD-producing controls clicked; destructive-action patterns (Place bet, Deposit, Logout, buy/delete/pay) never triggered; no form filling; per-page click budget; every skipped control inventoried with reason"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~ClickDiscovery"
+    done_when: "Phase-gate fixture run (js, click discovery on): click-only-navigation passes (three routes discovered by click); never-place-bet passes (nonGet == [] after the audit, no bet/deposit/logout control triggered); with click discovery off the controls appear in the non-crawlable navigation inventory."
+    acceptance_criteria_refs: [54]
+
+  - workpiece_id: "WP-11-03"
+    title: "Websocket-Tolerant Wait Rule & Consent-State Rendering"
+    phase_id: "phase-11"
+    status: "pending"
+    parallel_group: "wave-11A"
+    depends_on_workpieces: ["WP-10-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\06-ai-geo-and-martech-auditing.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+        sections: ["5.6.2"]
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\06-ai-geo-and-martech-auditing.md"
+        sections: ["14.2.1", "14.2"]
+    capabilities:
+      - { id: "CAP-A-X10", baseline_state: "missing_engine" }   # wait-rule facet of the CDP layer
+      - { id: "CAP-A-X19", baseline_state: "missing_engine" }
+      - { id: "CAP-H-X06", baseline_state: "partial" }          # consent-state capture facet
+    ui_surfaces: ["UI-04", "UI-10", "UI-16"]
+    fixture_traps: ["live-websocket", "consent-banner"]
+    contract_tests:
+      - payload: "render settle telemetry: quiet-network decision excluding long-lived streaming connections; settle time < 20 s cap"
+        test: "WaitRuleConformanceTests"
+      - payload: "consent-state capture rows (state, banner detected, tag hits before/after consent) + tag-before-consent finding"
+        test: "ConsentStateConformanceTests"
+    reopens:
+      - workpiece_id: "WP-02-06"
+        evidence: "probe-2: live-websocket not_testable; wait rule has no streaming-connection exclusion (D-016/CR-009)"
+      - workpiece_id: "WP-04-04"
+        evidence: "probe-2: consent-banner not_testable; no consent-state capture (CR-010 §14.2.1); tagHits vacuous because rendering inert"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Rendering\\WaitRules\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\MarTech\\Consent\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\WaitRules\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\Consent\\"
+    deliverables:
+      - "Wait rule: long-lived websocket/SSE connections excluded from the quiet-network test; /live/odds.html settles within the wait rule despite the continuous feed, never hitting the 20 s cap"
+      - "Consent-state rendering: configured consent states (none/accepted/rejected) applied before capture; banner detection; tag hits to /collect with consent=none before any consent interaction reported as tag-firing-before-consent"
+      - "dataLayer + Consent Mode v2 (gcs/gcd) capture from the rendered page feeding the MarTech auditor"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~WaitRules"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests --filter FullyQualifiedName~Consent"
+    done_when: "Phase-gate fixture run (js): live-websocket passes (settles, no 20 s cap); consent-banner passes (tag hit with consent=none before interaction, reported); UI walk: UI-04 Consent-states tab selects states and the finding appears in UI-16 Analytics and tagging."
+    acceptance_criteria_refs: [50, 54]
+
+  - workpiece_id: "WP-11-04"
+    title: "Site-Type, Click-Discovery & Consent Configuration UI + Safety Inventory Views"
+    phase_id: "phase-11"
+    status: "pending"
+    parallel_group: "wave-11B"
+    depends_on_workpieces: ["WP-11-01", "WP-11-02", "WP-11-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.8", "8.2"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+        sections: ["1", "4"]
+    capabilities:
+      - { id: "CAP-A-X15", baseline_state: "missing_engine" }   # view binding
+      - { id: "CAP-A-X16", baseline_state: "missing_engine" }   # view binding
+      - { id: "CAP-A-X17", baseline_state: "missing_engine" }   # configure + view binding
+      - { id: "CAP-A-X19", baseline_state: "missing_engine" }   # configure + view binding
+      - { id: "CAP-B-X05", baseline_state: "missing_engine" }   # view binding
+      - { id: "CAP-C-X05", baseline_state: "missing_engine" }   # view binding
+    ui_surfaces: ["UI-04", "UI-12", "UI-13", "UI-16"]
+    fixture_traps: ["postback-links", "hash-route", "consent-banner", "click-only-navigation", "never-place-bet"]
+    contract_tests:
+      - payload: "UI-04 Click-discovery-and-site-types / Consent-states tabs <-> configuration DTO"
+        test: "SiteTypeConfigWireConformanceTests"
+      - payload: "non-crawlable navigation inventory query (control, reason, page)"
+        test: "NavigationInventoryWireTests"
+    reopens:
+      - workpiece_id: "WP-06-02"
+        evidence: "probe-2: UI-04 0/13 tabs; click-discovery/site-type/consent controls absent"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\sitetypes\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\sitetypes\\"
+    deliverables:
+      - "UI-04 Click discovery and site types tab: click-discovery toggle, hash-route mode, site-type rule toggles, safety exclusions display; Consent states tab: state definitions and banner handling"
+      - "UI-13 non-crawlable navigation inventory per page (postbacks, click-only controls, skipped destructive controls with reasons); UI-12/UI-16 site-type and consent findings with evidence"
+    verification_commands:
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+      - "cd E:\\Crawlforge\\app && npm run test -- --run tests/frontend/sitetypes"
+    done_when: "Phase-gate UI walk: UI-04 tabs toggle click discovery and hash-route mode and a re-run flips click-only-navigation between discovered-by-click and non-crawlable inventory; consent state selection changes the consent-banner capture; safety inventory shows the Place bet control as never-triggered."
+    acceptance_criteria_refs: [53, 54, 56]
+
+  - workpiece_id: "WP-11-05"
+    title: "Phase 11 Serial Wiring — Site-Type/Click/Consent Integration & Flow-3 Gate"
+    phase_id: "phase-11"
+    status: "pending"
+    parallel_group: "wave-11C"
+    depends_on_workpieces: ["WP-11-01", "WP-11-02", "WP-11-03", "WP-11-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+        sections: ["2"]
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+        sections: ["5.6.4"]
+    capabilities:
+      - { id: "CAP-A-X17", baseline_state: "missing_engine" }   # made reachable end to end
+      - { id: "CAP-B-X03", baseline_state: "partial" }          # rendered soft-404 completed
+    ui_surfaces: ["UI-04", "UI-10", "UI-12", "UI-13", "UI-16"]
+    fixture_traps: ["soft-404-client-route", "hash-route", "client-side-redirect", "postback-links", "cookieless-session", "large-viewstate", "live-websocket", "click-only-navigation", "never-place-bet", "consent-banner", "service-worker"]
+    contract_tests:
+      - payload: "full js fixture audit with click discovery + consent states through the UI entry point"
+        test: "Flow3EndToEndConformanceTests (harness-driven)"
+    reopens:
+      - workpiece_id: "WP-03-02"
+        evidence: "site-type rules (CR-009 §7.19) had no v1.1 workpiece at all — added to the architecture after v1.1 froze"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Execution\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host\\Composition\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Pipeline\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\App.tsx"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\store\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\shell\\"
+    deliverables:
+      - "Site-type rule registration, click-discovery dispatch in the render loop, wait-rule replacement, consent-state capture wiring; frontend tab wiring; flow-3 gate execution and evidence"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode js --traps soft-404-client-route,hash-route,client-side-redirect,postback-links,large-viewstate,live-websocket,click-only-navigation,never-place-bet,consent-banner"
+    done_when: "Criteria #53 and #54 pass through a UI-started js audit; the global safety assertion holds (GET /__fixture/requests nonGet == []); no destructive control triggered."
+    acceptance_criteria_refs: [53, 54]

@@ -1,0 +1,150 @@
+# CrawlForge Build Plan v2.0 — Phase 15: Re-baselining and Acceptance
+# Proves: every acceptance criterion re-verified against the running product and the
+# fixture site — #1 to #48 first (the v1.1 claims), then #49 to #58 (the v2.0 end-to-end
+# criteria). Serial phase, one agent: verification must see the whole product at once.
+# No criterion is marked passed on unit-test evidence alone.
+phase_id: "phase-15"
+name: "Re-baselining and Acceptance"
+status: "pending"
+depends_on_phases: ["phase-09", "phase-10", "phase-11", "phase-12", "phase-13", "phase-14"]
+max_parallel_agents: 1
+parallel_waves:
+  - wave_id: "wave-15A"
+    workpiece_ids: ["WP-15-01"]
+  - wave_id: "wave-15B"
+    workpiece_ids: ["WP-15-02"]
+  - wave_id: "wave-15C"
+    workpiece_ids: ["WP-15-03"]
+gated_acceptance_criteria: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58]
+
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
+    - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
+    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
+  after_waves:
+    wave-15C:
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode dual --traps all"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --tls --traps mixed-content"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces all"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mcp --traps noindex,duplicate-titles,orphan"
+
+workpieces:
+  - workpiece_id: "WP-15-01"
+    title: "Re-verify Criteria #1–#48 Against the Fixture Site and UI Walks"
+    phase_id: "phase-15"
+    status: "pending"
+    parallel_group: "wave-15A"
+    depends_on_workpieces: ["WP-14-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+      - "E:\\Crawlforge\\audit-work\\runtime-probe-2\\RUNTIME-PROBE.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+        sections: ["14", "9"]
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+        sections: ["2"]
+    capabilities:
+      - { id: "CAP-G-X01", baseline_state: "works" }
+      - { id: "CAP-H-184", baseline_state: "works" }
+      - { id: "CAP-H-186", baseline_state: "works" }
+      - { id: "CAP-H-190", baseline_state: "works" }
+    ui_surfaces: ["UI-01", "UI-02", "UI-03", "UI-04", "UI-10", "UI-11", "UI-12", "UI-13", "UI-20", "UI-21"]
+    fixture_traps: ["noindex", "canonical-conflict", "soft-404-server", "missing-alt", "redirect-chain", "redirect-loop", "robots-blocked", "broken-links", "duplicate-titles", "orphan", "cookieless-session", "cookie-gate", "crawler-trap-filter", "crawler-trap-calendar", "structured-data-errors", "hreflang-no-return", "thin-page", "mixed-content"]
+    contract_tests:
+      - payload: "criterion evidence records: command, exit code, observed output, UI path walked, trap verdicts"
+        test: "RebaselineEvidenceCompletenessTests — every criterion #1-#48 has runtime evidence, none claim-only"
+    reopens:
+      - workpiece_id: "WP-07-02"
+        evidence: "v1.1 declared 48/48 criteria complete; probe-2 could not run an audit from the UI and 16/24 surfaces were unreachable — every #1-#48 verdict is reopened"
+    owned_paths:
+      - "E:\\Crawlforge\\audit-work\\rebaseline\\criteria-01-48\\"
+    deliverables:
+      - "Per-criterion re-verification of #1–#48 against the running product launched via launch-crawlforge.ps1: fixture audits through normal entry points, expected-results comparison, /__fixture/requests check, UI navigation walks over CDP; evidence file per criterion (command, exit code, output, screenshots)"
+      - "Verdict table: pass / fail / blocked with evidence level; failures routed back to the owning phase as discoveries (loop §8), never patched around"
+    verification_commands:
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode http --traps all"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-01,UI-02,UI-03,UI-04,UI-10,UI-11,UI-12,UI-13,UI-20,UI-21"
+    done_when: "All 48 criteria have runtime evidence recorded; any failure is filed as a discovery with the owning workpiece identified; no criterion marked pass on unit tests or code reading alone."
+    acceptance_criteria_refs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
+
+  - workpiece_id: "WP-15-02"
+    title: "Verify Criteria #49–#58 — Full 31-Trap Matrix, All Capture Modes, All Surfaces, MCP"
+    phase_id: "phase-15"
+    status: "pending"
+    parallel_group: "wave-15B"
+    depends_on_workpieces: ["WP-15-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+      - "E:\\Crawlforge\\app\\tests\\fixture-site\\expected-results.json"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+        sections: ["10"]
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+        sections: ["1", "2"]
+    capabilities:
+      - { id: "CAP-H-190", baseline_state: "works" }
+      - { id: "CAP-H-185", baseline_state: "partial" }   # final end-to-end proof
+      - { id: "CAP-H-181", baseline_state: "missing_engine" }   # final end-to-end proof via test double
+    ui_surfaces: ["UI-01", "UI-02", "UI-03", "UI-04", "UI-05", "UI-06", "UI-07", "UI-08", "UI-09", "UI-10", "UI-11", "UI-12", "UI-13", "UI-14", "UI-15", "UI-16", "UI-17", "UI-18", "UI-19", "UI-20", "UI-21", "UI-22", "UI-23", "UI-24"]
+    fixture_traps: ["redirect-chain", "redirect-loop", "noindex", "robots-blocked", "canonical-conflict", "broken-links", "orphan", "js-only-link", "script-injected-content", "late-meta-change", "soft-404-server", "soft-404-client-route", "hash-route", "client-side-redirect", "postback-links", "cookieless-session", "large-viewstate", "crawler-trap-filter", "crawler-trap-calendar", "cookie-gate", "consent-banner", "service-worker", "structured-data-errors", "missing-alt", "mixed-content", "hreflang-no-return", "duplicate-titles", "thin-page", "live-websocket", "click-only-navigation", "never-place-bet", "no-non-get-requests"]
+    contract_tests:
+      - payload: "full acceptance matrix: 31 traps x capture modes (http/js/dual/adaptive) + TLS run + MCP session + 24-surface walk"
+        test: "FullAcceptanceMatrixTests — harness aggregates every run into one verdict table"
+    reopens:
+      - workpiece_id: "WP-07-02"
+        evidence: "#49-#58 added by CR-015/CR-018 after v1.1; never verified"
+    owned_paths:
+      - "E:\\Crawlforge\\audit-work\\rebaseline\\criteria-49-58\\"
+    deliverables:
+      - "Full matrix execution: fixture audits in all four capture modes through the UI entry point; TLS run for mixed-content; MCP steering session (#57); Google test-double flow (#58); scheduled unattended run; UI walk of all 24 surfaces with configure/trigger/view checks per the binding table"
+      - "Per-criterion evidence for #49–#58; global assertion nonGet == [] verified after every run; never-place-bet safety verified (zero state-changing requests)"
+    verification_commands:
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode dual --traps all"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode adaptive --traps all"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --tls --traps mixed-content"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces all"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mcp --traps noindex,duplicate-titles,orphan"
+    done_when: "All 31 traps pass in their specified capture modes; all 24 surfaces reachable and functional through their bindings; #49–#58 each have recorded runtime evidence; nonGet == [] everywhere."
+    acceptance_criteria_refs: [49, 50, 51, 52, 53, 54, 55, 56, 57, 58]
+
+  - workpiece_id: "WP-15-03"
+    title: "Final Acceptance Report & Owner Sign-off Package"
+    phase_id: "phase-15"
+    status: "pending"
+    parallel_group: "wave-15C"
+    depends_on_workpieces: ["WP-15-02"]
+    context_files:
+      - "E:\\Crawlforge\\audit-work\\SOURCE-OF-TRUTH-LOOP.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+      - "E:\\Crawlforge\\buildplan\\capability-baseline.yaml"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+        sections: ["14", "9", "10"]
+    capabilities:
+      - { id: "CAP-H-190", baseline_state: "works" }
+    ui_surfaces: []   # reporting workpiece; no new surface
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "acceptance report cross-references: every criterion -> evidence file -> trap/surface run id"
+        test: "AcceptanceReportIntegrityTests"
+    reopens:
+      - workpiece_id: "WP-07-02"
+        evidence: "v1.1 sign-off was claim-based; this report replaces it with runtime evidence"
+    owned_paths:
+      - "E:\\Crawlforge\\audit-work\\rebaseline\\acceptance-report\\"
+    deliverables:
+      - "Final acceptance report: 58-criterion verdict table with evidence links, trap matrix, surface walk results, contract-suite results, governance results; residual risks and deferred items (24 out-of-scope capabilities) listed explicitly"
+      - "Proposed capability-baseline state updates (works promotions with runtime evidence) for OWNER approval — the builder does not edit the plan, baseline or register (loop §8); sign-off checklist for the owner"
+    verification_commands:
+      - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
+      - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
+    done_when: "Report complete and internally consistent (every pass verdict links to runtime evidence); owner sign-off package delivered; no plan/register/spec file modified by this workpiece."
+    acceptance_criteria_refs: [1, 49, 58]

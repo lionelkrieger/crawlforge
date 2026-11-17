@@ -1,0 +1,242 @@
+# CrawlForge Build Plan v2.0 — Phase 08: Hotfix Record and Foundations
+# Records the two shipped hotfixes as completed workpieces, then builds the two harnesses
+# that make every later workpiece verifiable: cross-layer contract conformance and the
+# automated fixture acceptance harness (fixture site + normal entry points + UI path walk).
+phase_id: "phase-08"
+name: "Hotfix Record and Foundations"
+status: "pending"
+depends_on_phases: []
+max_parallel_agents: 2
+parallel_waves:
+  - wave_id: "wave-8A"      # historical records; no new code
+    workpiece_ids: ["WP-08-01", "WP-08-02"]
+  - wave_id: "wave-8B"
+    workpiece_ids: ["WP-08-03", "WP-08-04"]
+  - wave_id: "wave-8C"      # serial shared wiring
+    workpiece_ids: ["WP-08-05"]
+gated_acceptance_criteria: []
+
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"   # launch-crawlforge.ps1 step 2; pinned SDK 10.0.404 via app/global.json (HOTFIX-01b)
+    - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"                     # launch-crawlforge.ps1 step 3
+    - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"    # launch-crawlforge.ps1 step 4
+    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
+    - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
+  after_waves:
+    wave-8C:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests --filter KnownGap!=WP-09-06"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode http --traps noindex,canonical-conflict,soft-404-server,missing-alt"
+
+workpieces:
+  - workpiece_id: "WP-08-01"
+    title: "HOTFIX-01 — AIMD Configuration Wire Shape & Host-Throttle Event Contract (Record)"
+    phase_id: "phase-08"
+    status: "completed"
+    assigned_agent: "hotfix-01"
+    started_at: "2026-11-16T00:00:00Z"
+    completed_at: "2026-11-16T00:00:00Z"
+    parallel_group: "wave-8A"
+    depends_on_workpieces: []
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\01-limits-and-aimd-politeness.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\01-limits-and-aimd-politeness.md"
+        sections: ["3.7"]
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+        sections: ["10.3"]
+    capabilities:
+      - { id: "CAP-A-X01", baseline_state: "partial" }   # verified payload, not full delivery
+      - { id: "CAP-L-X05", baseline_state: "partial" }   # verified payload, not full delivery
+    ui_surfaces: ["UI-10"]
+    fixture_traps: ["noindex", "canonical-conflict", "soft-404-server", "missing-alt"]
+    contract_tests:
+      - payload: "REST audit configuration AIMD block (nested JSON vs flat DTO)"
+        test: "CrawlForge.Contracts.Tests WireShapeContractTests (added by HOTFIX-01)"
+      - payload: "hub host-throttle adjustment event (rateBefore/rateAfter field names)"
+        test: "CrawlForge.Contracts.Tests WireShapeContractTests (added by HOTFIX-01)"
+    reopens:
+      - workpiece_id: "WP-02-01"
+        evidence: "hotfix-01-report.md §2: nested AIMD JSON deserialized into flat DTO -> InitialRate 0 -> Validate throw; no audit could start"
+      - workpiece_id: "WP-05-02"
+        evidence: "hotfix-01-report.md §3: host-throttle event used previousRate/newRate; frontend read rateBefore/rateAfter -> undefined.toFixed crash"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Politeness\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Contracts\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Contracts.Tests\\"
+    deliverables:
+      - "RECORD ONLY (commit db53378): AIMD configuration wire shape aligned; host-throttle event field names aligned; WireShapeContractTests added"
+      - "Acceptance evidence: hotfix-01-report.md audits 6, 7, 8, 10 ran to completion; probe-2 audits 11/12/13 ran on HEAD fc9ac0f"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Contracts.Tests"
+    done_when: "Recorded. Runtime evidence: probe-2 HTTP audit 11 completed 183 URLs; traps noindex, canonical-conflict, soft-404-server, missing-alt pass."
+    acceptance_criteria_refs: [36, 41]
+
+  - workpiece_id: "WP-08-02"
+    title: "HOTFIX-01b — Pin .NET SDK 10.0.404 via global.json (Record)"
+    phase_id: "phase-08"
+    status: "completed"
+    assigned_agent: "hotfix-01b"
+    started_at: "2026-11-16T00:00:00Z"
+    completed_at: "2026-11-16T00:00:00Z"
+    parallel_group: "wave-8A"
+    depends_on_workpieces: []
+    context_files:
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\02-process-model-and-lifecycle.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\02-process-model-and-lifecycle.md"
+        sections: ["2.3"]
+    capabilities:
+      - { id: "CAP-L-X01", baseline_state: "partial" }   # build/diagnostics infrastructure, verified payload
+    ui_surfaces: ["UI-10"]
+    fixture_traps: ["noindex", "canonical-conflict", "soft-404-server", "missing-alt"]
+    contract_tests:
+      - payload: "build toolchain (SDK resolution)"
+        test: "app/global.json pins 10.0.404 rollForward latestFeature; dotnet build resolves pinned SDK"
+    reopens:
+      - workpiece_id: "WP-00-01"
+        evidence: "commit fc9ac0f: unpinned SDK resolved a 10.0.1xx preview that could not build net10.0; global.json added"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\global.json"
+    deliverables:
+      - "RECORD ONLY (commit fc9ac0f): app/global.json pins SDK 10.0.404, rollForward latestFeature; deterministic build for all agents and gates"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
+    done_when: "Recorded. Runtime evidence: probe-2 ran on HEAD fc9ac0f with the pinned SDK; all three audits started."
+    acceptance_criteria_refs: [19]
+
+  - workpiece_id: "WP-08-03"
+    title: "Contract-Conformance Harness — Every Cross-Layer Payload (REST, Hub, IPC, MCP, Storage-to-Engine)"
+    phase_id: "phase-08"
+    status: "pending"
+    parallel_group: "wave-8B"
+    depends_on_workpieces: ["WP-08-01", "WP-08-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\01-rest-api-contract.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\01-rest-api-contract.md"
+        sections: ["10.1", "10.2", "10.4"]
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+        sections: ["10.3"]
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+        sections: ["11.7", "11.8"]
+      - file: "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\02-process-model-and-lifecycle.md"
+        sections: ["2.2"]
+    capabilities:
+      - { id: "CAP-H-184", baseline_state: "works" }     # conformance verification of the REST surface
+      - { id: "CAP-H-186", baseline_state: "works" }     # conformance verification of MCP JSON output
+      - { id: "CAP-L-X05", baseline_state: "partial" }   # conformance verification of hub payloads
+    ui_surfaces: ["UI-10"]
+    fixture_traps: ["noindex", "redirect-chain"]
+    contract_tests:
+      - payload: "REST GET /api/audits/{id} counters (engine counters_json discovered/fetched/analyzed/failed vs AuditWireMapper.ParseCounters queued/fetched/error/blocked/wafBlocked)"
+        test: "AuditCountersWireConformanceTests — fails on the known key mismatch (hotfix-01-report.md §6); green only after WP-09-06"
+      - payload: "REST uniform envelope + pagination on all 88 routes"
+        test: "RestEnvelopeConformanceTests — route inventory driven from architecture 05/01 §10.2 + Appendix B"
+      - payload: "hub 19 event payload shapes"
+        test: "HubEventWireConformanceTests — event inventory from 05/02 §10.3 + Appendix C"
+      - payload: "Electron IPC bridge payloads (preload <-> renderer <-> main)"
+        test: "IpcContractConformanceTests — TypeScript contract types vs C# DTOs"
+      - payload: "MCP tool/resource/prompt JSON shapes (summary-first, cursors)"
+        test: "McpWireConformanceTests — 05/03 §11.7/§11.8"
+      - payload: "storage-to-engine rows (counters_json, redirect chains, rendered documents, findings)"
+        test: "StorageEngineConformanceTests — schema catalog 02/02 §9.2 + Appendix A"
+    reopens:
+      - workpiece_id: "WP-00-02"
+        evidence: "hotfix-01-report.md §6: REST counter-key mismatch survived v1.1 because no cross-layer conformance suite existed"
+      - workpiece_id: "WP-00-03"
+        evidence: "G05/G06: hub events and metric families drifted from contracts without detection"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests\\"
+    deliverables:
+      - "New test project CrawlForge.ContractConformance.Tests wired into CrawlForge.sln by WP-08-05"
+      - "Payload inventory generated from the architecture contract tables (88 REST routes/108 ops, 19 hub events, IPC bridge, MCP surface, storage rows); every payload has a conformance test asserting the exact wire shape against a live loopback backend started by the harness"
+      - "Known-failing test for the REST counter-key mismatch, marked [Trait(\"KnownGap\",\"WP-09-06\")] so the suite documents the gap until Flow 1 fixes it; gate runs with the trait excluded until then"
+      - "Conformance suite runnable standalone: dotnet test tests/CrawlForge.ContractConformance.Tests"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests --filter KnownGap!=WP-09-06"
+    done_when: "Harness runs against a live backend started through launch-crawlforge.ps1 build steps; every inventoried payload has a conformance test; the counter-key mismatch test exists and fails for the documented reason; fixture audit (http mode) payloads for traps noindex and redirect-chain are captured and asserted."
+    acceptance_criteria_refs: [7, 16, 20, 41]
+
+  - workpiece_id: "WP-08-04"
+    title: "Fixture Acceptance Harness — Normal Entry Points, expected-results.json Comparison, UI Path Walker"
+    phase_id: "phase-08"
+    status: "pending"
+    parallel_group: "wave-8B"
+    depends_on_workpieces: ["WP-08-01", "WP-08-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+        sections: ["1", "2"]
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+        sections: ["10"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+        sections: ["1", "3"]
+    capabilities:
+      - { id: "CAP-H-190", baseline_state: "works" }     # harness drives project/audit creation through normal entry points
+      - { id: "CAP-G-X01", baseline_state: "works" }     # harness drives single-page/tools entry points
+    ui_surfaces: ["UI-01", "UI-10", "UI-18", "UI-19"]
+    fixture_traps: ["redirect-chain", "redirect-loop", "noindex", "robots-blocked", "canonical-conflict", "broken-links", "orphan", "js-only-link", "script-injected-content", "late-meta-change", "soft-404-server", "soft-404-client-route", "hash-route", "client-side-redirect", "postback-links", "cookieless-session", "large-viewstate", "crawler-trap-filter", "crawler-trap-calendar", "cookie-gate", "consent-banner", "service-worker", "structured-data-errors", "missing-alt", "mixed-content", "hreflang-no-return", "duplicate-titles", "thin-page", "live-websocket", "click-only-navigation", "never-place-bet"]
+    contract_tests:
+      - payload: "fixture harness verdict report (JSON: per-trap pass/partial/fail/not_testable + evidence)"
+        test: "HarnessVerdictShapeTests — verdict report schema validated against expected-results.json structure"
+      - payload: "GET /__fixture/requests (nonGet, tagHits)"
+        test: "FixtureSafetyAssertionTests — nonGet == [] after every audit; tagHits inspected for consent-banner"
+    reopens:
+      - workpiece_id: "WP-07-01"
+        evidence: "probe-2: v1.1 integration suite passed while 16/24 surfaces were unreachable and 10/19 HTTP traps failed; acceptance must run the real product against the fixture"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\"
+    deliverables:
+      - "run_fixture_acceptance.py: starts app/tests/fixture-site (node server, port 47311, TLS variant via --tls-cert/--tls-key for mixed-content), builds/launches the product via launch-crawlforge.ps1 build steps, runs audits through NORMAL entry points only (UI over CDP, REST, MCP — the same paths probe-2 used)"
+      - "Per-trap comparison against app/tests/fixture-site/expected-results.json (capture mode aware: any/js/dual; flags requires_tls/safety); global assertion no-non-get-requests checked after every audit via GET /__fixture/requests"
+      - "UI path walker over CDP: for each UI-01..UI-24 surface, navigate the stated path from the main hub, assert the surface renders real data (placeholder/empty frame = fail per CR-018); screenshots + verdicts into audit-work-style evidence directory"
+      - "Modes: --mode http|js|dual|adaptive, --traps <ids>, --surfaces <ids>, --mcp (MCP entry point), --scheduled (schedule entry point); machine-readable verdict JSON + human-readable summary; non-zero exit on any fail"
+      - "Evidence retention: verdicts, screenshots, fixture request log, audit IDs written under app/tests/fixture-acceptance/results/<timestamp>/"
+    verification_commands:
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode http --traps noindex,canonical-conflict,soft-404-server,missing-alt"
+    done_when: "Harness reproduces probe-2's verdicts on the current build (4 pass, 5 partial, 10 fail, 12 not_testable in http/js modes) — proving the harness measures the same reality; UI walker reports UI-02..UI-09, UI-12..UI-17, UI-20, UI-22 not reachable and UI-11 placeholder, matching probe-2."
+    acceptance_criteria_refs: [49, 50, 51, 52, 53, 54, 55, 56, 57, 58]
+
+  - workpiece_id: "WP-08-05"
+    title: "Phase 08 Serial Wiring — Solution, Gates & Harness Integration"
+    phase_id: "phase-08"
+    status: "pending"
+    parallel_group: "wave-8C"
+    depends_on_workpieces: ["WP-08-03", "WP-08-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
+        sections: ["2"]
+    capabilities:
+      - { id: "CAP-L-X01", baseline_state: "partial" }   # diagnostics/verification infrastructure wiring
+    ui_surfaces: ["UI-10"]
+    fixture_traps: ["noindex"]
+    contract_tests:
+      - payload: "orchestrator gate command surface"
+        test: "gate script self-test: every orchestrator_gates command in phase-08..phase-15 resolves and runs"
+    reopens:
+      - workpiece_id: "WP-07-04"
+        evidence: "v1.1 sign-off had no fixture-based gate; gates now include the acceptance harness"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\README.md"
+      - "E:\\Crawlforge\\app\\tools\\gates\\"
+    deliverables:
+      - "CrawlForge.ContractConformance.Tests added to CrawlForge.sln; fixture-acceptance README documents modes and evidence layout"
+      - "tools/gates/run-phase-gates.ps1 executing the phase orchestrator_gates (build steps with pinned SDK, all test suites, conformance suite, check_traceability.py, check_buildplan.py, fixture harness for the flow's traps)"
+      - "No product code changes; wiring only"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode http --traps noindex"
+    done_when: "Full phase-08 gate list passes on the canonical surface (CF_AGENT_ID unset); fixture harness runs noindex through the REST entry point and the UI walker reaches UI-01/UI-10."
+    acceptance_criteria_refs: [49]
