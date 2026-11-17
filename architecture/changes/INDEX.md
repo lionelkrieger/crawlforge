@@ -6,11 +6,11 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 |---|---|---|---|---|---|---|---|
 | CR-001 | Promote the architecture to living master (v2.0) | clarification | applied | loop adoption | none | README, domain source tables, baseline/, changes/ | 2026-11-17 |
 | CR-002 | Capability traceability tags and index | traceability | applied | D-015 | all 275 | 22 domain files, TRACEABILITY.md | 2026-11-17 |
-| CR-003 | Network boundary amendment for user-connected services | amendment | draft | D-005, D-012, D-010 | H-181..183 | 01/03 §2.6; 07/02 §15 | |
-| CR-004 | Open source, AGPL-3.0 and CLA | addition | draft | D-010, D-011 | none | 01/01 new §1.4; 06/01 §8.9 | |
-| CR-005 | Capture modes (non-JS, JS, dual, adaptive) | addition | draft | D-001 | A-X09 | 03/03 §5.6.1; 03/02 §5.1 | |
-| CR-006 | Direct CDP rendering layer | amendment | draft | D-002 | A-X10 | 03/03 §5.6.2, §5.9 | |
-| CR-007 | Pinned bundled browser and browser path | addition | draft | D-003, D-009 | A-X11 | 03/03 §5.6.3; 06/01 §8.9 | |
+| CR-003 | Network boundary amendment for user-connected services | amendment | applied | D-005, D-012, D-010 | H-181..183 | 01/03 §2.6; 07/02 §15 | 2026-11-17 |
+| CR-004 | Open source, AGPL-3.0 and CLA | addition | applied | D-010, D-011 | none | 01/01 new §1.4; 06/01 §8.9 | 2026-11-17 |
+| CR-005 | Capture modes (non-JS, JS, dual, adaptive) | addition | applied | D-001 | A-X09 | 03/03 §5.6.1; 03/02 §5.1 | 2026-11-17 |
+| CR-006 | Direct CDP rendering layer | amendment | applied | D-002 | A-X10 | 03/03 §5.6.2, §5.9 | 2026-11-17 |
+| CR-007 | Pinned bundled browser and browser path | addition | applied | D-003, D-009 | A-X11 | 03/03 §5.6.3; 06/01 §8.9 | 2026-11-17 |
 | CR-008 | Crawl behaviour additions | addition | draft | D-004 | A-X12..14, A-X21, A-X22 | 03/02 §5.11-5.15 | |
 | CR-009 | Site-type handling | addition | draft | D-004 | A-X15..18, B-X05, C-X05 | 03/02 §5.2, §5.5; 04/02 §7.12, §7.18, §7.19 | |
 | CR-010 | Consent-state rendering | addition | draft | D-004 | A-X19 | 04/06 §14.2.1 | |

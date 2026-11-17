@@ -4,15 +4,6 @@ untagged:
   CAP-A-X08:
     status: spec gap
     ref: CR-013
-  CAP-A-X09:
-    status: spec gap
-    ref: CR-005
-  CAP-A-X10:
-    status: spec gap
-    ref: CR-006
-  CAP-A-X11:
-    status: spec gap
-    ref: CR-007
   CAP-A-X12:
     status: spec gap
     ref: CR-008
@@ -130,15 +121,6 @@ untagged:
   CAP-H-176:
     status: spec gap, scope decision pending
     ref: CR-017
-  CAP-H-181:
-    status: spec gap
-    ref: CR-013
-  CAP-H-182:
-    status: spec gap
-    ref: CR-013
-  CAP-H-183:
-    status: spec gap
-    ref: CR-013
   CAP-H-187:
     status: out of scope
     ref: D-013; CR-016

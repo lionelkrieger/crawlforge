@@ -15,6 +15,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 2.6 Network boundary — verbatim and unabridged**
 
 ### 2.6 Network boundary
+> Capabilities: CAP-H-181, CAP-H-182, CAP-H-183 · Decisions: D-005, D-012, D-010 · Change records: CR-003
 
 Outbound traffic is limited to:
 
@@ -22,8 +23,10 @@ Outbound traffic is limited to:
 - File writes for user-initiated exports (local filesystem).
 - Transfers to **export destinations explicitly configured by the user** (section 8.5), occurring only when the user initiates them or pre-authorizes them on a schedule. No destinations exist by default.
 - Connections to a **user-configured external database server** (section 2.4), only when that provider is selected. None is configured by default.
+- Connections to **user-connected search and analytics services** (Google Search Console, Google Analytics 4, PageSpeed Insights; `08-integrations`), using the user's own OAuth client or API key, only for properties the user has explicitly connected to a project, and only when the user initiates a sync or has scheduled one. None is connected by default. **[Added by CR-003, D-005, D-012]**
+- A **user-initiated release check** against the project's public release channel (GitHub Releases; `09-distribution`). It runs only when the user requests it and transmits no identifier, usage data or diagnostic data. Specified now; built once public releases exist. **[Added by CR-003, D-010]**
 
-There is no telemetry, no remote crash reporting, no update checking, no account service, and no vendor-operated cloud service of any kind. User-configured destinations and database servers are the user's own services, not vendor services. Diagnostic artifacts (logs, minidumps) and metrics never leave the machine (section 10.5).
+There is no telemetry, no remote crash reporting, no automatic update checking, no account service, and no vendor-operated cloud service of any kind. User-configured destinations, database servers and user-connected search and analytics services are the user's own services, not vendor services. Data synced from them is cached locally so audits and reports remain fully functional offline after a sync. Disconnecting all such services and deleting all destinations restores the guarantee of zero non-crawl outbound traffic, except a release check the user explicitly starts. **[Amended by CR-003, D-005, D-012, D-010]**
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -126,3 +129,13 @@ Import server access logs from local disk and correlate bot traffic against craw
 - Provider selection lives in settings (`application_settings`); the active provider and model tag are snapshotted per audit.
 - If the provider is unavailable, semantic passes are marked **unavailable** with a local diagnostic; audits never fail because of embeddings.
 - No remote embedding API, remote vector store, or hosted LLM service is permitted (FS-CRAWL-002 §1.6 E7; §2.6 boundary preserved — loopback stays on-machine, FS-CRAWL-002 §1.4 rule 9).
+
+---
+
+## Amendment history
+
+### CR-003 (2026-11-17; D-005, D-012, D-010)
+
+Replaced text in §2.6 (closing paragraph):
+
+> There is no telemetry, no remote crash reporting, no update checking, no account service, and no vendor-operated cloud service of any kind. User-configured destinations and database servers are the user's own services, not vendor services. Diagnostic artifacts (logs, minidumps) and metrics never leave the machine (section 10.5).

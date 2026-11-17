@@ -60,6 +60,16 @@ This document defines the complete functional behavior of a standalone, non-comm
 - Every feature is enabled by default; no remote configuration channel exists.
 - All application data remains on the local machine by default. Data leaves the machine only toward services the user has explicitly configured themselves (export destinations, an external database server), via transfers the user initiates or pre-authorizes on a schedule.
 
+### 1.4 Product licence
+> Decisions: D-010, D-011 · Change records: CR-004
+
+**[Added by CR-004, D-010, D-011]**
+
+- CrawlForge is distributed as open source under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. The repository carries a `LICENSE` file with the full licence text and a licence notice in its README. Per-file licence headers are not required.
+- The licence is a property of the distributed source and binaries. It introduces **no** licence keys, activation, entitlement state, account or licence check of any kind; section 3 rows 2, 3 and 8 remain in force.
+- Outside contributions are accepted only under a **contributor licence agreement (CLA)** that grants the project owner the right to relicense the contribution. When the project goes public, a standard individual CLA is used with an automated CLA check on the repository (for example the CLA Assistant bot) before any contribution is merged.
+- Every bundled dependency and data asset must have a licence compatible with distribution under AGPL-3.0. Compatibility is verified by the licence audit (`09-distribution`), a **required release-checklist step**, automated where tooling allows; it is not an automatic hard block.
+
 ---
 
 ---

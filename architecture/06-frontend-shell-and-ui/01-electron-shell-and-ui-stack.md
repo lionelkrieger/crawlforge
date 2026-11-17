@@ -169,10 +169,22 @@
 Normalized slices: settings, projects, audits, windowed URL/finding/link/n-gram pages, host-throttle state, system-health, plugin registry. Selector subscriptions drive rendering; the hub demultiplexer updates slices immutably; the plugin bridge (FS-CRAWL-002 §6.4) relays coalesced read-only slices and hub events. No slice ever holds a full dataset (FS-CRAWL-002 §7.4).
 
 ### 8.9 Offline, packaging, and licensing mandates
+> Decisions: D-003, D-010, D-011 · Change records: CR-004, CR-007
 
 - All libraries and assets bundle locally; no CDN, no remote fonts or icons (local icon set); CSP `default-src 'self'` with exactly two exception classes: the sandboxed crawl preview (§12) and user-granted plugin destinations (FS-CRAWL-002 §6.4).
-- Permissive open-source license compliance; a local attribution file ships with the bundle.
+- Bundled third-party libraries and assets must carry licences compatible with distribution under AGPL-3.0 (permissive licences such as MIT and Apache-2.0 qualify); a local attribution file listing every bundled component and its licence ships with the bundle. **[Amended by CR-004, D-010, D-011]**
 - The §13 packaging asset manifest gains: UI bundle, local icon set, attribution file, bundled WAF signature catalogue (FS-CRAWL-002 §2.3), and per-language stop-word lists (FS-CRAWL-002 §5.2).
+- The packaging asset manifest also includes the pinned rendering browser build and its licence notices (§5.6.3), and the product `LICENSE` file (§1.4 of `01-clean-room-and-exclusions.md`). **[Added by CR-007 and CR-004]**
 - Every new surface is localizable through the parent localization framework (§13); plugin labels localize via manifest maps (FS-CRAWL-002 §6.3).
 
 ---
+
+---
+
+## Amendment history
+
+### CR-004 (2026-11-17; D-010, D-011)
+
+Replaced text in §8.9:
+
+> - Permissive open-source license compliance; a local attribution file ships with the bundle.

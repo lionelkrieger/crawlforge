@@ -21,7 +21,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.1 Audit inputs — verbatim and unabridged**
 
 ### 5.1 Audit inputs
-> Capabilities: CAP-A-005, CAP-A-021, CAP-A-022, CAP-A-023, CAP-A-030, CAP-A-031, CAP-A-X02, CAP-A-X07
+> Capabilities: CAP-A-005, CAP-A-021, CAP-A-022, CAP-A-023, CAP-A-030, CAP-A-031, CAP-A-X02, CAP-A-X07 · Decisions: D-001 · Change records: CR-005
 
 | Input | Required | Description |
 |---|---|---|
@@ -31,7 +31,7 @@
 | Inclusion patterns | No | URL patterns that must match for a URL to be crawled |
 | Exclusion patterns | No | URL patterns that disqualify a URL (evaluated after inclusion) |
 | Query-parameter policy | No | Keep all, keep a whitelist, or strip all query parameters during canonicalization |
-| Rendering mode | No | Plain HTTP fetch, or JavaScript-rendered fetch (section 5.6) |
+| Capture mode | No | Non-JS, JS, dual or adaptive capture (section 5.6.1); new configurations default to non-JS | **[Amended by CR-005, D-001]**
 | Limit overrides | No | Any subset of the parameters in section 4.2 |
 | Custom request headers / cookies | No | Optional credentials for the target site, stored locally |
 | Sitemap seeds | No | Additional sitemap URLs to expand at start |
@@ -369,3 +369,13 @@ Extended existing routes: POST `/api/audits` accepts `urlList` + `listMode`; con
 **Acceptance hook:** FS-CRAWL-002 §9, criterion #43.
 
 ---
+
+---
+
+## Amendment history
+
+### CR-005 (2026-11-17; D-001)
+
+Replaced text in §5.1 (Rendering mode row):
+
+> | Rendering mode | No | Plain HTTP fetch, or JavaScript-rendered fetch (section 5.6) |
