@@ -88,7 +88,7 @@ Execution modes: **incremental** (per-URL passes run during the crawl) and **ful
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.5 Finding model — verbatim and unabridged**
 
 ### 7.5 Finding model
-> Capabilities: CAP-B-063, CAP-F-140, CAP-I-192, CAP-I-194, CAP-I-196, CAP-I-X01, CAP-J-204, CAP-J-207, CAP-J-208, CAP-K-X03 · Decisions: D-004 · Change records: CR-012
+> Capabilities: CAP-B-063, CAP-F-140, CAP-I-192, CAP-I-194, CAP-I-196, CAP-I-X01, CAP-J-204, CAP-J-207, CAP-J-208, CAP-K-X03 · Decisions: D-004, D-019 · Change records: CR-012, CR-020
 
 Each finding carries:
 
@@ -100,6 +100,7 @@ Each finding carries:
 - A **recommendation**: generic remediation guidance.
 - A **first-seen audit** reference for delta tracking.
 - An optional **remediation difficulty** indicator (effort estimate), independent of severity and priority.
+- **Business importance** (the rule's local priority/importance ranking, see below) and **remediation effort** are typed fields of the finding contract in storage, REST, hub and MCP payloads. They are filterable and sortable in the issue explorer and in MCP queries; they are not carried in free-form JSON. **[Added by CR-020, D-019]**
 
 **Near-duplicate detection principle:** page bodies are fingerprinted using overlapping token sequences (shingles); set-similarity estimation between fingerprints identifies clusters of substantially similar content. The mathematical principle is specified; the concrete hashing and estimation techniques are an implementation choice.
 
