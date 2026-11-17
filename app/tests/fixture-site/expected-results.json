@@ -1,0 +1,480 @@
+{
+  "fixture": "CrawlForge fixture site",
+  "spec": "architecture/07-quality-and-verification/03-fixture-site.md (CR-015)",
+  "base_url": "http://127.0.0.1:47311",
+  "capture_values": {
+    "any": "expected in every capture mode",
+    "js": "requires JS, dual or adaptive capture",
+    "dual": "requires dual capture"
+  },
+  "global_assertions": [
+    {
+      "id": "no-non-get-requests",
+      "check": "GET /__fixture/requests -> nonGet is empty after any audit",
+      "criteria": [
+        54
+      ]
+    }
+  ],
+  "traps": [
+    {
+      "id": "redirect-chain",
+      "urls": [
+        "/redirect/chain-1"
+      ],
+      "capabilities": [
+        "CAP-A-010",
+        "CAP-B-049"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Three-hop redirect chain 301>302>301 ending at /pages/redirect-target.html is recorded hop by hop and reported as a redirect chain.",
+      "capture": "any"
+    },
+    {
+      "id": "redirect-loop",
+      "urls": [
+        "/redirect/loop-a"
+      ],
+      "capabilities": [
+        "CAP-A-011",
+        "CAP-B-050"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Loop between /redirect/loop-a and /redirect/loop-b is detected and reported; the crawl does not hang.",
+      "capture": "any"
+    },
+    {
+      "id": "noindex",
+      "urls": [
+        "/pages/noindex.html"
+      ],
+      "capabilities": [
+        "CAP-A-007",
+        "CAP-B-036"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Page is crawled and reported as noindex.",
+      "capture": "any"
+    },
+    {
+      "id": "robots-blocked",
+      "urls": [
+        "/private/blocked.html"
+      ],
+      "capabilities": [
+        "CAP-A-006",
+        "CAP-B-037"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "URL is not fetched and is reported as blocked by robots.txt.",
+      "capture": "any"
+    },
+    {
+      "id": "canonical-conflict",
+      "urls": [
+        "/pages/canonical-conflict.html"
+      ],
+      "capabilities": [
+        "CAP-B-038",
+        "CAP-B-X02"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "HTML canonical (/pages/canonical-target-html.html) conflicts with HTTP Link header canonical (/pages/canonical-target-header.html); reported.",
+      "capture": "any"
+    },
+    {
+      "id": "broken-links",
+      "urls": [
+        "/pages/broken-links.html"
+      ],
+      "capabilities": [
+        "CAP-B-046",
+        "CAP-B-047"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Internal link to /pages/does-not-exist.html returns 404 and external link to broken.example.invalid fails; both reported.",
+      "capture": "any"
+    },
+    {
+      "id": "orphan",
+      "urls": [
+        "/pages/orphan.html"
+      ],
+      "capabilities": [
+        "CAP-B-048",
+        "CAP-E-122"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Listed only in the sitemap; reported as orphan (in sitemap, no internal links).",
+      "capture": "any"
+    },
+    {
+      "id": "js-only-link",
+      "urls": [
+        "/pages/js-link.html",
+        "/pages/js-only-target.html"
+      ],
+      "capabilities": [
+        "CAP-A-004",
+        "CAP-A-035"
+      ],
+      "criteria": [
+        50,
+        51
+      ],
+      "expect": "Non-JS capture does not find /pages/js-only-target.html; JS capture does; dual capture reports the link as present only after rendering.",
+      "capture": "js"
+    },
+    {
+      "id": "script-injected-content",
+      "urls": [
+        "/pages/js-content.html"
+      ],
+      "capabilities": [
+        "CAP-A-004",
+        "CAP-A-035"
+      ],
+      "criteria": [
+        50,
+        51
+      ],
+      "expect": "Raw word count is near zero; rendered word count is about 200; difference reported.",
+      "capture": "js"
+    },
+    {
+      "id": "late-meta-change",
+      "urls": [
+        "/pages/late-meta.html"
+      ],
+      "capabilities": [
+        "CAP-A-035",
+        "CAP-A-X09"
+      ],
+      "criteria": [
+        51
+      ],
+      "expect": "Raw title 'Raw title before script' vs rendered 'Rendered title after script'; canonical changed; rendered-only noindex reported as critical.",
+      "capture": "dual"
+    },
+    {
+      "id": "soft-404-server",
+      "urls": [
+        "/pages/soft-404.html"
+      ],
+      "capabilities": [
+        "CAP-B-X03"
+      ],
+      "criteria": [
+        53
+      ],
+      "expect": "200 response with not-found content is reported as soft 404.",
+      "capture": "any"
+    },
+    {
+      "id": "soft-404-client-route",
+      "urls": [
+        "/spa/does-not-exist"
+      ],
+      "capabilities": [
+        "CAP-B-X03"
+      ],
+      "criteria": [
+        53
+      ],
+      "expect": "SPA shell returns 200 but renders 'Page not found'; reported as soft 404 from the rendered document.",
+      "capture": "js"
+    },
+    {
+      "id": "hash-route",
+      "urls": [
+        "/hash-app/"
+      ],
+      "capabilities": [
+        "CAP-A-X16"
+      ],
+      "criteria": [
+        53
+      ],
+      "expect": "Hash routing (#/products, #!/about) is reported; with hash-route mode on, both routes are captured as distinct routes.",
+      "capture": "js"
+    },
+    {
+      "id": "client-side-redirect",
+      "urls": [
+        "/pages/js-redirect.html"
+      ],
+      "capabilities": [
+        "CAP-B-X05"
+      ],
+      "criteria": [
+        53
+      ],
+      "expect": "Script redirect to /pages/js-redirect-target.html after 300 ms is recorded as a client-side redirect.",
+      "capture": "js"
+    },
+    {
+      "id": "postback-links",
+      "urls": [
+        "/pages/postback.aspx"
+      ],
+      "capabilities": [
+        "CAP-A-X15"
+      ],
+      "criteria": [
+        53
+      ],
+      "expect": "Two postback links are recorded as uncrawlable navigation and not followed.",
+      "capture": "any"
+    },
+    {
+      "id": "cookieless-session",
+      "urls": [
+        "/(S(abc123xyz))/pages/session.aspx"
+      ],
+      "capabilities": [
+        "CAP-A-013"
+      ],
+      "criteria": [
+        53
+      ],
+      "expect": "Session segment is removed during canonicalisation (URL becomes /pages/session.aspx) and reported.",
+      "capture": "any"
+    },
+    {
+      "id": "large-viewstate",
+      "urls": [
+        "/pages/viewstate-large.aspx"
+      ],
+      "capabilities": [
+        "CAP-C-X05"
+      ],
+      "criteria": [
+        53
+      ],
+      "expect": "__VIEWSTATE of about 150 KB is reported above the 100 KB threshold.",
+      "capture": "any"
+    },
+    {
+      "id": "crawler-trap-filter",
+      "urls": [
+        "/trap/filter?color=red"
+      ],
+      "capabilities": [
+        "CAP-A-X13"
+      ],
+      "criteria": [
+        55
+      ],
+      "expect": "Parameter-combination trap is detected, throttled and reported; the audit finishes.",
+      "capture": "any"
+    },
+    {
+      "id": "crawler-trap-calendar",
+      "urls": [
+        "/trap/calendar/2026/11"
+      ],
+      "capabilities": [
+        "CAP-A-X13"
+      ],
+      "criteria": [
+        55
+      ],
+      "expect": "Infinite calendar is detected, throttled and reported; the audit finishes.",
+      "capture": "any"
+    },
+    {
+      "id": "cookie-gate",
+      "urls": [
+        "/cookie-gate/"
+      ],
+      "capabilities": [
+        "CAP-A-X12"
+      ],
+      "criteria": [
+        55
+      ],
+      "expect": "With the cookie jar on (default) the page returns 200 after one redirect; cookieless crawl reports a redirect loop.",
+      "capture": "any"
+    },
+    {
+      "id": "consent-banner",
+      "urls": [
+        "/pages/consent.html"
+      ],
+      "capabilities": [
+        "CAP-A-X19",
+        "CAP-H-X06"
+      ],
+      "criteria": [
+        50
+      ],
+      "expect": "Tag hit to /collect with consent=none occurs before any consent interaction; reported as tag firing before consent.",
+      "capture": "js"
+    },
+    {
+      "id": "service-worker",
+      "urls": [
+        "/sw-app/"
+      ],
+      "capabilities": [
+        "CAP-A-X18"
+      ],
+      "criteria": [
+        53
+      ],
+      "expect": "Service worker registration is reported as informational; renders bypass it.",
+      "capture": "js"
+    },
+    {
+      "id": "structured-data-errors",
+      "urls": [
+        "/pages/structured-data.html"
+      ],
+      "capabilities": [
+        "CAP-B-067",
+        "CAP-B2-075"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Product block missing required properties and a malformed JSON-LD block are both reported.",
+      "capture": "any"
+    },
+    {
+      "id": "missing-alt",
+      "urls": [
+        "/pages/images.html"
+      ],
+      "capabilities": [
+        "CAP-B-055",
+        "CAP-D1-101"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Image without alt attribute reported (the empty-alt image is decorative and may be treated differently).",
+      "capture": "any"
+    },
+    {
+      "id": "mixed-content",
+      "urls": [
+        "/pages/mixed-content.html"
+      ],
+      "capabilities": [
+        "CAP-D2-114"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Only when served over HTTPS (--tls-cert/--tls-key): insecure image is reported as mixed content.",
+      "capture": "any",
+      "flags": [
+        "requires_tls"
+      ]
+    },
+    {
+      "id": "hreflang-no-return",
+      "urls": [
+        "/pages/hreflang-en.html"
+      ],
+      "capabilities": [
+        "CAP-B-060"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "English page declares French alternate; French page has no return tag; reported.",
+      "capture": "any"
+    },
+    {
+      "id": "duplicate-titles",
+      "urls": [
+        "/pages/dup-title-a.html",
+        "/pages/dup-title-b.html"
+      ],
+      "capabilities": [
+        "CAP-B-040"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Both pages share the title 'Duplicate title'; reported.",
+      "capture": "any"
+    },
+    {
+      "id": "thin-page",
+      "urls": [
+        "/pages/thin.html"
+      ],
+      "capabilities": [
+        "CAP-B-061",
+        "CAP-F-148"
+      ],
+      "criteria": [
+        49
+      ],
+      "expect": "Visible word count below threshold; reported as thin content.",
+      "capture": "any"
+    },
+    {
+      "id": "live-websocket",
+      "urls": [
+        "/live/odds.html"
+      ],
+      "capabilities": [
+        "CAP-A-X10"
+      ],
+      "criteria": [
+        54
+      ],
+      "expect": "Page settles within the wait rule despite the continuous websocket feed (long-lived connections excluded from quiet-network test); it does not hit the 20 s cap.",
+      "capture": "js"
+    },
+    {
+      "id": "click-only-navigation",
+      "urls": [
+        "/spa/"
+      ],
+      "capabilities": [
+        "CAP-A-X17"
+      ],
+      "criteria": [
+        54
+      ],
+      "expect": "With click discovery on, /spa/markets, /spa/promotions and /spa/results are discovered as 'discovered by click'; without it they are reported as non-crawlable navigation.",
+      "capture": "js"
+    },
+    {
+      "id": "never-place-bet",
+      "urls": [
+        "/live/odds.html",
+        "/spa/markets"
+      ],
+      "capabilities": [
+        "CAP-A-X17"
+      ],
+      "criteria": [
+        54
+      ],
+      "expect": "No 'Place bet', 'Deposit' or 'Logout' control is triggered: GET /__fixture/requests must show nonGet == [] after the audit.",
+      "capture": "js",
+      "flags": [
+        "safety"
+      ]
+    }
+  ]
+}
