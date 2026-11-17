@@ -4,7 +4,7 @@
 # automated fixture acceptance harness (fixture site + normal entry points + UI path walk).
 phase_id: "phase-08"
 name: "Hotfix Record and Foundations"
-status: "pending"
+status: "in_progress"
 depends_on_phases: []
 max_parallel_agents: 2
 parallel_waves:
@@ -111,7 +111,9 @@ workpieces:
   - workpiece_id: "WP-08-03"
     title: "Contract-Conformance Harness — Every Cross-Layer Payload (REST, Hub, IPC, MCP, Storage-to-Engine)"
     phase_id: "phase-08"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-08-03"
+    started_at: "2026-11-17T22:43:59Z"
     parallel_group: "wave-8B"
     depends_on_workpieces: ["WP-08-01", "WP-08-02"]
     context_files:
@@ -166,7 +168,9 @@ workpieces:
   - workpiece_id: "WP-08-04"
     title: "Fixture Acceptance Harness — Normal Entry Points, expected-results.json Comparison, UI Path Walker"
     phase_id: "phase-08"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-08-04"
+    started_at: "2026-11-17T22:43:59Z"
     parallel_group: "wave-8B"
     depends_on_workpieces: ["WP-08-01", "WP-08-02"]
     context_files:

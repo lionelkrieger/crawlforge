@@ -40,14 +40,14 @@ metadata:
 
 status_summary:
   phases:
-    pending: 8
-    in_progress: 0
+    pending: 7
+    in_progress: 1
     completed: 0
     blocked: 0
     unscheduled: 1
   workpieces:
-    pending: 52
-    in_progress: 0
+    pending: 50
+    in_progress: 2
     verifying: 0
     completed: 2
     blocked: 0
@@ -59,7 +59,7 @@ phases:
   - phase_id: "phase-08"
     name: "Hotfix Record and Foundations"
     file: "phases/phase-08-hotfix-record-and-foundations.yaml"
-    status: "pending"
+    status: "in_progress"
     depends_on_phases: []      # v1.1 phases are history, not verified dependencies
     max_parallel_agents: 2
     workpiece_ids: ["WP-08-01", "WP-08-02", "WP-08-03", "WP-08-04", "WP-08-05"]
