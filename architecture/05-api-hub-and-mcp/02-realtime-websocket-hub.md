@@ -15,6 +15,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 10.3 Real-time hub — verbatim and unabridged**
 
 ### 10.3 Real-time hub
+> Capabilities: CAP-B-X01, CAP-L-X05
 
 | Event | Direction | Payload fields | Emission rule |
 |---|---|---|---|

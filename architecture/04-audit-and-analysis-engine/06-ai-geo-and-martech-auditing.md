@@ -18,6 +18,7 @@
 **Extends FS-CRAWL-001 §4.4, §7.4, §8.2, §8.7.** Additional hooks: §5.1, §5.3, §7.3, §9.2, §10.2, §11.4.
 
 ### 13.1 `llms.txt` and `llms-full.txt` discovery and validation
+> Capabilities: CAP-J-X01
 
 - **At crawl start, alongside the robots.txt fetch (§4.4):** probe `/llms.txt` and `/llms-full.txt` on each in-scope host. Both are recorded as ordinary `url_records` (§9.2) with their status and content type.
 - **Structural validation** of a retrieved `llms.txt`: H1 title present; blockquote summary present; H2 sections containing link lists. Structural failures emit `geo.llms-txt-malformed` (**Warning**) with per-element evidence.
@@ -26,6 +27,7 @@
 - All `geo.*` rule keys live in a new additive category **AI Search (GEO)** (additive to the §7.4 taxonomy); suppression follows §7.5.
 
 ### 13.2 AI crawler governance matrix
+> Capabilities: CAP-J-X02
 
 - **Bundled, versioned agent-profile catalogue** (the §7.15 asset pattern), each profile carrying an agent token and a purpose class:
 
@@ -41,6 +43,7 @@
 - **Site-wide matrix surface:** rows = path prefixes / URLs, columns = agents, purpose toggles (indexing / RAG / training); virtualized per FS-CRAWL-002 §7.1. The matrix is a report, not a gate — it never alters crawl behavior.
 
 ### 13.3 Standalone tool — `llms.txt` Generator & Validator (extends §8.7)
+> Capabilities: CAP-J-X01
 
 - **Generate:** from an audit's top-scoring indexable pages — ranking contract: indexable, no Error findings, descending content-quality composite (word count, readability in range, title/description present; exact composite an implementation choice) — grouped by directory/category. Output structure: H1 site name; blockquote summary (site meta description or user input); H2 sections per group with markdown link lists (page title + absolute URL). Optional `llms-full.txt` variant adds bounded content excerpts.
 - **Validate:** pasted/uploaded body or a URL → structural verdict (FS-CRAWL-002 §13.1 rules) plus link verification.
@@ -83,6 +86,7 @@ A new **GEO Readiness** report surface, additive to the §8.2 catalog:
 > **Verbatim source — FS-CRAWL-002 v1.1: 14. MarTech, Analytics & Tag Integrity Auditor — complete section, verbatim and unabridged**
 
 ## 14. MarTech, Analytics & Tag Integrity Auditor
+> Capabilities: CAP-H-X06
 
 **Extends FS-CRAWL-001 §5.6, §5.9, §7.3, §7.4, §8.2.** Additional hooks: §7.2, §7.17, §9.2, §10.2, §11.4.
 

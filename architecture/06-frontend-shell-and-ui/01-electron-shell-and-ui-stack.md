@@ -24,6 +24,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 12. Desktop Shell Requirements — complete section, verbatim and unabridged**
 
 ## 12. Desktop Shell Requirements
+> Capabilities: CAP-L-X06
 
 - **Window catalog:** splash; main hub (projects, dashboards, and schedules); report window; visualization window; single-page analyzer; standalone tools (section 8.7); settings; backend-failure/recovery screen.
 - **Shell duties:** spawn, monitor, and restart the backend; discover the backend port; load only local UI assets; provide native file dialogs for export/import; surface OS taskbar progress and local notifications; persist window state.

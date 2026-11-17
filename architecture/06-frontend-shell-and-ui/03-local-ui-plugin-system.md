@@ -14,6 +14,7 @@
 > **Verbatim source — FS-CRAWL-002 v1.1: 6. Local UI Plugin Architecture and Lifecycle Hooks — complete section, verbatim and unabridged**
 
 ## 6. Local UI Plugin Architecture and Lifecycle Hooks
+> Capabilities: CAP-L-X04
 
 **Extends FS-CRAWL-001 §8.2, §12.** Additional hooks: §2.3, §2.6, §3, §8.7, §9.2, §10.2, §10.3, §10.5.
 

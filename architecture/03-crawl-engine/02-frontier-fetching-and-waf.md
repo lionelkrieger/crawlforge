@@ -21,6 +21,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.1 Audit inputs — verbatim and unabridged**
 
 ### 5.1 Audit inputs
+> Capabilities: CAP-A-005, CAP-A-021, CAP-A-022, CAP-A-023, CAP-A-030, CAP-A-031, CAP-A-X02, CAP-A-X07
 
 | Input | Required | Description |
 |---|---|---|
@@ -49,6 +50,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.2 URL canonicalization and deduplication — verbatim and unabridged**
 
 ### 5.2 URL canonicalization and deduplication
+> Capabilities: CAP-A-012, CAP-A-013, CAP-B-064, CAP-B-065, CAP-B-066
 
 Before a URL enters the frontier it is canonicalized:
 
@@ -75,6 +77,7 @@ A persistent **seen-set** keyed by canonical URL guarantees each URL is fetched 
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.4 Fetching — verbatim and unabridged**
 
 ### 5.4 Fetching
+> Capabilities: CAP-A-001, CAP-A-010, CAP-A-011, CAP-A-025, CAP-A-026, CAP-A-027, CAP-A-028, CAP-A-029, CAP-C-085, CAP-D2-112, CAP-D2-118
 
 - Workers pull URLs under the concurrency and throughput ceilings and fetch them with a configurable HTTP client, honoring the configured proxy routing (section 5.9).
 - Redirects are followed up to the hop ceiling; **every hop is recorded** so full chains and loops can be reconstructed.
@@ -87,6 +90,7 @@ A persistent **seen-set** keyed by canonical URL guarantees each URL is fetched 
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.5 Link discovery — verbatim and unabridged**
 
 ### 5.5 Link discovery
+> Capabilities: CAP-A-002, CAP-A-003, CAP-A-008, CAP-A-014
 
 - From HTML: anchor and image-map references, document-level link relations (canonical, alternates, stylesheets, next/previous), and optionally embedded frame sources and meta-refresh targets.
 - From sitemaps: URL entries with their declared metadata; sitemap indexes are expanded recursively.
@@ -97,6 +101,7 @@ A persistent **seen-set** keyed by canonical URL guarantees each URL is fetched 
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.7 Lifecycle and control — verbatim and unabridged**
 
 ### 5.7 Lifecycle and control
+> Capabilities: CAP-A-032, CAP-A-033, CAP-A-034
 
 - Audit states: `configuring → running → (paused ⇄ running) → completed | cancelled | failed | interrupted`.
 - **Pause** checkpoints the frontier, seen-set, and counters; **resume** rehydrates them; **cancel** drains workers and finalizes partial data; **interrupted** (process loss) is recoverable from the last checkpoint.
@@ -115,6 +120,7 @@ A persistent **seen-set** keyed by canonical URL guarantees each URL is fetched 
 > **Verbatim source — FS-CRAWL-002 v1.1: 2. Soft-Block and WAF Challenge Detection on 200 OK Responses — complete section, verbatim and unabridged**
 
 ## 2. Soft-Block and WAF Challenge Detection on 200 OK Responses
+> Capabilities: CAP-D2-X01
 
 **Extends FS-CRAWL-001 §5.3, §5.4, §7.12.** Additional hooks: §4.4, §5.1, §5.6, §7.2, §7.4, §7.5, §7.15, §8.1, §8.2, §9.2, §9.6, §10.2, §10.3, §11.4.
 
@@ -290,6 +296,7 @@ Extended existing routes (additive fields only): GET `/api/audits/{id}/urls` gai
 Three related capabilities for migration and targeted auditing: (a) **List Mode** — crawl a user-supplied URL list instead of discovering from seeds; (b) a **Redirect Migration Matrix Validator** that verifies old→new URL mappings hop-by-hop; (c) **on-the-fly URL rewriting** and **staging↔production host mapping** for canonicalization and comparison.
 
 ### 10.2 List Mode ingestion (extends §5.1)
+> Capabilities: CAP-A-X05
 
 - New audit input: **URL list seed**, supplied as `.txt` (one URL per line), `.csv` (configurable URL column, automatic header detection), or clipboard paste; files are selected via the native dialog (§12).
 - Ingestion pipeline: parse → per-entry validation (absolute http(s) URLs; malformed entries are rejected into a bounded per-line diagnostic list and never fail the audit) → canonicalization (§5.2, including the rewrite rules of FS-CRAWL-002 §10.4) → seen-set deduplication (§5.2) → enqueue as seeds with discovery source `list`.
@@ -313,6 +320,7 @@ Three related capabilities for migration and targeted auditing: (a) **List Mode*
 - **Migration Matrix surface** (additive to §8.2): verdict columns, hop-chain drill-down, verdict filters, and spreadsheet/CSV export (§8.4). Aggregates: `metric_summaries` key `redirect-matrix` dimensioned by verdict (§8.1).
 
 ### 10.4 On-the-fly URL rewriting (extends §5.2)
+> Capabilities: CAP-A-X06
 
 - Ordered **regex find/replace rules** applied during canonicalization, before seen-set keying. Rule fields: pattern, replacement, scope (`seeds-only` | `all-discovered`), enabled flag.
 - Deterministic evaluation order; time-bounded pattern evaluation (the §7.16 bound philosophy); invalid patterns rejected at configuration time (§4.3); a rewrite may never produce a non-http(s) scheme.

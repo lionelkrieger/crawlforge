@@ -50,6 +50,7 @@ The product consists of two cooperating processes with a strict separation of co
 > **Verbatim source — FS-CRAWL-001 v1.4: 2.3 Startup, shutdown, and recovery — verbatim and unabridged**
 
 ### 2.3 Startup, shutdown, and recovery
+> Capabilities: CAP-A-034
 
 **Startup sequence:**
 

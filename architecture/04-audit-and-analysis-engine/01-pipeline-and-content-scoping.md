@@ -48,6 +48,7 @@ Execution modes: **incremental** (per-URL passes run during the crawl) and **ful
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.3 Element extraction inventory — verbatim and unabridged**
 
 ### 7.3 Element extraction inventory
+> Capabilities: CAP-A-007, CAP-A-009, CAP-F-141
 
 | Element group | Extracted facts |
 |---|---|
@@ -66,6 +67,7 @@ Execution modes: **incremental** (per-URL passes run during the crawl) and **ful
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.4 Rule taxonomy (generic, industry-standard) — verbatim and unabridged**
 
 ### 7.4 Rule taxonomy (generic, industry-standard)
+> Capabilities: CAP-A-007, CAP-B-036, CAP-B-037, CAP-B-038, CAP-B-039, CAP-B-040, CAP-B-041, CAP-B-042, CAP-B-043, CAP-B-044, CAP-B-045, CAP-B-046, CAP-B-047, CAP-B-048, CAP-B-049, CAP-B-050, CAP-B-051, CAP-B-052, CAP-B-053, CAP-B-054, CAP-B-055, CAP-B-056, CAP-B-057, CAP-B-058, CAP-B-059, CAP-B-060, CAP-B-061, CAP-B-062, CAP-B-063, CAP-C-087, CAP-C-090, CAP-C-091, CAP-C-092, CAP-C-095, CAP-C-096, CAP-C-097, CAP-D2-111, CAP-D2-113, CAP-D2-114, CAP-D2-116, CAP-E-122, CAP-E-125, CAP-F-139, CAP-F-148
 
 | Category | Example checks (abstract) |
 |---|---|
@@ -86,6 +88,7 @@ Execution modes: **incremental** (per-URL passes run during the crawl) and **ful
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.5 Finding model — verbatim and unabridged**
 
 ### 7.5 Finding model
+> Capabilities: CAP-B-063, CAP-F-140, CAP-I-192, CAP-I-194, CAP-I-196, CAP-I-X01, CAP-J-204, CAP-J-207, CAP-J-208, CAP-K-X03
 
 Each finding carries:
 
@@ -106,6 +109,7 @@ Each finding carries:
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.6 Rule execution architecture — verbatim and unabridged**
 
 ### 7.6 Rule execution architecture
+> Capabilities: CAP-H-172
 
 - Rules are **declarative conditions** over the element inventory and aggregate views; a generic evaluator applies them. Adding a rule is a data change, not an engine change.
 - Per-URL passes are independent and parallelizable. Aggregation passes run once over indexed views (for example, grouping by title text, or computing reachability from seeds over the link graph).
@@ -115,6 +119,7 @@ Each finding carries:
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.7 Single-page analysis — verbatim and unabridged**
 
 ### 7.7 Single-page analysis
+> Capabilities: CAP-G-X01
 
 - An ad-hoc mode fetches and audits a single URL without creating a project or crawl. The same pipeline applies; results are shown immediately and may optionally be saved as a lightweight local record.
 
@@ -123,6 +128,7 @@ Each finding carries:
 > **Verbatim source — FS-CRAWL-002 v1.1: 4. Content Area Scoping and Boilerplate Stripping — complete section, verbatim and unabridged**
 
 ## 4. Content Area Scoping and Boilerplate Stripping
+> Capabilities: CAP-G-162
 
 **Extends FS-CRAWL-001 §7.2, §7.8, §7.9, §7.12, §7.16.** Additional hooks: §5.1, §7.3, §7.5, §8.2, §9.2, §9.6, §10.2.
 
@@ -148,6 +154,7 @@ FS-CRAWL-001 §7.12 already states: *"All text metrics operate on content-area-s
 - **Validation and bounds:** selector syntax is validated at configuration time; invalid selectors are rejected with a descriptive local error (§4.3 pattern). Selector evaluation is time-bounded per page (the §7.9 bound philosophy); evaluation failures are isolated, logged as rule-level diagnostics, and never fail the audit. A live preview against a sample URL is provided before the crawl starts (mirroring the §7.9 rule-preview pattern).
 
 ### 4.3 Scoped Visible Text Tree
+> Capabilities: CAP-G-163
 
 **Definition:** a derived, scope-filtered visible-text view of the parsed document, produced in the §7.2 pipeline **after DOM parsing (step 2) and before text-sensitive inventory and rule passes (steps 3–4)**.
 

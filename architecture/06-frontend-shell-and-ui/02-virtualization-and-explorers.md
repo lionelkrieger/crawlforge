@@ -21,6 +21,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 8.2 Report surfaces — verbatim and unabridged**
 
 ### 8.2 Report surfaces
+> Capabilities: CAP-C-098, CAP-E-119, CAP-E-130, CAP-E-137, CAP-E-138, CAP-H-168, CAP-H-169, CAP-H-170, CAP-H-178, CAP-H-180, CAP-I-193, CAP-I-199, CAP-I-200, CAP-I-201
 
 | Surface | Content |
 |---|---|
@@ -46,6 +47,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 8.4 Export — verbatim and unabridged**
 
 ### 8.4 Export
+> Capabilities: CAP-G-167, CAP-H-173, CAP-H-174, CAP-H-177
 
 - Local file exports: a multi-sheet spreadsheet workbook (summary, URLs, findings, links, and custom extraction when enabled), CSV per dataset, a self-contained HTML report bundle, and an optional PDF summary. Custom extraction exports use the same dynamic-column expansion as the explorer (section 7.9).
 - Exports may additionally be delivered to optional user-configured destinations (section 8.5).
@@ -55,6 +57,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 8.5 Optional export destinations — verbatim and unabridged**
 
 ### 8.5 Optional export destinations
+> Capabilities: CAP-H-X02
 
 - **Off by default;** no destination exists until the user creates one. Destination classes: a cloud drive/spreadsheet service, an object-storage endpoint, and a notification webhook — all addressed with the **user's own credentials**, never vendor accounts.
 - Each destination stores: a user-chosen name; class; endpoint details; credential payload **encrypted at rest** (section 9.1).
@@ -76,6 +79,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 8.7 Standalone diagnostic and authoring tools — verbatim and unabridged**
 
 ### 8.7 Standalone diagnostic and authoring tools
+> Capabilities: CAP-G-166, CAP-G-X01, CAP-H-170, CAP-H-X03
 
 A set of self-contained tools operates without requiring a full audit; each is reachable from the shell and, where stateless, from the automation interface:
 

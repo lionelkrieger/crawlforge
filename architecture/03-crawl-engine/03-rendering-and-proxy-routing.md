@@ -14,6 +14,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.6 Rendering mode (optional) — verbatim and unabridged**
 
 ### 5.6 Rendering mode (optional)
+> Capabilities: CAP-A-004, CAP-A-015, CAP-A-X04, CAP-C-086
 
 - A headless-browser mode renders JavaScript-heavy pages and captures the post-render DOM, a network-waterfall summary, and console messages (errors and warnings).
 - Optional rendering behaviors: **infinite-scroll** expansion (scroll until content stabilizes or a bounded limit) and a **stealth** profile that reduces automation fingerprints. Device, viewport, and locale emulation are configurable per audit.
@@ -26,6 +27,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.9 Local proxy and traffic routing — verbatim and unabridged**
 
 ### 5.9 Local proxy and traffic routing
+> Capabilities: CAP-A-024, CAP-A-X03
 
 - **Upstream proxy (optional):** crawl requests may be routed through a user-configured upstream proxy — HTTP-connect or SOCKS class — set globally or per audit. Optional proxy credentials are supplied by the user and encrypted at rest (section 9.1). A per-host bypass list exempts chosen hosts from proxying. A per-audit option allows fallback to direct connection when the proxy is unreachable; proxy failures are otherwise classified like any other fetch failure.
 - **Built-in local intercepting proxy (optional):** the backend can run a forward proxy bound to the **loopback interface only**. When enabled, the headless rendering engine routes all page traffic through it, providing:

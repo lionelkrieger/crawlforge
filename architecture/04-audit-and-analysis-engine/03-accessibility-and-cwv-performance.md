@@ -14,6 +14,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.10 Accessibility auditing (optional category) — verbatim and unabridged**
 
 ### 7.10 Accessibility auditing (optional category)
+> Capabilities: CAP-D1-100, CAP-D1-101, CAP-D1-102, CAP-D1-103, CAP-D1-104, CAP-D1-105, CAP-D1-107, CAP-D1-108, CAP-D1-109, CAP-D1-110, CAP-D1-X01
 
 - An automated accessibility rule engine evaluates each page's document tree against a bundled, versioned rule set. When rendering mode is enabled the rendered tree is used; otherwise the parsed tree is used, and checks that require layout or computed style are marked as requiring rendering.
 - Rule families include: image alternative text; ARIA attribute and role validity; form-label association; landmark and heading structure; link purpose; document language; and color-contrast signals.
@@ -25,6 +26,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.11 Rendered performance and Core Web Vitals (optional category) — verbatim and unabridged**
 
 ### 7.11 Rendered performance and Core Web Vitals (optional category)
+> Capabilities: CAP-C-082, CAP-C-084, CAP-C-085, CAP-C-088, CAP-C-089, CAP-C-X02, CAP-C-X03, CAP-C-X04
 
 - Requires rendering mode (section 5.6). For each rendered page the engine captures standard lab metrics — largest contentful paint, cumulative layout shift, total blocking time, first contentful paint, and time to first byte — using their publicly documented definitions.
 - **Performance budgets:** the user defines per-metric thresholds; exceedance emits a finding. Budgets are stored with the audit configuration and applied per audit.

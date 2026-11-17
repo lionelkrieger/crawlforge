@@ -15,6 +15,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 2.4 Persistence foundation — verbatim and unabridged**
 
 ### 2.4 Persistence foundation
+> Capabilities: CAP-L-X02, CAP-L-X03
 
 - **Configurable database providers.** Persistence is abstracted behind a provider contract; the application is not restricted to a single storage engine. Two provider classes are supported:
   - **Default — local file-based embedded database (SQLite-class):** resides in the per-user application data directory; zero configuration, zero network, fully offline.
@@ -33,6 +34,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 8.1 Aggregation into the database — verbatim and unabridged**
 
 ### 8.1 Aggregation into the database
+> Capabilities: CAP-B-048, CAP-E-119, CAP-E-120, CAP-E-121, CAP-E-122, CAP-E-123, CAP-E-124, CAP-E-132, CAP-E-X03, CAP-H-179, CAP-H-180, CAP-I-202, CAP-I-X02
 
 - During and after an audit, the backend computes summary metrics into dedicated aggregate tables on the configured provider (section 2.4):
   - URL counts by status class, content type, depth, and indexability.

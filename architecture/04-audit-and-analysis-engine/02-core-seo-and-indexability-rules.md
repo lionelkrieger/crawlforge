@@ -15,6 +15,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.8 Spelling checks — verbatim and unabridged**
 
 ### 7.8 Spelling checks
+> Capabilities: CAP-F-X02
 
 - Visible page text is checked against bundled per-language dictionaries; the dictionary is chosen from the page's declared language, falling back to the user's preferred checking language.
 - A locally stored **user dictionary** (per language) lets the user add accepted words; user-dictionary entries suppress findings.
@@ -26,6 +27,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.12 Readability, content metrics, and soft-404 detection — verbatim and unabridged**
 
 ### 7.12 Readability, content metrics, and soft-404 detection
+> Capabilities: CAP-B-X03, CAP-F-142, CAP-F-148, CAP-F-X02, CAP-F-X03
 
 - **Readability:** a standard reading-ease score and grade-level estimate (Flesch-class formulas over sentence, word, and syllable counts) are computed from visible text, per page and in aggregate.
 - **Reading time:** estimated from word count and a configurable words-per-minute rate.
@@ -39,6 +41,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.13 Structured data validation — verbatim and unabridged**
 
 ### 7.13 Structured data validation
+> Capabilities: CAP-B-067, CAP-B-068, CAP-B2-069, CAP-B2-070, CAP-B2-072, CAP-B2-073, CAP-B2-074, CAP-B2-075, CAP-B2-076
 
 - Embedded structured data is parsed from JSON-LD and Microdata into a normalized graph resolved against a bundled open vocabulary.
 - Validation covers syntax (well-formedness, context and type presence) and semantics (required and expected properties per type).
@@ -51,6 +54,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.14 Mobile-friendliness (optional category) — verbatim and unabridged**
 
 ### 7.14 Mobile-friendliness (optional category)
+> Capabilities: CAP-C-093, CAP-C-094, CAP-C-X01
 
 - Uses the rendered document and the configured device-emulation profile (section 5.6).
 - Checks: viewport meta presence and validity; tap-target sizing and spacing; font legibility; content-to-viewport fit; and responsive-design signals.
@@ -61,6 +65,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.15 Technology detection (optional category) — verbatim and unabridged**
 
 ### 7.15 Technology detection (optional category)
+> Capabilities: CAP-E-X01
 
 - A bundled, versioned fingerprint catalogue is matched against DOM markers, script/source patterns, response headers, and meta generators to detect platforms, frameworks, analytics, and other technologies, grouped by category with a confidence indicator.
 - Detections are stored per URL and surfaced in a technology explorer and an aggregate "technologies in use" view.
@@ -71,6 +76,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.18 Response-vs-rendered comparison — verbatim and unabridged**
 
 ### 7.18 Response-vs-rendered comparison
+> Capabilities: CAP-A-035
 
 - When rendering mode is enabled, both the raw HTTP response body and the post-render document are retained for each page.
 - The engine compares status, title and metadata, link sets, visible text, structured data, and resource sets between the two.
@@ -87,18 +93,21 @@
 **Extends FS-CRAWL-001 §7.3, §7.4, §8.1, §8.2 and FS-CRAWL-002 §4.** Additional hooks: §5.4, §9.2, §9.3, §10.2, §11.4.
 
 ### 15.1 DOM-zone link classification
+> Capabilities: CAP-E-126, CAP-E-127, CAP-E-X02
 
 - Every extracted `link_edge` (§9.2) is classified by the DOM zone of its source anchor: **`in-content`, `navigation`, `header`, `footer`, `sidebar`, `breadcrumb`**.
 - Classification uses landmark elements/roles and the Content Area Scoping rules (FS-CRAWL-002 §4): anchors inside the scoped content region classify as `in-content`; boilerplate landmarks classify by deterministic precedence — breadcrumb markers > `nav`/`role=navigation` > `header`/`role=banner` > `footer`/`role=contentinfo` > `aside`/`role=complementary` (sidebar) > default `in-content` for body anchors matching no boilerplate landmark.
 - Persisted as the additive column **`link_edges.dom_zone`** with zone evidence; classification runs during link inventory and is re-derived from stored bodies on re-audit (§9.6).
 
 ### 15.2 Weighted link equity (extends §8.1)
+> Capabilities: CAP-E-132
 
 - **Zone weights** are configurable per audit; built-in defaults: `in-content` **1.0**, `breadcrumb` **0.6**, `navigation` **0.3**, `sidebar` **0.3**, `header` **0.2**, `footer` **0.1** — editorial in-content links transfer significantly more weight than boilerplate.
 - The internal PageRank / link-equity computation (§8.1) runs in a **weighted variant**: each edge contributes its zone weight (standard iterative computation with configurable damping; mathematical principle specified, implementation choice). The unweighted distribution is retained for comparability.
 - Outputs: per-URL weighted equity score, percentile, and concentration, persisted under `metric_summaries` key `link-equity-weighted`; graph node sizing offers a weighted/unweighted toggle (FS-CRAWL-002 §8.5).
 
 ### 15.3 Pixel-width SERP and social card measurement (extends §7.3, §7.4)
+> Capabilities: CAP-B-X04
 
 - **Measurement:** rendered pixel widths of `<title>` and `<meta name="description">` are computed from **bundled per-locale font-metric tables** (standard search-result font metrics; packaged offline assets, no web-font fetch). Width = summed glyph advances with the search engine's ellipsis behavior.
 - **Configurable budgets** (defaults are approximations of standard search-result rendering): title desktop **~580 px**; title mobile **~920 px** with two-line wrap; description desktop **~920 px** two-line; description mobile **~920 px** two-line.
@@ -107,6 +116,7 @@
 - Measurements persist as the `url_elements` group `serp_metrics`.
 
 ### 15.4 HTTP header vs HTML directive equivalency (extends §7.3, §7.4)
+> Capabilities: CAP-B-038, CAP-B-X02
 
 Reconcile response-header directives (recorded per §5.4) against their HTML counterparts in the inventory (§7.3):
 

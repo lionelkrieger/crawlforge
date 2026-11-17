@@ -54,6 +54,7 @@ There is no telemetry, no remote crash reporting, no update checking, no account
 > **Verbatim source — FS-CRAWL-001 v1.4: 9.1 Conventions — verbatim and unabridged**
 
 ### 9.1 Conventions
+> Capabilities: CAP-L-X01
 
 - One logical installation database, served by the configured provider (section 2.4); all crawl data is project-scoped.
 - Surrogate integer keys; UTC timestamps; JSON text columns for flexible payloads.

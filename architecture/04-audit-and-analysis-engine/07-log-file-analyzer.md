@@ -14,6 +14,7 @@
 > **Verbatim source — FS-CRAWL-002 v1.1: 11. Local Server Log File Analyzer & True Orphan Discovery — complete section, verbatim and unabridged**
 
 ## 11. Local Server Log File Analyzer & True Orphan Discovery
+> Capabilities: CAP-H-X05
 
 **Extends FS-CRAWL-001 §7.4, §8.1, §8.2, §9.2.** Additional hooks: §2.6, §2.7, §5.2, §9.5, §10.2, §10.3, §11.4, §12, §13.
 

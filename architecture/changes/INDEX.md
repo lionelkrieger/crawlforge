@@ -5,3 +5,4 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 | CR | Title | Type | Status | Decisions | Capabilities | Files | Approved |
 |---|---|---|---|---|---|---|---|
 | CR-001 | Promote the architecture to living master (v2.0) | clarification | applied | loop adoption | none | README, domain source tables, baseline/, changes/ | 2026-11-17 |
+| CR-002 | Capability traceability tags and index | traceability | applied | D-015 | all 275 | 22 domain files, TRACEABILITY.md | 2026-11-17 |

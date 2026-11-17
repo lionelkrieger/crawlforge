@@ -15,6 +15,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 10. API and Real-Time Contract — section heading & introduction (verbatim); this section's subsections are distributed across the sibling files listed in the README traceability matrix**
 
 ## 10. API and Real-Time Contract
+> Capabilities: CAP-H-184
 
 ---
 
@@ -32,6 +33,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 10.2 REST mapping — verbatim and unabridged**
 
 ### 10.2 REST mapping
+> Capabilities: CAP-H-190
 
 | Operation | Method & path | Input fields | Output fields |
 |---|---|---|---|

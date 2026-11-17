@@ -15,6 +15,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 9.5 Retention — verbatim and unabridged**
 
 ### 9.5 Retention
+> Capabilities: CAP-H-179, CAP-K-X05
 
 - User-configurable retention per project (keep the last N audits, or an age limit). Pruning removes dependent rows transactionally, including content artifacts, embeddings, extracted content, schedule run history, and automation action-log entries; orphaned content-store files are reclaimed. Periodic integrity checks and compaction keep the database healthy on either provider. Diagnostic artifacts (logs, minidumps) have their own bounded local retention (section 10.5).
 

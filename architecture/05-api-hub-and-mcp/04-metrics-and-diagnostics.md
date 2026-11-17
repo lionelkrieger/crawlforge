@@ -15,6 +15,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 10.5 Local metrics and diagnostics — verbatim and unabridged**
 
 ### 10.5 Local metrics and diagnostics
+> Capabilities: CAP-A-X06, CAP-L-X01, CAP-L-X05
 
 - **Standardized local metrics:** the metrics endpoint (section 10.2) serves a **pull-only, loopback-only** exposition in a standardized text format (Prometheus-class). There is no push gateway, no remote export, and no scraping by any vendor service.
 - Metric families (abstract): crawl counters and throughput; frontier depth; audit phase durations; findings emitted by severity; database read/write latency; content-store size; hub connection count; runtime memory and garbage-collection statistics.

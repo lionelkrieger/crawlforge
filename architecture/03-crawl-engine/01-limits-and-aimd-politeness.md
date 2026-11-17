@@ -24,6 +24,7 @@
 - The built-in profile is the maximum configuration: **every ceiling defaults to Unlimited**.
 
 ### 4.2 Configuration parameters
+> Capabilities: CAP-A-016, CAP-A-017, CAP-A-018, CAP-A-019, CAP-A-020
 
 | Parameter | Semantics | Built-in default | Override rules |
 |---|---|---|---|
@@ -46,6 +47,7 @@
 - No code path may consult any remote service or persisted entitlement to alter these values.
 
 ### 4.4 Politeness (independent of limits)
+> Capabilities: CAP-A-005, CAP-A-006
 
 - The robots exclusion protocol is fetched, cached per host, and obeyed (allow/disallow rules; crawl-delay directives when present). Sitemaps declared there are discovered automatically.
 - When a throughput ceiling is set, it is enforced by token-bucket-style request spacing; when unset, per-host concurrency is still bounded adaptively to avoid overloading a single origin.
@@ -59,6 +61,7 @@
 > **Verbatim source — FS-CRAWL-002 v1.1: 3. AIMD Auto-Adaptive Politeness Controller — complete section, verbatim and unabridged**
 
 ## 3. AIMD Auto-Adaptive Politeness Controller
+> Capabilities: CAP-A-X01
 
 **Extends FS-CRAWL-001 §4.2, §4.4, §5.3.** Additional hooks: §4.1, §4.3, §5.1, §5.4, §5.7, §9.2, §10.2, §10.3, §10.5, §11.4.
 

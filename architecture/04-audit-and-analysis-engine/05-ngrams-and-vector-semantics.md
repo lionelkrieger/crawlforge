@@ -14,6 +14,7 @@
 > **Verbatim source — FS-CRAWL-002 v1.1: 5. Site-Wide N-Gram and Topical Density Analyzer — complete section, verbatim and unabridged**
 
 ## 5. Site-Wide N-Gram and Topical Density Analyzer
+> Capabilities: CAP-F-143, CAP-F-144
 
 **Extends FS-CRAWL-001 §7.2, §8.2, §9.2, §10.2, §11.4.** Additional hooks: §7.3, §7.4, §7.5, §8.1, §8.4, §9.6, §13.
 
@@ -59,6 +60,7 @@ Four distinct zones per URL, counted separately:
 - **Primary terms:** per URL, the highest-density 2-gram and 3-gram in the `title` zone and in H1 text (from `headings`), using configurable zone weights (defaults: title 2.0, H1 1.5).
 
 ### 5.5 Cannibalization and topical-gap detection
+> Capabilities: CAP-F-149, CAP-F-X01
 
 - **Keyword cannibalization:** cluster **indexable** URLs (indexability flags, §9.2 `url_records`; §7.4) whose primary 2-gram or 3-gram in Titles/H1s is identical after normalization. A cluster of ≥ 2 URLs emits a finding:
   - Rule key `content.keyword-cannibalization`, category *Content quality* (§7.4), severity **Warning**.
@@ -147,6 +149,7 @@ FS-CRAWL-001 §2.4 mandates vector-similarity search as a required database capa
 - Similarity metric: **cosine similarity**, executed through the database provider's vector-similarity capability (§2.4) on both providers; nearest-neighbour queries are indexed and bounded (top-K).
 
 ### 12.5 Semantic audit passes
+> Capabilities: CAP-E-129, CAP-F-146
 
 | Pass | Definition | Deliverable |
 |---|---|---|

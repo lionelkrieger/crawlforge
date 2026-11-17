@@ -14,6 +14,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.9 Custom Content Extraction — verbatim and unabridged**
 
 ### 7.9 Custom Content Extraction
+> Capabilities: CAP-G-153, CAP-G-154, CAP-G-155, CAP-G-156, CAP-G-157, CAP-G-158, CAP-G-159
 
 - **Purpose:** beyond the fixed built-in inventory (section 7.3), the user may define **custom extraction rules** that pull arbitrary content from crawled pages into named, typed datasets for reporting and export.
 - **Configuration:** custom extraction is an optional, off-by-default part of the audit configuration (section 5.1). It consists of an ordered list of rules; each rule defines:
@@ -38,6 +39,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.16 Custom content search — verbatim and unabridged**
 
 ### 7.16 Custom content search
+> Capabilities: CAP-G-160, CAP-G-161
 
 - The user defines search items combining plain terms and/or regular expressions, with optional **negative terms** that must be absent for a match.
 - Per-item URL-path include/exclude directives scope where the item runs; each item targets visible text (content-area-scoped when configured) and/or raw markup.
@@ -50,6 +52,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.17 Custom JavaScript snippets (optional) — verbatim and unabridged**
 
 ### 7.17 Custom JavaScript snippets (optional)
+> Capabilities: CAP-A-X20
 
 - Requires rendering mode. The user defines scripts executed in the rendered page, each with an execution timing, a timeout, URL-path matching, and declared result columns.
 - Scripts run inside an isolated wrapper exposing a minimal host API (submit a data value, report an error, load an external script); return values are captured as typed results.

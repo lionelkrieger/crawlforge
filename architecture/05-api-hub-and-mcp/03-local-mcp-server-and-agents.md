@@ -15,6 +15,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 11. Local Automation Interface — Local MCP Server (Optional) — complete section, verbatim and unabridged**
 
 ## 11. Local Automation Interface — Local MCP Server (Optional)
+> Capabilities: CAP-H-185
 
 ### 11.1 Mandate and boundary
 
@@ -52,6 +53,7 @@ Tools are the protocol's invocable actions. Names below are new design artifacts
 - Every invocation is recorded in the local automation action log (section 9.2).
 
 ### 11.4 Resources and prompts — data consumption
+> Capabilities: CAP-H-186, CAP-J-203, CAP-J-204, CAP-J-208, CAP-J-210, CAP-J-212
 
 **Resources** are read-only, addressable data views. Each is identified by a structured address combining resource kind, audit (or schedule) reference, and optional filters; the address templates are new design artifacts.
 
@@ -74,6 +76,7 @@ Tools are the protocol's invocable actions. Names below are new design artifacts
 | audit-delta-briefing | Two audit references | New/resolved findings and metric deltas, structured for change reporting |
 
 ### 11.5 Delegated AI control flows
+> Capabilities: CAP-H-X04, CAP-J-209
 
 The interface shall support the following architectural pattern for an external **local** agent negotiating multi-step actions:
 

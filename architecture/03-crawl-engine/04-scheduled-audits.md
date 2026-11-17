@@ -14,6 +14,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 6. Scheduled Audits — complete section, verbatim and unabridged**
 
 ## 6. Scheduled Audits
+> Capabilities: CAP-H-188
 
 ### 6.1 Schedule model
 
