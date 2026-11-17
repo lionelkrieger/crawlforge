@@ -119,8 +119,8 @@ untagged:
     status: spec gap, scope decision pending
     ref: CR-017
   CAP-G-165:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: spec gap
+    ref: CR-011
   CAP-H-171:
     status: spec gap, scope decision pending
     ref: CR-017

@@ -267,7 +267,7 @@ Tagged: 215 · Untagged (accounted for): 60 · Total: 275
 | CAP-F-151 | Entity extraction | spec gap, scope decision pending | CR-017 |
 | CAP-F-152 | Content-template comparison | spec gap, scope decision pending | CR-017 |
 | CAP-G-164 | Full page text export (plain text) | spec gap, scope decision pending | CR-017 |
-| CAP-G-165 | Full page content export (Markdown) | spec gap, scope decision pending | CR-017 |
+| CAP-G-165 | Full page content export (Markdown) | spec gap | CR-011 |
 | CAP-H-171 | Segmentation | spec gap, scope decision pending | CR-017 |
 | CAP-H-175 | JSON export | spec gap | CR-011 |
 | CAP-H-176 | XML export | spec gap, scope decision pending | CR-017 |
