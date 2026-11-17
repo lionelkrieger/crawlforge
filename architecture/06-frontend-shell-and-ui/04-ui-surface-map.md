@@ -43,6 +43,8 @@ Every screen and panel of the product, with its navigation path. A surface not l
 
 The configuration editor (UI-04) has these tabs: Scope; Crawl as and capture; Limits; Rules; Directives; Resources and external scope; Authentication and cookies; Click discovery and site types; Consent states; Analysis categories; Thresholds; Extraction and search; Advanced.
 
+**Undelivered features (added by CR-022, D-019):** tabs and controls whose engine is not yet delivered render **disabled**, with a short note "Available in a later build" naming the feature. They are never hidden and never functional stubs. A disabled control does not satisfy a UI binding; the binding is met only when the control works end to end.
+
 ### 2. Capability bindings
 > Decisions: D-018 · Change records: CR-018
 

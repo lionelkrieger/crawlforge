@@ -25,3 +25,4 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 | CR-019 | Criterion #40 composite scrolling gate | amendment | applied | D-019 | none (acceptance criterion) | 07/01 #40; 06/01 §7.5; 06/02 §7.1/§8.3 table | 2026-11-18 |
 | CR-020 | Finding business importance and remediation effort as typed fields | addition | applied | D-019 | CAP-I-194, CAP-I-196 | 04/01 §7.5 | 2026-11-18 |
 | CR-021 | Lighthouse results via PageSpeed Insights only | clarification | applied | D-019 | CAP-C-081 | 08/01 §3; register title; UI map title | 2026-11-18 |
+| CR-022 | Configuration-editor tabs for undelivered features render disabled | clarification | applied | D-019 | CAP-K-X01 | 06/04 §1 | 2026-11-18 |
