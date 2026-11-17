@@ -112,7 +112,7 @@ Tagged: 251 · Untagged (accounted for): 24 · Total: 275
 | CAP-B2-075 | Identify missing required properties | `04-audit-and-analysis-engine/02-core-seo-and-indexability-rules.md` · 7.13 Structured data validation |
 | CAP-B2-076 | Identify missing recommended properties | `04-audit-and-analysis-engine/02-core-seo-and-indexability-rules.md` · 7.13 Structured data validation |
 | CAP-B2-080 | Group errors by template and entity type | `04-audit-and-analysis-engine/01-pipeline-and-content-scoping.md` · 7.20 Template identification |
-| CAP-C-081 | Lighthouse integration | `08-integrations/01-google-integrations.md` · 3. Data retrieved and toggles |
+| CAP-C-081 | Lighthouse results via PageSpeed Insights | `08-integrations/01-google-integrations.md` · 3. Data retrieved and toggles |
 | CAP-C-082 | Core Web Vitals: LCP | `04-audit-and-analysis-engine/03-accessibility-and-cwv-performance.md` · 7.11 Rendered performance and Core Web Vitals (optional category) |
 | CAP-C-083 | Core Web Vitals: INP | `08-integrations/01-google-integrations.md` · 3. Data retrieved and toggles |
 | CAP-C-084 | Core Web Vitals: CLS | `04-audit-and-analysis-engine/03-accessibility-and-cwv-performance.md` · 7.11 Rendered performance and Core Web Vitals (optional category) |
