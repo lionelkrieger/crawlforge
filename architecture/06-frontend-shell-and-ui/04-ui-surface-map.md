@@ -166,7 +166,7 @@ The configuration editor (UI-04) has these tabs: Scope; Crawl as and capture; Li
 | CAP-B2-075 | Identify missing required properties | UI-04 Analysis categories | UI-10; UI-19 structured-data checker | UI-16 Structured data |
 | CAP-B2-076 | Identify missing recommended properties | UI-04 Analysis categories | UI-10; UI-19 structured-data checker | UI-16 Structured data |
 | CAP-B2-080 | Group errors by template and entity type | - | UI-10 | UI-16 Templates; UI-12 group by template |
-| CAP-C-081 | Lighthouse integration | UI-05 toggles | UI-05 sync; UI-13 URL Inspection for selected URLs | UI-16 Search performance |
+| CAP-C-081 | Lighthouse results via PageSpeed Insights | UI-05 toggles | UI-05 sync; UI-13 URL Inspection for selected URLs | UI-16 Search performance |
 | CAP-C-082 | Core Web Vitals: LCP | UI-04 Analysis categories (performance budgets) | UI-10 | UI-16 Performance |
 | CAP-C-083 | Core Web Vitals: INP | UI-05 toggles | UI-05 sync; UI-13 URL Inspection for selected URLs | UI-16 Search performance |
 | CAP-C-084 | Core Web Vitals: CLS | UI-04 Analysis categories (performance budgets) | UI-10 | UI-16 Performance |

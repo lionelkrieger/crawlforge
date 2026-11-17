@@ -25,7 +25,7 @@
 - Each project binds at most one Search Console property and one GA4 property. Binding is explicit; nothing is inferred from crawled sites.
 
 ### 3. Data retrieved and toggles
-> Capabilities: CAP-H-181, CAP-H-182, CAP-H-183, CAP-C-081, CAP-C-083 · Decisions: D-005, D-012 · Change records: CR-013
+> Capabilities: CAP-H-181, CAP-H-182, CAP-H-183, CAP-C-081, CAP-C-083 · Decisions: D-005, D-012, D-019 · Change records: CR-013, CR-021
 
 Every data type below has its own per-project toggle; disabled types are never requested.
 
@@ -39,6 +39,7 @@ Every data type below has its own per-project toggle; disabled types are never r
 | PageSpeed Insights | Lighthouse lab results and real-user field data (including INP) for **user-selected URLs plus a sample of one URL per URL pattern** | On |
 
 - Default date range: **last 28 days**, compared with the previous 28 days; configurable per project.
+- **Lighthouse:** Lighthouse results are obtained only through PageSpeed Insights. No local Lighthouse runner is bundled; local lab metrics come from the rendering lab probe (§7.11). **[Added by CR-021, D-019]**
 
 ### 4. Sync
 > Capabilities: CAP-H-181, CAP-H-182, CAP-H-183 · Decisions: D-005, D-012 · Change records: CR-013

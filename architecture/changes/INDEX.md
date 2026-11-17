@@ -24,3 +24,4 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 | CR-018 | UI surface map and capability UI bindings | addition | applied | D-018 | all in scope | 06/04 (new); 07/03 §2; checker | 2026-11-17 |
 | CR-019 | Criterion #40 composite scrolling gate | amendment | applied | D-019 | none (acceptance criterion) | 07/01 #40; 06/01 §7.5; 06/02 §7.1/§8.3 table | 2026-11-18 |
 | CR-020 | Finding business importance and remediation effort as typed fields | addition | applied | D-019 | CAP-I-194, CAP-I-196 | 04/01 §7.5 | 2026-11-18 |
+| CR-021 | Lighthouse results via PageSpeed Insights only | clarification | applied | D-019 | CAP-C-081 | 08/01 §3; register title; UI map title | 2026-11-18 |

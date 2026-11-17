@@ -1055,7 +1055,7 @@ capabilities:
 - id: CAP-C-081
   section: C
   section_title: Performance analysis
-  title: Lighthouse integration
+  title: Lighthouse results via PageSpeed Insights
   origin: checklist
   checklist_row: 81
   description: null
