@@ -14,6 +14,7 @@ CrawlForge is an offline-first desktop website crawler and SEO auditor: .NET 10 
 | Build plan | `buildplan/` (v2.0; v1.1 is history in `buildplan/v1.1/`) | Orchestrator writes status fields; builders do not. |
 | Acceptance | `architecture/07-quality-and-verification/` and `app/tests/fixture-site/` | Done = a full audit through the UI or MCP against the fixture site produces the expected results. Unit tests alone never complete a workpiece. |
 | Measured state | `audit-work/reports/runtime-probe-2/` | Strongest evidence of what the app actually does. Audit documents are leads, not proof. |
+| Code map | `app/CODEMAP.md` | Where code is registered, wired and mounted: composition root, execution path, mounting points, "how to add" checklists, known unwired code. |
 
 If the spec is wrong, ambiguous or contradictory: **stop that item and report it** (loop section 8). Never change the spec or the plan to match what you built.
 
