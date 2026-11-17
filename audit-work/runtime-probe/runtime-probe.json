@@ -1,0 +1,1311 @@
+{
+  "environment": {
+    "probe_date": "2026-11-17",
+    "git_head": "18c53da",
+    "os": "Windows 11 Pro 10.0.26300",
+    "node": "v26.5.1",
+    "dotnet_sdk": "11.0.100-rc.3.26522.148 (app targets net10.0, RollForward=LatestMajor, runs on Microsoft.AspNetCore.App 11.0.0-rc.3)",
+    "electron": "app/packaging/vendor/electron/electron.exe",
+    "build_result": "launch-crawlforge.ps1: backend, frontend bundle and Electron shell all reported \"up to date\"; no rebuild; exit 0; main window \"CrawlForge\" loaded (route=hub).",
+    "debug_launch": "Copy of launch script at audit-work/runtime-probe/tools/launch-debug.ps1 starting electron.exe with --remote-debugging-port=9222; driven via playwright-core 1.49.1 connectOverCDP.",
+    "ports": {
+      "fixture": 47311,
+      "cdp": 9222,
+      "backend_rest": 61219,
+      "mcp_loopback": 61222,
+      "note": "backend port is dynamic (Port=0), read from %APPDATA%/CrawlForge/loopback-handshake.json; REST auth header X-CrawlForge-Session"
+    },
+    "data_directory": "%APPDATA%/CrawlForge (pre-existing data: project \"Airpower\" from an earlier session)",
+    "logs": [
+      "logs/launch-original.log",
+      "logs/launch-debug.log",
+      "logs/launch-transcript-debug-run.log",
+      "logs/electron-stdout-trimmed.log",
+      "logs/electron-stderr.log",
+      "logs/backend-structured-errors-warnings.jsonl",
+      "logs/backend-structured-nonhttp.jsonl"
+    ],
+    "shell_warning": "electron-stderr: \"[crawlforge] Main window hydration timed out; plugin scan deferred.\""
+  },
+  "surfaces": {
+    "UI-01": {
+      "status": "reachable_functional",
+      "evidence": "Main hub lists projects (2) with counters; New project dialog (name, target URL, description) created project 2 via POST /api/projects + POST /api/projects/2/configurations; per-row Start audit issued POST /api/audits {configurationId:\"2\"}. Hub \"Audits\" panel is stale until \"Refresh local aggregates\".",
+      "screenshot": "screenshots/UI-01-main-hub.png",
+      "more_screenshots": [
+        "screenshots/UI-01-new-project-dialog.png",
+        "screenshots/UI-01-new-project-filled.png",
+        "screenshots/UI-01-after-create.png"
+      ]
+    },
+    "UI-02": {
+      "status": "not_reachable",
+      "evidence": "Clicking, double-clicking the project row and picking the project from the command palette all leave the Main hub unchanged; no API call, no overview.",
+      "screenshot": "screenshots/UI-02-row-click.png"
+    },
+    "UI-03": {
+      "status": "not_reachable",
+      "evidence": "No Configurations entry anywhere (rail, palette, hub). Bundle contains no \"Configurations\" string.",
+      "screenshot": null
+    },
+    "UI-04": {
+      "status": "not_reachable",
+      "evidence": "No configuration editor. 0 of 13 tabs present. Of the 18 audit inputs in 03-crawl-engine/02 §5.1 only Seed URL is settable in the UI (New project \"Target URL\"); robots toggle is hard-coded true by the dialog. Capture mode, limits, scope, include/exclude, headers/cookies etc. only via REST.",
+      "screenshot": null,
+      "tabs_present": [],
+      "tabs_missing": [
+        "Scope",
+        "Crawl as and capture",
+        "Limits",
+        "Rules",
+        "Directives",
+        "Resources and external scope",
+        "Authentication and cookies",
+        "Click discovery and site types",
+        "Consent states",
+        "Analysis categories",
+        "Thresholds",
+        "Extraction and search",
+        "Advanced"
+      ],
+      "section_5_1_inputs_in_ui": [
+        "Seed URL(s) (New project dialog only, at creation)"
+      ]
+    },
+    "UI-05": {
+      "status": "not_reachable",
+      "evidence": "No Integrations entry; no integration controllers in backend route list.",
+      "screenshot": null
+    },
+    "UI-06": {
+      "status": "not_reachable",
+      "evidence": "No Segments entry or segment picker.",
+      "screenshot": null
+    },
+    "UI-07": {
+      "status": "not_reachable",
+      "evidence": "No per-project Audits/retention view; the global Audits rail view (UI-10 list) is the only audit list.",
+      "screenshot": null
+    },
+    "UI-08": {
+      "status": "not_reachable",
+      "evidence": "No Clients entry.",
+      "screenshot": null
+    },
+    "UI-09": {
+      "status": "not_reachable",
+      "evidence": "No Schedules entry (backend has SchedulesController).",
+      "screenshot": null
+    },
+    "UI-10": {
+      "status": "reachable_functional",
+      "evidence": "Reached via hub Start audit (auto-opens) and Audits › Open report. Shows state, phase, fetched/queued counters, Pause/Cancel, host-throttle panel, live activity feed. DEFECTS: (1) renderer crashes to a blank window (uncaught TypeError reading \"toFixed\" of undefined in Host throttle table, e.ttfbEwmaMs) as soon as host-throttle data arrives for a running audit — reproduced twice, recovered only by reload; (2) failed audits stay shown as RUNNING with no error until manual refresh; (3) audits started via REST/MCP do not appear until manual refresh; (4) no error reason surfaced for failed audits.",
+      "screenshot": "screenshots/UI-10-run-view-audit3.png",
+      "more_screenshots": [
+        "screenshots/UI-10-after-start.png",
+        "screenshots/UI-10-audits-list.png",
+        "screenshots/UI-10-run-view-audit5-js.png",
+        "screenshots/UI-10-renderer-crash-blank.png",
+        "screenshots/UI-10-renderer-crash-blank-2.png"
+      ]
+    },
+    "UI-11": {
+      "status": "reachable_but_placeholder",
+      "evidence": "Report rail / Open report shows run telemetry plus a static \"REPORT SURFACES … mount into this workspace from the report workpieces\" paragraph; no dashboard.",
+      "screenshot": "screenshots/UI-11-report-placeholder.png"
+    },
+    "UI-12": {
+      "status": "not_reachable",
+      "evidence": "No issue explorer navigation in the report area.",
+      "screenshot": null
+    },
+    "UI-13": {
+      "status": "not_reachable",
+      "evidence": "No URL explorer / URL detail navigation; data exists in REST (/api/audits/{id}/urls, /urls/{id}).",
+      "screenshot": null
+    },
+    "UI-14": {
+      "status": "not_reachable",
+      "evidence": "No Visualizations entry; REST /graph and /charts exist.",
+      "screenshot": null
+    },
+    "UI-15": {
+      "status": "not_reachable",
+      "evidence": "No Compare entry; REST /api/audits/compare exists.",
+      "screenshot": null
+    },
+    "UI-16": {
+      "status": "not_reachable",
+      "evidence": "None of the 19 specialist surfaces is navigable.",
+      "screenshot": null
+    },
+    "UI-17": {
+      "status": "not_reachable",
+      "evidence": "No Logs entry; LogsController exists in backend.",
+      "screenshot": null
+    },
+    "UI-18": {
+      "status": "reachable_functional",
+      "evidence": "Reached via Tools rail › Single-Page Analyzer (not a hub toolbar \"Analyze a page\"). Analysing /pages/thin.html returned 7 findings and 10 elements via POST /api/analysis/single-page; no thin-content finding for a 6-word page; Render toggle does not change analysis (color-contrast still \"rendering disabled\").",
+      "screenshot": "screenshots/UI-18-single-page-thin.png"
+    },
+    "UI-19": {
+      "status": "reachable_functional",
+      "evidence": "Tools rail lists 12 tools (SERP preview, Render Tester + Picker, Robots tester, Sitemap generator, Content scope preview, Rewrite & host mapping, llms.txt, URL Check, Structured data checker, Query builder, Export destinations, Single-page analyzer). Render Tester rendered /pages/js-content.html with Chromium (script-injected text visible, console 404 captured). URL Check on /redirect/chain-1 reports a single hop with status 200 instead of 301>302>301.",
+      "screenshot": "screenshots/UI-19-render-tester-run.png",
+      "more_screenshots": [
+        "screenshots/UI-19-render-tester-run.png",
+        "screenshots/UI-19-tool-Content_Scope_Preview.png",
+        "screenshots/UI-19-tool-Export_Destinations.png",
+        "screenshots/UI-19-tool-llms_txt_Generate_Validate.png",
+        "screenshots/UI-19-tool-Query_Builder.png",
+        "screenshots/UI-19-tool-Render_Tester_Picker.png",
+        "screenshots/UI-19-tool-Rewrite_Host_Mapping.png",
+        "screenshots/UI-19-tool-Robots_txt_Tester.png",
+        "screenshots/UI-19-tool-SERP_Social_Preview.png",
+        "screenshots/UI-19-tool-Single_Page_Analyzer.png",
+        "screenshots/UI-19-tool-Sitemap_Generator.png",
+        "screenshots/UI-19-tool-Structured_Data_Checker.png",
+        "screenshots/UI-19-tool-URL_Check.png",
+        "screenshots/UI-19-url-check-run.png"
+      ]
+    },
+    "UI-20": {
+      "status": "not_reachable",
+      "evidence": "No Export action in any report surface. REST POST /api/exports produced valid CSV (zip of urls.csv, findings.csv) and XLSX for audit 3.",
+      "screenshot": null
+    },
+    "UI-21": {
+      "status": "reachable_functional",
+      "evidence": "Settings rail: Appearance, UI language, Status-bar advisories, Database (SQLite, Test connection), MCP (enable, transport, token), Embeddings (ONNX, Test provider), Proxy (read-only \"Disabled\"), Diagnostics (artifact list, Refresh, Purge). Missing sub-sections: export destinations (lives in Tools), browser, user dictionary, integrations credentials, configuration templates, MCP action log, release check, Plugins.",
+      "screenshot": "screenshots/UI-21-settings.png"
+    },
+    "UI-22": {
+      "status": "not_reachable",
+      "evidence": "No Plugins entry in Settings or elsewhere.",
+      "screenshot": null
+    },
+    "UI-23": {
+      "status": "reachable_functional",
+      "evidence": "Status bar always visible: working set, managed heap, GC counts, WAL size, JS heap, heartbeat time, Compact action.",
+      "screenshot": "screenshots/UI-23-status-bar.png"
+    },
+    "UI-24": {
+      "status": "not_exercised",
+      "evidence": "Shown only after repeated backend failures; not induced during this probe (would have disrupted measurement). Recovery code exists in electron/src/recovery.",
+      "screenshot": null
+    }
+  },
+  "runs": {
+    "http": {
+      "entry_point": "UI (hub Start audit) and MCP start-audit, configuration created by the UI New project dialog (config 2)",
+      "audit_ids": [
+        1,
+        4
+      ],
+      "state_transitions": [
+        "running",
+        "failed (finalizing) after 0.038 s"
+      ],
+      "completed": false,
+      "url_count": 0,
+      "duration_s": 0.038,
+      "failure": "ArgumentOutOfRangeException: The initial rate must be a positive finite number. (Parameter InitialRate) Actual value was 0.",
+      "nonGet": [],
+      "tagHits": []
+    },
+    "js": {
+      "entry_point": "REST: POST /api/projects/2/configurations with rendering.enabled=true (config 3; stored rendering_mode=1/auto), POST /api/audits",
+      "how_enabled": "Only REST (rendering.enabled) — no UI control exists",
+      "audit_ids": [
+        2
+      ],
+      "state_transitions": [
+        "running",
+        "failed after ~3 ms"
+      ],
+      "completed": false,
+      "url_count": 0,
+      "failure": "same InitialRate=0 exception",
+      "nonGet": [],
+      "tagHits": []
+    },
+    "http_diagnostic": {
+      "entry_point": "REST start (POST /api/audits) of config 4. NOT a normal entry point: politeness_json of this probe-only config was rewritten directly in SQLite to the flat AimdSettings shape {\"InitialRate\":10.0,...} the engine deserialises; maxDurationSeconds=480 set via REST",
+      "audit_id": 3,
+      "state_transitions": [
+        {
+          "t": 0,
+          "state": "running",
+          "phase": "crawling"
+        },
+        {
+          "t": 477.3,
+          "state": "running",
+          "phase": "analyzing"
+        },
+        {
+          "t": 501.3,
+          "state": "completed",
+          "phase": "finalizing"
+        }
+      ],
+      "completed": true,
+      "completed_by": "maxDurationSeconds=480 cap (crawler traps never detected)",
+      "url_count": 1061,
+      "fetched": 1058,
+      "links": 3391,
+      "findings": 7647,
+      "duration_s": 503.5,
+      "trap_url_counts": {
+        "/trap/calendar": 886,
+        "/trap/filter": 144
+      },
+      "throttle": {
+        "throttledHostCount": 1,
+        "meanEffectiveRate": 5.14,
+        "adjustmentCount": 205
+      },
+      "nonGet": [],
+      "tagHits": [],
+      "data": "logs/audit-3-data.json.gz"
+    },
+    "js_diagnostic": {
+      "entry_point": "MCP start-audit (projectId 2, configurationId 5) via the stdio adapter; config 5 = rendering.enabled=true via REST + same DB politeness patch + maxDurationSeconds=480",
+      "audit_id": 5,
+      "state_transitions": [
+        "running/crawling",
+        "completed/finalizing at 511.5 s"
+      ],
+      "completed": true,
+      "completed_by": "maxDurationSeconds cap",
+      "url_count": 1548,
+      "fetched": 1545,
+      "links": 4365,
+      "findings": 11056,
+      "duration_s": 509.7,
+      "trap_url_counts": {
+        "/trap/calendar": 1373,
+        "/trap/filter": 144
+      },
+      "rendering_evidence": "snapshot renderingMode=auto, yet every page reports \"no rendered tree is available for this page\"; js-content.html wordCount 2; findings by rule identical to http_diagnostic",
+      "nonGet": [],
+      "tagHits": [],
+      "data": "logs/audit-5-data.json.gz"
+    }
+  },
+  "traps": {
+    "redirect-chain": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "partial",
+        "evidence": "URL row /redirect/chain-1 status 200, redirectChain [] in URL detail, no chain finding; only the final target is kept (CSV \"Redirect Target\" = /pages/redirect-target.html). Hops 301>302>301 not recorded."
+      },
+      "js_diagnostic": {
+        "result": "partial",
+        "evidence": "URL row /redirect/chain-1 status 200, redirectChain [] in URL detail, no chain finding; only the final target is kept (CSV \"Redirect Target\" = /pages/redirect-target.html). Hops 301>302>301 not recorded. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "redirect-loop": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "partial",
+        "evidence": "URL /redirect/loop-a recorded as FetchError (status 0, statusClass 5xx); crawl did not hang; no loop finding."
+      },
+      "js_diagnostic": {
+        "result": "partial",
+        "evidence": "URL /redirect/loop-a recorded as FetchError (status 0, statusClass 5xx); crawl did not hang; no loop finding. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "noindex": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "pass",
+        "evidence": "indexability.noindex (notice) on /pages/noindex.html. Note: URL row still has indexable=true."
+      },
+      "js_diagnostic": {
+        "result": "pass",
+        "evidence": "indexability.noindex (notice) on /pages/noindex.html. Note: URL row still has indexable=true. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "robots-blocked": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "partial",
+        "evidence": "Not fetched: CSV export shows Status NotCrawled, Robots State Disallowed. But REST URL row has blockReason null, status 0/1xx, and no robots finding."
+      },
+      "js_diagnostic": {
+        "result": "partial",
+        "evidence": "Not fetched: CSV export shows Status NotCrawled, Robots State Disallowed. But REST URL row has blockReason null, status 0/1xx, and no robots finding. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "canonical-conflict": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "pass",
+        "evidence": "canonical.header-html-conflict (error) and canonical.mismatch (warning) on /pages/canonical-conflict.html."
+      },
+      "js_diagnostic": {
+        "result": "pass",
+        "evidence": "canonical.header-html-conflict (error) and canonical.mismatch (warning) on /pages/canonical-conflict.html. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "broken-links": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "partial",
+        "evidence": "Internal /pages/does-not-exist.html crawled as 404 (ClientError); external https://broken.example.invalid/page stored as a link but not checked; no broken-link finding for either."
+      },
+      "js_diagnostic": {
+        "result": "partial",
+        "evidence": "Internal /pages/does-not-exist.html crawled as 404 (ClientError); external https://broken.example.invalid/page stored as a link but not checked; no broken-link finding for either. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "orphan": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "/pages/orphan.html never appears: sitemap.xml not used for discovery; no orphan finding."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "/pages/orphan.html never appears: sitemap.xml not used for discovery; no orphan finding. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "js-only-link": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; rendering is inert in full audits. Observed in both modes: /pages/js-only-target.html not discovered."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; rendering is inert in full audits. Observed in both modes: /pages/js-only-target.html not discovered."
+      }
+    },
+    "script-injected-content": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; rendering inert. js-content.html wordCount 2 in both modes; flagged content.thin-text instead."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; rendering inert. js-content.html wordCount 2 in both modes; flagged content.thin-text instead."
+      }
+    },
+    "late-meta-change": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires dual capture (does not exist). Title stays \"Raw title before script\"; no rendered comparison."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires dual capture (does not exist). Title stays \"Raw title before script\"; no rendered comparison."
+      }
+    },
+    "soft-404-server": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "pass",
+        "evidence": "indexability.soft-404 (warning) on /pages/soft-404.html (emitted twice for the same URL)."
+      },
+      "js_diagnostic": {
+        "result": "pass",
+        "evidence": "indexability.soft-404 (warning) on /pages/soft-404.html (emitted twice for the same URL). Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "soft-404-client-route": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; /spa/does-not-exist not discovered."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; /spa/does-not-exist not discovered."
+      }
+    },
+    "hash-route": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; /hash-app/ crawled only as raw HTML; no hash-route finding."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; /hash-app/ crawled only as raw HTML; no hash-route finding."
+      }
+    },
+    "client-side-redirect": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; /pages/js-redirect-target.html not discovered; no client-side redirect finding."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; /pages/js-redirect-target.html not discovered; no client-side redirect finding."
+      }
+    },
+    "postback-links": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "/pages/postback.aspx crawled; no postback / uncrawlable-navigation finding (only content.spelling)."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "/pages/postback.aspx crawled; no postback / uncrawlable-navigation finding (only content.spelling). Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "cookieless-session": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "URL stored as /(S(abc123xyz))/pages/session.aspx; session segment not removed; no finding."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "URL stored as /(S(abc123xyz))/pages/session.aspx; session segment not removed; no finding. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "large-viewstate": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "No ViewState finding on /pages/viewstate-large.aspx (only content.thin-text)."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "No ViewState finding on /pages/viewstate-large.aspx (only content.thin-text). Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "crawler-trap-filter": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "144 /trap/filter URLs crawled; no trap detection or finding; audit ended only by the 480 s duration cap."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "144 /trap/filter URLs crawled; no trap detection or finding; audit ended only by the 480 s duration cap. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "crawler-trap-calendar": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "886 (http) / 1373 (js) /trap/calendar URLs crawled; no trap detection; audit ended only by the 480 s duration cap."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "886 (http) / 1373 (js) /trap/calendar URLs crawled; no trap detection; audit ended only by the 480 s duration cap. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "cookie-gate": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "/cookie-gate/ recorded as FetchError (status 0); cookie jar did not yield the 200."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "/cookie-gate/ recorded as FetchError (status 0); cookie jar did not yield the 200. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "consent-banner": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; tagHits stayed empty because nothing rendered."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; tagHits stayed empty because nothing rendered."
+      }
+    },
+    "service-worker": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; no service-worker finding."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; no service-worker finding."
+      }
+    },
+    "structured-data-errors": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "No structured-data finding on /pages/structured-data.html in the audit."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "No structured-data finding on /pages/structured-data.html in the audit. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "missing-alt": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "pass",
+        "evidence": "accessibility.image-alt (error) \"Image has no alt attribute.\" on /pages/images.html; empty-alt image not flagged."
+      },
+      "js_diagnostic": {
+        "result": "pass",
+        "evidence": "accessibility.image-alt (error) \"Image has no alt attribute.\" on /pages/images.html; empty-alt image not flagged. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "mixed-content": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "Requires HTTPS; and the audit fails at start anyway."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "Requires HTTPS; and the audit fails at start anyway."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires HTTPS fixture (--tls-cert/--tls-key); probe served HTTP."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires HTTPS fixture (--tls-cert/--tls-key); probe served HTTP."
+      }
+    },
+    "hreflang-no-return": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "Both hreflang-en and hreflang-fr crawled; i18n.hreflang-valid (pass) emitted for the English page; missing return tag not reported."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "Both hreflang-en and hreflang-fr crawled; i18n.hreflang-valid (pass) emitted for the English page; missing return tag not reported. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "duplicate-titles": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "partial",
+        "evidence": "No duplicate-title rule fired; only content.keyword-cannibalization with term \"duplicate title\" (zone title) clustering dup-title-a and dup-title-b."
+      },
+      "js_diagnostic": {
+        "result": "partial",
+        "evidence": "No duplicate-title rule fired; only content.keyword-cannibalization with term \"duplicate title\" (zone title) clustering dup-title-a and dup-title-b. Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "thin-page": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "fail",
+        "evidence": "/pages/thin.html wordCount 6 but no content.thin-text finding (that rule fired on 5 other pages)."
+      },
+      "js_diagnostic": {
+        "result": "fail",
+        "evidence": "/pages/thin.html wordCount 6 but no content.thin-text finding (that rule fired on 5 other pages). Identical in js_diagnostic (rendering inert)."
+      }
+    },
+    "live-websocket": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture with a wait rule; nothing rendered."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture with a wait rule; nothing rendered."
+      }
+    },
+    "click-only-navigation": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS + click discovery (absent). /spa/markets found only through a plain link; /spa/promotions and /spa/results not discovered; no non-crawlable navigation inventory."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS + click discovery (absent). /spa/markets found only through a plain link; /spa/promotions and /spa/results not discovered; no non-crawlable navigation inventory."
+      }
+    },
+    "never-place-bet": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit fails at start (InitialRate=0); 0 URLs crawled."
+      },
+      "http_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS + click discovery. nonGet stayed [] in every run, but vacuously: no page was rendered or clicked."
+      },
+      "js_diagnostic": {
+        "result": "not_testable",
+        "evidence": "Requires JS + click discovery. nonGet stayed [] in every run, but vacuously: no page was rendered or clicked."
+      }
+    }
+  },
+  "global_assertions": {
+    "no-non-get-requests": {
+      "result": "pass",
+      "evidence": "GET /__fixture/requests returned nonGet [] and tagHits [] after audits 1, 2, 3, 4 and 5 (vacuous for click safety: no rendering or click discovery ran)."
+    }
+  },
+  "trap_counts": {
+    "http": {
+      "fail": 30,
+      "not_testable": 1
+    },
+    "js": {
+      "fail": 30,
+      "not_testable": 1
+    },
+    "http_diagnostic": {
+      "partial": 5,
+      "pass": 4,
+      "fail": 10,
+      "not_testable": 12
+    },
+    "js_diagnostic": {
+      "partial": 5,
+      "pass": 4,
+      "fail": 10,
+      "not_testable": 12
+    }
+  },
+  "mcp": {
+    "transport": "stdio adapter app/src/mcp-stdio-adapter/dist/index.js → loopback endpoint from %APPDATA%/CrawlForge/mcp-endpoint.json; client @modelcontextprotocol/sdk 1.32.2",
+    "server": {
+      "name": "crawlforge",
+      "version": "1.0.0"
+    },
+    "tools": [
+      "start-audit",
+      "pause-audit",
+      "resume-audit",
+      "cancel-audit",
+      "re-audit",
+      "analyze-single-page",
+      "run-schedule-now",
+      "get-audit-progress"
+    ],
+    "resources": [
+      "audit-summary crawlforge://audits/{auditId}/summary",
+      "high-severity-findings crawlforge://audits/{auditId}/high-severity-findings",
+      "url-detail crawlforge://audits/{auditId}/urls/{urlId}",
+      "audit-list crawlforge://audits",
+      "schedule-status crawlforge://schedules",
+      "crawl-progress crawlforge://audits/{auditId}/progress",
+      "extracted-content crawlforge://audits/{auditId}/urls/{urlId}/content",
+      "ngram-analysis crawlforge://audits/{auditId}/ngrams",
+      "waf-blocks crawlforge://audits/{auditId}/waf-blocks",
+      "host-throttle crawlforge://audits/{auditId}/host-throttle",
+      "redirect-matrix-results crawlforge://audits/{auditId}/redirect-matrix",
+      "log-correlation crawlforge://audits/{auditId}/log-correlation?import={logImportId}",
+      "semantic-link-opportunities crawlforge://audits/{auditId}/semantic-links",
+      "geo-readiness crawlforge://audits/{auditId}/geo-readiness",
+      "analytics-coverage crawlforge://audits/{auditId}/analytics-coverage"
+    ],
+    "resource_templates": "resources/templates/list → MCP error -32601 Method not found (templated URIs are listed as plain resources)",
+    "prompts": [
+      "audit-health-briefing",
+      "high-severity-triage",
+      "audit-delta-briefing",
+      "ngram-topical-briefing",
+      "semantic-topical-briefing"
+    ],
+    "project_or_configuration_tools": "absent — no tool creates or edits projects or configurations",
+    "flow_result": {
+      "normal_config": "start-audit ok (audit 4) → get-audit-progress immediately Failed/Finalizing with 0 fetched → audit-summary readable → high-severity-findings [] → audit-health-briefing prompt ok. Flow mechanics work; audit does not run.",
+      "diagnostic_config": "start-audit (audit 5, config 5) → polled Running → Completed at 511.5 s (fetched 1545) → audit-summary and high-severity-findings read with evidence JSON → prompt ok.",
+      "re_audit": "tool error: \"The JSON value could not be converted to System.Int64. Path: $.id\" (isError true)",
+      "analyze_single_page": "works; render=true makes no difference to analysis (color-contrast still \"rendering mode is disabled\")",
+      "invalid_token": "adapter exits with \"Unauthorized: invalid local token\" (rejected)"
+    },
+    "logs": [
+      "logs/mcp-list.json",
+      "logs/mcp-flow-normal-config.json",
+      "logs/mcp-flow-diag-js.json"
+    ]
+  },
+  "criteria": {
+    "1": {
+      "result": "not_testable",
+      "reason": "Not a first launch; existing data directory."
+    },
+    "3": {
+      "result": "not_testable",
+      "reason": "Network monitoring not performed in this session."
+    },
+    "4": {
+      "result": "pass",
+      "reason": "Default configuration snapshot: maxUrls/maxDepth null (unlimited); diagnostic crawls ran uncapped apart from the duration limit added for the probe."
+    },
+    "5": {
+      "result": "pass",
+      "reason": "No license/account concept in observed screens or payloads (observed surfaces only)."
+    },
+    "6": {
+      "result": "not_testable",
+      "reason": "Pause/resume/crash recovery not exercised (time-box)."
+    },
+    "7": {
+      "result": "fail",
+      "reason": "Report surfaces not mounted; REST CSV/XLSX exports produce valid local files."
+    },
+    "10": {
+      "result": "pass",
+      "reason": "Single-page analysis returned findings without a project (UI Tools and MCP analyze-single-page)."
+    },
+    "16": {
+      "result": "partial",
+      "reason": "stdio handshake works and invalid token is rejected; SSE transport, non-loopback and rotation not tested."
+    },
+    "20": {
+      "result": "partial",
+      "reason": "/metrics serves exposition format on loopback (requires session header); push/identity not audited."
+    },
+    "23": {
+      "result": "partial",
+      "reason": "start/poll/complete/read high-severity via MCP works only with a DB-patched config; re-audit tool errors; action log not visible in UI."
+    },
+    "27": {
+      "result": "fail",
+      "reason": "Audit emits no structured-data findings on the fixture structured-data page."
+    },
+    "28": {
+      "result": "pass",
+      "reason": "Readability, reading time, text-to-HTML computed (content.metrics); soft-404 flagged distinctly."
+    },
+    "33": {
+      "result": "partial",
+      "reason": "Standalone tools present and reachable; robots tester, sitemap generator, query builder not functionally exercised."
+    },
+    "36": {
+      "result": "partial",
+      "reason": "Host throttle summary shows 205/159 AIMD adjustments; UI throttle panel crashes the renderer."
+    },
+    "38": {
+      "result": "partial",
+      "reason": "content.keyword-cannibalization emitted with cluster evidence (title/headings 2-grams); n-gram endpoints and MCP resource not read."
+    },
+    "41": {
+      "result": "partial",
+      "reason": "Status bar shows WS, heap, GC, WAL, JS heap and heartbeat; /metrics has the families; Compact not exercised."
+    },
+    "42": {
+      "result": "partial",
+      "reason": "Render Tester shows sandboxed picker and selector preview; click-to-capture not exercised."
+    },
+    "48": {
+      "result": "partial",
+      "reason": "canonical.header-html-conflict emitted as error on the conflict page; zone weights present on link edges; pixel truncation only seen in SERP tool."
+    },
+    "49": {
+      "result": "fail",
+      "reason": "UI-created config cannot run (InitialRate=0); no config editor; no results grid; export only via REST. Diagnostic run: 4 pass / 5 partial / 10 fail on applicable traps."
+    },
+    "50": {
+      "result": "fail",
+      "reason": "No UI capture-mode control; REST rendering.enabled audits fail at start; with DB patch, rendering is inert in full audits."
+    },
+    "51": {
+      "result": "fail",
+      "reason": "No dual capture or raw-vs-rendered comparison."
+    },
+    "52": {
+      "result": "fail",
+      "reason": "No adaptive capture."
+    },
+    "53": {
+      "result": "fail",
+      "reason": "Postback, cookieless session, ViewState fail; hash route, client redirect, rendered soft 404 not testable (no rendering)."
+    },
+    "54": {
+      "result": "fail",
+      "reason": "No rendering or click discovery; nonGet empty only vacuously."
+    },
+    "55": {
+      "result": "fail",
+      "reason": "Filter and calendar traps not detected (886-1373 calendar URLs); cookie gate fetch error."
+    },
+    "56": {
+      "result": "fail",
+      "reason": "No configuration editor in the UI."
+    },
+    "57": {
+      "result": "fail",
+      "reason": "MCP has no project/configuration tools; audit via MCP fails on a normal config; paged findings with evidence readable only after DB patch."
+    },
+    "58": {
+      "result": "fail",
+      "reason": "No integrations surface or backend integration endpoints observed."
+    }
+  },
+  "capabilities": {
+    "CAP-A-001": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "HTTP crawling works only with DB-patched politeness; normal configs fail at start."
+    },
+    "CAP-A-004": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "rendering.enabled=true stored as RenderMode.Auto but no page in a full audit has a rendered tree; Render Tester tool does render."
+    },
+    "CAP-A-006": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Disallowed URL not fetched (CSV Robots State Disallowed) but not reported via REST/finding."
+    },
+    "CAP-A-007": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "indexability.noindex emitted."
+    },
+    "CAP-A-010": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Redirect hops not recorded; only final target."
+    },
+    "CAP-A-011": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Loop ends as FetchError, crawl continues; not reported as loop."
+    },
+    "CAP-A-013": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Cookieless session segment not removed."
+    },
+    "CAP-A-035": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "No raw vs rendered comparison in audits."
+    },
+    "CAP-A-X09": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Only non-JS effective; capture mode not settable in UI."
+    },
+    "CAP-A-X10": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "No rendering in full audits."
+    },
+    "CAP-A-X12": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Cookie-gate page ends as FetchError."
+    },
+    "CAP-A-X13": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Calendar/filter traps not detected."
+    },
+    "CAP-A-X15": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "No postback finding."
+    },
+    "CAP-A-X16": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "No hash-route handling observed."
+    },
+    "CAP-A-X17": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "No click discovery / non-crawlable navigation inventory."
+    },
+    "CAP-A-X18": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "No service-worker finding."
+    },
+    "CAP-A-X19": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "No consent-state rendering; no UI."
+    },
+    "CAP-B-036": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "noindex finding emitted (URL row indexable flag inconsistent)."
+    },
+    "CAP-B-037": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Robots state stored in export only."
+    },
+    "CAP-B-038": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "canonical.mismatch emitted."
+    },
+    "CAP-B-X02": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "canonical.header-html-conflict emitted."
+    },
+    "CAP-B-040": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Only via keyword-cannibalization cluster."
+    },
+    "CAP-B-046": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "404 target recorded; no broken-link finding."
+    },
+    "CAP-B-047": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "External link not checked."
+    },
+    "CAP-B-048": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Sitemap-only orphan never discovered."
+    },
+    "CAP-E-122": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Same as CAP-B-048."
+    },
+    "CAP-B-049": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "No chain finding."
+    },
+    "CAP-B-050": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "No loop finding."
+    },
+    "CAP-B-055": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "accessibility.image-alt error."
+    },
+    "CAP-D1-101": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "accessibility.image-alt error."
+    },
+    "CAP-B-060": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "hreflang-valid pass emitted despite missing return tag."
+    },
+    "CAP-B-061": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "content.thin-text fires on some pages but not on the 6-word thin page."
+    },
+    "CAP-F-148": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Same as CAP-B-061."
+    },
+    "CAP-B-067": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "No structured-data findings in audits."
+    },
+    "CAP-B2-075": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Same as CAP-B-067."
+    },
+    "CAP-B-X03": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Server soft 404 detected (duplicated finding); client-route soft 404 not testable."
+    },
+    "CAP-B-X05": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "No client-side redirect detection."
+    },
+    "CAP-C-X05": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "No ViewState finding."
+    },
+    "CAP-D2-114": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Not testable over HTTP; no mixed-content rule seen."
+    },
+    "CAP-H-X06": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "No tag/consent coverage in audits; tagHits empty."
+    },
+    "CAP-G-X01": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Single-page analyzer and render tester work in UI-18/UI-19."
+    },
+    "CAP-H-168": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "UI-11 dashboard is a placeholder."
+    },
+    "CAP-H-169": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "UI-13 not reachable (REST URL inventory works)."
+    },
+    "CAP-H-173": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "CSV export via REST only; no UI-20."
+    },
+    "CAP-H-174": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "XLSX export via REST only; no UI-20."
+    },
+    "CAP-H-185": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "MCP server reachable via stdio; settings toggle present; action log not in UI."
+    },
+    "CAP-H-190": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "UI-01 lists and creates projects."
+    },
+    "CAP-K-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "No UI-03/UI-04."
+    },
+    "CAP-L-X05": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Status bar and hub events present; live activity feed only after re-subscribe; throttle event crashes renderer."
+    },
+    "CAP-A-032": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Pause button present in UI-10; not exercised."
+    },
+    "CAP-A-X01": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "AIMD adjusts (205 adjustments) once politeness JSON is in the flat shape; API-written shape breaks it."
+    }
+  }
+}

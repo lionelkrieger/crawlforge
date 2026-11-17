@@ -1,0 +1,37 @@
+{
+  "log": [
+    {
+      "t": "0.1",
+      "state": "failed",
+      "phase": "finalizing",
+      "counters": {
+        "queued": 0,
+        "fetched": 0,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": null
+      }
+    }
+  ],
+  "final": {
+    "data": {
+      "id": "1",
+      "projectId": "2",
+      "configurationId": "2",
+      "state": "failed",
+      "phase": "finalizing",
+      "startedAt": "2026-11-17T17:05:19.1288207+00:00",
+      "completedAt": "2026-11-17T17:05:19.1665041+00:00",
+      "counters": {
+        "queued": 0,
+        "fetched": 0,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": null
+      },
+      "elapsedSeconds": 0.038,
+      "throughputPerSecond": 0,
+      "estimatedRemainderSeconds": null
+    }
+  }
+}

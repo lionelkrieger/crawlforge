@@ -1,0 +1,36 @@
+{
+  "steps": [
+    {
+      "name": "start-audit",
+      "v": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"auditId\":4,\"status\":\"Running\",\"phase\":\"Crawling\"}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "name": "auditId",
+      "v": 4
+    },
+    {
+      "name": "progress 0.0s",
+      "v": "{\"auditId\":4,\"status\":\"Failed\",\"phase\":\"Finalizing\",\"discovered\":0,\"fetched\":0,\"analyzed\":0,\"queued\":0}"
+    },
+    {
+      "name": "read summary",
+      "v": "{\"audit\":{\"id\":4,\"projectId\":2,\"configurationId\":2,\"configurationSnapshotJson\":\"{\\u0022id\\u0022:2,\\u0022projectId\\u0022:2,\\u0022name\\u0022:\\u0022Default configuration\\u0022,\\u0022seedsJson\\u0022:\\u0022[\\\\u0022http://127.0.0.1:47311/\\\\u0022]\\u0022,\\u0022scopeRulesJson\\u0022:\\u0022{\\\\u0022respectRobotsTxt\\\\u0022:true}\\u0022,\\u0022depth\\u0022:null,\\u0022limitOverrides\\u0022:null,\\u0022renderingMode\\u0022:\\u0022none\\u0022,\\u0022politenessJson\\u0022:\\u0022{\\\\u0022aimd\\\\u0022:{\\\\u0022initialRateR0\\\\u0022:2,\\\\u0022alpha\\\\u0022:0.5,\\\\u0022beta\\\\u0022:0.5,\\\\u0022kappa\\\\u0022:4,\\\\u0022ewmaTtfbWeight\\\\u0022:0.2}}\\u0022,\\u0022proxyRoutingJson\\u0022:null,\\u0022customExtractionRulesJson\\u0022:null,\\u0022headersJson\\u0022:null,\\u0022cookiesJson\\u0022:null,\\u0022createdAt\\u0022:\\u00222026-11-17T17:04:46.5160775\\u002B00:00\\u0022,\\u0022updatedAt\\u0022:\\u00222026-11-17T17:04:46.5160775\\u002B00:00\\u0022,\\u0022contentScope\\u0022:null,\\u0022contentScopeProfileId\\u0022:null,\\u0022isListMode\\u0022:null,\\u0022urlListJson\\u0022:null,\\u0022rewriteRulesJson\\u0022:null,\\u0022hostMappingJson\\u0022:null,\\u0022consentModeEnabled\\u0022:null,\\u0022primaryContainerOverride\\u0022:null,\\u0022dataLayerSchemaJson\\u0022:null,\\u0022beaconPatternsJson\\u0022:null,\\u0022zoneWeightsJson\\u0022:null,\\u0022serpBudgets\\u0022:null}\",\"status\":\"Failed\",\"phase\":\"Finalizing\",\"startedAt\":\"2026-11-17T17:15:25.8903942+00:00\",\"finishedAt\":\"2026-11-17T17:15:25.893191+00:00\",\"countersJson\":\"{\\u0022discovered\\u0022:0,\\u0022fetched\\u0022:0,\\u0022analyzed\\u0022:0,\\u0022failed\\u0022:0}\",\"engineVersion\":\"0.0.1.0\",\"isDeleted\":false},\"scores\":[],\"metrics\":[],\"findingCountsBySeverity\":{},\"waf\":{\"detectionCount\":0,\"resolvedByRendering\":0,\"byProvider\":{}}}"
+    },
+    {
+      "name": "read high-severity-findings",
+      "v": "{\"auditId\":4,\"findings\":[]}"
+    },
+    {
+      "name": "prompt audit-health-briefing",
+      "v": "{\"messages\":[{\"role\":\"user\",\"content\":{\"type\":\"text\",\"text\":\"You are reviewing the health of a CrawlForge website audit. Summarize the overall state, category scores, and the most important issues, then recommend the next three actions.\\n\\nAudit summary (JSON):\\n{\\\"audit\\\":{\\\"id\\\":4,\\\"projectId\\\":2,\\\"configurationId\\\":2,\\\"configurationSnapshotJson\\\":\\\"{\\\\u0022id\\\\u0022:2,\\\\u0022projectId\\\\u0022:2,\\\\u0022name\\\\u0022:\\\\u0022Default configuration\\\\u0022,\\\\u0022seedsJson\\\\u0022:\\\\u0022[\\\\\\\\u0022http://127.0.0.1:47311/\\\\\\\\u0022]\\\\u0022,\\\\u0022scopeRulesJson\\\\u0022:\\\\u0022{\\\\\\\\u0022respectRobotsTxt\\\\\\\\u0022:true}\\\\u0022,\\\\u0022depth\\\\u0022:null,\\\\u0022limitOverrides\\\\u0022:null,\\\\u0022renderingMode\\\\u0022:\\\\u0022none\\\\u0022,\\\\u0022politenessJson\\\\u0022:\\\\u0022{\\\\\\\\u0022aimd\\\\\\\\u0022:{\\\\\\\\u0022initialRateR0\\\\\\\\u0022:2,\\\\\\\\u0022alpha\\\\\\\\u0022:0.5,\\\\\\\\u0022beta\\\\\\\\u0022:0.5,\\\\\\\\u0022kappa\\\\\\\\u0022:4,\\\\\\\\u0022ewmaTtfbWeight\\\\\\\\u0022:0.2}}\\\\u0022,\\\\u0022proxyRoutingJson\\\\u0022:null,\\\\u0022customExtractionRulesJson\\\\u0022:null,\\\\u0022headersJson\\\\u0022:null,\\\\u0022cookiesJson\\\\u0022:null,\\\\u0022createdAt\\\\u0022:\\\\u00222026-11-17T17:04:46.5160775\\\\u002B00:00\\\\u0022,\\\\u0022updatedAt\\\\u0022:\\\\u00222026-11-17T17:04:46.5160775\\\\u002B00:00\\\\u0022,\\\\u0022contentScope\\\\u0022:null,\\\\u0022contentScopeProfileId\\\\u0022:null,\\\\u0022isListMode\\\\u0022:null,\\\\u0022urlListJson\\\\u0022:null,\\\\u0022rewriteRulesJson\\\\u0022:null,\\\\u0022hostMappingJson\\\\u0022:null,\\\\u0022consentModeEnabled\\\\u0022:null,\\\\u0022p"
+    }
+  ]
+}
