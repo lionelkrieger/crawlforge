@@ -21,3 +21,4 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 | CR-015 | Fixture site and end-to-end acceptance | addition | applied | D-007 | all (verification) | 07/01 #49+; 07/03 (new) | 2026-11-17 |
 | CR-016 | Out-of-scope records | amendment | applied | D-006, D-013, D-009 | H-187, H-189, H-191 | 01/01 new §1.5; 06/02 §8.5 | 2026-11-17 |
 | CR-017 | Scope decisions for unspecified checklist capabilities | decision request | applied | D-017 | 30 capabilities | various | 2026-11-17 |
+| CR-018 | UI surface map and capability UI bindings | addition | draft | D-018 | all in scope | 06/04 (new); 07/03 §2; checker | |
