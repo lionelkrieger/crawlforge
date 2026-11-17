@@ -11,11 +11,11 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 | CR-005 | Capture modes (non-JS, JS, dual, adaptive) | addition | applied | D-001 | A-X09 | 03/03 §5.6.1; 03/02 §5.1 | 2026-11-17 |
 | CR-006 | Direct CDP rendering layer | amendment | applied | D-002 | A-X10 | 03/03 §5.6.2, §5.9 | 2026-11-17 |
 | CR-007 | Pinned bundled browser and browser path | addition | applied | D-003, D-009 | A-X11 | 03/03 §5.6.3; 06/01 §8.9 | 2026-11-17 |
-| CR-008 | Crawl behaviour additions | addition | draft | D-004 | A-X12..14, A-X21, A-X22 | 03/02 §5.11-5.15 | |
-| CR-009 | Site-type handling | addition | draft | D-004 | A-X15..18, B-X05, C-X05 | 03/02 §5.2, §5.5; 04/02 §7.12, §7.18, §7.19 | |
-| CR-010 | Consent-state rendering | addition | draft | D-004 | A-X19 | 04/06 §14.2.1 | |
-| CR-011 | MCP as AI channel and agent data contract | addition | draft | D-008, D-013, D-014 | H-185, H-186, H-175, G-165, J-213 | 05/03 §11.3-11.8; 06/02 §8.4 | |
-| CR-012 | Projects and configuration (section K) | addition | draft | D-004, D-005 | K-X01..05 | 06/02 §8.8; 04/01 §7.5; 02/03 §9.5 | |
+| CR-008 | Crawl behaviour additions | addition | applied | D-004 | A-X12..14, A-X21, A-X22 | 03/02 §5.11-5.15 | 2026-11-17 |
+| CR-009 | Site-type handling | addition | applied | D-004 | A-X15..18, B-X05, C-X05 | 03/02 §5.2, §5.5; 04/02 §7.12, §7.18, §7.19 | 2026-11-17 |
+| CR-010 | Consent-state rendering | addition | applied | D-004 | A-X19 | 04/06 §14.2.1 | 2026-11-17 |
+| CR-011 | MCP as AI channel and agent data contract | addition | applied | D-008, D-013, D-014 | H-185, H-186, H-175, G-165, J-213 | 05/03 §11.3-11.8; 06/02 §8.4 | 2026-11-17 |
+| CR-012 | Projects and configuration (section K) | addition | applied | D-004, D-005 | K-X01..05 | 06/02 §8.8; 04/01 §7.5; 02/03 §9.5 | 2026-11-17 |
 | CR-013 | New domain 08-integrations | addition | draft | D-005, D-012, D-009 | H-181..183, A-X08, C-081, C-083 | 08/01 (new); 04/03 §7.11 | |
 | CR-014 | New domain 09-distribution | addition | draft | D-009, D-010, D-011 | none | 09/01 (new) | |
 | CR-015 | Fixture site and end-to-end acceptance | addition | draft | D-007 | all (verification) | 07/01 #49+; 07/03 (new) | |

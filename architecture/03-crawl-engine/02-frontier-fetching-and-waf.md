@@ -21,7 +21,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.1 Audit inputs — verbatim and unabridged**
 
 ### 5.1 Audit inputs
-> Capabilities: CAP-A-005, CAP-A-021, CAP-A-022, CAP-A-023, CAP-A-030, CAP-A-031, CAP-A-X02, CAP-A-X07 · Decisions: D-001 · Change records: CR-005
+> Capabilities: CAP-A-005, CAP-A-021, CAP-A-022, CAP-A-023, CAP-A-030, CAP-A-031, CAP-A-X02, CAP-A-X07 · Decisions: D-001, D-004 · Change records: CR-005, CR-008, CR-009
 
 | Input | Required | Description |
 |---|---|---|
@@ -44,17 +44,23 @@
 | Virtual robots override | No | A user-supplied robots.txt body used in place of the live one for this audit |
 | Signed-request access | No | Optional signature material applied to in-scope requests, with expiry tracking and automatic re-application (section 5.10) |
 | Pre-crawl validation | No | Resolve and probe the start URL(s) before crawling (protocol, redirect, TLS, login-gate detection) and surface blockers before work begins |
+| Cookie handling | No | Per-audit cookie jar or cookieless crawl (section 5.11) **[Added by CR-008]** |
+| Directive handling | No | Nofollow, noindex, canonical, hreflang, pagination, iframe and meta-refresh behaviour (section 5.12) **[Added by CR-008]** |
+| Resource and external scope | No | Resource-type fetch toggles, internal asset domains, external link checking (section 5.13) **[Added by CR-008]** |
+| Crawler-trap detection | No | Thresholds for trap detection (section 5.14) **[Added by CR-008]** |
+| User-agent comparison | No | Optional crawler-vs-browser comparison (section 5.15) **[Added by CR-008]** |
+| Click discovery | No | Optional route discovery by triggering non-link navigation in rendered capture (section 5.6.4) **[Added by CR-009]** |
 
 ---
 
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.2 URL canonicalization and deduplication — verbatim and unabridged**
 
 ### 5.2 URL canonicalization and deduplication
-> Capabilities: CAP-A-012, CAP-A-013, CAP-B-064, CAP-B-065, CAP-B-066
+> Capabilities: CAP-A-012, CAP-A-013, CAP-B-064, CAP-B-065, CAP-B-066 · Decisions: D-004 · Change records: CR-009
 
 Before a URL enters the frontier it is canonicalized:
 
-- Scheme and host are lowercased; default ports are removed; fragments are discarded.
+- Scheme and host are lowercased; default ports are removed; fragments are discarded, except in hash-route mode (section 7.19). ASP.NET cookieless session segments (`(S(...))`, `(A(...))`, `(F(...))`) are removed from paths. **[Amended by CR-009, D-004]**
 - Trailing-slash policy is applied consistently; percent-encoding is normalized.
 - Query parameters are sorted, filtered by the configured policy, and known session-tracking parameters are stripped.
 - Relative references are resolved against the document base, honoring any declared base override.
@@ -90,11 +96,12 @@ A persistent **seen-set** keyed by canonical URL guarantees each URL is fetched 
 > **Verbatim source — FS-CRAWL-001 v1.4: 5.5 Link discovery — verbatim and unabridged**
 
 ### 5.5 Link discovery
-> Capabilities: CAP-A-002, CAP-A-003, CAP-A-008, CAP-A-014
+> Capabilities: CAP-A-002, CAP-A-003, CAP-A-008, CAP-A-014 · Decisions: D-004 · Change records: CR-009
 
 - From HTML: anchor and image-map references, document-level link relations (canonical, alternates, stylesheets, next/previous), and optionally embedded frame sources and meta-refresh targets.
 - From sitemaps: URL entries with their declared metadata; sitemap indexes are expanded recursively.
 - Classification: **in-scope** URLs are enqueued; **external** URLs are recorded as external links only; **excluded** URLs are recorded as skipped with the reason.
+- Postback links (`javascript:__doPostBack(...)`, `WebForm_DoPostBackWithOptions`) are not followed. They are recorded as uncrawlable navigation with the source URL and control identifier (section 7.19). **[Added by CR-009]**
 
 ---
 
@@ -114,6 +121,42 @@ A persistent **seen-set** keyed by canonical URL guarantees each URL is fetched 
 ### 5.8 Storage during crawl
 
 - URL records, link edges, and extracted elements are persisted incrementally in transactional batches; the engine never requires the full dataset in memory.
+
+### 5.11 Per-audit cookie jar
+> Capabilities: CAP-A-X12 · Decisions: D-004 · Change records: CR-008
+
+**[Added by CR-008]** Cookies set by crawled sites are retained for the audit, scoped by host as a browser would scope them, and sent on subsequent in-scope requests. The jar is **on by default**; a configuration toggle crawls cookieless instead. User-supplied cookies (section 5.1) are merged in. When a URL's response changes after a cookie was set, the change is recorded.
+
+### 5.12 Directive-handling toggles
+> Capabilities: CAP-A-X21 · Decisions: D-004 · Change records: CR-008
+
+**[Added by CR-008]** Per configuration, with defaults that follow search-engine (Googlebot) behaviour:
+
+| Toggle | Default |
+|---|---|
+| Follow `nofollow` links (page level and link level, separately) | Off |
+| Crawl pages marked `noindex` (so they can be reported) | On |
+| Use canonical targets as discovery | On |
+| Use hreflang alternates and rel next/previous as discovery | On |
+| Follow meta refresh | On |
+| Follow iframes | Off |
+
+Detection and reporting of these directives (sections 7.3, 7.4) are unaffected by the toggles.
+
+### 5.13 Resource and external scope
+> Capabilities: CAP-A-X22 · Decisions: D-004 · Change records: CR-008
+
+**[Added by CR-008]** Per configuration: fetch toggles for each resource type (scripts, stylesheets, images, fonts, other files); a list of asset domains (for example CDNs) treated as internal; and a toggle to check the status of external links without crawling beyond them.
+
+### 5.14 Crawler-trap detection
+> Capabilities: CAP-A-X13 · Decisions: D-004 · Change records: CR-008
+
+**[Added by CR-008]** The engine flags URL patterns whose count grows without new content: parameter-combination explosion, repeating path segments, incrementing date paths, and runs of near-duplicate content hashes. By default a pattern is flagged once it exceeds **500 URLs** while mostly producing near-duplicate content (configurable). A flagged pattern is throttled and raised as a finding naming the pattern, its URL count and examples.
+
+### 5.15 User-agent comparison (optional)
+> Capabilities: CAP-A-X14 · Decisions: D-004 · Change records: CR-008
+
+**[Added by CR-008]** Off by default. When enabled, a sample of URLs (default 50, configurable, or all URLs) is fetched both as Googlebot Smartphone and as a standard Chrome browser. Status, redirects, meta robots, canonical, content hash and links are compared; material differences are raised as findings (possible cloaking, dynamic rendering or bot blocking).
 
 ---
 
@@ -379,3 +422,8 @@ Extended existing routes: POST `/api/audits` accepts `urlList` + `listMode`; con
 Replaced text in §5.1 (Rendering mode row):
 
 > | Rendering mode | No | Plain HTTP fetch, or JavaScript-rendered fetch (section 5.6) |
+### CR-009 (2026-11-17; D-004)
+
+Replaced text in §5.2:
+
+> - Scheme and host are lowercased; default ports are removed; fragments are discarded.

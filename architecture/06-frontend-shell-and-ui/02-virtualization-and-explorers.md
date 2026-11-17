@@ -47,10 +47,11 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 8.4 Export — verbatim and unabridged**
 
 ### 8.4 Export
-> Capabilities: CAP-G-167, CAP-H-173, CAP-H-174, CAP-H-177
+> Capabilities: CAP-G-167, CAP-H-173, CAP-H-174, CAP-H-177, CAP-H-175, CAP-G-165 · Decisions: D-014 · Change records: CR-011
 
 - Local file exports: a multi-sheet spreadsheet workbook (summary, URLs, findings, links, and custom extraction when enabled), CSV per dataset, a self-contained HTML report bundle, and an optional PDF summary. Custom extraction exports use the same dynamic-column expansion as the explorer (section 7.9).
 - Exports may additionally be delivered to optional user-configured destinations (section 8.5).
+- Agent dataset exports: CSV, JSON Lines and Markdown datasets, and a read-only SQLite audit snapshot (section 11.8). **[Added by CR-011, D-014]**
 
 ---
 
@@ -89,6 +90,17 @@ A set of self-contained tools operates without requiring a full audit; each is r
 - **Render tester:** renders a single URL and returns a screenshot, the post-render document, and console messages — a preview of rendering-mode behavior.
 - **XML sitemap generator:** builds a sitemap from an audit's URL set, filterable by indexability and status, with optional change-frequency and priority hints; the result is exported as a standards-conformant sitemap file (and sitemap index when split by size).
 - **Interactive query builder:** composes nested AND/OR filter rules over URL columns (operators such as contains, starts/ends-with, equals, in-set, between, regex, and numeric comparison), including dynamic custom-extraction and snippet columns; saved queries apply to the explorers and exports. A raw-SQL administration tool is an open scope decision (section 15) and is not required by this version.
+
+### 8.8 Configuration editor and project settings
+> Capabilities: CAP-K-X01, CAP-K-X02, CAP-K-X04 · Decisions: D-004, D-005 · Change records: CR-012
+
+**[Added by CR-012]**
+
+- Every project lists its **configurations** (named crawl profiles, for example "Full crawl", "Quick sample", "Mobile rendered", "URL list check"). Each can be viewed, created, duplicated, edited and deleted. App-level configuration templates can be copied into a project. A running audit keeps the configuration snapshot it started with (section 4.3).
+- The editor exposes every section 5.1 input, grouped: start URLs and scope; "crawl as" preset and capture mode; limits; include/exclude rules; directive handling; resources and external scope; authentication and cookies; click discovery and site-type options; consent states; analysis categories; thresholds; extraction and search; advanced.
+- **"Crawl as" presets** bundle user agent, viewport and default capture mode: Googlebot Smartphone, Googlebot Desktop, Chrome mobile, Chrome desktop, using current user-agent strings.
+- **Analysis categories** are enabled **per configuration**, not application-wide; a disabled category contributes no score (section 8.1).
+- **Clients.** A client entity can be shared by several projects. It holds: expected GA4 measurement IDs and GTM container IDs (used by analytics coverage checks, FS-CRAWL-002 §14), the expected consent platform, brand name variants, target locale and language (driving the spelling dictionary and expected hreflang), and report branding (client name, logo). A project may override any client value.
 
 ---
 

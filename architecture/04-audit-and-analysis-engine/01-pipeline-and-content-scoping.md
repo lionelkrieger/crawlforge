@@ -88,12 +88,13 @@ Execution modes: **incremental** (per-URL passes run during the crawl) and **ful
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.5 Finding model — verbatim and unabridged**
 
 ### 7.5 Finding model
-> Capabilities: CAP-B-063, CAP-F-140, CAP-I-192, CAP-I-194, CAP-I-196, CAP-I-X01, CAP-J-204, CAP-J-207, CAP-J-208, CAP-K-X03
+> Capabilities: CAP-B-063, CAP-F-140, CAP-I-192, CAP-I-194, CAP-I-196, CAP-I-X01, CAP-J-204, CAP-J-207, CAP-J-208, CAP-K-X03 · Decisions: D-004 · Change records: CR-012
 
 Each finding carries:
 
 - A **rule key** from the product's own taxonomy, plus its category.
 - A **severity**: Error, Warning, Notice, or Pass — assigned by the rule definition, with thresholds configurable locally.
+- Thresholds (title and description lengths, thin-content word count, slow-response cut-off, readability target and others) are configurable **per project**, falling back to application defaults taken from the rule definitions. **[Added by CR-012]**
 - The **affected URL(s)**, or a site-wide scope marker.
 - **Evidence**: the extracted values that support the judgment.
 - A **recommendation**: generic remediation guidance.

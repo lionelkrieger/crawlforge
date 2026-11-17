@@ -145,4 +145,15 @@ A new report surface, additive to the §8.2 catalog:
 
 **Acceptance hook:** FS-CRAWL-002 §9, criterion #47.
 
+### 14.2.1 Consent states
+> Capabilities: CAP-A-X19 · Decisions: D-004 · Change records: CR-010
+
+**[Added by CR-010]**
+
+- In rendered capture a configuration selects one or more consent states: **no interaction**, **consent accepted**, **consent rejected**.
+- Built-in selectors operate Cookiebot, OneTrust, CookieYes, Complianz and Agency Support Consent; a custom selector may be configured for any other platform.
+- When more than one state is selected, multi-state rendering runs on a **sample by default** (about 20 URLs, or one per URL pattern; configurable), or on every URL when the user chooses. In each state the tags, requests, cookies and dataLayer events are stored and compared.
+- Tags that fire, or cookies that are set, before consent is given are reported as findings.
+- Content analysis uses the **no interaction** render, which matches what search-engine crawlers see.
+
 ---

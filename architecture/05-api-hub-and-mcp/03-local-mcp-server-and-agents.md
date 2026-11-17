@@ -76,7 +76,7 @@ Tools are the protocol's invocable actions. Names below are new design artifacts
 | audit-delta-briefing | Two audit references | New/resolved findings and metric deltas, structured for change reporting |
 
 ### 11.5 Delegated AI control flows
-> Capabilities: CAP-H-X04, CAP-J-209
+> Capabilities: CAP-H-X04, CAP-J-209, CAP-J-213 · Decisions: D-008, D-013 · Change records: CR-011
 
 The interface shall support the following architectural pattern for an external **local** agent negotiating multi-step actions:
 
@@ -93,12 +93,44 @@ The interface shall support the following architectural pattern for an external 
 - Long-running work never blocks the protocol channel; all tools return immediately with identifiers, and progress is obtained through the polling/notification contract.
 - Conflicting lifecycle commands from concurrent local clients are resolved by the audit state machine: the first valid transition wins; later commands are rejected idempotently.
 - All invocations are recorded in the local, user-viewable, purgeable action log for transparency.
+- AI clients interpret only data CrawlForge has collected. The interface exposes no operation that fabricates or edits findings; every finding returned carries its evidence and source rule. **[Added by CR-011, D-008]**
 
 ### 11.6 Credentials and lifecycle
 
 - Authentication uses a **locally generated random token**, viewable and rotatable by the user in settings; rotation invalidates existing clients immediately. The token is stored encrypted at rest (section 9.1) and never leaves the machine. It is never derived from hardware or OS identity (section 3, row 1).
 - No enrollment, heartbeat, liveness reporting, or remote credential issuance exists.
 - Disabling the interface closes all of its listeners and terminates any running stdio adapter.
+
+### 11.3.1 Steering and query tools
+> Capabilities: CAP-H-185 · Decisions: D-008, D-013, D-014 · Change records: CR-011
+
+**[Added by CR-011]** Each maps one-to-one onto a REST operation with identical semantics; the rules of section 11.3 apply.
+
+| Tool | Input fields | Behavior | Output |
+|---|---|---|---|
+| list-projects / create-project / update-project | Project fields | Project management | Project record(s) |
+| list-configurations / get-configuration / create-configuration / update-configuration | Project reference; configuration fields | Configuration management, including capture mode and every section 5.1 input | Configuration record |
+| query-findings | Audit reference; filters (severity, category, rule, URL pattern, template); cursor | Paged finding rows with evidence | Rows, total count, next cursor |
+| query-urls | Audit reference; filters; selected columns; cursor | Paged URL rows | Rows, total count, next cursor |
+| export-agent-dataset | Audit reference; dataset; format | Writes a bulk dataset file (section 11.8) to a local path | File path, row count |
+
+- Project- and configuration-changing tools are permitted only while the Settings switch **"Allow MCP clients to change projects and configurations"** is on. It is **on by default**. Every invocation is recorded in the action log.
+
+### 11.7 Summary-first responses
+> Capabilities: CAP-H-186 · Decisions: D-014 · Change records: CR-011
+
+**[Added by CR-011]** Every data-returning tool and resource leads with counts and the highest-priority items, returns at most one page of rows (default 50, maximum 500), and carries stable identifiers (audit, URL, finding, rule) and a cursor. No tool returns an unbounded result set.
+
+### 11.8 Agent data contract
+> Capabilities: CAP-H-175, CAP-G-165 · Decisions: D-014 · Change records: CR-011
+
+**[Added by CR-011]**
+
+- Over MCP: compact JSON, summary-first and paginated (section 11.7).
+- Bulk files for agents working in code: **CSV** for flat tables (URLs, links, findings), **JSON Lines** for nested records (full URL records, structured-data entities, redirect chains), **Markdown** for page content.
+- A **read-only SQLite snapshot** of an audit, with a documented schema, may be exported for query by an agent. It contains no secrets or credentials.
+- Every exported row carries the same stable identifiers as the API.
+- Transports are unchanged (section 11.2): stdio, used by VS Code and Claude, and the loopback transport.
 
 ---
 

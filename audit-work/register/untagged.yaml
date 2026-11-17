@@ -4,39 +4,6 @@ untagged:
   CAP-A-X08:
     status: spec gap
     ref: CR-013
-  CAP-A-X12:
-    status: spec gap
-    ref: CR-008
-  CAP-A-X13:
-    status: spec gap
-    ref: CR-008
-  CAP-A-X14:
-    status: spec gap
-    ref: CR-008
-  CAP-A-X15:
-    status: spec gap
-    ref: CR-009
-  CAP-A-X16:
-    status: spec gap
-    ref: CR-009
-  CAP-A-X17:
-    status: spec gap
-    ref: CR-009
-  CAP-A-X18:
-    status: spec gap
-    ref: CR-009
-  CAP-A-X19:
-    status: spec gap
-    ref: CR-010
-  CAP-A-X21:
-    status: spec gap
-    ref: CR-008
-  CAP-A-X22:
-    status: spec gap
-    ref: CR-008
-  CAP-B-X05:
-    status: spec gap
-    ref: CR-009
   CAP-B2-071:
     status: spec gap, scope decision pending
     ref: CR-017
@@ -61,9 +28,6 @@ untagged:
   CAP-C-099:
     status: spec gap, scope decision pending
     ref: CR-017
-  CAP-C-X05:
-    status: spec gap
-    ref: CR-009
   CAP-D1-106:
     status: spec gap, scope decision pending
     ref: CR-017
@@ -109,15 +73,9 @@ untagged:
   CAP-G-164:
     status: spec gap, scope decision pending
     ref: CR-017
-  CAP-G-165:
-    status: spec gap
-    ref: CR-011
   CAP-H-171:
     status: spec gap, scope decision pending
     ref: CR-017
-  CAP-H-175:
-    status: spec gap
-    ref: CR-011
   CAP-H-176:
     status: spec gap, scope decision pending
     ref: CR-017
@@ -151,15 +109,3 @@ untagged:
   CAP-J-211:
     status: spec gap, scope decision pending
     ref: CR-017
-  CAP-J-213:
-    status: spec gap
-    ref: CR-011
-  CAP-K-X01:
-    status: spec gap
-    ref: CR-012
-  CAP-K-X02:
-    status: spec gap
-    ref: CR-012
-  CAP-K-X04:
-    status: spec gap
-    ref: CR-012

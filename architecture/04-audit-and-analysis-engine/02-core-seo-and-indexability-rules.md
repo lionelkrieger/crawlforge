@@ -27,13 +27,14 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.12 Readability, content metrics, and soft-404 detection — verbatim and unabridged**
 
 ### 7.12 Readability, content metrics, and soft-404 detection
-> Capabilities: CAP-B-X03, CAP-F-142, CAP-F-148, CAP-F-X02, CAP-F-X03
+> Capabilities: CAP-B-X03, CAP-F-142, CAP-F-148, CAP-F-X02, CAP-F-X03 · Decisions: D-004 · Change records: CR-009
 
 - **Readability:** a standard reading-ease score and grade-level estimate (Flesch-class formulas over sentence, word, and syllable counts) are computed from visible text, per page and in aggregate.
 - **Reading time:** estimated from word count and a configurable words-per-minute rate.
 - **Text-to-HTML ratio:** visible-text length relative to markup size, as a thin-content signal.
 - **Sentiment (optional):** polarity scoring against a bundled affect lexicon; disabled by default and enabled per audit.
 - **Soft-404 detection:** pages returning a success status whose content matches error-like patterns (a configurable phrase list plus structural heuristics) are flagged as soft-404 findings, distinct from hard HTTP errors.
+- When a rendered document exists, soft-404 detection runs on the rendered document and takes precedence over the raw result. **[Added by CR-009]**
 - All text metrics operate on content-area-scoped text when a content-area selector is configured (section 7.9).
 
 ---
@@ -76,11 +77,27 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.18 Response-vs-rendered comparison — verbatim and unabridged**
 
 ### 7.18 Response-vs-rendered comparison
-> Capabilities: CAP-A-035
+> Capabilities: CAP-A-035 · Decisions: D-004 · Change records: CR-009
 
 - When rendering mode is enabled, both the raw HTTP response body and the post-render document are retained for each page.
 - The engine compares status, title and metadata, link sets, visible text, structured data, and resource sets between the two.
 - Differences surface as findings (e.g. content or links present only after rendering, metadata altered by script) and as a side-by-side diff in the URL detail view, supporting a "rendered" report surface.
+- A difference between raw and rendered title, canonical, meta robots or hreflang is a high-severity finding. A rendered `noindex` absent from the raw document, or the reverse, is critical. **[Added by CR-009]**
+
+### 7.19 Site-type rules
+> Capabilities: CAP-A-X15, CAP-A-X16, CAP-A-X18, CAP-B-X05, CAP-C-X05 · Decisions: D-004 · Change records: CR-009
+
+**[Added by CR-009]**
+
+| Rule | Behaviour |
+|---|---|
+| Hash routing | Hash routing is always reported (search engines do not index hash routes) and the finding suggests enabling hash-route mode. In rendered capture, **hash-route mode** (off by default) preserves fragments starting `#/` or `#!` as distinct routes. |
+| Non-crawlable navigation | In rendered capture, elements with click listeners or link/button roles that change the route without a crawlable `<a href>` are inventoried and reported, including routes found only by click discovery (section 5.6.4). |
+| Client-side redirects | Navigations performed by script after load (frame navigation and history changes) are recorded as a distinct redirect type in the redirect chain, with timing, and reported. |
+| Service workers | Service workers are bypassed for every render; a registered service worker is reported as informational. |
+| Postback navigation | Uncrawlable postback navigation (section 5.5) is reported per page and per URL pattern. |
+| Cookieless sessions | Detected ASP.NET cookieless session segments (section 5.2) are reported, since search engines index such URLs. |
+| ViewState weight | The size of `__VIEWSTATE` and `__EVENTVALIDATION` is measured per page and reported above a configurable threshold (default 100 KB). |
 
 ---
 

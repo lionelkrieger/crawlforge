@@ -50,7 +50,7 @@
 - **Network capture:** request and response events (URL, method, status, headers, timing, size, initiator) feed the network-waterfall summary (section 5.6), WAF evaluation (FS-CRAWL-002 §2) and analytics/consent inspection (FS-CRAWL-002 §14.2).
 - **Console messages and runtime exceptions** are captured per page.
 - **Emulation:** device, viewport, user agent and locale are applied per configuration.
-- **Wait rule:** a page is complete when the DOM and network have been quiet for 500 ms, subject to a hard cap of 20 seconds; both values are configurable. Fixed delays are not used.
+- **Wait rule:** a page is complete when the DOM and network have been quiet for 500 ms, subject to a hard cap of 20 seconds; both values are configurable. Long-lived connections (websockets, server-sent events, long-polling and other streaming requests) are excluded from the quiet-network test, so pages with live data (for example live odds) can settle. Fixed delays are not used. **[Amended by CR-009, D-004]**
 - **Resource blocking** is a configuration profile. The default profile blocks nothing, so Core Web Vitals and tag checks are not skewed; an opt-in "fast" profile blocks selected resource classes (for example fonts and media).
 - **Shared resource cache:** static resources are cached for the duration of one audit so each site bundle is fetched once.
 - Infinite-scroll expansion, the stealth profile, custom JavaScript snippets (section 7.17) and the Core Web Vitals lab probe (section 7.11) run on this layer.
@@ -66,6 +66,20 @@
 - Every audit and every rendered URL record records the browser product and version used. Audit comparison flags a browser-version change between the compared audits.
 - If no browser resolves, rendering-dependent capture modes fail at pre-crawl validation with a clear local error; non-JS capture remains available.
 - Redistribution terms of the bundled browser are confirmed by the licence audit (`09-distribution`) before public release.
+
+### 5.6.4 Click discovery
+> Capabilities: CAP-A-X17 · Decisions: D-004 · Change records: CR-009
+
+**[Added by CR-009, owner decision 2026-11-17: in scope from the start, for client-side applications such as betting sites]**
+
+- An optional configuration setting for rendered capture. When enabled, after a page settles the engine triggers navigation elements that have no crawlable `<a href>` (click listeners, buttons and router links, menus, tabs, "load more" controls) and observes the result.
+- A resulting URL change (history navigation or hash route) adds the new route to the frontier as a discovered URL, recorded as **discovered by click** with the triggering element. A state change without a URL change is recorded against the page as an unaddressable state and reported, since search engines cannot reach it.
+- **Safety, mandatory:**
+  - While click discovery runs, every request other than GET and HEAD is **blocked** by the rendering control layer. A click can never submit a form, place a bet, deposit, withdraw, log out or change data.
+  - Elements whose text, label or attributes match a destructive-action pattern list (for example logout, sign out, delete, remove, deposit, withdraw, bet, place, buy, checkout, pay, submit) are never triggered. The list is configurable and can be extended per project.
+  - Form inputs are never filled.
+- **Bounds:** maximum triggered elements per page, maximum click depth from a crawled URL, and a time budget per page, all configurable. Elements are deduplicated by a DOM signature so repeated components (for example the same menu on every page) are triggered once per audit.
+- Findings: routes reachable only by click are reported as non-crawlable navigation (section 7.19). Click discovery is labelled in reports as going beyond search-engine behaviour.
 
 ---
 
@@ -113,3 +127,8 @@ Replaced text in §5.9 (built-in proxy bullet):
 Replaced text in §5.9 (resource-blocking sub-bullet):
 
 >   - user-defined local resource-blocking rules (for example, suppressing selected third-party resource classes during rendering);
+### CR-009 (2026-11-17; D-004)
+
+Replaced text in §5.6.2 (wait rule):
+
+> - **Wait rule:** a page is complete when the DOM and network have been quiet for 500 ms, subject to a hard cap of 20 seconds; both values are configurable. Fixed delays are not used.
