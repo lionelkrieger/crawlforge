@@ -1,0 +1,18 @@
+{
+  "title": "CrawlForge",
+  "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+  "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\n\nNo active audit. Open one from the hub or the audits list — its live report mounts here.\n\nBrowse audits\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n0/1000\n\nNo hub activity yet. Start an audit or connect the backend to see live events here.\n\nWS\n149 MiB\nHeap\n7.03 MiB\nGC\n4/1/0\nWAL\n1.73 MiB\nJS\n9.54 MiB\nbeat\n22:27:58\nCompact\nActive audit report surfaces",
+  "buttons": [
+    "Open command palette (Ctrl+K)",
+    "Main hub",
+    "Audits",
+    "Report",
+    "Tools",
+    "Settings",
+    "Toggle activity pane",
+    "Browse audits",
+    "Resize Main workspace and Live activity (Enter toggles colla",
+    "Compact and trim working set"
+  ],
+  "inputs": []
+}

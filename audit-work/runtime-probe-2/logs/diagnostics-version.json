@@ -1,0 +1,14 @@
+200
+{
+  "product": "CrawlForge",
+  "version": "0.0.1.0",
+  "runtime": ".NET 10.0.15",
+  "gc": {
+    "server": true,
+    "concurrent": true
+  },
+  "featureAvailability": {
+    "remoteFlagResolution": false,
+    "allFeaturesEnabledByDefault": true
+  }
+}

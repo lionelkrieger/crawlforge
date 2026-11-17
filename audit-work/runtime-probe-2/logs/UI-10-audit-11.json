@@ -1,0 +1,23 @@
+{
+  "calls": [],
+  "pages": [
+    "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub"
+  ],
+  "title": "CrawlForge",
+  "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+  "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\nAudit 11\nCOMPLETED\n\nPhase finalizing · started 17 Nov 22:27:46\n\nCRAWL PROGRESS\n\n183 fetched · 0 queued\n\nERRORS\n0\nBLOCKED\n0\nWAF BLOCKED\n0\nELAPSED\n—\n\nHOST THROTTLE (AIMD)\n\nNo host state yet — adjustments stream as the crawler adapts per host.\n\nREPORT SURFACES\n\nURL / finding / link grids, charts, and the link graph mount into this workspace from the report workpieces; all render locally from aggregate endpoints. Live telemetry above is already streaming for this audit.\n\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n0/1000\n\nNo hub activity yet. Start an audit or connect the backend to see live events here.\n\nWS\n189 MiB\nHeap\n29.8 MiB\nGC\n149/12/8\nWAL\n4.12 MiB\nJS\n9.54 MiB\nbeat\n22:35:06\nCompact",
+  "buttons": [
+    "Open command palette (Ctrl+K)",
+    "Main hub",
+    "Audits",
+    "Report",
+    "Tools",
+    "Settings",
+    "Toggle activity pane",
+    "Resize Main workspace and Live activity (Enter toggles colla",
+    "Compact and trim working set"
+  ],
+  "inputs": [
+    "textarea[textarea] name= label="
+  ]
+}

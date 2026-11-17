@@ -1,0 +1,29 @@
+{
+  "title": "CrawlForge",
+  "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+  "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nAUDITS\nHide\nAudits\n\nCrawl runs · live counters stream over the hub (≤1/s).\n\nID\tState\tPhase\tFetched\tErrors\tStarted\t\n\n\n1\n\n\t\nFAILED\n\t\n\nfinalizing\n\n\t0\t0\t\n\n17 Nov 19:05:19\n\n\t\nOpen report\n\n\n\n2\n\n\t\nFAILED\n\t\n\nfinalizing\n\n\t0\t0\t\n\n17 Nov 19:06:25\n\n\t\nOpen report\n\n\n\n3\n\n\t\nCOMPLETED\n\t\n\nfinalizing\n\n\t1,058\t0\t\n\n17 Nov 19:06:47\n\n\t\nOpen report\n\n\n\n4\n\n\t\nFAILED\n\t\n\nfinalizing\n\n\t0\t0\t\n\n17 Nov 19:15:25\n\n\t\nOpen report\n\n\n\n5\n\n\t\nCOMPLETED\n\t\n\nfinalizing\n\n\t1,545\t0\t\n\n17 Nov 19:15:31\n\n\t\nOpen report\n\n\n\n6\n\n\t\nCANCELLED\n\t\n\nfinalizing\n\n\t127\t0\t\n\n17 Nov 21:43:56\n\n\t\nOpen report\n\n\n\n7\n\n\t\nCOMPLETED\n\t\n\nfinalizing\n\n\t12\t0\t\n\n17 Nov 21:45:51\n\n\t\nOpen report\n\n\n\n8\n\n\t\nCOMPLETED\n\t\n\nfinalizing\n\n\t10\t0\t\n\n17 Nov 21:46:42\n\n\t\nOpen report\n\n\n\n9\n\n\t\nCOMPLETED\n\t\n\nfinalizing\n\n\t5\t0\t\n\n17 Nov 21:49:10\n\n\t\nOpen report\n\n\n\n10\n\n\t\nFAILED\n\t\n\nfinalizing\n\n\t0\t0\t\n\n17 Nov 21:49:57\n\n\t\nOpen report\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n0/1000\n\nNo hub activity yet. Start an audit or connect the backend to see live events here.\n\nWS\n183 MiB\nHeap\n29.7 MiB\nGC\n148/12/8\nWAL\n4.12 MiB\nJS\n9.54 MiB\nbeat\n22:33:54\nCompact\nCrawl runs and lifecycle",
+  "buttons": [
+    "Open command palette (Ctrl+K)",
+    "Main hub",
+    "Audits",
+    "Report",
+    "Tools",
+    "Settings",
+    "Toggle activity pane",
+    "Open report",
+    "Open report",
+    "Open report",
+    "Open report",
+    "Open report",
+    "Open report",
+    "Open report",
+    "Open report",
+    "Open report",
+    "Open report",
+    "Resize Main workspace and Live activity (Enter toggles colla",
+    "Compact and trim working set"
+  ],
+  "inputs": [
+    "textarea[textarea] name= label="
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "log": [
+    {
+      "t": "0.1",
+      "state": "running",
+      "phase": "crawling",
+      "counters": {
+        "queued": 0,
+        "fetched": 0,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": null
+      }
+    },
+    {
+      "t": "197.4",
+      "state": "running",
+      "phase": "analyzing",
+      "counters": {
+        "queued": 0,
+        "fetched": 26,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": null
+      }
+    },
+    {
+      "t": "198.4",
+      "state": "completed",
+      "phase": "finalizing",
+      "counters": {
+        "queued": 0,
+        "fetched": 26,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": null
+      }
+    }
+  ],
+  "final": {
+    "data": {
+      "id": "12",
+      "projectId": "4",
+      "configurationId": "8",
+      "state": "completed",
+      "phase": "finalizing",
+      "startedAt": "2026-11-17T20:30:23.280626+00:00",
+      "completedAt": "2026-11-17T20:33:41.1724147+00:00",
+      "counters": {
+        "queued": 0,
+        "fetched": 26,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": null
+      },
+      "elapsedSeconds": 197.892,
+      "throughputPerSecond": 0.131,
+      "estimatedRemainderSeconds": null,
+      "errorMessage": null
+    }
+  }
+}

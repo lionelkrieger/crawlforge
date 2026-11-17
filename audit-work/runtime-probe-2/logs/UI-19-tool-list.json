@@ -1,0 +1,50 @@
+{
+  "Single-Page Analyzer": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-Single_Page_Analyzer.png",
+    "text": "Single-Page Analyzer | criterion #10 | Audit-grade findings for one page — no project, no crawl, no setup. | Inspect rendered artifact | Page URL | Render | Analyze page | Findings | Element inventory | Rendered artifact | Enter a URL and analyze — findings, element inventory, and scope diagnostics arrive without a project. | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "SERP & Social Preview": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-SERP_Social_Preview.png",
+    "text": "SERP & Social Card Preview | criterion #48 | Live pixel truncation from bundled font metrics — no network, no remote fonts. | Desktop | Mobile | Title | Description | Display URL | Card image (data: URL only — offline) | DESKTOP PIXEL BUDGETS | Defaults | Title max px | Description total px | Desc. lines | crawlforge.local | https://crawlforge.local/features/auditor | CrawlForge — Local-First Website Crawler & Technical SEO…Auditor | CrawlForge is an offline-first desktop crawler that audits entire websites | locally: technical SEO, content quality, accessibility, performance, and…structured data — with no accounts, no telemetry, and no vendor services. Your data never leaves the machine. | 558 / 580 px | 889 / 920 px | TITLE TRUNCATED | DESCRIPTION TRUNCATED | URL 240 PX | Social cards | og:image (data: URL) | CRAWLFORGE.LOCAL | CrawlForge — Local-First Website Crawler & Technical SEO Auditor | CrawlForg"
+  },
+  "Render Tester + Picker": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-Render_Tester_Picker.png",
+    "text": "Render Tester | §8.7 · #42 | Headless render via the local backend — screenshot, console, WAF verdict, and the visual selector picker. | Target URL | Device | Picker | Render | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "Robots.txt Tester": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-Robots_txt_Tester.png",
+    "text": "Robots.txt Tester | §8.7 | Allow/disallow verdicts with the matched rule — standalone, no audit required. | Paste body | Fetch URL | User-agent | robots.txt body | Test URLs (one per line) | Test verdicts | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "Sitemap Generator": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-Sitemap_Generator.png",
+    "text": "Sitemap Generator | §8.7 | Standards-conformant XML from a filtered URL set — written locally, never published. | Source audit | Status class | Change frequency | Max depth | URL contains | Indexable URLs only | Include lastmod | Priority: 0.5 | Generate sitemap | Output writes to the local exports directory only. | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "Content Scope Preview": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-Content_Scope_Preview.png",
+    "text": "Content Scope Preview | §4.6 | Build include/exclude lists visually — the picker sends captured selectors straight into them. | Sample URL | Stored artifact | Load rendered artifact | Sample URL | INCLUDE SELECTORS | 1 active | Add selector | EXCLUDE SELECTORS | 3 active | Add selector | Preview scope | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "Rewrite & Host Mapping": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-Rewrite_Host_Mapping.png",
+    "text": "Rewrite & Host-Mapping Preview | §10.7 | Dry-run regex rules and host mappings against sample URLs — no crawl side effects. | Sample URLs (one per line) | REWRITE RULES | Add rule | HOST MAPPINGS | Add mapping | → | Preview rewrite | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "llms.txt Generate / Validate": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-llms_txt_Generate_Validate.png",
+    "text": "llms.txt Generator & Validator | §13.5 | GEO readiness, local-only: generate to disk or validate a body/URL. | Generator | Validator | Source audit | Variant | Restrict to hosts (comma-separated, optional) | Generate locally | Writes the local exports directory only — never published, never submitted. | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "URL Check": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-URL_Check.png",
+    "text": "URL Check | §8.7 | Status, redirects, headers, indexability, WAF verdict — one URL, no audit. | Target URL | Check | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "Structured Data Checker": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-Structured_Data_Checker.png",
+    "text": "Structured Data Checker | §7.13 | JSON-LD & Microdata blocks with validation and rich-result verdicts. | Paste markup | Fetch URL | Check blocks | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "Query Builder": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-Query_Builder.png",
+    "text": "Query Builder | §8.7 | Saved AND/OR rule trees over URL fields — depth capped at 16, operators whitelisted. | Reload | Query name | Save query | No saved queries yet — build a tree and save it. | AND | OR | DEPTH 1 | Condition | Group | RULE TREE JSON | { |   \"kind\": \"group\", |   \"operator\": \"and\", |   \"children\": [ |     { |       \"kind\": \"condition\", |       \"field\": \"statusClass\", |       \"operator\": \"eq\", |       \"value\": \"2xx\" |     }, |     { |       \"kind\": \"condition\", |       \"field\": \"indexable\", |       \"operator\": \"eq\", |       \"value\": true |     } |   ] | } | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  },
+  "Export Destinations": {
+    "shot": "E:\\Crawlforge\\audit-work\\runtime-probe-2\\screenshots\\UI-19-tool-Export_Destinations.png",
+    "text": "Export Destinations | §8.5 · §10.2 | User-owned targets only. Credentials stay local and masked; disabled destinations are skipped by delivery. | Reload | New destination | No destinations configured — exports stay local until you add one. | LIVE WORKSPACE | LIVE ACTIVITY | 0/1000 | No hub activity yet. Start an audit or connect the backend to see live events here."
+  }
+}

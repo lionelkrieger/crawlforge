@@ -1,0 +1,39 @@
+201
+{
+  "data": {
+    "id": "8",
+    "projectId": "4",
+    "name": "Runtime Probe 2 - JS",
+    "description": "REST-only rendering.enabled=true; no UI capture control",
+    "createdAt": "2026-11-17T20:30:17.1699823+00:00",
+    "updatedAt": "2026-11-17T20:30:17.1699823+00:00",
+    "startUrls": [
+      "http://127.0.0.1:47311/"
+    ],
+    "limits": {
+      "maxUrls": null,
+      "maxDepth": null,
+      "maxDurationSeconds": null,
+      "maxResponseBytes": null
+    },
+    "aimd": {
+      "initialRateR0": 2,
+      "alpha": 0.5,
+      "beta": 0.5,
+      "kappa": 4,
+      "ewmaTtfbWeight": 0.2
+    },
+    "rendering": {
+      "enabled": true,
+      "deviceProfile": "desktop",
+      "infiniteScroll": false,
+      "captureConsole": true
+    },
+    "respectRobotsTxt": true,
+    "virtualRobotsTxt": null,
+    "contentScope": null,
+    "rewrite": null,
+    "consent": null,
+    "zoneWeights": null
+  }
+}

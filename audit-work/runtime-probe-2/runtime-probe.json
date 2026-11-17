@@ -1,0 +1,1977 @@
+{
+  "environment": {
+    "repository_head": "fc9ac0f",
+    "os": "Windows 11 Pro 10.0.26300",
+    "node": "v22.22.2",
+    "system_dotnet_sdk": "11.0.100-rc.3.26522.148 (system PATH; global.json 10.0.404 is not satisfied by this host)",
+    "pinned_sdk": {
+      "version": "10.0.404",
+      "rollForward": "latestFeature",
+      "path": "C:\\Users\\lione\\AppData\\Local\\Microsoft\\dotnet",
+      "observed_with_dotnet_list_sdks": true
+    },
+    "backend_runtime": ".NET 10.0.15",
+    "build_result": "Original launch-crawlforge.ps1 completed with Electron binary and all three build outputs up to date; direct pinned-SDK build succeeded with 0 warnings and 0 errors.",
+    "launch": "Original script launched, then the debug copy in scratch relaunched Electron with --remote-debugging-port=9232 and the local .NET 10 path. The only script differences are the debug port, local SDK PATH/DOTNET_ROOT, proxy-duplicate avoidance, and log paths.",
+    "main_window": "Loaded: file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub, title CrawlForge.",
+    "ports": {
+      "fixture": 47311,
+      "electron_cdp": 9232,
+      "backend": 49413,
+      "mcp": 49417
+    },
+    "fixture": "Pre-existing fixture server on 127.0.0.1:47311 reused after confirming root, robots.txt, sitemap.xml, and /__fixture/requests respond. /__fixture/reset called before each of the three audits.",
+    "workspace_note": "The user data directory already contained projects 1-3 and audits 1-10. Probe created project 4 \"Runtime Probe 2\", configurations 7-9, audits 11-13, and exports 1-2. Project 1 was not touched."
+  },
+  "surfaces": {
+    "UI-01": {
+      "status": "reachable_and_functional",
+      "evidence": "New project dialog created project 4 and a default configuration via POST /api/projects and POST /api/projects/4/configurations; Start audit controls present. Hub shows projects and audit aggregates after manual refresh.",
+      "screenshot": "screenshots/UI-01-final.png"
+    },
+    "UI-02": {
+      "status": "not_reachable",
+      "evidence": "Project row click, dblclick, and command-palette project pick produced no navigation and no API call; no project overview controls or text appeared.",
+      "screenshot": null
+    },
+    "UI-03": {
+      "status": "not_reachable",
+      "evidence": "No Configurations entry in rail, project row, or command palette; the section name is absent from the running shell.",
+      "screenshot": null
+    },
+    "UI-04": {
+      "status": "not_reachable",
+      "evidence": "No configuration editor: 0 of 13 documented tabs. The only seed/target input is in the New project dialog; no limit, AIMD, rendering, directive, analysis, or extraction inputs exist.",
+      "screenshot": "screenshots/UI-01-new-project-filled.png"
+    },
+    "UI-05": {
+      "status": "not_reachable",
+      "evidence": "No Integrations navigation or controls in the running shell.",
+      "screenshot": null
+    },
+    "UI-06": {
+      "status": "not_reachable",
+      "evidence": "No Segments surface or report segment picker.",
+      "screenshot": null
+    },
+    "UI-07": {
+      "status": "not_reachable",
+      "evidence": "Global Audits rail exists, but Project overview > Audits and retention controls do not; no project-scoped history/retention surface.",
+      "screenshot": "screenshots/UI-07-audits-list.png"
+    },
+    "UI-08": {
+      "status": "not_reachable",
+      "evidence": "No Clients surface or navigation.",
+      "screenshot": null
+    },
+    "UI-09": {
+      "status": "not_reachable",
+      "evidence": "No Schedules surface or navigation; schedules exist only as an MCP tool/resource.",
+      "screenshot": null
+    },
+    "UI-10": {
+      "status": "reachable_and_functional",
+      "evidence": "Opening audit 11 rendered state COMPLETED, phase finalizing, 183 fetched, 0 queued, 0 errors, 0 blocked, and a host-throttle panel without crash. Failed audit 10 displays its persisted error message after HOTFIX-01.",
+      "screenshot": "screenshots/UI-10-audit-11-report.png"
+    },
+    "UI-11": {
+      "status": "reachable_but_placeholder",
+      "evidence": "Report area loads with crawl progress but the data area is static text: \"URL / finding / link grids, charts, and the link graph mount into this workspace from the report workpieces\"; no URL/finding data grid.",
+      "screenshot": "screenshots/UI-11-report-placeholder.png"
+    },
+    "UI-12": {
+      "status": "not_reachable",
+      "evidence": "No report navigation; issue explorer is absent.",
+      "screenshot": null
+    },
+    "UI-13": {
+      "status": "not_reachable",
+      "evidence": "No URL explorer or drill-down; URL data reachable only through REST.",
+      "screenshot": null
+    },
+    "UI-14": {
+      "status": "not_reachable",
+      "evidence": "No visualization window or navigation.",
+      "screenshot": null
+    },
+    "UI-15": {
+      "status": "not_reachable",
+      "evidence": "No Compare surface or two-audit selection.",
+      "screenshot": null
+    },
+    "UI-16": {
+      "status": "not_reachable",
+      "evidence": "No specialist report navigation; none of the listed specialist surfaces is mounted.",
+      "screenshot": null
+    },
+    "UI-17": {
+      "status": "not_reachable",
+      "evidence": "No Log File Analyzer surface or import control.",
+      "screenshot": null
+    },
+    "UI-18": {
+      "status": "reachable_and_functional",
+      "evidence": "Tools rail > Single-Page Analyzer accepted a fixture URL and returned 9 findings and 10 elements through POST /api/analysis/single-page without creating a project.",
+      "screenshot": "screenshots/UI-18-single-page-analyzer.png"
+    },
+    "UI-19": {
+      "status": "reachable_and_functional",
+      "evidence": "Tools rail exposes 12 standalone tools. Render Tester, URL Check, Structured Data Checker, robots tester, sitemap generator, query builder, and other listed tools render with working controls.",
+      "screenshot": "screenshots/UI-19-tools.png"
+    },
+    "UI-20": {
+      "status": "not_reachable",
+      "evidence": "No Export dialog or report-window Export control. REST CSV and XLSX export jobs 1 and 2 completed and downloaded valid files.",
+      "screenshot": "screenshots/UI-11-report-placeholder.png"
+    },
+    "UI-21": {
+      "status": "reachable_and_functional",
+      "evidence": "Settings renders Appearance, language, advisories, Database, MCP automation, Embeddings, Proxy, and Diagnostics. Missing from the specified surface: browser, user dictionary, integrations credentials, configuration templates, action log, release check, and Plugins navigation.",
+      "screenshot": "screenshots/UI-21-settings.png"
+    },
+    "UI-22": {
+      "status": "not_reachable",
+      "evidence": "No plugin manager; Settings has no Plugins entry.",
+      "screenshot": null
+    },
+    "UI-23": {
+      "status": "reachable_and_functional",
+      "evidence": "Status bar visible in every window with WS, working set, heap, GC, WAL, JS heap, heartbeat, and Compact control; /metrics exposes the same backend families.",
+      "screenshot": "screenshots/UI-23-status-bar.png"
+    },
+    "UI-24": {
+      "status": "not_applicable_yet",
+      "evidence": "Recovery screen is automatic after repeated backend failures; no backend failure was induced in this measurement session.",
+      "screenshot": null
+    }
+  },
+  "runs": [
+    {
+      "mode": "http",
+      "entry_point": "REST POST /api/audits",
+      "configuration_id": "7",
+      "configuration_setup": "Project and default config created through UI; rendering.enabled=false (default).",
+      "limit_overrides": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      },
+      "audit_id": "11",
+      "state": "completed",
+      "url_count": 183,
+      "fetched": 183,
+      "queued": 0,
+      "error": 0,
+      "blocked": 0,
+      "links": 1641,
+      "findings": 1522,
+      "duration_seconds": 122.729,
+      "transitions": [
+        {
+          "t": "0.1s",
+          "state": "running",
+          "phase": "crawling",
+          "fetched": 6
+        },
+        {
+          "t": "95.9s",
+          "state": "running",
+          "phase": "analyzing",
+          "fetched": 182
+        },
+        {
+          "t": "117.3s",
+          "state": "completed",
+          "phase": "finalizing",
+          "fetched": 183
+        }
+      ],
+      "nonGet": [],
+      "tagHits": [],
+      "evidence_files": [
+        "logs/audit-11-poll.json",
+        "logs/audit-11-data.json",
+        "logs/audit-11-trap-details.json"
+      ]
+    },
+    {
+      "mode": "js",
+      "entry_point": "REST POST /api/audits",
+      "configuration_id": "8",
+      "configuration_setup": "REST-only creation of config 8 with rendering.enabled=true, deviceProfile=desktop, captureConsole=true; no UI capture-mode control exists. Snapshot reports renderingMode=auto, but every rendering-dependent finding reports no rendered tree.",
+      "limit_overrides": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      },
+      "audit_id": "12",
+      "state": "completed",
+      "url_count": 26,
+      "fetched": 26,
+      "queued": 0,
+      "error": 0,
+      "blocked": 0,
+      "links": 48,
+      "findings": 194,
+      "duration_seconds": 197.892,
+      "transitions": [
+        {
+          "t": "0.1s",
+          "state": "running",
+          "phase": "crawling",
+          "fetched": 0
+        },
+        {
+          "t": "197.4s",
+          "state": "running",
+          "phase": "analyzing",
+          "fetched": 26
+        },
+        {
+          "t": "198.4s",
+          "state": "completed",
+          "phase": "finalizing",
+          "fetched": 26
+        }
+      ],
+      "nonGet": [],
+      "tagHits": [],
+      "evidence_files": [
+        "logs/audit-12-poll.json",
+        "logs/audit-12-data.json",
+        "logs/audit-12-trap-details.json"
+      ]
+    }
+  ],
+  "traps": {
+    "redirect-chain": {
+      "http": {
+        "result": "partial",
+        "evidence": "Audit 11/12 stored the seed as 200 with redirectChain length 1 and no redirect-chain finding; the required three-hop 301>302>301 record and finding are absent."
+      },
+      "js": {
+        "result": "partial",
+        "evidence": "Audit 11/12 stored the seed as 200 with redirectChain length 1 and no redirect-chain finding; the required three-hop 301>302>301 record and finding are absent."
+      }
+    },
+    "redirect-loop": {
+      "http": {
+        "result": "partial",
+        "evidence": "Audit 11/12 stored /redirect/loop-a as status 0 and did not hang, but emitted no loop finding or loop classification."
+      },
+      "js": {
+        "result": "partial",
+        "evidence": "Audit 11/12 stored /redirect/loop-a as status 0 and did not hang, but emitted no loop finding or loop classification."
+      }
+    },
+    "noindex": {
+      "http": {
+        "result": "pass",
+        "evidence": "Audit 11/12 emitted indexability.noindex with source meta-robots and directives [\"noindex\",\"follow\"]; the page was crawled (200, 154 words)."
+      },
+      "js": {
+        "result": "pass",
+        "evidence": "Audit 11/12 emitted indexability.noindex with source meta-robots and directives [\"noindex\",\"follow\"]; the page was crawled (200, 154 words)."
+      }
+    },
+    "robots-blocked": {
+      "http": {
+        "result": "partial",
+        "evidence": "Audit 11/12 did not fetch /private/blocked.html (status 0) but stored blockReason=null and emitted no robots finding; the URL is not affirmatively reported as blocked."
+      },
+      "js": {
+        "result": "partial",
+        "evidence": "Audit 11/12 did not fetch /private/blocked.html (status 0) but stored blockReason=null and emitted no robots finding; the URL is not affirmatively reported as blocked."
+      }
+    },
+    "canonical-conflict": {
+      "http": {
+        "result": "pass",
+        "evidence": "Audit 11/12 emitted canonical.header-html-conflict and canonical.mismatch with header target /pages/canonical-target-header.html and HTML target /pages/canonical-target-html.html."
+      },
+      "js": {
+        "result": "pass",
+        "evidence": "Audit 11/12 emitted canonical.header-html-conflict and canonical.mismatch with header target /pages/canonical-target-header.html and HTML target /pages/canonical-target-html.html."
+      }
+    },
+    "broken-links": {
+      "http": {
+        "result": "partial",
+        "evidence": "Audit 11/12 recorded the internal 404 URL state, but no broken-internal or broken-external finding; broken.example.invalid was not checked."
+      },
+      "js": {
+        "result": "partial",
+        "evidence": "Audit 11/12 recorded the internal 404 URL state, but no broken-internal or broken-external finding; broken.example.invalid was not checked."
+      }
+    },
+    "orphan": {
+      "http": {
+        "result": "fail",
+        "evidence": "/pages/orphan.html is absent from both audits; sitemap-only discovery does not exist."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "/pages/orphan.html is absent from both audits; sitemap-only discovery does not exist."
+      }
+    },
+    "js-only-link": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "Rendering is inert in full audits: /pages/js-only-target.html is absent in both the http run and the rendering-enabled js run; no rendered tree is available."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "Rendering is inert in full audits: /pages/js-only-target.html is absent in both the http run and the rendering-enabled js run; no rendered tree is available."
+      }
+    },
+    "script-injected-content": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "/pages/js-content.html reports totalWordCount=2 in both modes and all rendering-dependent findings say no rendered tree is available; rendered ~200-word content is absent."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "/pages/js-content.html reports totalWordCount=2 in both modes and all rendering-dependent findings say no rendered tree is available; rendered ~200-word content is absent."
+      }
+    },
+    "late-meta-change": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "No dual-capture configuration exists through UI or REST. /pages/late-meta.html keeps its raw title and emits no late-change finding."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "No dual-capture configuration exists through UI or REST. /pages/late-meta.html keeps its raw title and emits no late-change finding."
+      }
+    },
+    "soft-404-server": {
+      "http": {
+        "result": "pass",
+        "evidence": "Audit 11/12 emitted indexability.soft-404 for /pages/soft-404.html with confidence 0.9 and matched \"page not found\" phrases."
+      },
+      "js": {
+        "result": "pass",
+        "evidence": "Audit 11/12 emitted indexability.soft-404 for /pages/soft-404.html with confidence 0.9 and matched \"page not found\" phrases."
+      }
+    },
+    "soft-404-client-route": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "/spa/does-not-exist is absent; the SPA shell is not rendered in full audits."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "/spa/does-not-exist is absent; the SPA shell is not rendered in full audits."
+      }
+    },
+    "hash-route": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "Hash routes require rendering; /hash-app/ was crawled as a static 3-word page with no route capture or hash-route finding."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "Hash routes require rendering; /hash-app/ was crawled as a static 3-word page with no route capture or hash-route finding."
+      }
+    },
+    "client-side-redirect": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "Requires rendering; /pages/js-redirect.html stayed at its raw shell and no client-side redirect finding was emitted."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "Requires rendering; /pages/js-redirect.html stayed at its raw shell and no client-side redirect finding was emitted."
+      }
+    },
+    "postback-links": {
+      "http": {
+        "result": "fail",
+        "evidence": "/pages/postback.aspx was crawled but no uncrawlable-navigation or postback finding was emitted."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "/pages/postback.aspx was crawled but no uncrawlable-navigation or postback finding was emitted."
+      }
+    },
+    "cookieless-session": {
+      "http": {
+        "result": "fail",
+        "evidence": "The URL \"http://127.0.0.1:47311/(S(abc123xyz))/pages/session.aspx\" is stored unchanged; no canonicalisation finding."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "The URL \"http://127.0.0.1:47311/(S(abc123xyz))/pages/session.aspx\" is stored unchanged; no canonicalisation finding."
+      }
+    },
+    "large-viewstate": {
+      "http": {
+        "result": "fail",
+        "evidence": "/pages/viewstate-large.aspx has markupLength 153005 but no ViewState finding; it is misclassified as thin content."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "/pages/viewstate-large.aspx has markupLength 153005 but no ViewState finding; it is misclassified as thin content."
+      }
+    },
+    "crawler-trap-filter": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit 11 generated numerous /trap/filter?color=... combinations with no trap detection; the 220-URL limit, not detection, bounded the run."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit 11 generated numerous /trap/filter?color=... combinations with no trap detection; the 220-URL limit, not detection, bounded the run."
+      }
+    },
+    "crawler-trap-calendar": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit 11 followed the infinite calendar through 2027/4 with no trap detection; the 220-URL limit, not detection, bounded the run."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit 11 followed the infinite calendar through 2027/4 with no trap detection; the 220-URL limit, not detection, bounded the run."
+      }
+    },
+    "cookie-gate": {
+      "http": {
+        "result": "fail",
+        "evidence": "/cookie-gate/ ended as status 0 in both modes; no successful cookie-jar navigation or loop finding was recorded."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "/cookie-gate/ ended as status 0 in both modes; no successful cookie-jar navigation or loop finding was recorded."
+      }
+    },
+    "consent-banner": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture. Fixture tagHits stayed [] in both runs; no consent/tag finding was emitted."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture. Fixture tagHits stayed [] in both runs; no consent/tag finding was emitted."
+      }
+    },
+    "service-worker": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; /sw-app/ has no service-worker finding."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "Requires JS capture; /sw-app/ has no service-worker finding."
+      }
+    },
+    "structured-data-errors": {
+      "http": {
+        "result": "fail",
+        "evidence": "/pages/structured-data.html was crawled but no structured-data validation finding was emitted."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "/pages/structured-data.html was crawled but no structured-data validation finding was emitted."
+      }
+    },
+    "missing-alt": {
+      "http": {
+        "result": "pass",
+        "evidence": "Audit 11/12 emitted accessibility.image-alt with locator html > body:nth-of-type(1) > img:nth-of-type(1) on /pages/images.html."
+      },
+      "js": {
+        "result": "pass",
+        "evidence": "Audit 11/12 emitted accessibility.image-alt with locator html > body:nth-of-type(1) > img:nth-of-type(1) on /pages/images.html."
+      }
+    },
+    "mixed-content": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "Fixture ran over HTTP only; mixed-content expectation requires HTTPS (--tls-cert/--tls-key)."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "Fixture ran over HTTP only; mixed-content expectation requires HTTPS (--tls-cert/--tls-key)."
+      }
+    },
+    "hreflang-no-return": {
+      "http": {
+        "result": "fail",
+        "evidence": "Audit 11/12 emitted i18n.hreflang-valid (pass) with languages en/fr; no missing return-tag finding."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "Audit 11/12 emitted i18n.hreflang-valid (pass) with languages en/fr; no missing return-tag finding."
+      }
+    },
+    "duplicate-titles": {
+      "http": {
+        "result": "partial",
+        "evidence": "Both duplicate-title pages were crawled, but the only related finding is content.keyword-cannibalization; no duplicate-title finding was emitted."
+      },
+      "js": {
+        "result": "partial",
+        "evidence": "Both duplicate-title pages were crawled, but the only related finding is content.keyword-cannibalization; no duplicate-title finding was emitted."
+      }
+    },
+    "thin-page": {
+      "http": {
+        "result": "fail",
+        "evidence": "/pages/thin.html reports totalWordCount=6 but has no content.thin-text finding."
+      },
+      "js": {
+        "result": "fail",
+        "evidence": "/pages/thin.html reports totalWordCount=6 but has no content.thin-text finding."
+      }
+    },
+    "live-websocket": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "Requires JS rendering and network quiet detection; no rendered tree is available in full audits."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "Requires JS rendering and network quiet detection; no rendered tree is available in full audits."
+      }
+    },
+    "click-only-navigation": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "Requires click discovery; /spa/promotions and /spa/results were not discovered in the bounded js run."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "Requires click discovery; /spa/promotions and /spa/results were not discovered in the bounded js run."
+      }
+    },
+    "never-place-bet": {
+      "http": {
+        "result": "not_testable",
+        "evidence": "nonGet=[] and tagHits=[] in both runs, but rendering and click discovery are inert, so the safety assertion is vacuous rather than an exercised click-safety pass."
+      },
+      "js": {
+        "result": "not_testable",
+        "evidence": "nonGet=[] and tagHits=[] in both runs, but rendering and click discovery are inert, so the safety assertion is vacuous rather than an exercised click-safety pass."
+      }
+    }
+  },
+  "mcp": {
+    "transport": "stdio",
+    "adapter": "app/src/mcp-stdio-adapter/dist/index.js --endpoint <mcp-endpoint.json> --token <token>",
+    "endpoint": "http://127.0.0.1:49417/mcp",
+    "server": {
+      "name": "crawlforge",
+      "version": "1.0.0"
+    },
+    "tools": [
+      "start-audit",
+      "pause-audit",
+      "resume-audit",
+      "cancel-audit",
+      "re-audit",
+      "analyze-single-page",
+      "run-schedule-now",
+      "get-audit-progress"
+    ],
+    "resources": [
+      "crawlforge://audits/{auditId}/summary",
+      "crawlforge://audits/{auditId}/high-severity-findings",
+      "crawlforge://audits/{auditId}/urls/{urlId}",
+      "crawlforge://audits",
+      "crawlforge://schedules",
+      "crawlforge://audits/{auditId}/progress",
+      "crawlforge://audits/{auditId}/urls/{urlId}/content",
+      "crawlforge://audits/{auditId}/ngrams",
+      "crawlforge://audits/{auditId}/waf-blocks",
+      "crawlforge://audits/{auditId}/host-throttle",
+      "crawlforge://audits/{auditId}/redirect-matrix",
+      "crawlforge://audits/{auditId}/log-correlation?import={logImportId}",
+      "crawlforge://audits/{auditId}/semantic-links",
+      "crawlforge://audits/{auditId}/geo-readiness",
+      "crawlforge://audits/{auditId}/analytics-coverage"
+    ],
+    "resource_templates": {
+      "error": "MCP -32601 Method not found"
+    },
+    "prompts": [
+      "audit-health-briefing",
+      "high-severity-triage",
+      "audit-delta-briefing",
+      "ngram-topical-briefing",
+      "semantic-topical-briefing"
+    ],
+    "flow_result": "partial",
+    "flow_detail": "start-audit on bounded config 9 created audit 13; get-audit-progress transitioned Running/Crawling to Completed/Finalizing in 22.2s with 40 fetched; audit-summary and high-severity-findings read successfully with evidence JSON; audit-health-briefing prompt rendered.",
+    "management_tools": "none: no project or configuration management tools",
+    "reaudit": "error: isError=true, \"The JSON value could not be converted to CrawlForge.Contracts.Entities.CrawlConfigurationDto. Path: $.id\"",
+    "bounded_note": "The MCP protocol exposes no limit override. To satisfy the crawler-trap safety cap, the MCP run used configuration 9 created through REST with maxUrls=40, maxDepth=3, maxDurationSeconds=90.",
+    "evidence_files": [
+      "logs/mcp-list.json",
+      "logs/mcp-flow-console.log",
+      "logs/mcp-reaudit-console.log"
+    ]
+  },
+  "criteria": {
+    "49": {
+      "result": "fail",
+      "reason": "Project creation works through UI, but there is no UI configuration editor or results grid; REST CSV/XLSX exports work."
+    },
+    "50": {
+      "result": "fail",
+      "reason": "No UI capture-mode control; rendering-enabled REST audits complete but rendering is inert."
+    },
+    "51": {
+      "result": "fail",
+      "reason": "No dual capture configuration is available through UI or REST."
+    },
+    "52": {
+      "result": "fail",
+      "reason": "No adaptive capture or manual per-pattern override is exposed through normal entry points."
+    },
+    "53": {
+      "result": "fail",
+      "reason": "Postback, cookieless-session, ViewState, and rendered soft-404 checks have no runtime evidence; JS-dependent cases not testable."
+    },
+    "54": {
+      "result": "fail",
+      "reason": "No click discovery or render settle is exercised; nonGet=[] is vacuous."
+    },
+    "55": {
+      "result": "fail",
+      "reason": "Crawler traps are not detected; only the explicit 220-URL limit bounded the run. Cookie gate fails."
+    },
+    "56": {
+      "result": "fail",
+      "reason": "Configuration editor UI-03/UI-04 is not reachable."
+    },
+    "57": {
+      "result": "fail",
+      "reason": "MCP listing, start, poll, and resource reads work, but there are no project/configuration tools, findings are not paged through MCP, and re-audit errors."
+    },
+    "58": {
+      "result": "fail",
+      "reason": "No integrations surface or integration sync endpoints were observed."
+    },
+    "1": {
+      "result": "not_testable",
+      "reason": "Not a first launch; the user data directory already contained projects and audits."
+    },
+    "3": {
+      "result": "not_testable",
+      "reason": "No network monitor was installed; external traffic was not instrumented."
+    },
+    "4": {
+      "result": "pass",
+      "reason": "Configuration 7 has maxUrls/maxDepth/maxDuration/maxResponseBytes all null in REST; limits were supplied only as per-audit overrides."
+    },
+    "5": {
+      "result": "pass",
+      "reason": "No license, account, entitlement, or activation concept appeared in observed UI, configuration payloads, or diagnostics."
+    },
+    "7": {
+      "result": "fail",
+      "reason": "Report surfaces are placeholders; REST exports produced valid CSV zip and XLSX files."
+    },
+    "10": {
+      "result": "pass",
+      "reason": "Single-Page Analyzer returned 9 findings and 10 elements without creating a crawl project."
+    },
+    "16": {
+      "result": "partial",
+      "reason": "MCP stdio handshake, listings, and calls work; SSE, token rotation, and non-loopback reachability were not exercised."
+    },
+    "19": {
+      "result": "pass",
+      "reason": "GET /api/diagnostics/version reports .NET 10.0.15 with server=true and concurrent=true."
+    },
+    "20": {
+      "result": "partial",
+      "reason": "GET /metrics serves Prometheus-style exposition on loopback; non-loopback exposure and identity dimensions were not fully tested."
+    },
+    "23": {
+      "result": "partial",
+      "reason": "MCP start/poll/complete/resource-read flow works mechanically; no project/config tools and re-audit fails."
+    },
+    "27": {
+      "result": "fail",
+      "reason": "No structured-data findings were emitted for the fixture page with JSON-LD errors."
+    },
+    "28": {
+      "result": "pass",
+      "reason": "Content metrics and word counts were produced; server soft-404 was flagged distinctly."
+    },
+    "33": {
+      "result": "partial",
+      "reason": "Standalone robots tester, sitemap generator, and query builder controls render; executions were not exhaustively exercised."
+    },
+    "36": {
+      "result": "partial",
+      "reason": "UI-10 host-throttle panel and MCP host-throttle resource exist; AIMD adaptation was not exercised."
+    },
+    "38": {
+      "result": "partial",
+      "reason": "MCP ngram-analysis resource is listed; ngram data and cannibalization endpoints were not read in this pass."
+    },
+    "41": {
+      "result": "partial",
+      "reason": "Status-bar heartbeat/heap/GC/WAL and /metrics were observed; the Compact action was not exercised."
+    },
+    "42": {
+      "result": "partial",
+      "reason": "Render Tester + Picker renders, but point-and-click selector generation was not exercised."
+    },
+    "48": {
+      "result": "partial",
+      "reason": "canonical.header-html-conflict was emitted with dual evidence; X-Robots and hreflang header/HTML equivalency were not observed."
+    }
+  },
+  "capabilities": {
+    "CAP-A-001": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "nonGet=[] and tagHits=[] in both runs, but rendering and click discovery are inert, so the safety assertion is vacuous rather than an exercised click-safety pass."
+    },
+    "CAP-A-002": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "nonGet=[] and tagHits=[] in both runs, but rendering and click discovery are inert, so the safety assertion is vacuous rather than an exercised click-safety pass."
+    },
+    "CAP-A-003": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "nonGet=[] and tagHits=[] in both runs, but rendering and click discovery are inert, so the safety assertion is vacuous rather than an exercised click-safety pass."
+    },
+    "CAP-A-004": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-005": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-006": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime audit trap evidence: robots-blocked (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-007": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Runtime audit trap evidence: noindex (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-008": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: noindex (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-009": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: noindex (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-010": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime audit trap evidence: redirect-chain (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-011": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime audit trap evidence: redirect-loop (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-012": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: redirect-loop (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-013": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-014": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-015": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-016": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-017": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-018": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-019": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-020": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-021": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-022": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-023": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-024": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-025": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-026": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-027": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-028": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-029": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-030": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-031": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-032": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-033": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-034": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: cookieless-session (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-035": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable), late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable), late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X02": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable), late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X03": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable), late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X04": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable), late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X05": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable), late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X06": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable), late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X07": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable), late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X08": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: js-only-link (not_testable), script-injected-content (not_testable), late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X09": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: late-meta-change (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X10": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: live-websocket (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X11": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime surface walk: UI-21=reachable_and_functional; UI-10=reachable_and_functional; UI-11=reachable_but_placeholder. Capability-specific end-to-end behaviour was not demonstrated."
+    },
+    "CAP-A-X12": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: cookie-gate (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X13": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: crawler-trap-filter (fail), crawler-trap-calendar (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X14": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: crawler-trap-filter (fail), crawler-trap-calendar (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X15": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: postback-links (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X16": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: hash-route (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X17": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: click-only-navigation (not_testable), never-place-bet (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X18": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: service-worker (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X19": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X20": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X21": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-A-X22": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-036": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Runtime audit trap evidence: noindex (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-037": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime audit trap evidence: robots-blocked (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-038": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Runtime audit trap evidence: canonical-conflict (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-039": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: canonical-conflict (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-040": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime audit trap evidence: duplicate-titles (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-041": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: duplicate-titles (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-042": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: duplicate-titles (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-043": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: duplicate-titles (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-044": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: duplicate-titles (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-045": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: duplicate-titles (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-046": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime audit trap evidence: broken-links (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-047": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime audit trap evidence: broken-links (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-048": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-049": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime audit trap evidence: redirect-chain (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-050": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime audit trap evidence: redirect-loop (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-051": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: redirect-loop (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-052": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: redirect-loop (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-053": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: redirect-loop (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-054": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: redirect-loop (partial). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-055": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-056": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-057": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-058": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-059": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-060": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: hreflang-no-return (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-061": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-062": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-063": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-064": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-065": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-066": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-067": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-068": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-X01": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime surface walk reached the bound surface(s) UI-23, UI-10, but no capability-specific end-to-end behaviour was exercised beyond surface rendering."
+    },
+    "CAP-B-X02": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Runtime audit trap evidence: canonical-conflict (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-X03": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Runtime audit trap evidence: soft-404-server (pass), soft-404-client-route (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-X04": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: soft-404-server (pass), soft-404-client-route (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B-X05": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: client-side-redirect (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B2-069": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: client-side-redirect (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B2-070": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: client-side-redirect (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B2-071": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: client-side-redirect (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B2-072": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: client-side-redirect (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B2-073": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: client-side-redirect (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B2-074": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: client-side-redirect (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B2-075": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B2-076": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-B2-080": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-081": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-082": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-083": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-084": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-085": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-086": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-087": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-088": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-089": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-090": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-091": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-092": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-093": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-094": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-095": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-096": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-097": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-098": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-099": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-X02": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-X03": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-X04": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: structured-data-errors (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-C-X05": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: large-viewstate (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-100": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: large-viewstate (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-101": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-102": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-103": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-104": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-105": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-107": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-108": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-109": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-110": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D1-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D2-111": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D2-112": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D2-113": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: missing-alt (pass). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D2-114": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: mixed-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D2-115": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: mixed-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D2-116": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: mixed-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D2-117": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: mixed-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D2-118": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: mixed-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-D2-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: mixed-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-119": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: mixed-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-120": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: mixed-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-121": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: mixed-content (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-122": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-123": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-124": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-125": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-126": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-127": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-128": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-129": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-130": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-132": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-137": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-138": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-X02": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-E-X03": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-139": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-140": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-141": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-142": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-143": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-144": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-146": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: orphan (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-148": {
+      "evidence_level": "runtime",
+      "result": "fails",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-149": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-X02": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-F-X03": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-153": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-154": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-155": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-156": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-157": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-158": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-159": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-160": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-161": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-162": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-163": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-164": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-165": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-166": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-167": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: thin-page (fail). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-G-X01": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Single-Page Analyzer returned 9 findings and 10 elements for a fixture URL without a crawl project; Render Tester controls render in UI-19."
+    },
+    "CAP-H-168": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime surface walk: UI-10=reachable_and_functional; UI-11=reachable_but_placeholder. Capability-specific end-to-end behaviour was not demonstrated."
+    },
+    "CAP-H-169": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime surface walk: UI-10=reachable_and_functional; UI-11=reachable_but_placeholder. Capability-specific end-to-end behaviour was not demonstrated."
+    },
+    "CAP-H-170": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime surface walk: UI-10=reachable_and_functional; UI-11=reachable_but_placeholder. Capability-specific end-to-end behaviour was not demonstrated."
+    },
+    "CAP-H-171": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime surface walk: UI-10=reachable_and_functional; UI-11=reachable_but_placeholder. Capability-specific end-to-end behaviour was not demonstrated."
+    },
+    "CAP-H-172": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime surface walk: UI-10=reachable_and_functional; UI-11=reachable_but_placeholder. Capability-specific end-to-end behaviour was not demonstrated."
+    },
+    "CAP-H-173": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "REST CSV export job 1 completed and downloaded a valid zip; UI-20 Export dialog is not reachable."
+    },
+    "CAP-H-174": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "REST XLSX export job 2 completed and downloaded a valid file; UI-20 Export dialog is not reachable."
+    },
+    "CAP-H-175": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "REST XLSX export job 2 completed and downloaded a valid file; UI-20 Export dialog is not reachable."
+    },
+    "CAP-H-177": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "REST XLSX export job 2 completed and downloaded a valid file; UI-20 Export dialog is not reachable."
+    },
+    "CAP-H-178": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "REST XLSX export job 2 completed and downloaded a valid file; UI-20 Export dialog is not reachable."
+    },
+    "CAP-H-179": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Global hub and Audits rail list persisted audits 1-13; project-scoped UI-07 retention controls are absent."
+    },
+    "CAP-H-180": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Global hub and Audits rail list persisted audits 1-13; project-scoped UI-07 retention controls are absent."
+    },
+    "CAP-H-181": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Global hub and Audits rail list persisted audits 1-13; project-scoped UI-07 retention controls are absent."
+    },
+    "CAP-H-182": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Global hub and Audits rail list persisted audits 1-13; project-scoped UI-07 retention controls are absent."
+    },
+    "CAP-H-183": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Global hub and Audits rail list persisted audits 1-13; project-scoped UI-07 retention controls are absent."
+    },
+    "CAP-H-184": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "All project, configuration, audit, explorer, diagnostics, metrics, and export operations were performed through REST."
+    },
+    "CAP-H-185": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "MCP stdio handshake, listings, start, poll, and resource reads work; SSE and token rotation were not exercised."
+    },
+    "CAP-H-186": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "REST returned structured JSON envelopes for every probe operation; MCP resources returned structured JSON text."
+    },
+    "CAP-H-188": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "No Schedules UI; MCP lists a schedule resource and run-schedule-now tool but no schedule creation flow was reachable."
+    },
+    "CAP-H-190": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Project 4 was created through the UI New project dialog and appears in the hub."
+    },
+    "CAP-H-X02": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Project 4 was created through the UI New project dialog and appears in the hub."
+    },
+    "CAP-H-X03": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Sitemap Generator tool renders with controls; generation was not executed."
+    },
+    "CAP-H-X04": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime surface walk reached the bound surface(s) UI-21, but no capability-specific end-to-end behaviour was exercised beyond surface rendering."
+    },
+    "CAP-H-X05": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime surface walk reached the bound surface(s) UI-21, but no capability-specific end-to-end behaviour was exercised beyond surface rendering."
+    },
+    "CAP-H-X06": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-192": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-193": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-194": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-196": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-197": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-199": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-200": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-201": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-202": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-I-X02": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime audit trap evidence: consent-banner (not_testable). See logs/audit-11-data.json and logs/audit-12-data.json."
+    },
+    "CAP-J-204": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "REST findings expose human-readable messages and MCP high-severity-findings exposes evidence; dedicated finding detail surface not reachable."
+    },
+    "CAP-J-207": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Finding evidence contains remediation text, e.g. color-contrast and image-alt; dedicated finding detail surface not reachable."
+    },
+    "CAP-J-208": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "REST finding evidence includes snippet/selector/details and urlId; UI finding detail is not reachable."
+    },
+    "CAP-J-209": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime surface walk reached the bound surface(s) UI-21, but no capability-specific end-to-end behaviour was exercised beyond surface rendering."
+    },
+    "CAP-J-210": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "REST GET /api/audits/compare route exists but was not exercised in this pass."
+    },
+    "CAP-J-213": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "REST GET /api/audits/compare route exists but was not exercised in this pass."
+    },
+    "CAP-J-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "REST GET /api/audits/compare route exists but was not exercised in this pass."
+    },
+    "CAP-J-X02": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "REST GET /api/audits/compare route exists but was not exercised in this pass."
+    },
+    "CAP-K-X01": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "UI-03/UI-04 configuration editor is not reachable; no configuration tabs exist."
+    },
+    "CAP-K-X02": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "UI-03/UI-04 configuration editor is not reachable; no configuration tabs exist."
+    },
+    "CAP-K-X03": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "UI-03/UI-04 configuration editor is not reachable; no configuration tabs exist."
+    },
+    "CAP-K-X04": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "UI-03/UI-04 configuration editor is not reachable; no configuration tabs exist."
+    },
+    "CAP-K-X05": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "UI-03/UI-04 configuration editor is not reachable; no configuration tabs exist."
+    },
+    "CAP-L-X01": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Settings Diagnostics lists local logs; /api/diagnostics/version and /metrics responded, but native minidump purge was not exercised."
+    },
+    "CAP-L-X02": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Settings Diagnostics lists local logs; /api/diagnostics/version and /metrics responded, but native minidump purge was not exercised."
+    },
+    "CAP-L-X03": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime surface walk reached the bound surface(s) UI-21, but no capability-specific end-to-end behaviour was exercised beyond surface rendering."
+    },
+    "CAP-L-X04": {
+      "evidence_level": "runtime",
+      "result": "absent",
+      "evidence": "Runtime surface walk reached the bound surface(s) UI-21, but no capability-specific end-to-end behaviour was exercised beyond surface rendering."
+    },
+    "CAP-L-X05": {
+      "evidence_level": "runtime",
+      "result": "works",
+      "evidence": "Status bar heartbeat, heap, GC, WAL, and JS heap were visible; /metrics exposed backend families."
+    },
+    "CAP-L-X06": {
+      "evidence_level": "runtime",
+      "result": "partial",
+      "evidence": "Runtime surface walk reached the bound surface(s) UI-21, but no capability-specific end-to-end behaviour was exercised beyond surface rendering."
+    }
+  }
+}

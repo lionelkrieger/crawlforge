@@ -1,0 +1,37 @@
+200
+{
+  "data": [
+    {
+      "id": "1",
+      "name": "Airpower",
+      "description": null,
+      "tags": [],
+      "scopeSummary": null,
+      "createdAt": "2026-11-17T12:51:55.0893044+00:00",
+      "updatedAt": "2026-11-17T12:51:55.0893044+00:00"
+    },
+    {
+      "id": "2",
+      "name": "Fixture probe",
+      "description": "Runtime probe against fixture site",
+      "tags": [],
+      "scopeSummary": null,
+      "createdAt": "2026-11-17T17:04:46.44383+00:00",
+      "updatedAt": "2026-11-17T17:04:46.44383+00:00"
+    },
+    {
+      "id": "3",
+      "name": "HOTFIX verification",
+      "description": "HOTFIX-01 acceptance",
+      "tags": [],
+      "scopeSummary": null,
+      "createdAt": "2026-11-17T19:43:42.558517+00:00",
+      "updatedAt": "2026-11-17T19:43:42.558517+00:00"
+    }
+  ],
+  "pagination": {
+    "offset": 0,
+    "limit": 50,
+    "total": 3
+  }
+}

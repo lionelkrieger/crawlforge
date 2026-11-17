@@ -1,0 +1,35 @@
+{
+  "title": "CrawlForge",
+  "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+  "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nSETTINGS\nHide\nSettings\n\nLocal configuration only — no accounts, licenses, or remote services.\n\nAppearance\n\nDark theme (dark-first)\n\ndark\nUI language\nStatus-bar advisories\n\nAdvisory thresholds color the status bar; they never trigger automatic destructive actions.\n\nWorking-set advisory (bytes)\nWAL advisory (bytes)\nSave advisories (1.50 GiB / 256 MiB)\nDatabase\nSQLITE\n\nEmbedded SQLite · WAL mode · local file\n\nTest connection\nAutomation interface (MCP)\n\nEnable local MCP server\n\nTransport\nAutomation token (local credential)\n\nDisplayed locally; rotate by updating the token field.\n\nEmbeddings\nONNX\n\ndefault model\n\nTest provider\nProxy\n\nDisabled — direct connections.\n\nDiagnostics\n\nLocal structured logs and native minidumps only. No remote diagnostics ever leave this machine.\n\nKind\tFile\tCreated\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\n\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\n\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\n\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\n\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\n\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\n\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\n\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\n\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\n\n\nLOG\n\t\n\nstructured-2026-11-17.jsonl\n\n\t\n\n17 Nov 13:33:00\n\nRefresh\nPurge artifacts\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n0/1000\n\nNo hub activity yet. Start an audit or connect the backend to see live events here.\n\nWS\n166 MiB\nHeap\n12.3 MiB\nGC\n5/2/1\nWAL\n3.94 MiB\nJS\n9.54 MiB\nbeat\n22:28:20\nCompact\nLocal configuration",
+  "buttons": [
+    "Open command palette (Ctrl+K)",
+    "Main hub",
+    "Audits",
+    "Report",
+    "Tools",
+    "Settings",
+    "Toggle activity pane",
+    "",
+    "",
+    "",
+    "",
+    "Save advisories (1.50 GiB / 256 MiB)",
+    "Test connection",
+    "Test provider",
+    "Refresh",
+    "Purge artifacts",
+    "Resize Main workspace and Live activity (Enter toggles colla",
+    "Compact and trim working set"
+  ],
+  "inputs": [
+    "input[checkbox] name= label=",
+    "input[text] name= label=",
+    "input[text] name= label=",
+    "input[text] name= label=",
+    "input[checkbox] name= label=",
+    "input[text] name= label=",
+    "input[text] name= label=",
+    "textarea[textarea] name= label="
+  ]
+}
