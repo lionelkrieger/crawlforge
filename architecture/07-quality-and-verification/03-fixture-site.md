@@ -14,8 +14,10 @@
 - **SPA traps modelled on live betting sites:** a page with a continuous websocket data feed (live odds); navigation reachable only by clicking; and a "Place bet" style control backed by a POST endpoint that the crawler **must never trigger**. The fixture server records any non-GET request; any such request during click discovery fails acceptance.
 
 ### 2. Acceptance rule
+> Capabilities:  · Decisions: D-019 · Change records: CR-023
 > Decisions: D-007 · Change records: CR-015
 
 - A criterion from #49 onward passes only when a full audit, started through the product's normal entry points (UI or MCP), against the fixture site, produces the expected results for the traps the criterion names. Unit tests alone never satisfy a criterion.
+- **Entry points (added by CR-023, D-019):** in every acceptance run, the flow criteria #49, #55 and #56 must be proven at least once with the audit started and inspected **through the UI**. The bulk trap matrix (every trap in every capture mode) may start audits through REST or MCP against the same running product, for speed. Direct database manipulation or any other workaround never counts as an entry point.
 - Criteria #1 to #48 are re-verified against the fixture site in a **re-baselining pass**, applying the same rule.
 - **UI reachability (added by CR-018):** for every capability with a UI binding (`06-frontend-shell-and-ui/04-ui-surface-map.md`), acceptance includes reaching it through its navigation path in the running product: configure, trigger and view as bound. A capability whose bound surface is not reachable, or renders a placeholder, is not complete, whatever its backend tests show.
