@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    WP-01-04: CQRS read/write repositories over IDbProvider, aggregation-into-DB
+    service (§8.1), and project archive export/import. Provider-agnostic ADO.NET;
+    BCL only (no additional packages).
+  -->
+  <PropertyGroup>
+    <RootNamespace>CrawlForge.Data.Repositories</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+  </ItemGroup>
+</Project>

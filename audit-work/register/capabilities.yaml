@@ -1,0 +1,2850 @@
+# CrawlForge gap register - capability spine.
+#
+# Checklist capabilities: one per functionality-audit-checklist.md row (213).
+# ID = CAP-<section>-<global row number, 3 digits>. These IDs never change.
+# Extra capabilities: CAP-<section>-X<nn>, numbered per section from X01.
+# Sources for extras: 05-functionality-audit-results.md §3 first, then
+# project-configuration-review.md, then the other audit documents.
+# Sub-capabilities of checklist rows are recorded in that row's notes, not as extras.
+# Sections K (Projects and configuration) and L (Platform) hold extras only (added 2026-11-17).
+# Owner decisions affecting rows are recorded in notes; see ../decisions-log.md.
+# Rejected duplicate candidates are listed at the end of the file.
+
+capabilities:
+- id: CAP-A-001
+  section: A
+  section_title: Crawl engine
+  title: HTTP and HTTPS crawling
+  origin: checklist
+  checklist_row: 1
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-002
+  section: A
+  section_title: Crawl engine
+  title: HTML link discovery
+  origin: checklist
+  checklist_row: 2
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-003
+  section: A
+  section_title: Crawl engine
+  title: Internal and external link analysis
+  origin: checklist
+  checklist_row: 3
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-004
+  section: A
+  section_title: Crawl engine
+  title: JavaScript-rendered crawling (Chromium)
+  origin: checklist
+  checklist_row: 4
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-005
+  section: A
+  section_title: Crawl engine
+  title: Configurable user agents, including Googlebot simulation
+  origin: checklist
+  checklist_row: 5
+  description: null
+  discovered_in: []
+  notes: '"Crawl as" presets bundling user agent, viewport and rendering mode are a sub-capability of this row (project-configuration-review.md §3.6).'
+- id: CAP-A-006
+  section: A
+  section_title: Crawl engine
+  title: robots.txt handling
+  origin: checklist
+  checklist_row: 6
+  description: null
+  discovered_in: []
+  notes: 'Sub-capabilities recorded here: robots crawl-delay as an inviolable AIMD floor (05-functionality-audit-results.md §3, suggested section A, "Crawl-delay source"); virtual robots override (project-configuration-review.md §3.3). Directive-handling toggles are CAP-A-X21.'
+- id: CAP-A-007
+  section: A
+  section_title: Crawl engine
+  title: Meta robots handling
+  origin: checklist
+  checklist_row: 7
+  description: null
+  discovered_in: []
+  notes: The "crawl noindexed pages" toggle is part of CAP-A-X21.
+- id: CAP-A-008
+  section: A
+  section_title: Crawl engine
+  title: XML sitemap discovery and crawling
+  origin: checklist
+  checklist_row: 8
+  description: null
+  discovered_in: []
+  notes: Sitemap ingestion is absent (UNDERBUILD-AUDIT.md G08); the separate sitemap generation tool is CAP-H-X03.
+- id: CAP-A-009
+  section: A
+  section_title: Crawl engine
+  title: Canonical URL detection
+  origin: checklist
+  checklist_row: 9
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-010
+  section: A
+  section_title: Crawl engine
+  title: Redirect chain detection
+  origin: checklist
+  checklist_row: 10
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-011
+  section: A
+  section_title: Crawl engine
+  title: Redirect loop detection
+  origin: checklist
+  checklist_row: 11
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-012
+  section: A
+  section_title: Crawl engine
+  title: Query parameter handling
+  origin: checklist
+  checklist_row: 12
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-013
+  section: A
+  section_title: Crawl engine
+  title: URL normalisation
+  origin: checklist
+  checklist_row: 13
+  description: null
+  discovered_in: []
+  notes: ASP.NET cookieless-session path-segment normalisation ((S(...)), (A(...)), (F(...))) is a sub-capability of this row (project-configuration-review.md §5.4).
+- id: CAP-A-014
+  section: A
+  section_title: Crawl engine
+  title: Pagination handling
+  origin: checklist
+  checklist_row: 14
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-015
+  section: A
+  section_title: Crawl engine
+  title: Infinite-scroll handling
+  origin: checklist
+  checklist_row: 15
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-016
+  section: A
+  section_title: Crawl engine
+  title: Crawl depth limit
+  origin: checklist
+  checklist_row: 16
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-017
+  section: A
+  section_title: Crawl engine
+  title: URL count limit
+  origin: checklist
+  checklist_row: 17
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-018
+  section: A
+  section_title: Crawl engine
+  title: Crawl time limit
+  origin: checklist
+  checklist_row: 18
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-019
+  section: A
+  section_title: Crawl engine
+  title: Configurable concurrency
+  origin: checklist
+  checklist_row: 19
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-020
+  section: A
+  section_title: Crawl engine
+  title: Configurable request rate
+  origin: checklist
+  checklist_row: 20
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-021
+  section: A
+  section_title: Crawl engine
+  title: Authentication support
+  origin: checklist
+  checklist_row: 21
+  description: null
+  discovered_in: []
+  notes: 'Sub-capabilities recorded here: signed-request crawler access (05-functionality-audit-results.md §3 suggested section A; 04b-docs-channel-join.md B1-09); first-class HTTP basic auth and recorded form login (project-configuration-review.md §3.5).'
+- id: CAP-A-022
+  section: A
+  section_title: Crawl engine
+  title: Cookie support
+  origin: checklist
+  checklist_row: 22
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-023
+  section: A
+  section_title: Crawl engine
+  title: Custom request headers
+  origin: checklist
+  checklist_row: 23
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-024
+  section: A
+  section_title: Crawl engine
+  title: Proxy support
+  origin: checklist
+  checklist_row: 24
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-025
+  section: A
+  section_title: Crawl engine
+  title: 'Asset discovery: CSS'
+  origin: checklist
+  checklist_row: 25
+  description: null
+  discovered_in: []
+  notes: Per-resource-type fetch toggles and asset-domain (CDN) allowlists are CAP-A-X22.
+- id: CAP-A-026
+  section: A
+  section_title: Crawl engine
+  title: 'Asset discovery: JS'
+  origin: checklist
+  checklist_row: 26
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-027
+  section: A
+  section_title: Crawl engine
+  title: 'Asset discovery: images'
+  origin: checklist
+  checklist_row: 27
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-028
+  section: A
+  section_title: Crawl engine
+  title: 'Asset discovery: fonts'
+  origin: checklist
+  checklist_row: 28
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-029
+  section: A
+  section_title: Crawl engine
+  title: 'Asset discovery: PDFs and other documents'
+  origin: checklist
+  checklist_row: 29
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-030
+  section: A
+  section_title: Crawl engine
+  title: Crawl inclusion rules
+  origin: checklist
+  checklist_row: 30
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-031
+  section: A
+  section_title: Crawl engine
+  title: Crawl exclusion rules
+  origin: checklist
+  checklist_row: 31
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-032
+  section: A
+  section_title: Crawl engine
+  title: Crawl pause
+  origin: checklist
+  checklist_row: 32
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-033
+  section: A
+  section_title: Crawl engine
+  title: Crawl resume
+  origin: checklist
+  checklist_row: 33
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-034
+  section: A
+  section_title: Crawl engine
+  title: Interruption recovery
+  origin: checklist
+  checklist_row: 34
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-A-035
+  section: A
+  section_title: Crawl engine
+  title: Original HTML response vs rendered DOM comparison (what the server delivered and what JavaScript changed)
+  origin: checklist
+  checklist_row: 35
+  description: null
+  discovered_in: []
+  notes: The high-severity policy for raw-vs-rendered differences in title, canonical, meta robots and hreflang (late meta changes) is a sub-capability of this row (project-configuration-review.md §5.5).
+- id: CAP-A-X01
+  section: A
+  section_title: Crawl engine
+  title: AIMD adaptive per-host throttle
+  origin: extra
+  checklist_row: null
+  description: Additive-increase/multiplicative-decrease per-host rate and concurrency control with checkpointing, manual pin and adjustment history.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section A, "AIMD adaptive per-host throttle"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G07
+  notes: Adaptive politeness is distinct from the manual configuration in rows 19-20; the robots crawl-delay floor belongs to row 6.
+- id: CAP-A-X02
+  section: A
+  section_title: Crawl engine
+  title: Pre-crawl start-URL validation
+  origin: extra
+  checklist_row: null
+  description: Protocol, redirect, TLS, login-gate and WAF probes run against start URLs before the crawl begins.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section A, "Pre-crawl start-URL validation"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G27
+  notes: null
+- id: CAP-A-X03
+  section: A
+  section_title: Crawl engine
+  title: Loopback intercepting proxy (network capture)
+  origin: extra
+  checklist_row: null
+  description: Local forward proxy supplying request/response capture and user resource-blocking to the fetcher and rendering pool.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section A, "Loopback intercepting proxy / network waterfall capture"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G09
+  notes: The waterfall display itself is row 86; outbound proxy configuration is row 24. The direct CDP layer (CAP-A-X10) is intended to replace this route for rendered pages.
+- id: CAP-A-X04
+  section: A
+  section_title: Crawl engine
+  title: Stealth rendering profile
+  origin: extra
+  checklist_row: null
+  description: Fingerprint reduction in Chromium (navigator.webdriver, chrome object, languages) applied to rendered captures.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section A, "Stealth rendering profile"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G03
+  notes: null
+- id: CAP-A-X05
+  section: A
+  section_title: Crawl engine
+  title: List Mode (URL-list seeds)
+  origin: extra
+  checklist_row: null
+  description: URL-list ingestion from .txt, .csv or clipboard with preview, list-only and bounded crawl behaviour.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section A, "List Mode (URL-list seeds, list-only/bounded)"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G10
+  notes: null
+- id: CAP-A-X06
+  section: A
+  section_title: Crawl engine
+  title: URL rewrite and host-mapping rules
+  origin: extra
+  checklist_row: null
+  description: Regex rewrite rules applied at canonicalization plus staging-to-production host mapping so crawls can be compared across hosts.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section A, "URL rewrite / host-mapping rules"
+  - doc: project-configuration-review.md
+    locator: §3.9
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G27
+  notes: Goes beyond row 13 normalisation and row 12 parameter handling; lowercase/https normalisation and parameter removal overlap those rows.
+- id: CAP-A-X07
+  section: A
+  section_title: Crawl engine
+  title: Sample-crawl mode
+  origin: extra
+  checklist_row: null
+  description: Depth- and page-bounded preview crawl with a WAF pass before committing to a full run.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section A, "Sample-crawl mode"
+  notes: null
+- id: CAP-A-X08
+  section: A
+  section_title: Crawl engine
+  title: GSC/GA4 export import as crawl source
+  origin: extra
+  checklist_row: null
+  description: Offline import of Search Console and Analytics page exports (CSV) as crawl seeds, enabling traffic-based orphan-page detection.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §3.2
+  notes: Offline alternative to the live integrations in rows 181-182, which are Not applicable under the offline-first design. Fallback for when GSC/GA4 are not connected (decision D-005).
+- id: CAP-A-X09
+  section: A
+  section_title: Crawl engine
+  title: Capture modes (non-JS / JS / dual / adaptive)
+  origin: extra
+  checklist_row: null
+  description: 'Per-configuration choice of capture strategy: plain HTTP, full rendering, both with comparison, or adaptive per-template rendering with a JavaScript-dependent-templates finding.'
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §4.2
+  notes: Row 4 covers JS rendering and row 35 the raw-vs-rendered comparison; the mode selection and adaptive sampling are the new capability.
+- id: CAP-A-X10
+  section: A
+  section_title: Crawl engine
+  title: Direct CDP rendering layer
+  origin: extra
+  checklist_row: null
+  description: 'Direct Chrome DevTools Protocol client replacing PuppeteerSharp: process pool, per-page contexts, network/console capture, emulation, wait rules, resource blocking and shared cache.'
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §4.3
+  notes: null
+- id: CAP-A-X11
+  section: A
+  section_title: Crawl engine
+  title: Pinned bundled browser
+  origin: extra
+  checklist_row: null
+  description: Bundled Chrome for Testing at a pinned version with the host passing the bundled path to the browser resolver, plus a browser-path setting and local-install fallbacks.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §4.1 gap, §4.4
+  notes: null
+- id: CAP-A-X12
+  section: A
+  section_title: Crawl engine
+  title: Per-audit cookie jar
+  origin: extra
+  checklist_row: null
+  description: Retention of site-set cookies scoped by host during a crawl, on by default with a cookieless toggle, recording responses that change after a cookie is set.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.3
+  notes: Row 22 covers supplying custom cookies; retaining cookies the site sets is the new capability.
+- id: CAP-A-X13
+  section: A
+  section_title: Crawl engine
+  title: Crawler-trap detection
+  origin: extra
+  checklist_row: null
+  description: Detection and throttling of URL patterns whose count grows without new content (parameter explosion, repeating segments, date paths, near-duplicate hashes), raised as a named finding.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.3
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §5.5 (query-variant trap approximated by Contains("?"))
+  notes: null
+- id: CAP-A-X14
+  section: A
+  section_title: Crawl engine
+  title: User-agent comparison
+  origin: extra
+  checklist_row: null
+  description: Optional fetch of a sample or all URLs as Googlebot and as a standard browser, comparing status, redirects, meta robots, canonical, content hash and links to detect cloaking and dynamic rendering.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.3
+  notes: Row 5 covers configuring user agents; the paired comparison check is the new capability.
+- id: CAP-A-X15
+  section: A
+  section_title: Crawl engine
+  title: Postback navigation detection
+  origin: extra
+  checklist_row: null
+  description: Detection of ASP.NET __doPostBack / WebForm_DoPostBackWithOptions links during discovery, recorded as uncrawlable navigation with per-page and per-template counts.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.4
+  notes: null
+- id: CAP-A-X16
+  section: A
+  section_title: Crawl engine
+  title: Hash-route handling
+  origin: extra
+  checklist_row: null
+  description: 'Per-configuration mode preserving #/ and #! fragments as distinct routes in rendered mode, always raising a finding when hash routing is detected.'
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.5
+  notes: 'Fixes an active breakage: default canonicalization discards fragments and collapses hash-routed apps into one URL.'
+- id: CAP-A-X17
+  section: A
+  section_title: Crawl engine
+  title: Non-crawlable navigation inventory
+  origin: extra
+  checklist_row: null
+  description: CDP inventory of rendered elements with click listeners or ARIA link/button roles that change the route without a crawlable href, raised as a non-crawlable navigation finding.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.5
+  notes: Optional bounded click-discovery mode is a later extension of this capability.
+- id: CAP-A-X18
+  section: A
+  section_title: Crawl engine
+  title: Service-worker bypass and detection
+  origin: extra
+  checklist_row: null
+  description: Bypassing service workers in every render and recording worker registration as an informational finding.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.5
+  notes: null
+- id: CAP-A-X19
+  section: A
+  section_title: Crawl engine
+  title: Consent-state rendering
+  origin: extra
+  checklist_row: null
+  description: Rendered capture under no-interaction, consent-accepted and consent-rejected states with platform selectors and custom fallback, comparing which tags fire per state and flagging pre-consent tags.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.6
+  notes: Consent analytics exists in code (CAP-H-X06) but consent-state rendering is not in the spec.
+- id: CAP-A-X20
+  section: A
+  section_title: Crawl engine
+  title: Custom JS snippets during rendering
+  origin: extra
+  checklist_row: null
+  description: User-defined JavaScript snippets executed in rendered captures, configured per audit.
+  discovered_in:
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G13
+  - doc: 05-functionality-audit-results.md
+    locator: §4, G13 row
+  notes: null
+- id: CAP-A-X21
+  section: A
+  section_title: Crawl engine
+  title: Directive-handling toggles
+  origin: extra
+  checklist_row: null
+  description: Per-configuration toggles for following nofollow links (page and link level), crawling noindexed pages, following canonicals and using hreflang and rel next/prev as discovery, and following iframes and meta refresh.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §3.3
+  notes: Promoted from notes on CAP-A-006 and CAP-A-007 (owner decision 2026-11-17, O-004). Rows 6, 7 and 9 cover detecting and obeying the directives; this capability covers configuring crawl behaviour around them.
+- id: CAP-A-X22
+  section: A
+  section_title: Crawl engine
+  title: Resource and external scope toggles
+  origin: extra
+  checklist_row: null
+  description: Per-configuration toggles for fetching each resource type (JS, CSS, fonts, images, other files), a per-project list of asset domains (CDNs) treated as internal, and checking external link status without crawling further.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §3.4
+  notes: Promoted from notes on CAP-A-025 and CAP-B-047 (owner decision 2026-11-17, O-004). Rows 25-29 cover discovering assets and row 47 covers broken external links; this capability covers configuring scope.
+- id: CAP-B-036
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Indexability: noindex'
+  origin: checklist
+  checklist_row: 36
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-037
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Indexability: robots restrictions'
+  origin: checklist
+  checklist_row: 37
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-038
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Indexability: canonical conflicts'
+  origin: checklist
+  checklist_row: 38
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-039
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Metadata: missing titles'
+  origin: checklist
+  checklist_row: 39
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-040
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Metadata: duplicate titles'
+  origin: checklist
+  checklist_row: 40
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-041
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Metadata: missing descriptions'
+  origin: checklist
+  checklist_row: 41
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-042
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Metadata: duplicate descriptions'
+  origin: checklist
+  checklist_row: 42
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-043
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Headings: H1/H2 hierarchy'
+  origin: checklist
+  checklist_row: 43
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-044
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Headings: missing headings'
+  origin: checklist
+  checklist_row: 44
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-045
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Headings: duplicated headings'
+  origin: checklist
+  checklist_row: 45
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-046
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Links: broken internal links'
+  origin: checklist
+  checklist_row: 46
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-047
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Links: broken external links'
+  origin: checklist
+  checklist_row: 47
+  description: null
+  discovered_in: []
+  notes: The "check external link status without crawling further" toggle is part of CAP-A-X22.
+- id: CAP-B-048
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Links: orphan pages'
+  origin: checklist
+  checklist_row: 48
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-049
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Redirects: 3xx chains'
+  origin: checklist
+  checklist_row: 49
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-050
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Redirects: loops'
+  origin: checklist
+  checklist_row: 50
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-051
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Redirects: inappropriate redirects'
+  origin: checklist
+  checklist_row: 51
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-052
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Sitemaps: missing URLs'
+  origin: checklist
+  checklist_row: 52
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-053
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Sitemaps: non-indexable URLs listed'
+  origin: checklist
+  checklist_row: 53
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-054
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Sitemaps: redirecting URLs listed'
+  origin: checklist
+  checklist_row: 54
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-055
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Images: missing alt text'
+  origin: checklist
+  checklist_row: 55
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-056
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Images: oversized images'
+  origin: checklist
+  checklist_row: 56
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-057
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Images: format checks'
+  origin: checklist
+  checklist_row: 57
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-058
+  section: B
+  section_title: Technical SEO analysis
+  title: 'International: hreflang validation'
+  origin: checklist
+  checklist_row: 58
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-059
+  section: B
+  section_title: Technical SEO analysis
+  title: 'International: language declarations'
+  origin: checklist
+  checklist_row: 59
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-060
+  section: B
+  section_title: Technical SEO analysis
+  title: 'International: reciprocal hreflang references'
+  origin: checklist
+  checklist_row: 60
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-061
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Content: thin content'
+  origin: checklist
+  checklist_row: 61
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-062
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Content: duplicate content'
+  origin: checklist
+  checklist_row: 62
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-063
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Content: near-duplicate content'
+  origin: checklist
+  checklist_row: 63
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-064
+  section: B
+  section_title: Technical SEO analysis
+  title: 'URL structure: parameters'
+  origin: checklist
+  checklist_row: 64
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-065
+  section: B
+  section_title: Technical SEO analysis
+  title: 'URL structure: inconsistent trailing slashes'
+  origin: checklist
+  checklist_row: 65
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-066
+  section: B
+  section_title: Technical SEO analysis
+  title: 'URL structure: duplicate URLs'
+  origin: checklist
+  checklist_row: 66
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-067
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Structured data: Schema.org validation'
+  origin: checklist
+  checklist_row: 67
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-068
+  section: B
+  section_title: Technical SEO analysis
+  title: 'Structured data: Google rich-result eligibility'
+  origin: checklist
+  checklist_row: 68
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B-X01
+  section: B
+  section_title: Technical SEO analysis
+  title: Redirect migration matrix
+  origin: extra
+  checklist_row: null
+  description: Two-column redirect-mapping upload validated with five-tier verdicts and hop chains, feeding a seeded list-mode audit.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section A, "Redirect migration matrix"
+  - doc: ux-api-gap-audit.md
+    locator: GAP-15
+  notes: null
+- id: CAP-B-X02
+  section: B
+  section_title: Technical SEO analysis
+  title: Header/HTML directive equivalency
+  origin: extra
+  checklist_row: null
+  description: Conflict detection between X-Robots-Tag / Link headers and HTML canonical, hreflang and indexability directives.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section B, "Header/HTML directive equivalency"
+  notes: null
+- id: CAP-B-X03
+  section: B
+  section_title: Technical SEO analysis
+  title: Soft-404 detection
+  origin: extra
+  checklist_row: null
+  description: Flagging success-status pages with error-like content distinctly from hard errors, with the rendered version taking priority when it exists.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section B, "Soft-404 detection"
+  - doc: project-configuration-review.md
+    locator: §5.5 (rendered-first soft-404)
+  notes: null
+- id: CAP-B-X04
+  section: B
+  section_title: Technical SEO analysis
+  title: SERP pixel measurement
+  origin: extra
+  checklist_row: null
+  description: Title and description pixel-width measurement against bundled font metrics, producing truncation findings and serp_metrics inventory fields.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section B, "SERP pixel measurement"
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section F, "SERP pixel-truncation metrics"
+  notes: Listed twice in 05 §3 (suggested B/C and F/H); one capability. Assigned to B as a metadata check; the mounted SerpPreview tool is client-only.
+- id: CAP-B-X05
+  section: B
+  section_title: Technical SEO analysis
+  title: Client-side redirect detection
+  origin: extra
+  checklist_row: null
+  description: Capture of JavaScript and history-API navigations in the CDP layer as a distinct client-side redirect type in the redirect chain, with timing and a finding.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.5
+  notes: null
+- id: CAP-B2-069
+  section: B2
+  section_title: Structured data engine
+  title: Extract JSON-LD
+  origin: checklist
+  checklist_row: 69
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-070
+  section: B2
+  section_title: Structured data engine
+  title: Extract Microdata
+  origin: checklist
+  checklist_row: 70
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-071
+  section: B2
+  section_title: Structured data engine
+  title: Extract RDFa
+  origin: checklist
+  checklist_row: 71
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-072
+  section: B2
+  section_title: Structured data engine
+  title: Parse multiple entities per page
+  origin: checklist
+  checklist_row: 72
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-073
+  section: B2
+  section_title: Structured data engine
+  title: Identify entity types and relationships
+  origin: checklist
+  checklist_row: 73
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-074
+  section: B2
+  section_title: Structured data engine
+  title: Validate properties against Schema.org
+  origin: checklist
+  checklist_row: 74
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-075
+  section: B2
+  section_title: Structured data engine
+  title: Identify missing required properties
+  origin: checklist
+  checklist_row: 75
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-076
+  section: B2
+  section_title: Structured data engine
+  title: Identify missing recommended properties
+  origin: checklist
+  checklist_row: 76
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-077
+  section: B2
+  section_title: Structured data engine
+  title: Detect conflicting entity information
+  origin: checklist
+  checklist_row: 77
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-078
+  section: B2
+  section_title: Structured data engine
+  title: Compare structured data against visible page content
+  origin: checklist
+  checklist_row: 78
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-079
+  section: B2
+  section_title: Structured data engine
+  title: Identify inconsistent organisation identity across a domain
+  origin: checklist
+  checklist_row: 79
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-B2-080
+  section: B2
+  section_title: Structured data engine
+  title: Group errors by template and entity type
+  origin: checklist
+  checklist_row: 80
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-081
+  section: C
+  section_title: Performance analysis
+  title: Lighthouse integration
+  origin: checklist
+  checklist_row: 81
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-082
+  section: C
+  section_title: Performance analysis
+  title: 'Core Web Vitals: LCP'
+  origin: checklist
+  checklist_row: 82
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-083
+  section: C
+  section_title: Performance analysis
+  title: 'Core Web Vitals: INP'
+  origin: checklist
+  checklist_row: 83
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-084
+  section: C
+  section_title: Performance analysis
+  title: 'Core Web Vitals: CLS'
+  origin: checklist
+  checklist_row: 84
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-085
+  section: C
+  section_title: Performance analysis
+  title: Time to First Byte
+  origin: checklist
+  checklist_row: 85
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-086
+  section: C
+  section_title: Performance analysis
+  title: Resource loading waterfalls
+  origin: checklist
+  checklist_row: 86
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-087
+  section: C
+  section_title: Performance analysis
+  title: Large image detection
+  origin: checklist
+  checklist_row: 87
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-088
+  section: C
+  section_title: Performance analysis
+  title: Unused CSS
+  origin: checklist
+  checklist_row: 88
+  description: null
+  discovered_in: []
+  notes: Code-coverage percentage metrics (used/total/unused CSS bytes) are the metric form of this row (05-functionality-audit-results.md §3, suggested section C).
+- id: CAP-C-089
+  section: C
+  section_title: Performance analysis
+  title: Unused JavaScript
+  origin: checklist
+  checklist_row: 89
+  description: null
+  discovered_in: []
+  notes: Code-coverage percentage metrics (used/total/unused script bytes) are the metric form of this row (05-functionality-audit-results.md §3, suggested section C).
+- id: CAP-C-090
+  section: C
+  section_title: Performance analysis
+  title: Render-blocking resources
+  origin: checklist
+  checklist_row: 90
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-091
+  section: C
+  section_title: Performance analysis
+  title: Compression checks
+  origin: checklist
+  checklist_row: 91
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-092
+  section: C
+  section_title: Performance analysis
+  title: Caching checks
+  origin: checklist
+  checklist_row: 92
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-093
+  section: C
+  section_title: Performance analysis
+  title: Mobile viewport checks
+  origin: checklist
+  checklist_row: 93
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-094
+  section: C
+  section_title: Performance analysis
+  title: Responsive checks
+  origin: checklist
+  checklist_row: 94
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-095
+  section: C
+  section_title: Performance analysis
+  title: Page weight
+  origin: checklist
+  checklist_row: 95
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-096
+  section: C
+  section_title: Performance analysis
+  title: Resource counts
+  origin: checklist
+  checklist_row: 96
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-097
+  section: C
+  section_title: Performance analysis
+  title: Slow server response detection
+  origin: checklist
+  checklist_row: 97
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-098
+  section: C
+  section_title: Performance analysis
+  title: Performance results at URL level
+  origin: checklist
+  checklist_row: 98
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-099
+  section: C
+  section_title: Performance analysis
+  title: Performance results at template level
+  origin: checklist
+  checklist_row: 99
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-C-X01
+  section: C
+  section_title: Performance analysis
+  title: Mobile-friendliness rule set
+  origin: extra
+  checklist_row: null
+  description: Tap-target size and spacing, font legibility and content-to-viewport fit checks beyond the viewport and responsive checks of rows 93-94.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section B, "Mobile-friendliness rules"
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section C, "Mobile friendliness extras"
+  notes: Listed twice in 05 §3; one capability. Render-dependent checks are skipped while rendering is inert (G03).
+- id: CAP-C-X02
+  section: C
+  section_title: Performance analysis
+  title: Performance budgets
+  origin: extra
+  checklist_row: null
+  description: User-defined per-metric performance budgets with exceedance and not-evaluated findings.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section C, "Performance budgets"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G04
+  notes: null
+- id: CAP-C-X03
+  section: C
+  section_title: Performance analysis
+  title: Local lab rendering probe
+  origin: extra
+  checklist_row: null
+  description: Bounded local-render capture of LCP, CLS, INP-proxy, FCP and TBT via CDP as the lab measurement engine for Core Web Vitals.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section C, "Instrumented lab measurement probe"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G04
+  notes: Measurement mechanism behind rows 82-84, adding FCP and TBT which are not on the checklist; intended to move onto the CDP layer (CAP-A-X10).
+- id: CAP-C-X04
+  section: C
+  section_title: Performance analysis
+  title: Page composition metrics
+  origin: extra
+  checklist_row: null
+  description: DOM node count, depth and width, image count and bytes, and minimum font size per page.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section C, "Page composition metrics"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G04
+  notes: null
+- id: CAP-C-X05
+  section: C
+  section_title: Performance analysis
+  title: ViewState weight measurement
+  origin: extra
+  checklist_row: null
+  description: Per-page measurement of __VIEWSTATE and __EVENTVALIDATION size with a performance finding above a configurable threshold.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §5.4
+  notes: null
+- id: CAP-D1-100
+  section: D1
+  section_title: Accessibility
+  title: WCAG 2.2 AA checks (where automatable)
+  origin: checklist
+  checklist_row: 100
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-101
+  section: D1
+  section_title: Accessibility
+  title: Missing image alternatives
+  origin: checklist
+  checklist_row: 101
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-102
+  section: D1
+  section_title: Accessibility
+  title: Form labels
+  origin: checklist
+  checklist_row: 102
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-103
+  section: D1
+  section_title: Accessibility
+  title: Colour contrast
+  origin: checklist
+  checklist_row: 103
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-104
+  section: D1
+  section_title: Accessibility
+  title: Heading structure
+  origin: checklist
+  checklist_row: 104
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-105
+  section: D1
+  section_title: Accessibility
+  title: Landmark structure
+  origin: checklist
+  checklist_row: 105
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-106
+  section: D1
+  section_title: Accessibility
+  title: Keyboard accessibility
+  origin: checklist
+  checklist_row: 106
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-107
+  section: D1
+  section_title: Accessibility
+  title: Accessible names
+  origin: checklist
+  checklist_row: 107
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-108
+  section: D1
+  section_title: Accessibility
+  title: Link purpose
+  origin: checklist
+  checklist_row: 108
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-109
+  section: D1
+  section_title: Accessibility
+  title: ARIA misuse
+  origin: checklist
+  checklist_row: 109
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-110
+  section: D1
+  section_title: Accessibility
+  title: Distinguish machine-detectable violations from issues needing human assessment
+  origin: checklist
+  checklist_row: 110
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D1-X01
+  section: D1
+  section_title: Accessibility
+  title: Accessibility rule-set configuration and versioning
+  origin: extra
+  checklist_row: null
+  description: Versioned bundled accessibility rule set with per-rule enable and severity mapping and render-dependent notices.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section D1, "Accessibility rule-set configuration & versioning"
+  notes: AccessibilitySummary builder has zero callers.
+- id: CAP-D2-111
+  section: D2
+  section_title: Security
+  title: HTTPS usage
+  origin: checklist
+  checklist_row: 111
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D2-112
+  section: D2
+  section_title: Security
+  title: Certificate validity
+  origin: checklist
+  checklist_row: 112
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D2-113
+  section: D2
+  section_title: Security
+  title: HTTP security headers
+  origin: checklist
+  checklist_row: 113
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D2-114
+  section: D2
+  section_title: Security
+  title: Mixed content
+  origin: checklist
+  checklist_row: 114
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D2-115
+  section: D2
+  section_title: Security
+  title: Cookie security attributes
+  origin: checklist
+  checklist_row: 115
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D2-116
+  section: D2
+  section_title: Security
+  title: Insecure external resources
+  origin: checklist
+  checklist_row: 116
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D2-117
+  section: D2
+  section_title: Security
+  title: Information disclosure
+  origin: checklist
+  checklist_row: 117
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D2-118
+  section: D2
+  section_title: Security
+  title: Basic TLS configuration checks
+  origin: checklist
+  checklist_row: 118
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-D2-X01
+  section: D2
+  section_title: Security
+  title: WAF detection and fingerprinting
+  origin: extra
+  checklist_row: null
+  description: Two-stage header/cookie and pre-parse challenge evaluation with block-rate diagnostics, per-URL findings, render-resolution outcomes and a manageable signature catalogue.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section A, "WAF detection & fingerprinting"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G26
+  - doc: ux-api-gap-audit.md
+    locator: GAP-14
+  notes: 'Absorbs two 05 §3 candidates as sub-capabilities: WAF-to-render resolution policy and WAF signature management. 05 suggests B/D2; assigned to D2 as security detection.'
+- id: CAP-E-119
+  section: E
+  section_title: Information architecture and site understanding
+  title: Internal link graph
+  origin: checklist
+  checklist_row: 119
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-120
+  section: E
+  section_title: Information architecture and site understanding
+  title: Click depth
+  origin: checklist
+  checklist_row: 120
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-121
+  section: E
+  section_title: Information architecture and site understanding
+  title: Crawl depth
+  origin: checklist
+  checklist_row: 121
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-122
+  section: E
+  section_title: Information architecture and site understanding
+  title: Orphan page identification
+  origin: checklist
+  checklist_row: 122
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-123
+  section: E
+  section_title: Information architecture and site understanding
+  title: Inlink counts
+  origin: checklist
+  checklist_row: 123
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-124
+  section: E
+  section_title: Information architecture and site understanding
+  title: Outlink counts
+  origin: checklist
+  checklist_row: 124
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-125
+  section: E
+  section_title: Information architecture and site understanding
+  title: Anchor-text analysis
+  origin: checklist
+  checklist_row: 125
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-126
+  section: E
+  section_title: Information architecture and site understanding
+  title: Navigation analysis
+  origin: checklist
+  checklist_row: 126
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-127
+  section: E
+  section_title: Information architecture and site understanding
+  title: Breadcrumb analysis
+  origin: checklist
+  checklist_row: 127
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-128
+  section: E
+  section_title: Information architecture and site understanding
+  title: Page template identification
+  origin: checklist
+  checklist_row: 128
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-129
+  section: E
+  section_title: Information architecture and site understanding
+  title: Content clustering
+  origin: checklist
+  checklist_row: 129
+  description: null
+  discovered_in: []
+  notes: The semantic/embedding linking pipeline (UNDERBUILD-AUDIT.md G22) is the implementation sub-capability behind this row and rows 131/146.
+- id: CAP-E-130
+  section: E
+  section_title: Information architecture and site understanding
+  title: URL taxonomy
+  origin: checklist
+  checklist_row: 130
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-131
+  section: E
+  section_title: Information architecture and site understanding
+  title: Topic and entity relationships
+  origin: checklist
+  checklist_row: 131
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-132
+  section: E
+  section_title: Information architecture and site understanding
+  title: Internal PageRank / link equity modelling
+  origin: checklist
+  checklist_row: 132
+  description: null
+  discovered_in: []
+  notes: Link-equity percentiles and top-decile concentration summaries are sub-capabilities of this row (05-functionality-audit-results.md §3, suggested section E).
+- id: CAP-E-133
+  section: E
+  section_title: Information architecture and site understanding
+  title: Important pages with insufficient internal links
+  origin: checklist
+  checklist_row: 133
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-134
+  section: E
+  section_title: Information architecture and site understanding
+  title: Pages receiving internal links from irrelevant sections
+  origin: checklist
+  checklist_row: 134
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-135
+  section: E
+  section_title: Information architecture and site understanding
+  title: Navigation inconsistencies
+  origin: checklist
+  checklist_row: 135
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-136
+  section: E
+  section_title: Information architecture and site understanding
+  title: Pages with no route from the main navigation
+  origin: checklist
+  checklist_row: 136
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-137
+  section: E
+  section_title: Information architecture and site understanding
+  title: Primary content sections of the site
+  origin: checklist
+  checklist_row: 137
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-E-138
+  section: E
+  section_title: Information architecture and site understanding
+  title: Site relationship graph (pages, links, entities, templates) with visual navigation
+  origin: checklist
+  checklist_row: 138
+  description: null
+  discovered_in: []
+  notes: Redirect-chain graph projection (audits.graph?type=redirect-chains) is a sub-capability of this row (05-functionality-audit-results.md §3, suggested section E).
+- id: CAP-E-X01
+  section: E
+  section_title: Information architecture and site understanding
+  title: Technology detection
+  origin: extra
+  checklist_row: null
+  description: Bundled 50-entry fingerprint catalogue producing per-URL technology detections with confidence.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section B, "Technology detection"
+  notes: null
+- id: CAP-E-X02
+  section: E
+  section_title: Information architecture and site understanding
+  title: DOM-zone link classification
+  origin: extra
+  checklist_row: null
+  description: Classification of every anchor into six weighted DOM zones (MainContent, Breadcrumb, Navigation, Sidebar, Header, Footer) feeding link equity.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section E, "DOM-zone link classification (6 weighted zones)"
+  notes: Feeds row 132 equity modelling; the zone-weights toggle UI is unmounted.
+- id: CAP-E-X03
+  section: E
+  section_title: Information architecture and site understanding
+  title: Whole-graph aggregate analytics
+  origin: extra
+  checklist_row: null
+  description: Streaming connected-components analysis with internal/external edge counts and orphan rate over the whole link graph.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section E, "Connected-components / whole-graph aggregate analytics"
+  notes: Read model never invoked; distinct from the graph itself (row 119) and orphan identification (row 122).
+- id: CAP-F-139
+  section: F
+  section_title: Content intelligence
+  title: Duplicate content detection
+  origin: checklist
+  checklist_row: 139
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-140
+  section: F
+  section_title: Content intelligence
+  title: Near-duplicate content detection
+  origin: checklist
+  checklist_row: 140
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-141
+  section: F
+  section_title: Content intelligence
+  title: Word count
+  origin: checklist
+  checklist_row: 141
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-142
+  section: F
+  section_title: Content intelligence
+  title: Text density
+  origin: checklist
+  checklist_row: 142
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-143
+  section: F
+  section_title: Content intelligence
+  title: N-gram analysis
+  origin: checklist
+  checklist_row: 143
+  description: null
+  discovered_in: []
+  notes: 'Sub-capabilities recorded here: n-gram configuration toggles and REST term filter (UNDERBUILD-AUDIT.md §5.5); user stop-word management (04b-docs-channel-join.md B1-10).'
+- id: CAP-F-144
+  section: F
+  section_title: Content intelligence
+  title: Keyword and phrase extraction
+  origin: checklist
+  checklist_row: 144
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-145
+  section: F
+  section_title: Content intelligence
+  title: Heading-to-content consistency
+  origin: checklist
+  checklist_row: 145
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-146
+  section: F
+  section_title: Content intelligence
+  title: Topic clustering
+  origin: checklist
+  checklist_row: 146
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-147
+  section: F
+  section_title: Content intelligence
+  title: Content freshness indicators
+  origin: checklist
+  checklist_row: 147
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-148
+  section: F
+  section_title: Content intelligence
+  title: Thin content detection
+  origin: checklist
+  checklist_row: 148
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-149
+  section: F
+  section_title: Content intelligence
+  title: Missing content coverage
+  origin: checklist
+  checklist_row: 149
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-150
+  section: F
+  section_title: Content intelligence
+  title: Title and body-content alignment
+  origin: checklist
+  checklist_row: 150
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-151
+  section: F
+  section_title: Content intelligence
+  title: Entity extraction
+  origin: checklist
+  checklist_row: 151
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-152
+  section: F
+  section_title: Content intelligence
+  title: Content-template comparison
+  origin: checklist
+  checklist_row: 152
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-F-X01
+  section: F
+  section_title: Content intelligence
+  title: Keyword cannibalization and topical-gap findings
+  origin: extra
+  checklist_row: null
+  description: Automated content.keyword-cannibalization and content.topical-gap findings derived from n-gram clusters.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section F, "Keyword-cannibalization & topical-gap findings"
+  - doc: ux-api-gap-audit.md
+    locator: GAP-17
+  notes: Topical gaps overlap row 149 missing content coverage; kept as one n-gram-driven finding capability.
+- id: CAP-F-X02
+  section: F
+  section_title: Content intelligence
+  title: Spelling and readability analysis
+  origin: extra
+  checklist_row: null
+  description: Hunspell-based spelling checks with a user dictionary, and readability/text metrics per page.
+  discovered_in:
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §5.4
+  - doc: 04b-docs-channel-join.md
+    locator: B1-01
+  - doc: 03-documented-feature-inventory.md
+    locator: audits.readability-metrics
+  - doc: 04a-ux-api-join.md
+    locator: A1-02 (dictionary management)
+  notes: Not on the checklist. User dictionary management (04a A1-02) is a sub-capability.
+- id: CAP-F-X03
+  section: F
+  section_title: Content intelligence
+  title: Sentiment scoring (optional)
+  origin: extra
+  checklist_row: null
+  description: Optional sentiment polarity scoring against a bundled lexicon, disabled by default, promised by spec §7.12.
+  discovered_in:
+  - doc: 04-gap-analysis.md
+    locator: G4-01
+  - doc: 04b-docs-channel-join.md
+    locator: B1-01
+  notes: null
+- id: CAP-G-153
+  section: G
+  section_title: Content extraction
+  title: 'Custom extraction: CSS selectors'
+  origin: checklist
+  checklist_row: 153
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-154
+  section: G
+  section_title: Content extraction
+  title: 'Custom extraction: XPath'
+  origin: checklist
+  checklist_row: 154
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-155
+  section: G
+  section_title: Content extraction
+  title: 'Custom extraction: regex'
+  origin: checklist
+  checklist_row: 155
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-156
+  section: G
+  section_title: Content extraction
+  title: 'Extraction output types: inner text, inner HTML, whole element, specific attribute'
+  origin: checklist
+  checklist_row: 156
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-157
+  section: G
+  section_title: Content extraction
+  title: 'Extraction source selectable: raw HTML, rendered DOM, or both'
+  origin: checklist
+  checklist_row: 157
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-158
+  section: G
+  section_title: Content extraction
+  title: Multiple matches per page per rule
+  origin: checklist
+  checklist_row: 158
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-159
+  section: G
+  section_title: Content extraction
+  title: Test extraction rule against a single URL before crawling
+  origin: checklist
+  checklist_row: 159
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-160
+  section: G
+  section_title: Content extraction
+  title: 'Custom search: pages containing a text or regex'
+  origin: checklist
+  checklist_row: 160
+  description: null
+  discovered_in: []
+  notes: Custom-search advanced options populated from configuration (UNDERBUILD-AUDIT.md G13) are sub-capabilities of this row and row 161.
+- id: CAP-G-161
+  section: G
+  section_title: Content extraction
+  title: 'Custom search: pages not containing a text or regex'
+  origin: checklist
+  checklist_row: 161
+  description: null
+  discovered_in: []
+  notes: Custom-search advanced options populated from configuration (UNDERBUILD-AUDIT.md G13) are sub-capabilities of this row and row 160.
+- id: CAP-G-162
+  section: G
+  section_title: Content extraction
+  title: Main content extraction (boilerplate removal of navigation, header, footer)
+  origin: checklist
+  checklist_row: 162
+  description: null
+  discovered_in: []
+  notes: Content-scope configuration validation and declared per-entry selector language (UNDERBUILD-AUDIT.md G24) are sub-capabilities of this row.
+- id: CAP-G-163
+  section: G
+  section_title: Content extraction
+  title: Analysis on main content (word count, duplicates, n-grams use extracted main content)
+  origin: checklist
+  checklist_row: 163
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-164
+  section: G
+  section_title: Content extraction
+  title: Full page text export (plain text)
+  origin: checklist
+  checklist_row: 164
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-165
+  section: G
+  section_title: Content extraction
+  title: Full page content export (Markdown)
+  origin: checklist
+  checklist_row: 165
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-166
+  section: G
+  section_title: Content extraction
+  title: Extracted values usable as filters
+  origin: checklist
+  checklist_row: 166
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-167
+  section: G
+  section_title: Content extraction
+  title: Extracted values included in exports
+  origin: checklist
+  checklist_row: 167
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-G-X01
+  section: G
+  section_title: Content extraction
+  title: Single-page analysis and render testing tools
+  origin: extra
+  checklist_row: null
+  description: Mounted standalone tools running the audit pipeline against one URL, including rendered-DOM analysis and render testing.
+  discovered_in:
+  - doc: 04-gap-analysis.md
+    locator: §1.4 (one-vs-four ruling)
+  - doc: 02-ux-surface-inventory.md
+    locator: §2 "Single-page & standalone tools"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G25
+  notes: Row 159 covers testing extraction rules only; whole-page single-URL analysis is broader.
+- id: CAP-H-168
+  section: H
+  section_title: Reporting, data and integrations
+  title: Interactive dashboard
+  origin: checklist
+  checklist_row: 168
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-169
+  section: H
+  section_title: Reporting, data and integrations
+  title: Searchable URL inventory
+  origin: checklist
+  checklist_row: 169
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-170
+  section: H
+  section_title: Reporting, data and integrations
+  title: Advanced filtering
+  origin: checklist
+  checklist_row: 170
+  description: null
+  discovered_in: []
+  notes: Saved queries / user filter presets (saved_views; 04b-docs-channel-join.md B1-04) are sub-capabilities of this row.
+- id: CAP-H-171
+  section: H
+  section_title: Reporting, data and integrations
+  title: Segmentation
+  origin: checklist
+  checklist_row: 171
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-172
+  section: H
+  section_title: Reporting, data and integrations
+  title: Custom issue rules
+  origin: checklist
+  checklist_row: 172
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-173
+  section: H
+  section_title: Reporting, data and integrations
+  title: CSV export
+  origin: checklist
+  checklist_row: 173
+  description: null
+  discovered_in: []
+  notes: Per-project default export field set and default export destination (project-configuration-review.md §3.11) are configuration sub-capabilities of rows 173-176.
+- id: CAP-H-174
+  section: H
+  section_title: Reporting, data and integrations
+  title: XLSX export
+  origin: checklist
+  checklist_row: 174
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-175
+  section: H
+  section_title: Reporting, data and integrations
+  title: JSON export
+  origin: checklist
+  checklist_row: 175
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-176
+  section: H
+  section_title: Reporting, data and integrations
+  title: XML export
+  origin: checklist
+  checklist_row: 176
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-177
+  section: H
+  section_title: Reporting, data and integrations
+  title: PDF reports
+  origin: checklist
+  checklist_row: 177
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-178
+  section: H
+  section_title: Reporting, data and integrations
+  title: Crawl comparison
+  origin: checklist
+  checklist_row: 178
+  description: null
+  discovered_in: []
+  notes: Baseline audit selection for comparisons (project-configuration-review.md §3.11) is a sub-capability of this row.
+- id: CAP-H-179
+  section: H
+  section_title: Reporting, data and integrations
+  title: Historical audit storage
+  origin: checklist
+  checklist_row: 179
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-180
+  section: H
+  section_title: Reporting, data and integrations
+  title: Issue trend over time (resolved, remaining, newly introduced)
+  origin: checklist
+  checklist_row: 180
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-181
+  section: H
+  section_title: Reporting, data and integrations
+  title: Google Search Console integration
+  origin: checklist
+  checklist_row: 181
+  description: null
+  discovered_in: []
+  notes: 'REQUIRED (decision D-005): user-connected Google Search Console via own OAuth client, user-triggered or scheduled sync, cached locally. Spec amendment to §2.6 network boundary needed.'
+- id: CAP-H-182
+  section: H
+  section_title: Reporting, data and integrations
+  title: Google Analytics 4 integration
+  origin: checklist
+  checklist_row: 182
+  description: null
+  discovered_in: []
+  notes: 'REQUIRED (decision D-005): user-connected GA4 via own OAuth client, user-triggered or scheduled sync, cached locally. Spec amendment to §2.6 network boundary needed.'
+- id: CAP-H-183
+  section: H
+  section_title: Reporting, data and integrations
+  title: PageSpeed Insights integration
+  origin: checklist
+  checklist_row: 183
+  description: null
+  discovered_in: []
+  notes: 'REQUIRED (decision D-012): user supplies own PageSpeed Insights API key; runs only when triggered. Adds CrUX field data alongside the local lab probe. Spec amendment to §2.6 needed.'
+- id: CAP-H-184
+  section: H
+  section_title: Reporting, data and integrations
+  title: API access
+  origin: checklist
+  checklist_row: 184
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-H-185
+  section: H
+  section_title: Reporting, data and integrations
+  title: MCP server access
+  origin: checklist
+  checklist_row: 185
+  description: null
+  discovered_in: []
+  notes: 'Sub-capabilities recorded here: the five MCP briefing prompts and the MCP transport/token service (05-functionality-audit-results.md §3 suggested section H; UNDERBUILD-AUDIT.md G17). Decision D-008: MCP is the AI channel, used both to steer CrawlForge (projects, configurations, audit lifecycle) and to analyse its data from Claude, VS Code and other clients. Decision D-013: MCP also covers the webhook use case through audit status/completion tools. Decision D-014: summary-first, paginated JSON responses with stable IDs.'
+- id: CAP-H-186
+  section: H
+  section_title: Reporting, data and integrations
+  title: Structured JSON output for other systems and agents
+  origin: checklist
+  checklist_row: 186
+  description: null
+  discovered_in: []
+  notes: 'Decision D-014 (agent data contract): summary-first JSON over MCP; CSV for flat tables, JSON Lines for nested records, Markdown for page content; read-only SQLite audit snapshot with documented schema.'
+- id: CAP-H-187
+  section: H
+  section_title: Reporting, data and integrations
+  title: Webhooks
+  origin: checklist
+  checklist_row: 187
+  description: null
+  discovered_in: []
+  notes: 'OUT OF SCOPE (decision D-013): replaced by MCP audit status/completion tools.'
+- id: CAP-H-188
+  section: H
+  section_title: Reporting, data and integrations
+  title: Scheduled crawls
+  origin: checklist
+  checklist_row: 188
+  description: null
+  discovered_in: []
+  notes: The scheduled-audit OS notification completion action (05-functionality-audit-results.md §3 suggested section H) is a sub-capability of this row.
+- id: CAP-H-189
+  section: H
+  section_title: Reporting, data and integrations
+  title: Email reports
+  origin: checklist
+  checklist_row: 189
+  description: null
+  discovered_in: []
+  notes: OUT OF SCOPE (decision D-006).
+- id: CAP-H-190
+  section: H
+  section_title: Reporting, data and integrations
+  title: Multi-project management
+  origin: checklist
+  checklist_row: 190
+  description: null
+  discovered_in: []
+  notes: App-level configuration templates copied into new projects (project-configuration-review.md §3.1) are a sub-capability of this row.
+- id: CAP-H-191
+  section: H
+  section_title: Reporting, data and integrations
+  title: Multi-user access and permissions
+  origin: checklist
+  checklist_row: 191
+  description: null
+  discovered_in: []
+  notes: 'OUT OF SCOPE (decision D-009): single user per desktop install.'
+- id: CAP-H-X01
+  section: H
+  section_title: Reporting, data and integrations
+  title: Offline website copy export
+  origin: extra
+  checklist_row: null
+  description: Optional production of an offline copy of the crawled website as a project output.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §3.11 (Consider)
+  notes: Proposed ("Consider"), not yet decided; decision_needed material.
+- id: CAP-H-X02
+  section: H
+  section_title: Reporting, data and integrations
+  title: Multi-protocol export destinations
+  origin: extra
+  checklist_row: null
+  description: Delivery of exports to user-owned LocalFolder, FTP and SFTP endpoints with credential encryption and bounded retry.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section H, "Multi-protocol export destinations"
+  notes: null
+- id: CAP-H-X03
+  section: H
+  section_title: Reporting, data and integrations
+  title: XML sitemap generation
+  origin: extra
+  checklist_row: null
+  description: Generation of an XML sitemap or sitemap index from eligible URLs into a local file.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section H, "XML sitemap generation tool"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: '§4 G08 (contrast: ingestion absent)'
+  notes: Generation exists; sitemap ingestion for crawling is row 8.
+- id: CAP-H-X04
+  section: H
+  section_title: Reporting, data and integrations
+  title: Automation action log
+  origin: extra
+  checklist_row: null
+  description: Write-only log of every MCP tool/resource invocation; the read path exists in code but is not exposed.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section H, "Automation action log (write-only)"
+  - doc: 01-api-exposure-inventory.md
+    locator: §5 observation 2
+  notes: null
+- id: CAP-H-X05
+  section: H
+  section_title: Reporting, data and integrations
+  title: Server log import and correlation
+  origin: extra
+  checklist_row: null
+  description: Import of server log files (combined/common/cloudflare/custom), import management, consented DNS bot-verification and log-to-crawl correlation.
+  discovered_in:
+  - doc: ux-api-gap-audit.md
+    locator: GAP-08
+  - doc: 04a-ux-api-join.md
+    locator: A1-05
+  - doc: 01-api-exposure-inventory.md
+    locator: §1.11
+  notes: Log analyzer exists in the backend; the import domain has no UI entry. Multipart upload and PerplexityBot CIDR gaps are sub-capabilities (UNDERBUILD §5.5).
+- id: CAP-H-X06
+  section: H
+  section_title: Reporting, data and integrations
+  title: MarTech and consent coverage analysis
+  origin: extra
+  checklist_row: null
+  description: Detection of analytics/tag-manager/consent implementations per URL (full MarTech catalogue, Consent Mode v2 gcs/gcd) with coverage checks against expected client IDs.
+  discovered_in:
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §5.5
+  - doc: 01-api-exposure-inventory.md
+    locator: §1.6 analytics.list / analytics.coverage
+  - doc: project-configuration-review.md
+    locator: §3.10
+  notes: null
+- id: CAP-I-192
+  section: I
+  section_title: Findings and prioritisation
+  title: Prioritise findings by severity
+  origin: checklist
+  checklist_row: 192
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-193
+  section: I
+  section_title: Findings and prioritisation
+  title: Prioritise by number of affected URLs
+  origin: checklist
+  checklist_row: 193
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-194
+  section: I
+  section_title: Findings and prioritisation
+  title: Prioritise by business importance
+  origin: checklist
+  checklist_row: 194
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-195
+  section: I
+  section_title: Findings and prioritisation
+  title: Prioritise by confidence
+  origin: checklist
+  checklist_row: 195
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-196
+  section: I
+  section_title: Findings and prioritisation
+  title: Prioritise by remediation effort
+  origin: checklist
+  checklist_row: 196
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-197
+  section: I
+  section_title: Findings and prioritisation
+  title: Template-level issue grouping (shared problems across a template)
+  origin: checklist
+  checklist_row: 197
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-198
+  section: I
+  section_title: Findings and prioritisation
+  title: Root-cause grouping (underlying causes rather than individual warnings)
+  origin: checklist
+  checklist_row: 198
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-199
+  section: I
+  section_title: Findings and prioritisation
+  title: 'Change detection between crawls: structural changes'
+  origin: checklist
+  checklist_row: 199
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-200
+  section: I
+  section_title: Findings and prioritisation
+  title: 'Change detection between crawls: newly introduced problems'
+  origin: checklist
+  checklist_row: 200
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-201
+  section: I
+  section_title: Findings and prioritisation
+  title: 'Change detection between crawls: disappearing content'
+  origin: checklist
+  checklist_row: 201
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-202
+  section: I
+  section_title: Findings and prioritisation
+  title: 'Change detection between crawls: deteriorating technical health'
+  origin: checklist
+  checklist_row: 202
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-I-X01
+  section: I
+  section_title: Findings and prioritisation
+  title: Finding suppression
+  origin: extra
+  checklist_row: null
+  description: Reversible suppression of findings by rule key and URL scope, with a list/read path and a suppressed view.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section B, "Suppression + scoring/recompute"
+  - doc: ux-api-gap-audit.md
+    locator: GAP-13
+  - doc: 04b-docs-channel-join.md
+    locator: B1-05
+  notes: Split from the combined 05 §3 row; no list endpoint exists today.
+- id: CAP-I-X02
+  section: I
+  section_title: Findings and prioritisation
+  title: Audit scoring and recompute
+  origin: extra
+  checklist_row: null
+  description: Per-category and overall audit scores with a recompute coordinator after suppression or configuration changes.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section B, "Suppression + scoring/recompute"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §5.4
+  notes: Split from the combined 05 §3 row; scores UI unmounted.
+- id: CAP-J-203
+  section: J
+  section_title: AI-assisted analysis
+  title: Website overview (structure, purpose, content, technical architecture)
+  origin: checklist
+  checklist_row: 203
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-204
+  section: J
+  section_title: AI-assisted analysis
+  title: Plain-language explanation of individual findings
+  origin: checklist
+  checklist_row: 204
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-205
+  section: J
+  section_title: AI-assisted analysis
+  title: Template-level pattern detection
+  origin: checklist
+  checklist_row: 205
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-206
+  section: J
+  section_title: AI-assisted analysis
+  title: Impact assessment (commercial, technical, search visibility)
+  origin: checklist
+  checklist_row: 206
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-207
+  section: J
+  section_title: AI-assisted analysis
+  title: Recommendations for interventions
+  origin: checklist
+  checklist_row: 207
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-208
+  section: J
+  section_title: AI-assisted analysis
+  title: 'Evidence references: every recommendation links to affected URLs and underlying data'
+  origin: checklist
+  checklist_row: 208
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-209
+  section: J
+  section_title: AI-assisted analysis
+  title: 'Custom investigations: operator questions about the crawl'
+  origin: checklist
+  checklist_row: 209
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-210
+  section: J
+  section_title: AI-assisted analysis
+  title: Change analysis between crawls
+  origin: checklist
+  checklist_row: 210
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-211
+  section: J
+  section_title: AI-assisted analysis
+  title: Developer implementation briefs
+  origin: checklist
+  checklist_row: 211
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-212
+  section: J
+  section_title: AI-assisted analysis
+  title: Machine-readable findings export
+  origin: checklist
+  checklist_row: 212
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-213
+  section: J
+  section_title: AI-assisted analysis
+  title: 'Constraint: AI only interprets collected crawl data; never invents findings'
+  origin: checklist
+  checklist_row: 213
+  description: null
+  discovered_in: []
+  notes: null
+- id: CAP-J-X01
+  section: J
+  section_title: AI-assisted analysis
+  title: GEO llms.txt generation and validation
+  origin: extra
+  checklist_row: null
+  description: Standalone generation and structural/link validation of llms.txt, plus GEO readiness analysis; the crawl-time llms.txt/llms-full.txt probe is absent.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section B, "GEO llms.txt generate/validate"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G14
+  notes: null
+- id: CAP-J-X02
+  section: J
+  section_title: AI-assisted analysis
+  title: AI-bot governance matrix
+  origin: extra
+  checklist_row: null
+  description: GEO governance matrix reporting AI-crawler robots policy and access posture per bot.
+  discovered_in:
+  - doc: 01-api-exposure-inventory.md
+    locator: §1.10 GEO / AI-bot governance
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §5.5 (GEO validator/governance matrix)
+  notes: null
+- id: CAP-K-X01
+  section: K
+  section_title: Projects and configuration
+  title: Configuration editor
+  origin: extra
+  checklist_row: null
+  description: UI to view and edit crawl configurations (start URLs, scope, crawl-as, limits, patterns, directives, toggles, thresholds) beyond the silent New-project default.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §1.1, §2
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G18
+  - doc: ux-api-gap-audit.md
+    locator: GAP-09
+  notes: null
+- id: CAP-K-X02
+  section: K
+  section_title: Projects and configuration
+  title: Per-configuration analysis category toggles
+  origin: extra
+  checklist_row: null
+  description: Choosing which analysis categories run per project/configuration instead of the current app-wide resolution.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §1.2, §3.7
+  notes: ResolveEnabledCategoriesAsync takes no project or configuration input today.
+- id: CAP-K-X03
+  section: K
+  section_title: Projects and configuration
+  title: Per-project issue thresholds
+  origin: extra
+  checklist_row: null
+  description: Per-project title/description length, thin-content word count, slow-response cut-off and readability targets, plus the wider settings.thresholds knob set.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §3.8
+  - doc: 04b-docs-channel-join.md
+    locator: B1-06
+  notes: null
+- id: CAP-K-X04
+  section: K
+  section_title: Projects and configuration
+  title: Client context
+  origin: extra
+  checklist_row: null
+  description: Per-project expected GA4/GTM IDs, expected consent tool, brand variants, target locale/language and client name/logo for report branding.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §3.10
+  notes: Drives analytics coverage checks (CAP-H-X06), spelling dictionary and expected hreflang.
+- id: CAP-K-X05
+  section: K
+  section_title: Projects and configuration
+  title: Per-project retention and storage reporting
+  origin: extra
+  checklist_row: null
+  description: Per-project keep-last-N / age retention policy including full-HTML versus extracted-data storage, with user-visible storage reporting.
+  discovered_in:
+  - doc: project-configuration-review.md
+    locator: §3.12
+  - doc: 04b-docs-channel-join.md
+    locator: B1-07
+  notes: null
+- id: CAP-L-X01
+  section: L
+  section_title: Platform
+  title: Platform security and diagnostics infrastructure
+  origin: extra
+  checklist_row: null
+  description: AES-256-GCM secret protection, loopback handshake guard, structured local logs, minidump crash handling, shell CSP and offline packaging completeness.
+  discovered_in:
+  - doc: 05-functionality-audit-results.md
+    locator: §3 suggested section H, "Platform security infrastructure"
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G15, G21, G28
+  notes: Absorbs CSP enforcement (G21) and packaging completeness (G28) as sub-capabilities.
+- id: CAP-L-X02
+  section: L
+  section_title: Platform
+  title: Project archive export/import and provider switching
+  origin: extra
+  checklist_row: null
+  description: ZIP archive export/import across all tables as the backup/transfer and database-provider migration vehicle.
+  discovered_in:
+  - doc: 04b-docs-channel-join.md
+    locator: B1-08
+  notes: Fully implemented in the data layer but never registered or exposed.
+- id: CAP-L-X03
+  section: L
+  section_title: Platform
+  title: MySQL provider parity and schema authority
+  origin: extra
+  checklist_row: null
+  description: Single schema authority and continuously verified live parity for the MySQL provider alongside SQLite.
+  discovered_in:
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G16, §5.2
+  notes: null
+- id: CAP-L-X04
+  section: L
+  section_title: Platform
+  title: Local plugin system
+  origin: extra
+  checklist_row: null
+  description: Local plugin registry, sandboxed execution with capability grants, hook timeouts, quarantine, storage limits and a management surface.
+  discovered_in:
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G02, G19
+  - doc: ux-api-gap-audit.md
+    locator: GAP-03
+  - doc: 03-documented-feature-inventory.md
+    locator: §2.10 extensions/plugins
+  notes: null
+- id: CAP-L-X05
+  section: L
+  section_title: Platform
+  title: Real-time hub events and metrics observability
+  origin: extra
+  checklist_row: null
+  description: Production publication of the 19 catalogued hub events and recording of the 15 metric families exposed at /metrics.
+  discovered_in:
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G05, G06
+  - doc: 01-api-exposure-inventory.md
+    locator: §2, §1.24
+  notes: null
+- id: CAP-L-X06
+  section: L
+  section_title: Platform
+  title: Electron native shell integration
+  origin: extra
+  checklist_row: null
+  description: 'Consumption of the preload bridge: native file pickers, notifications, taskbar progress, per-audit windows, window routes and recovery UX.'
+  discovered_in:
+  - doc: UNDERBUILD-AUDIT.md
+    locator: §4 G20
+  - doc: ux-api-gap-audit.md
+    locator: GAP-04
+  - doc: 02-ux-surface-inventory.md
+    locator: §2 "Electron-native"
+  notes: null
+rejected_duplicates:
+- candidate: Scheduled crawls
+  source: 05-functionality-audit-results.md §3 suggested section A
+  maps_to_row: 188
+  merged_into: null
+  reason: Checklist row 188 already covers scheduled crawls; the gap is the missing UI (GAP-06).
+- candidate: Crawl-delay source (RobotsCache/ICrawlDelaySource)
+  source: 05-functionality-audit-results.md §3 suggested section A
+  maps_to_row: 6
+  merged_into: null
+  reason: Honouring robots crawl-delay is part of robots.txt handling; noted on CAP-A-006.
+- candidate: Signed-request crawler access
+  source: 05-functionality-audit-results.md §3 suggested section A; 04b-docs-channel-join.md B1-09
+  maps_to_row: 21
+  merged_into: null
+  reason: A mechanism of authentication support; noted on CAP-A-021.
+- candidate: Code-coverage percentage metrics
+  source: 05-functionality-audit-results.md §3 suggested section C
+  maps_to_row: 88
+  merged_into: null
+  reason: Metric form of unused CSS/JS (rows 88-89); noted on CAP-C-088 and CAP-C-089.
+- candidate: Link-equity percentiles & top-decile concentration
+  source: 05-functionality-audit-results.md §3 suggested section E
+  maps_to_row: 132
+  merged_into: null
+  reason: Sub-capability of link equity modelling; noted on CAP-E-132.
+- candidate: Redirect-chain graph projection
+  source: 05-functionality-audit-results.md §3 suggested section E
+  maps_to_row: 138
+  merged_into: null
+  reason: A graph projection of redirect data within the site relationship graph; noted on CAP-E-138.
+- candidate: MCP briefing prompts (5)
+  source: 05-functionality-audit-results.md §3 suggested section H
+  maps_to_row: 185
+  merged_into: null
+  reason: Part of the MCP server surface; noted on CAP-H-185.
+- candidate: MCP transport/token service
+  source: 05-functionality-audit-results.md §3 suggested section H
+  maps_to_row: 185
+  merged_into: null
+  reason: Part of the MCP server surface; noted on CAP-H-185.
+- candidate: Scheduled-audit OS notification
+  source: 05-functionality-audit-results.md §3 suggested section H
+  maps_to_row: 188
+  merged_into: null
+  reason: A completion action of scheduled crawls; noted on CAP-H-188.
+- candidate: HTTP basic auth and recorded form login
+  source: project-configuration-review.md §3.5
+  maps_to_row: 21
+  merged_into: null
+  reason: Mechanisms of authentication support; noted on CAP-A-021.
+- candidate: '"Crawl as" presets'
+  source: project-configuration-review.md §3.6
+  maps_to_row: 5
+  merged_into: null
+  reason: Bundling of user agent, viewport and rendering configuration; noted on CAP-A-005.
+- candidate: Default export field set, destination, baseline audit
+  source: project-configuration-review.md §3.11
+  maps_to_row: 173
+  merged_into: null
+  reason: Configuration of exports (rows 173-176) and comparison (row 178); noted on CAP-H-173 and CAP-H-178.
+- candidate: ASP.NET cookieless-session path normalization
+  source: project-configuration-review.md §5.4
+  maps_to_row: 13
+  merged_into: null
+  reason: A canonicalization rule; noted on CAP-A-013.
+- candidate: Late meta changes severity policy
+  source: project-configuration-review.md §5.5
+  maps_to_row: 35
+  merged_into: null
+  reason: A severity policy on the raw-vs-rendered comparison; noted on CAP-A-035.
+- candidate: App-level configuration templates
+  source: project-configuration-review.md §3.1
+  maps_to_row: 190
+  merged_into: null
+  reason: A multi-project management convenience; noted on CAP-H-190.
+- candidate: User stop-word additions
+  source: 04b-docs-channel-join.md B1-10
+  maps_to_row: 143
+  merged_into: null
+  reason: Configuration of n-gram analysis; noted on CAP-F-143.
+- candidate: Saved views / user filter presets
+  source: 04b-docs-channel-join.md B1-04
+  maps_to_row: 170
+  merged_into: null
+  reason: Subsumed by saved queries under advanced filtering; noted on CAP-H-170.
+- candidate: Content-scope config validation / selector language
+  source: UNDERBUILD-AUDIT.md §4 G24
+  maps_to_row: 162
+  merged_into: null
+  reason: Validation of main-content extraction configuration; noted on CAP-G-162.
+- candidate: Semantic/embedding linking pipeline
+  source: UNDERBUILD-AUDIT.md §4 G22
+  maps_to_row: 129
+  merged_into: null
+  reason: Implementation behind content clustering and topic relationships (rows 129, 131, 146); noted on CAP-E-129.
+- candidate: Custom search advanced options
+  source: UNDERBUILD-AUDIT.md §4 G13
+  maps_to_row: 160
+  merged_into: null
+  reason: Configuration of custom search (rows 160-161); noted on CAP-G-160 and CAP-G-161. The JS-snippet half of G13 is CAP-A-X20.
+- candidate: Mobile friendliness extras
+  source: 05-functionality-audit-results.md §3 suggested section C
+  maps_to_row: null
+  merged_into: CAP-C-X01
+  reason: Internal duplicate of "Mobile-friendliness rules" in 05 §3 suggested section B; merged into CAP-C-X01.
+- candidate: SERP pixel-truncation metrics
+  source: 05-functionality-audit-results.md §3 suggested section F
+  maps_to_row: null
+  merged_into: CAP-B-X04
+  reason: Internal duplicate of "SERP pixel measurement" in 05 §3 suggested section B; merged into CAP-B-X04.
+- candidate: WAF-to-render resolution policy
+  source: 05-functionality-audit-results.md §3 suggested section A
+  maps_to_row: null
+  merged_into: CAP-D2-X01
+  reason: Resolution stage of WAF detection; merged into CAP-D2-X01.
+- candidate: WAF signature management
+  source: ux-api-gap-audit.md GAP-14; 04a-ux-api-join.md A1-04
+  maps_to_row: null
+  merged_into: CAP-D2-X01
+  reason: Management surface of the WAF signature catalogue; merged into CAP-D2-X01.
+- candidate: Rendered-first soft-404
+  source: project-configuration-review.md §5.5
+  maps_to_row: null
+  merged_into: CAP-B-X03
+  reason: Priority rule of soft-404 detection; merged into CAP-B-X03.
+- candidate: URL rewriting (regex, normalisation, host mapping)
+  source: project-configuration-review.md §3.9
+  maps_to_row: null
+  merged_into: CAP-A-X06
+  reason: Same capability as 05 §3 "URL rewrite / host-mapping rules"; merged into CAP-A-X06.
+- candidate: User dictionary management
+  source: 04a-ux-api-join.md A1-02; ux-api-gap-audit.md GAP-12
+  maps_to_row: null
+  merged_into: CAP-F-X02
+  reason: Management surface of spelling analysis; merged into CAP-F-X02.
+- candidate: CSP enforcement
+  source: UNDERBUILD-AUDIT.md §4 G21
+  maps_to_row: null
+  merged_into: CAP-L-X01
+  reason: Part of platform security infrastructure; merged into CAP-L-X01.
+- candidate: Offline packaging completeness
+  source: UNDERBUILD-AUDIT.md §4 G28
+  maps_to_row: null
+  merged_into: CAP-L-X01
+  reason: Part of platform foundation; merged into CAP-L-X01.

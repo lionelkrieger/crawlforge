@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    WP-01-02: MySQL external provider & connection tester.
+    Optional user-owned client-server database (FS-CRAWL-001 §2.4). Outbound traffic is
+    confined strictly to the user-configured server; credentials are encrypted at rest
+    via ISecretProtector (CrawlForge.Security). TFM, nullable, analyzers, and the GC
+    runtime profile come from Directory.Build.props.
+    MySqlConnector is a workpiece-local package: central package management is disabled
+    for this project only and the version is pinned here (dispatch packet, wave-1A).
+  -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <Description>CrawlForge optional external MySQL provider: user-configured endpoint only, connection-test verdicts, encrypted credentials, dialect adaptation, materialized aggregate read models, and provider-switch orchestration.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.6.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+    <ProjectReference Include="..\CrawlForge.Security\CrawlForge.Security.csproj" />
+  </ItemGroup>
+</Project>

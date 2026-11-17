@@ -1,0 +1,2758 @@
+{
+  "tool": "crawlforge-governance-analyzer",
+  "toolVersion": "1.0.0",
+  "root": "E:\\Crawlforge\\app",
+  "filesScanned": 1006,
+  "rules": [
+    {
+      "id": "NR-01",
+      "title": "Machine identity / OS fingerprinting",
+      "specReference": "FS-CRAWL-001 \u00A73 row 1",
+      "severity": "error",
+      "detectionBasis": "Behavioral: registry/WMI/IO-registry API usage (usings, object creations, invocations), hardware-serial/machine-GUID string literals (e.g. MachineGuid, Win32_BIOS, IOPlatformSerialNumber), identity-shaped declarations/invocations (machineId, hardwareId, deviceId, installationId, MAC/serial reads), Environment.MachineName/OSVersion member access. Comments and local random-ID generation (Guid.NewGuid, RandomNumberGenerator) are ignored. Environment.SpecialFolder.* path-enum accesses are directory locations, not identity reads, and are NOT flagged. Identifier-name matching is heuristic (camelCase token sequences)."
+    },
+    {
+      "id": "NR-02",
+      "title": "Licensing client \u0026 state model",
+      "specReference": "FS-CRAWL-001 \u00A73 row 2",
+      "severity": "error",
+      "detectionBasis": "Heuristic identifier tokens: license/licence/entitlement/activation-key/trial-period/seat-count/grace-period/recheck and licensing subscription compounds (subscription\u002Btier/plan/status/billing/...) in declarations, invocations and type references; identity-bearing vendor header literals (X-License-*, X-Entitlement-*); license/entitlement endpoint paths in transmission context; license-cache file names. Bare \u0027subscription\u0027 is NOT matched (the loopback hub uses pub/sub event subscriptions). User-destination credentials are not vendor headers and are not flagged."
+    },
+    {
+      "id": "NR-03",
+      "title": "Account system",
+      "specReference": "FS-CRAWL-001 \u00A73 row 3",
+      "severity": "error",
+      "detectionBasis": "Behavioral: identity-provider packages/usings (ASP.NET Identity, IdentityServer, Duende, OpenIddict, passport, next-auth, Auth0, Clerk, Supabase, Firebase auth); sign-in/sign-up/login/logout/password-reset/user-profile/account declarations and invocations; Environment.UserName/UserDomainName reads; auth endpoint paths in transmission context. Bare \u0027UserName\u0027 on user-destination credential objects is NOT flagged (permitted). Environment.SpecialFolder.* path-enum accesses (UserProfile/ApplicationData/LocalApplicationData/...) are directory locations, not account reads, and are NOT flagged."
+    },
+    {
+      "id": "NR-04",
+      "title": "Remote control plane / relay",
+      "specReference": "FS-CRAWL-001 \u00A73 row 4",
+      "severity": "error",
+      "detectionBasis": "Heuristic identifier tokens: enroll*, cloud/remote relay, remote heartbeat/liveness reporting, remote credential issuance/rotation/revocation, remote bridge; enrollment/heartbeat/liveness/relay endpoint paths in transmission context. The local system-health heartbeat and loopback MCP token rotation are NOT flagged (bare \u0027heartbeat\u0027 and loopback endpoints are exempt)."
+    },
+    {
+      "id": "NR-05",
+      "title": "Remote feature flags",
+      "specReference": "FS-CRAWL-001 \u00A73 row 5",
+      "severity": "error",
+      "detectionBasis": "Behavioral: remote flag SDK packages (LaunchDarkly, Unleash, Flagsmith, Split, Optimizely, ConfigCat, Azure App Configuration); remote-flag declarations/invocations (RemoteFlag*, FetchFlags, ResolveRemoteFlags); flag-service endpoint paths in transmission context. Local toggle surfaces (LocalFeatureAvailability, FeatureToggles) and diagnostic declarations such as \u0027remoteFlagResolution = false\u0027 are NOT flagged."
+    },
+    {
+      "id": "NR-06",
+      "title": "Telemetry \u0026 remote diagnostics",
+      "specReference": "FS-CRAWL-001 \u00A73 row 6",
+      "severity": "error",
+      "detectionBasis": "Behavioral: analytics/crash-reporting SDK packages and usings (Application Insights, Sentry, Raygun, Rollbar, Bugsnag, Datadog, New Relic, Mixpanel, Amplitude, PostHog, Segment, FullStory, LogRocket, Crashlytics, OTLP exporters); tracking invocations (TrackEvent/TrackPageView/CaptureException/gtag/fbq/dataLayer.push); analytics vendor hosts in any literal; collection endpoint paths (/collect, /track, /telemetry, /crash) in transmission context outside approved boundary scopes. Local ILogger/Serilog file logs, local minidumps (MiniDumpWriteDump) and pull-only Prometheus exposition are NOT flagged."
+    },
+    {
+      "id": "NR-07",
+      "title": "Server-gated functionality",
+      "specReference": "FS-CRAWL-001 \u00A73 row 7",
+      "severity": "error",
+      "detectionBasis": "Heuristic identifier tokens: report-viewing authorization, server-provided audit configuration, account-bound update feeds, marketing hooks, newsletter hooks, vendor cloud logging/alerting; vendor cloud-monitoring packages; marketing/newsletter/update-feed endpoint paths in transmission context. User-configured destinations are not vendor services and are not flagged."
+    },
+    {
+      "id": "NR-08",
+      "title": "Entitlement-based limits",
+      "specReference": "FS-CRAWL-001 \u00A73 row 8",
+      "severity": "error",
+      "detectionBasis": "Heuristic identifier tokens combining limits/quotas/features with license/account/plan/tier/seat/remote inputs (LicenseLimit, AccountQuota, PlanLimit, FeatureGate, CheckEntitlement, ValidateLicense). Local unlimited-limits resolution and local toggles are NOT flagged."
+    },
+    {
+      "id": "NR-E1",
+      "title": "Remote plugin registry / marketplace",
+      "specReference": "FS-CRAWL-002 \u00A71.6 E1",
+      "severity": "error",
+      "detectionBasis": "Behavioral: plugin marketplace/registry/download/auto-update declarations and invocations; remote code loading (dynamic import of http(s) URLs, Assembly.LoadFrom with http(s) argument); plugin-marketplace endpoint paths in transmission context. Local plugin directory scanning and local Assembly.Load discovery are NOT flagged."
+    },
+    {
+      "id": "NR-E2",
+      "title": "Remote signature / stop-word catalog services",
+      "specReference": "FS-CRAWL-002 \u00A71.6 E2",
+      "severity": "error",
+      "detectionBasis": "Behavioral: fetch/download/sync of signatures/stop-words/fingerprints/catalogs (declarations and invocations); catalog asset paths (signatures, stopwords, fingerprints) in transmission context outside approved boundary scopes. Bundled-asset File.ReadAllText loads and local user additions are NOT flagged."
+    },
+    {
+      "id": "NR-E3",
+      "title": "Challenge solving or bypass",
+      "specReference": "FS-CRAWL-002 \u00A71.6 E3",
+      "severity": "error",
+      "detectionBasis": "Behavioral: captcha-solving/challenge-bypass/token-forging/evasion-automation declarations and invocations; captcha-solver service packages and hosts (2captcha, anti-captcha, CapSolver, AZCaptcha). WAF/challenge DETECTION vocabulary (ChallengePage, WafChallenge, CaptchaDetected) is NOT flagged."
+    },
+    {
+      "id": "NR-E4",
+      "title": "Cloud reputation / blocklist services",
+      "specReference": "FS-CRAWL-002 \u00A71.6 E4",
+      "severity": "error",
+      "detectionBasis": "Behavioral: reputation/blocklist-consultation declarations and invocations; reputation vendor hosts (AbuseIPDB, VirusTotal, Spamhaus, Project Honey Pot, IPQualityScore) in any literal; reputation/blocklist endpoint paths in transmission context outside approved boundary scopes. Bundled CIDR/catalog matching is NOT flagged."
+    },
+    {
+      "id": "NR-E5",
+      "title": "Plugin backend mutation",
+      "specReference": "FS-CRAWL-002 \u00A71.6 E5",
+      "severity": "error",
+      "detectionBasis": "Behavioral: plugin-mutation/write-access declarations and invocations anywhere; inside plugin surfaces (path contains \u0027plugin\u0027), invocations of crawl-lifecycle or configuration mutation methods (Start/Stop/Pause/Resume/CancelCrawl, Update/Write/SaveConfiguration, Create/Update/DeleteProject). Read-only plugin data hooks (onLoad/onTabActivate/onDataUpdate/onCrawlComplete) are NOT flagged."
+    },
+    {
+      "id": "NR-E6",
+      "title": "New identity / entitlement concepts in plugins",
+      "specReference": "FS-CRAWL-002 \u00A71.6 E6",
+      "severity": "error",
+      "detectionBasis": "Heuristic identifier tokens: plugin licensing/accounts/entitlements/subscriptions/activation/feature-gating/trials/seats in declarations and invocations. The free, local, ungated plugin surface is NOT flagged."
+    },
+    {
+      "id": "NR-E7",
+      "title": "Remote embedding / vector / LLM APIs",
+      "specReference": "FS-CRAWL-002 \u00A71.6 E7",
+      "severity": "error",
+      "detectionBasis": "Behavioral: cloud LLM/embedding/vector vendor hosts (OpenAI, Anthropic, Google Generative Language, Cohere, Mistral, Together, Groq, Azure OpenAI, Bedrock, Voyage, Jina, DeepSeek, DashScope, Perplexity, Hugging Face inference, Fireworks, Pinecone, Weaviate Cloud, Qdrant Cloud, Zilliz) in any literal; vendor SDK packages; cloud-embedding/hosted-LLM declarations; embedding/completion endpoint paths on NON-loopback hosts in transmission context. Bundled ONNX and loopback daemons (127.0.0.1/::1/localhost, e.g. Ollama :11434) are NOT flagged."
+    },
+    {
+      "id": "NR-E8",
+      "title": "Remote log enrichment / bot-verification services",
+      "specReference": "FS-CRAWL-002 \u00A71.6 E8",
+      "severity": "error",
+      "detectionBasis": "Behavioral: remote log-enrichment/bot-list/bot-verification declarations and invocations; IP-enrichment vendor hosts (ipinfo, ipapi, ipstack, ipdata, MaxMind) in any literal; enrichment endpoint paths in transmission context outside approved boundary scopes. Bundled CIDR/agent-profile assets and the consented DNS check (System.Net.Dns / dns.resolve) are NOT flagged."
+    },
+    {
+      "id": "NR-E9",
+      "title": "Remote GEO / llms.txt registries or publishing",
+      "specReference": "FS-CRAWL-002 \u00A71.6 E9",
+      "severity": "error",
+      "detectionBasis": "Behavioral: remote llms.txt/GEO registry, auto-publishing and AI-vendor submission declarations/invocations; registry/submission endpoint paths in transmission context. Local llms.txt generation (File.WriteAllText) and crawl-target llms.txt probing through the crawler are NOT flagged."
+    },
+    {
+      "id": "NET-01",
+      "title": "Non-loopback listener",
+      "specReference": "FS-CRAWL-001 \u00A72.6 network boundary; FS-CRAWL-002 \u00A71.4 rule 2",
+      "severity": "error",
+      "detectionBasis": "Behavioral: TcpListener/IPEndPoint/Socket binds and Kestrel Listen calls with IPAddress.Any/IPv6Any/None, ListenAnyIP, wildcard UseUrls (http://* or http://\u002B), 0.0.0.0/:: literals in binding context; TS server.listen with 0.0.0.0/::/* host or without a host argument (Node default binds all interfaces \u2014 heuristic). Loopback binds (IPAddress.Loopback, 127.0.0.1, ::1, localhost) are NOT flagged."
+    },
+    {
+      "id": "NET-02",
+      "title": "Outbound call outside approved network boundary",
+      "specReference": "FS-CRAWL-001 \u00A72.6 network boundary; FS-CRAWL-002 \u00A71.4 rule 2",
+      "severity": "error",
+      "detectionBasis": "Heuristic call-site lint: outbound client construction/usage (HttpClient, WebClient, HttpWebRequest, Socket, TcpClient, UdpClient; TS fetch/axios/XMLHttpRequest/http.request/net.connect/WebSocket/EventSource) is flagged unless (a) the target is provably loopback or same-origin relative, or (b) the call site sits in an approved boundary scope (crawl target/proxy, user destination, user external DB, consented DNS) per boundary-allowlist.json (namespace prefixes, type-name patterns, path fragments \u2014 configurable via --boundary-config)."
+    },
+    {
+      "id": "ID-01",
+      "title": "Identity dimension in event/metric/log/plugin surface",
+      "specReference": "FS-CRAWL-002 \u00A71.4 precedence rule 8 (privacy invariant); FS-CRAWL-001 \u00A73 rows 1, 6",
+      "severity": "error",
+      "detectionBasis": "Behavioral: at telemetry call sites (ILogger.Log*, BeginScope, EventSource.WriteEvent, Track*, counter/histogram/meter Record/Add, Activity.SetTag, hub SendAsync, Serilog Enrich/WithProperty; TS console.*, track/gtag/fbq, postMessage/emit, metric record/observe) arguments are scanned for identity dimensions (machine/device/hardware/installation/account/user/license/entitlement/subscription IDs, MAC/serial/CPU identifiers, OS version, machine fingerprints) as identifiers, {Template} placeholders and object keys. Plugin surfaces additionally flag identity keys/declarations anywhere. WAF/site fingerprints and loopback addresses are NOT identity dimensions. Environment.SpecialFolder.* path-enum expressions are stripped from payload scans (directory locations, never identity dimensions)."
+    }
+  ],
+  "violations": [
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 30,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 60,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 70,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 91,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 102,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 114,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 125,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 136,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 153,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 162,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 172,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 187,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 200,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 206,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 219,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 229,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 236,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 246,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 265,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 274,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 289,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 298,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 304,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 317,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 326,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 367,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 389,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 402,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 419,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 436,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 453,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 470,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 487,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 507,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 527,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 547,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 567,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 587,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 607,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 624,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 641,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 660,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 677,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 691,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 697,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 715,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 735,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 752,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 762,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 778,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 789,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 800,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 811,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 818,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 825,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 835,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 845,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 855,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 885,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 913,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 922,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 934,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 947,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 963,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 981,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 991,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1007,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1017,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1041,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1054,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1063,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1076,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1093,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1102,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1111,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1124,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1133,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1142,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1151,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1168,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1183,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1190,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1203,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1221,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1227,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1237,
+      "column": 7,
+      "evidence": "license: Apache-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1246,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1252,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1266,
+      "column": 7,
+      "evidence": "license: Apache-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1276,
+      "column": 7,
+      "evidence": "license: 0BSD",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1282,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1289,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1308,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1318,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1324,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1338,
+      "column": 7,
+      "evidence": "license: BSD-2-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1351,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1363,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1372,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1382,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1388,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1400,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1407,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1416,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1425,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1434,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1443,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1455,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1465,
+      "column": 7,
+      "evidence": "license: Apache-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1474,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1517,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1536,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1549,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1565,
+      "column": 7,
+      "evidence": "license: BSD-3-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1572,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1589,
+      "column": 7,
+      "evidence": "license: Unlicense",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1599,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1620,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1629,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1640,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1653,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1662,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1686,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1695,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1708,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1721,
+      "column": 7,
+      "evidence": "license: BlueOak-1.0.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1727,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1739,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1751,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1758,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1767,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1779,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1791,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1801,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1813,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1833,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1849,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1855,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1864,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1874,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1885,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1900,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1911,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1917,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1923,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1929,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1939,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1977,
+      "column": 7,
+      "evidence": "license: BSD-3-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1989,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 1995,
+      "column": 7,
+      "evidence": "license: BSD-2-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2002,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2035,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2056,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2077,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2098,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2119,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2143,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2167,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2191,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2215,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2236,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2257,
+      "column": 7,
+      "evidence": "license: MPL-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2275,
+      "column": 7,
+      "evidence": "license: BlueOak-1.0.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2285,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2294,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2303,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2316,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2328,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2337,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2353,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2366,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2378,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2394,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2407,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2427,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2433,
+      "column": 7,
+      "evidence": "license: BSD-2-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2439,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2449,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2458,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2475,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2484,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2500,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2510,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2523,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2535,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2544,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2553,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2564,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2571,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2583,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2607,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2622,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2631,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2648,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2660,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2669,
+      "column": 7,
+      "evidence": "license: BSD-3-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2685,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2691,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2704,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2719,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2728,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2740,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2750,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2775,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2797,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2819,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2836,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2845,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2852,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2886,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2902,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2909,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2921,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2928,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2940,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2966,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2985,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2991,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 2997,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3009,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3018,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3037,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3053,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3071,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3090,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3101,
+      "column": 7,
+      "evidence": "license: BSD-3-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3110,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3120,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3127,
+      "column": 7,
+      "evidence": "license: Apache-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3139,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3146,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3156,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3166,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3183,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3196,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3202,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3211,
+      "column": 7,
+      "evidence": "license: BSD-3-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3227,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3239,
+      "column": 7,
+      "evidence": "license: 0BSD",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3245,
+      "column": 7,
+      "evidence": "license: (MIT OR CC0-1.0)",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3257,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3275,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3289,
+      "column": 7,
+      "evidence": "license: Apache-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3303,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3313,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3319,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3328,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3337,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3347,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3368,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3382,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3396,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3413,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3435,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3444,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3454,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3532,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3615,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3628,
+      "column": 7,
+      "evidence": "license: BSD-2-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3638,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3648,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3662,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3678,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3690,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3696,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3718,
+      "column": 7,
+      "evidence": "license: Apache-2.0",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3728,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3734,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3743,
+      "column": 7,
+      "evidence": "license: ISC",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3752,
+      "column": 7,
+      "evidence": "license: BSD-3-Clause",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3761,
+      "column": 7,
+      "evidence": "license: 0BSD",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-02",
+      "severity": "error",
+      "file": "package-lock.json",
+      "line": 3767,
+      "column": 7,
+      "evidence": "license: MIT",
+      "message": "Configuration key \u0027license\u0027 matches a prohibited concept for NR-02."
+    },
+    {
+      "ruleId": "NR-01",
+      "severity": "error",
+      "file": "tests/CrawlForge.Crawler.Tests/Fetching/FetchingBoundaryTests.cs",
+      "line": 54,
+      "column": 13,
+      "evidence": "MachineGuid",
+      "message": "Literal references an OS identity store, WMI class, or hardware identifier."
+    },
+    {
+      "ruleId": "NR-03",
+      "severity": "error",
+      "file": "tests/CrawlForge.Crawler.Tests/Fetching/PreCrawlValidatorTests.cs",
+      "line": 88,
+      "column": 5,
+      "evidence": "method Validate_LoginGate_SurfacesBlocker",
+      "message": "Identifier \u0027Validate_LoginGate_SurfacesBlocker\u0027 matches a prohibited concept for NR-03."
+    },
+    {
+      "ruleId": "NR-03",
+      "severity": "error",
+      "file": "tests/CrawlForge.Crawler.Tests/Fetching/SignedRequestTests.cs",
+      "line": 68,
+      "column": 5,
+      "evidence": "method Sign_InScopeRequest_Applied",
+      "message": "Identifier \u0027Sign_InScopeRequest_Applied\u0027 matches a prohibited concept for NR-03."
+    },
+    {
+      "ruleId": "NET-02",
+      "severity": "error",
+      "file": "tests/CrawlForge.Host.Tests/ExecutionEngineTests.cs",
+      "line": 168,
+      "column": 26,
+      "evidence": "new HttpClient()",
+      "message": "Outbound client outside approved boundary scopes (crawl target/proxy, user destination, external DB, consented DNS) must target loopback only."
+    },
+    {
+      "ruleId": "NET-02",
+      "severity": "error",
+      "file": "tests/CrawlForge.Host.Tests/ExecutionEngineTests.cs",
+      "line": 181,
+      "column": 27,
+      "evidence": "new HttpClient()",
+      "message": "Outbound client outside approved boundary scopes (crawl target/proxy, user destination, external DB, consented DNS) must target loopback only."
+    },
+    {
+      "ruleId": "NET-02",
+      "severity": "error",
+      "file": "tests/CrawlForge.Host.Tests/ExecutionEngineTests.cs",
+      "line": 198,
+      "column": 26,
+      "evidence": "new HttpClient()",
+      "message": "Outbound client outside approved boundary scopes (crawl target/proxy, user destination, external DB, consented DNS) must target loopback only."
+    },
+    {
+      "ruleId": "NET-02",
+      "severity": "error",
+      "file": "tests/CrawlForge.Host.Tests/HostScaffoldTests.cs",
+      "line": 41,
+      "column": 26,
+      "evidence": "new HttpClient()",
+      "message": "Outbound client outside approved boundary scopes (crawl target/proxy, user destination, external DB, consented DNS) must target loopback only."
+    },
+    {
+      "ruleId": "NET-02",
+      "severity": "error",
+      "file": "tests/CrawlForge.Host.Tests/HostScaffoldTests.cs",
+      "line": 95,
+      "column": 26,
+      "evidence": "new HttpClient()",
+      "message": "Outbound client outside approved boundary scopes (crawl target/proxy, user destination, external DB, consented DNS) must target loopback only."
+    },
+    {
+      "ruleId": "NET-02",
+      "severity": "error",
+      "file": "tests/CrawlForge.Mcp.Tests/McpInteropTests.cs",
+      "line": 138,
+      "column": 28,
+      "evidence": "new HttpClient()",
+      "message": "Outbound client outside approved boundary scopes (crawl target/proxy, user destination, external DB, consented DNS) must target loopback only."
+    },
+    {
+      "ruleId": "NET-02",
+      "severity": "error",
+      "file": "tests/CrawlForge.Mcp.Tests/McpLoopbackServerTests.cs",
+      "line": 34,
+      "column": 22,
+      "evidence": "new HttpClient()",
+      "message": "Outbound client outside approved boundary scopes (crawl target/proxy, user destination, external DB, consented DNS) must target loopback only."
+    },
+    {
+      "ruleId": "NR-03",
+      "severity": "error",
+      "file": "tests/CrawlForge.Security.Tests/Diagnostics/StructuredLogSinkTests.cs",
+      "line": 96,
+      "column": 35,
+      "evidence": "Environment.UserName",
+      "message": "OS account identity read is prohibited (no account system)."
+    },
+    {
+      "ruleId": "NR-03",
+      "severity": "error",
+      "file": "tests/CrawlForge.Security.Tests/Diagnostics/StructuredLogSinkTests.cs",
+      "line": 98,
+      "column": 35,
+      "evidence": "Environment.UserName",
+      "message": "OS account identity read is prohibited (no account system)."
+    },
+    {
+      "ruleId": "NR-01",
+      "severity": "error",
+      "file": "tests/CrawlForge.Security.Tests/Diagnostics/StructuredLogSinkTests.cs",
+      "line": 101,
+      "column": 31,
+      "evidence": "Environment.MachineName",
+      "message": "Member \u0027MachineName\u0027 matches a prohibited concept for NR-01."
+    },
+    {
+      "ruleId": "NR-01",
+      "severity": "error",
+      "file": "tests/CrawlForge.Security.Tests/Guardrails/SecurityGuardrailTests.cs",
+      "line": 38,
+      "column": 9,
+      "evidence": "MachineGuid",
+      "message": "Literal references an OS identity store, WMI class, or hardware identifier."
+    },
+    {
+      "ruleId": "NR-03",
+      "severity": "error",
+      "file": "tests/CrawlForge.Security.Tests/Handshake/LoopbackHandshakeTests.cs",
+      "line": 194,
+      "column": 39,
+      "evidence": "Environment.UserName",
+      "message": "OS account identity read is prohibited (no account system)."
+    },
+    {
+      "ruleId": "NR-03",
+      "severity": "error",
+      "file": "tests/CrawlForge.Security.Tests/Handshake/LoopbackHandshakeTests.cs",
+      "line": 196,
+      "column": 39,
+      "evidence": "Environment.UserName",
+      "message": "OS account identity read is prohibited (no account system)."
+    },
+    {
+      "ruleId": "NR-01",
+      "severity": "error",
+      "file": "tests/CrawlForge.Security.Tests/Handshake/LoopbackHandshakeTests.cs",
+      "line": 199,
+      "column": 35,
+      "evidence": "Environment.MachineName",
+      "message": "Member \u0027MachineName\u0027 matches a prohibited concept for NR-01."
+    }
+  ],
+  "violationsByRule": {
+    "NET-02": 7,
+    "NR-01": 4,
+    "NR-02": 272,
+    "NR-03": 6
+  },
+  "passed": false
+}

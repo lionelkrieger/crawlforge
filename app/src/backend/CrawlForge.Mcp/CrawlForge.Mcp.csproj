@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Phase-05 (WP-05-04 owns this project): ORCHESTRATOR-MANAGED csproj.
+       MCP SDK packages arrive via serialized amendments through the lead. -->
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+    <ProjectReference Include="..\CrawlForge.Audit\CrawlForge.Audit.csproj" />
+    <ProjectReference Include="..\CrawlForge.Crawler\CrawlForge.Crawler.csproj" />
+    <ProjectReference Include="..\CrawlForge.Intelligence\CrawlForge.Intelligence.csproj" />
+    <ProjectReference Include="..\CrawlForge.Security\CrawlForge.Security.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.Sqlite\CrawlForge.Data.Sqlite.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.MySql\CrawlForge.Data.MySql.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.Migrations\CrawlForge.Data.Migrations.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.Repositories\CrawlForge.Data.Repositories.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.ContentStore\CrawlForge.Data.ContentStore.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,9 @@
+﻿node.exe : npm notice run @crawlforge/frontend@0.0.1 typecheck
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\lione\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm notice run ...0.0.1 typecheck:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+npm notice run tsc --noEmit
+TYPECHECK_EXIT=0

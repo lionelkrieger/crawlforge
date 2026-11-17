@@ -1,0 +1,4 @@
+# CrawlForge gap register — findings.
+# Format: finding-schema.yaml in this directory. Capabilities: capabilities.yaml.
+# Empty by design: findings are extracted per source document in a later step.
+findings: []

@@ -1,0 +1,96 @@
+/**
+ * SERP & social-card preview styling. The result cards are deliberately
+ * light — they simulate external results pages (Google/X/Facebook), so
+ * realism demands their native palettes inside the dark forge chrome.
+ * Overflow tails carry a danger tint: the cut is visible, not hidden.
+ */
+
+.cf-serp-card {
+  background: #ffffff;
+  border: 1px solid var(--mantine-color-night-5);
+  border-radius: var(--mantine-radius-md);
+  padding: 14px 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+}
+
+.cf-serp-card[data-device='mobile'] {
+  max-width: 400px;
+}
+
+.cf-serp-favicon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+  background: #f1f3f4;
+  border: 1px solid #ecedef;
+  color: #5f6368;
+}
+
+.cf-serp-overflow {
+  background: rgba(240, 62, 62, 0.14);
+  color: #c92a2a;
+  border-bottom: 2px solid rgba(240, 62, 62, 0.55);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* Pixel meters: ember fill, danger heat past the budget mark. */
+.cf-meter-track {
+  position: relative;
+  height: 7px;
+  min-width: 90px;
+  border-radius: 5px;
+  background: var(--mantine-color-night-8);
+  border: 1px solid var(--mantine-color-night-5);
+  overflow: hidden;
+}
+
+.cf-meter-fill {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--mantine-color-signal-6), var(--mantine-color-ember-5));
+  transition: width 160ms ease, background 160ms ease;
+}
+
+.cf-meter-fill[data-over='true'] {
+  background: linear-gradient(90deg, var(--mantine-color-ember-6), var(--cf-danger, #f03e3e));
+}
+
+.cf-meter-budget-mark {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: 2px;
+  background: var(--mantine-color-night-2);
+  opacity: 0.85;
+}
+
+/* Social cards: white surfaces, hairline border, image well on top. */
+.cf-social-card {
+  background: #ffffff;
+  border: 1px solid #cfd9de;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+}
+
+.cf-social-card[data-platform='facebook'] {
+  border-radius: 8px;
+  border-color: #dddfe2;
+}
+
+.cf-social-image {
+  height: 110px;
+  background:
+    repeating-linear-gradient(45deg, #f1f3f5 0 10px, #e9ecef 10px 20px);
+  border-bottom: 1px solid #e3e8ec;
+}
+
+.cf-budget-panel {
+  background: var(--mantine-color-night-8);
+  border-color: var(--mantine-color-night-5);
+}

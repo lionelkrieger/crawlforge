@@ -1,0 +1,49 @@
+<Project>
+  <!--
+    CrawlForge shared build settings (Phase 00 scaffold, WP-00-01).
+    Applies to every project under E:\Crawlforge\app.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <RollForward>LatestMajor</RollForward>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <!--
+      Runtime performance profile (process-model spec §13): server garbage collection
+      with concurrent collection enabled. Fixed at packaging time, active by default,
+      and reported by the version/diagnostics surface (/api/diagnostics/version).
+      These MSBuild properties emit System.GC.Server=true / System.GC.Concurrent=true
+      into every project's runtimeconfig.json.
+    -->
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+  </PropertyGroup>
+
+  <!--
+    Agent-scoped MSBuild outputs (AGENT-INSTRUCTIONS.md §10.2).
+    When CF_AGENT_ID is set, every project resolves obj\<CF_AGENT_ID>\ and
+    bin\<CF_AGENT_ID>\ per project, so concurrent agents never collide.
+    Unset = canonical obj\ / bin\ (orchestrator wave gates).
+    Directory.Build.props is imported before Microsoft.Common.props evaluates
+    output paths, which is what makes this isolation work.
+  -->
+  <PropertyGroup Condition="'$(CF_AGENT_ID)' != ''">
+    <BaseIntermediateOutputPath>$(MSBuildProjectDirectory)\obj\$(CF_AGENT_ID)\</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(MSBuildProjectDirectory)\bin\$(CF_AGENT_ID)\</BaseOutputPath>
+  </PropertyGroup>
+
+  <!--
+    v1.1c (orchestrator fix): exclude ALL obj/bin variants from default item globs.
+    With CF_AGENT_ID scoping, canonical obj\ artifacts (written by orchestrator wave
+    gates) would otherwise be double-compiled by agent-scoped builds, because the SDK
+    only excludes the CURRENT BaseIntermediateOutputPath/BaseOutputPath from globs.
+  -->
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
+  </PropertyGroup>
+</Project>

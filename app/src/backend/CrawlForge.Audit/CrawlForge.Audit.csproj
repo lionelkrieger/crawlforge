@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Phase-03 shared project (v1.1e): ORCHESTRATOR-MANAGED. Builders own disjoint
+       subfolders only; csproj changes go through the lead. Implementation codes against
+       locked Contracts interfaces; dependencies arrive via constructor composition (Host, later phase). -->
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- WP-03-D1 (orchestrator-applied): tolerant HTML5 parser + CSS/XPath selectors for
+         ITolerantDomParser / IElementInventoryExtractor / IContentScopeResolver. Pure managed, offline. -->
+    <PackageReference Include="AngleSharp" />
+    <PackageReference Include="AngleSharp.XPath" />
+    <!-- WP-03-D2 (orchestrator-applied): Hunspell reader for WP-03-03 spelling checks. -->
+    <PackageReference Include="WeCantSpell.Hunspell" />
+    <!-- WP-03-D3 (orchestrator-applied, requested cf-wp-00-03/WP-03-06): direct driver access
+         for the bounded lab CWV/coverage probe — locked IRenderingPool exposes no script-evaluation
+         or metrics surface. Version pinned by WP-02-D1. Local-only browser resolution, zero-egress
+         hardening reused verbatim from Crawler\Rendering. -->
+    <PackageReference Include="PuppeteerSharp" />
+    <!-- WP-03-D4 (orchestrator-applied): sandboxed JS interpreter for WP-03-07 custom snippets. -->
+    <PackageReference Include="Jint" />
+  </ItemGroup>
+</Project>

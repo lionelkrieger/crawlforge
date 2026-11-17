@@ -1,0 +1,25 @@
+{
+  "name": "crawlforge",
+  "version": "0.0.1",
+  "private": true,
+  "description": "CrawlForge monorepo root - offline-first desktop website crawler and auditor.",
+  "workspaces": [
+    "src/frontend",
+    "src/electron",
+    "src/mcp-stdio-adapter",
+    "tests/frontend",
+    "tests/electron"
+  ],
+  "scripts": {
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

@@ -1,0 +1,225 @@
+# CrawlForge Build Plan — Phase 02: Crawl Engine & Politeness (Parallel Wave)
+# Wave 2A: five agents on disjoint crawler subsystems. Wave 2B: rendering/proxy + scheduler integrate against 2A contracts.
+phase_id: "phase-02"
+name: "Crawl Engine and Politeness"
+status: "completed"
+depends_on_phases: ["phase-00", "phase-01"]
+max_parallel_agents: 5
+parallel_waves:
+  - wave_id: "wave-2A"
+    workpiece_ids: ["WP-02-01", "WP-02-02", "WP-02-03", "WP-02-04", "WP-02-05"]
+  - wave_id: "wave-2B"
+    workpiece_ids: ["WP-02-06", "WP-02-07"]
+gated_acceptance_criteria: [3, 4, 6, 11, 12, 22, 34, 35, 36, 43]
+
+# v1.1 orchestrator wave gates: run after EVERY wave completes, canonical build surface
+# (CF_AGENT_ID unset). A failed gate blocks the next wave (AGENT-INSTRUCTIONS.md §5.5).
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+
+workpieces:
+  - workpiece_id: "WP-02-01"
+    title: "Unlimited Limits Resolver, robots.txt, Virtual Robots & AIMD Auto-Adaptive Politeness"
+    phase_id: "phase-02"
+    status: "completed"
+    assigned_agent: "cf-wp-00-02"
+    started_at: "2026-11-14T09:46:34Z"
+    completed_at: "2026-11-14T10:43:03Z"
+    parallel_group: "wave-2A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\01-limits-and-aimd-politeness.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Limits\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Politeness\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Limits\\"
+    deliverables:
+      - "Unlimited Limits Resolver: priority order per-audit override → project default → application default → built-in profile; fresh audit with no overrides runs unlimited total/per-domain ceilings (criterion #4); all validation invariants"
+      - "robots.txt parser + cache, crawl-delay honoring, and virtual robots override (behavior per spec without altering limits resolution)"
+      - "AIMD controller: R0 initial rate, additive increase α on consecutive healthy responses below TTFB threshold up to the resolved ceiling (never above; robots crawl-delay always honored); multiplicative decrease ×β to floor on TTFB spike > κ × rolling EWMA baseline, WAF soft-block, or HTTP 429/503"
+      - "Per-host controller state checkpointing into crawl_checkpoints additive payload; pause/resume preserves state; disable toggle reverts exactly to static parent politeness (criterion #36)"
+      - "host_throttle_events bounded history persistence; host-throttle adjustment emission contract (trigger codes, rate/concurrency before/after, TTFB sample, rolling baseline) consumed by the hub in Phase 05"
+    interfaces_implemented:
+      - "ILimitsResolver"
+      - "IRobotsTxtParser"
+      - "IAimdPolitenessController"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Limits"
+    acceptance_criteria_refs: [4, 36]
+
+  - workpiece_id: "WP-02-02"
+    title: "URL Canonicalization, Regex Rewriter, Priority Frontier & Crash Checkpointing"
+    phase_id: "phase-02"
+    status: "completed"
+    assigned_agent: "cf-wp-00-01"
+    started_at: "2026-11-14T09:46:34Z"
+    completed_at: "2026-11-14T10:43:03Z"
+    parallel_group: "wave-2A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Canonicalization\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Frontier\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Frontier\\"
+    deliverables:
+      - "URL canonicalization and deduplication per §5.2 (scheme/host normalization, parameter handling, fragment rules, seen-set)"
+      - "On-the-fly regex URL rewrite engine: deterministic transformation applied during canonicalization, invalid patterns rejected at configuration, rewrite-preview contract for the standalone tool"
+      - "Priority Frontier with per-host sub-queues, depth/breadth ordering, politeness-aware dequeue hooks (rate decisions delegated to IAimdPolitenessController)"
+      - "Pause/resume/cancel lifecycle with periodic + on-pause checkpointing (serialized frontier, seen-set reference, counters); crash recovery resumes from checkpoint with data preserved (criterion #6)"
+      - "Link discovery emission contract (internal/external, anchor, relation flags) feeding link_edges; storage-during-crawl batching per §5.8"
+    interfaces_implemented:
+      - "IUrlCanonicalizer"
+      - "IUrlRewriteEngine"
+      - "IPriorityFrontier"
+      - "ICrawlCheckpointService"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Frontier"
+    acceptance_criteria_refs: [6]
+
+  - workpiece_id: "WP-02-03"
+    title: "HTTP Fetcher, Redirect Recorder, Signed-Request Access & Pre-Crawl Validation"
+    phase_id: "phase-02"
+    status: "completed"
+    assigned_agent: "cf-wp-00-04"
+    started_at: "2026-11-14T09:46:34Z"
+    completed_at: "2026-11-14T10:40:25Z"
+    parallel_group: "wave-2A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Fetching\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Fetching\\"
+    deliverables:
+      - "HTTP fetcher per §5.4: timeouts, retries, content-type/size guards, TTFB measurement feeding AIMD observables, status classification, proxy-routing hook (delegates to ILoopbackInterceptingProxy contract)"
+      - "Hop-by-hop redirect chain recorder (full chain persisted per URL, loop detection, chain cap)"
+      - "Signed-Request Crawler Access (§5.10): signature headers applied only to in-scope requests, expiry tracking, signing material encrypted at rest via ISecretProtector (criterion #34)"
+      - "Pre-crawl start-URL validation and sample-crawl mode behaving as specified without altering limits resolution (criterion #34)"
+      - "Fetch result contract carrying headers/body/timing to the WAF pass and content store; outbound connections only to crawl targets or the configured proxy (criterion #3 audit-path evidence)"
+    interfaces_implemented:
+      - "IHttpFetcher"
+      - "IRedirectChainRecorder"
+      - "ISignedRequestHandler"
+      - "IPreCrawlValidator"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Fetching"
+    acceptance_criteria_refs: [34]
+
+  - workpiece_id: "WP-02-04"
+    title: "Pre-Audit WAF & Challenge Fingerprinting Pass (200 OK)"
+    phase_id: "phase-02"
+    status: "completed"
+    assigned_agent: "cf-wp-01-03"
+    started_at: "2026-11-14T09:46:34Z"
+    completed_at: "2026-11-14T10:31:22Z"
+    parallel_group: "wave-2A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Waf\\"
+      - "E:\\Crawlforge\\app\\assets\\waf-signatures\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Waf\\"
+    deliverables:
+      - "Stage A (header/cookie) and Stage B (bounded pre-parse) WAF fingerprinting evaluator running before the audit pipeline on 200 OK responses"
+      - "Bundled WAF signature catalogue JSON asset (Cloudflare, DataDome, Akamai, Imperva, PerimeterX, Generic) + user-local signature entries (waf_user_signatures); no runtime fetch (E2/E4)"
+      - "2-facet corroboration guard, 0.8 default confidence threshold, render-resolution policy (challenge-resolved-by-render / suspected-challenge notices); blocked URLs recorded status blocked + sub-classification waf-challenge with provider name, never fetched; no thin-content/duplicate-title findings for them"
+      - "waf-challenge-detected finding and site-wide waf-block-rate diagnostic (1% Warning / 5% Error, minimum 20 URLs); waf_detections persistence; re-audit re-detects from stored body offline (criterion #35)"
+      - "Detection-only boundary: zero challenge solving, replay, token forging, or evasion (E3)"
+    interfaces_implemented:
+      - "IWafChallengeEvaluator"
+      - "IWafSignatureCatalogue"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Waf"
+    acceptance_criteria_refs: [35]
+
+  - workpiece_id: "WP-02-05"
+    title: "List Mode Ingestion & Redirect Migration Matrix Validator"
+    phase_id: "phase-02"
+    status: "completed"
+    assigned_agent: "cf-wp-01-02"
+    started_at: "2026-11-14T09:46:34Z"
+    completed_at: "2026-11-14T10:42:02Z"
+    parallel_group: "wave-2A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\ListMode\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\ListMode\\"
+    deliverables:
+      - "List Mode ingestion from .txt, .csv, and clipboard: seeds carry discovery source list; list-only crawls at depth 0 with link discovery disabled; list-bounded skips off-list discoveries (criterion #43)"
+      - "Redirect Migration Matrix Validator: two-column Source_URL/Expected_Target_URL upload persisted to redirect_mappings, auto-seeded list-mode audit, every Source_URL fetched with full hop chain recorded"
+      - "5-tier verdict precedence emitting redirect-matrix.pass, .target-mismatch, .chain-exceeded, .final-non-200, .canonical-mismatch against fixtures; matrix-row-validated emission contract for the hub"
+      - "Staging-vs-production host mapping aligning audit and content comparison by path; rewrite rules applied deterministically through IUrlRewriteEngine with invalid patterns rejected"
+      - "Matrix counters and verdict aggregates into metric_summaries (redirect-matrix key); results readable offline on re-audit"
+    interfaces_implemented:
+      - "IListModeIngestor"
+      - "IRedirectMatrixValidator"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~ListMode"
+    acceptance_criteria_refs: [43]
+
+  - workpiece_id: "WP-02-06"
+    title: "Headless Chromium Rendering Pool & Built-in Loopback Intercepting Proxy"
+    phase_id: "phase-02"
+    status: "completed"
+    assigned_agent: "cf-wp-00-05"
+    started_at: "2026-11-14T10:45:01Z"
+    completed_at: "2026-11-14T11:28:45Z"
+    parallel_group: "wave-2B"
+    depends_on_workpieces: ["WP-00-02", "WP-02-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Rendering\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Proxy\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Rendering\\"
+    deliverables:
+      - "Headless Chromium rendering pool (§5.6): bounded concurrency, stealth posture, infinite-scroll handling, console capture, rendered DOM + screenshot artifacts into the content store, render timeout/failure isolation"
+      - "Built-in loopback intercepting proxy (§5.9): waterfall capture of rendered traffic, resource blocking rules, upstream proxy chaining; no non-loopback listener is ever opened (criterion #22)"
+      - "Proxy routing honoring configured upstream proxy for all crawl traffic; with no destinations configured and no audit running, zero outbound connections (criterion #3 network-boundary evidence)"
+      - "Render-resolution hook consumed by the WAF pass; network capture contract feeding MarTech beacon inspection and code-coverage/composition metrics"
+      - "Local-only browser binary resolution from packaged assets; no remote driver or browser download at runtime"
+    interfaces_implemented:
+      - "IRenderingPool"
+      - "ILoopbackInterceptingProxy"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Rendering"
+    acceptance_criteria_refs: [3, 22]
+
+  - workpiece_id: "WP-02-07"
+    title: "Scheduled Audits Background Service (Catch-up, No-Overlap, Completion Actions)"
+    phase_id: "phase-02"
+    status: "completed"
+    assigned_agent: "cf-wp-01-01"
+    started_at: "2026-11-14T10:45:01Z"
+    completed_at: "2026-11-14T11:12:09Z"
+    parallel_group: "wave-2B"
+    depends_on_workpieces: ["WP-00-02", "WP-02-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\04-scheduled-audits.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Scheduling\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Scheduling\\"
+    deliverables:
+      - "Schedule model persistence (schedule_definitions) with recurrence rules, enabled flag, limit overrides, and next-due timestamp surviving backend restarts (criterion #11)"
+      - "Unattended execution producing a normal audit plus a schedule_runs history entry; no-overlap guard so a running audit is never double-fired"
+      - "Catch-up semantics: a schedule missed while the machine was off runs exactly once at the next opportunity, recorded as a catch-up run (criterion #12)"
+      - "User-authorized completion actions (local export delivery / user-configured notification endpoints only) with per-run outcome recording"
+      - "schedule-fired and schedule-run-completed emission contracts for the hub; run-history pruning through IRetentionPruner"
+    interfaces_implemented:
+      - "IScheduledAuditService"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Scheduling"
+    acceptance_criteria_refs: [11, 12]

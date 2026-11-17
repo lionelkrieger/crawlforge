@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    WP-01-04: compressed content-artifact store (§9.6) and transactional retention
+    pruner (§9.5). BCL compression + hashing only (no additional packages).
+    References Repositories for the shared provider-agnostic schema catalog.
+  -->
+  <PropertyGroup>
+    <RootNamespace>CrawlForge.Data.ContentStore</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.Repositories\CrawlForge.Data.Repositories.csproj" />
+  </ItemGroup>
+</Project>

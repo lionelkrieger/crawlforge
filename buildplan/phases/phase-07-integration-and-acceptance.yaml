@@ -1,0 +1,141 @@
+# CrawlForge Build Plan — Phase 07: Integration & Acceptance (Final Gate)
+# Wave 7A: three verification agents in parallel. Wave 7B: serialized final sign-off across all 48 criteria.
+phase_id: "phase-07"
+name: "Integration and Acceptance"
+status: "in_progress"
+depends_on_phases: ["phase-00", "phase-01", "phase-02", "phase-03", "phase-04", "phase-05", "phase-06"]
+max_parallel_agents: 3
+parallel_waves:
+  - wave_id: "wave-7A"
+    workpiece_ids: ["WP-07-01", "WP-07-02", "WP-07-03"]
+  - wave_id: "wave-7B"
+    workpiece_ids: ["WP-07-04"]
+gated_acceptance_criteria: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
+
+# v1.1 orchestrator wave gates: run after EVERY wave completes, canonical build surface
+# (CF_AGENT_ID unset). A failed gate blocks the next wave (AGENT-INSTRUCTIONS.md §5.5).
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+
+workpieces:
+  - workpiece_id: "WP-07-01"
+    title: "Full End-to-End Integration Test Suite (Crawl → Audit → Report → Export → MCP)"
+    phase_id: "phase-07"
+    status: "completed"
+    assigned_agent: "cf-wp-01-01"
+    started_at: "2026-11-14T18:30:02Z"
+    completed_at: "2026-11-16T14:34:09Z"
+    verification_note: "Canonical E2E.Tests 80/80 exit 0 (CF_AGENT_ID unset, live MySQL 8.0.28) + Data.Repositories.Tests 146/146 exit 0 + governance app 637/0 exit 0. 14 suites (baseline 24 + deliverables 56). All twelve E2E-driven defects D1/D2/D4/D5/D6/D7/D8/D9/D10/D11/D12 fixed by routed owners + proven by flip tests; zero product edits from this workpiece. Criterion #18 fully re-proven (MySQL report parity IDENTICAL + archive revert round-trip body fidelity). Plugin network-consent invariant verified (pending-consent + default-deny CSP). Handoff: WP-07-01-HANDOFF.md. WP-07-04 observations: optional MySQL GET_LOCK first-migration hardening, ListMode REST load-flake closed, 110-route inventory (88 locked + 22 additive)."
+    parallel_group: "wave-7A"
+    depends_on_workpieces: ["WP-06-01", "WP-06-02", "WP-06-03", "WP-06-04", "WP-06-05", "WP-06-06"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\01-limits-and-aimd-politeness.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests\\"
+    deliverables:
+      - "Local fixture origins (loopback test servers) exercising: full audit lifecycle, unlimited defaults, pause/resume/cancel/crash-recovery checkpointing, scheduled + catch-up runs"
+      - "WAF 200-OK challenge fixtures (all six providers + corroboration-guard negative case), AIMD simulated-origin rate adaptation fixtures, List Mode + 5-tier redirect matrix fixtures"
+      - "Offline re-audit proofs: content comparison, custom extraction/search/JS re-run, WAF re-detection, scoped-metric re-derivation — all from stored artifacts with zero network"
+      - "External-DB parity run (MySQL full audit identical report output) and archive-import revert; single-page analysis without a project; delegated MCP flow with action-log assertions"
+      - "Cross-module integration: hub event sequencing/throttling, REST envelope conformance across all 88 routes, export file validity, plugin lifecycle fixture"
+    interfaces_implemented:
+      - "(verification only — no product contracts)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests"
+    acceptance_criteria_refs: [1, 6, 10, 11, 12, 15, 18, 23, 24, 30, 31, 34, 35, 36, 37, 43]
+
+  - workpiece_id: "WP-07-02"
+    title: "Offline / Air-Gap Network Boundary Audit & Negative-Requirement Runtime Verification"
+    phase_id: "phase-07"
+    status: "completed"
+    assigned_agent: "cf-wp-00-05"
+    started_at: "2026-11-14T18:30:02Z"
+    completed_at: "2026-11-14T20:10:33Z"
+    verification_note: "Canonical re-run (CF_AGENT_ID unset): Boundary.Tests 27/27 exit 0 + governance-analyzer --root app 636 files/0 violations exit 0 + strict LogsRestSurfaceTests green (flipped on cf-wp-00-04 logs ILogCorrelationReadModel forwarding). 25 durable artifacts + 2 scan JSONs (tools/network-audit/README.md index); §9.1 handshake ruling + monitoring scope (UDP/DNS, no-admin ETW) documented for WP-07-04 attestation. WP-07-G1 analyzer enumerator amendment applied (lockfiles + tests/ exclusions, 21 rules unchanged). First canonical re-run hit transient sibling build contention (20 false fails); clean re-run + single-test isolation confirmed 27/27."
+    parallel_group: "wave-7A"
+    depends_on_workpieces: ["WP-05-04", "WP-06-01", "WP-06-06"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\01-clean-room-and-exclusions.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Boundary.Tests\\"
+      - "E:\\Crawlforge\\app\\tools\\network-audit\\"
+      - "E:\\Crawlforge\\app\\tools\\governance-analyzer\\"
+    deliverables:
+      - "Air-gap harness: first launch with no network completes initialization; idle/reporting with no destinations, no external DB, no schedule due produces zero outbound connections"
+      - "Audit-time traffic classification: connections only to crawl targets or configured proxy; destination transfers only to user endpoints; external-DB traffic only to the user server; DNS verification only on explicit consented trigger"
+      - "Process-monitoring evidence that no OS identity stores (registry/WMI/platform I/O) are read at any point; no license/account/entitlement concept in any payload, settings row, or screen"
+      - "Loopback-only listener sweep (backend, hub, SSE, intercepting proxy, embedding daemon validation); MCP token rejection/rotation and non-loopback unreachability"
+      - "Encrypted-at-rest verification for all five credential classes; minidump locality and purge; /metrics no-identity/no-push assertion; plugin zero-network default and grant-restricted access"
+      - "Governance analyzer full-tree run with zero violations; bundled-asset manifest check (no runtime fetch paths)"
+    interfaces_implemented:
+      - "(verification only — no product contracts)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Boundary.Tests"
+      - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app --fail-on-violation"
+    acceptance_criteria_refs: [2, 3, 5, 8, 14, 17, 20, 21, 22, 39, 44, 45, 46]
+
+  - workpiece_id: "WP-07-03"
+    title: "500k-Row Scale & 60 FPS Benchmark, Memory/GC/WAL Telemetry Validation"
+    phase_id: "phase-07"
+    status: "completed"
+    assigned_agent: "cf-wp-00-03"
+    started_at: "2026-11-14T18:30:02Z"
+    completed_at: "2026-11-16T15:30:00Z"
+    verification_note: "Canonical Scale.Benchmarks --filter Category=Scale 10/10 exit 0 (CF_AGENT_ID unset, 31m45s, live MySQL 8.0.28) + canonical npm grid benchmark 134/134 exit 0 + typecheck app/tests exit 0. Scale facets: dataset-seed 500k+ via real persistence; pipeline-10k live proof (10k crawled+analyzed, 212MB peak <<2.5GB, option-a ratified — #19 bounded-memory+completion+retention, no throughput mandate); retention-prune 1,324,340 rows/12 tables; export 500001 rows CSV+Excel (<x:row namespace-prefix counter fix verified); CWV 24 samples; Server GC verified via diagnostics; heartbeat 2s; /metrics family parity; Compact/Trim Working Set + WAL checkpoint. Criterion #40 canonical BeginFrame composite ALL 5 PASS (product-owner amended gate). Worker facet 67.8MB peak/guaranteed termination. Criteria #19/#26/#40/#41 re-verified at scale. benchmark-report.md published (amendment record + canonical tables + methodology). Performance observations for WP-07-04: ~5 URLs/s analysis, ~22 URLs/s fetch, ~350ms unindexed LIKE filter."
+    parallel_group: "wave-7A"
+    depends_on_workpieces: ["WP-06-03", "WP-05-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\02-process-model-and-lifecycle.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\04-metrics-and-diagnostics.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Scale.Benchmarks\\"
+    deliverables:
+      - "Synthetic 500,000+ URL dataset generator (deterministic seed) loading through the real persistence stack"
+      - "Scroll benchmark: URL/Issue/Link/Custom Extraction/N-Gram explorers mount ≤ 50 DOM rows and sustain 60 FPS (p95 frame time ≤ 16.7 ms) with sorting, instant filtering, pinning, and dynamic columns active"
+      - "Backend scale run: full crawl/audit pipeline at target scale with bounded memory (Server GC profile verified via diagnostics surface), streaming retention prune, and export writers"
+      - "system-health 2-second heartbeat accuracy, Compact/Trim Working Set before/after reduction + WAL checkpoint evidence, /metrics family parity with the heartbeat"
+      - "Rendered CWV capture benchmark and graph-layout Web Worker memory bounds; published benchmark report artifact"
+    interfaces_implemented:
+      - "(verification only — no product contracts)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Scale.Benchmarks --filter Category=Scale"
+      - "npm run test --workspace src/frontend -- grid -- --run benchmark"
+    acceptance_criteria_refs: [19, 26, 40, 41]
+
+  - workpiece_id: "WP-07-04"
+    title: "Packaging Asset Verification & Final Sign-Off Across All 48 Acceptance Criteria"
+    phase_id: "phase-07"
+    status: "completed"
+    assigned_agent: "cf-wp-00-04"
+    started_at: "2026-11-16T15:32:00Z"
+    completed_at: "2026-11-16T17:15:00Z"
+    verification_note: "Canonical Acceptance.Tests 72/72 exit 0 (CF_AGENT_ID unset, 19s) + CrawlForge.sln Release build exit 0 (0 warnings/0 errors) + verify-packaging.ps1 18/18 exit 0. Harness = 48-criterion evidence-integrity theory + wave-7A artifact re-verification + #40 raw-artifact composite gate (5/5 explorers) + 11 targeted live checks + 6 packaging facts. ALL 48 CRITERIA PASS. D13/D14/D15 live wiring defects discovered by the harness, routed to cf-wp-01-01 (task-51), fixed + independently re-verified green (verification independence preserved — verifier edited no product code). Packaging: offline first-launch from published layout proven (fresh data dir, migrations, health/settings 200, db=True via local handshake), 10/10 asset families bundled, licensing manifest absent, no account-bound update feed, local Chrome no-fetch (LocalBrowserResolver), Electron local-only config (ELECTRON_OVERRIDE_DIST_PATH + vendor drop-in; dist binary source product-owner-reserved). Sign-off report docs/acceptance/WP-07-04-final-sign-off.md STATUS COMPLETE; open-scope #1-#5 verbatim PRODUCT-OWNER RESERVED; boundary attestation 17 negative requirements; performance observations recorded (~5 URLs/s analysis, ~22 URLs/s fetch, ~350ms unindexed LIKE, GET_LOCK candidate)."
+    parallel_group: "wave-7B"
+    depends_on_workpieces: ["WP-07-01", "WP-07-02", "WP-07-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\02-open-scope-decisions.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\02-process-model-and-lifecycle.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Acceptance.Tests\\"
+      - "E:\\Crawlforge\\app\\packaging\\"
+      - "E:\\Crawlforge\\app\\docs\\acceptance\\"
+    deliverables:
+      - "Criterion-by-criterion acceptance harness mapping all 48 criteria (#1–#34 baseline + #35–#48 extension) to automated evidence from WP-07-01/02/03 plus targeted checks for the remainder (spelling evidence, structured-data taxonomy, readability/soft-404, technology catalogue locality, scoring/suppression comparability, standalone tools, signed-request scope, n-gram bounds, SERP pixels, header conflicts, zone-weighted equity)"
+      - "Offline packaging verification: installers bundle every required asset (WAF signatures, stop-words, dictionaries, font metrics, tech fingerprints, bot CIDR, agent profiles, ONNX model, Chromium runtime); licensing manifest absent; no account-bound update feed; first-launch offline init from the packaged build"
+      - "Open scope decisions (#1–#5) respected as written — sign-off records them as product-owner reserved, never silently resolved"
+      - "Final sign-off report in docs/acceptance with per-criterion status, evidence pointers, benchmark results, and boundary-audit attestation; index.yaml acceptance_criteria_ledger driven to completed only on passing evidence"
+      - "Release gate: any failing criterion blocks sign-off and reopens the owning workpiece through the orchestrator"
+    interfaces_implemented:
+      - "(verification only — no product contracts)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Acceptance.Tests"
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln -c Release"
+    acceptance_criteria_refs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]

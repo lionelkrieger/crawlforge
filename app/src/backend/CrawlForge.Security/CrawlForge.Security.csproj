@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- WP-00-04: Security runtime — app-entropy secret protection, loopback port
+       handshake, native minidump crash handler, local structured diagnostics.
+       TFM, nullable, analyzers, and the GC runtime profile come from Directory.Build.props.
+       All dependencies are in-box (System.Security.Cryptography, System.Text.Json,
+       System.Net.Sockets for the loopback probe, dbghelp P/Invoke); no NuGet packages. -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>CrawlForge security runtime: authenticated encryption at rest with app-generated entropy, loopback-only port handshake, and local-only crash/diagnostic artifacts (never transmitted).</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+  </ItemGroup>
+</Project>

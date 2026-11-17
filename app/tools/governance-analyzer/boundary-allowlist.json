@@ -1,0 +1,26 @@
+{
+  "namespacePrefixes": [
+    "CrawlForge.Crawler",
+    "CrawlForge.Export",
+    "CrawlForge.Data.MySql",
+    "CrawlForge.Intelligence.LogAnalyzer"
+  ],
+  "typeNamePatterns": [
+    "*CrawlTarget*",
+    "*TargetFetcher*",
+    "*Proxy*",
+    "*Destination*",
+    "*ExternalDb*",
+    "*Dns*",
+    "*LoopbackDaemon*"
+  ],
+  "pathFragments": [
+    "crawler/fetching",
+    "crawler/proxy",
+    "crawlforge.export/",
+    "data.mysql/",
+    "loganalyzer/",
+    "plugins/",
+    "frontend/src/store/apiclient"
+  ]
+}

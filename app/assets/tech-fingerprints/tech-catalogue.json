@@ -1,0 +1,480 @@
+{
+  "version": "2026.1",
+  "revision": "r1",
+  "technologies": [
+    {
+      "key": "wordpress",
+      "name": "WordPress",
+      "category": "CMS",
+      "meta": [ { "name": "generator", "pattern": "WordPress", "weight": 1.0 } ],
+      "scripts": [ { "pattern": "/wp-(content|includes)/", "weight": 0.9 } ],
+      "cookies": [
+        { "name": "wordpress_", "isPrefix": true, "weight": 0.6 },
+        { "name": "wp-settings-", "isPrefix": true, "weight": 0.5 }
+      ],
+      "html": [ { "pattern": "wp-content", "weight": 0.3 } ]
+    },
+    {
+      "key": "drupal",
+      "name": "Drupal",
+      "category": "CMS",
+      "meta": [ { "name": "generator", "pattern": "Drupal", "weight": 1.0 } ],
+      "headers": [ { "name": "x-generator", "pattern": "Drupal", "weight": 0.8 } ],
+      "scripts": [
+        { "pattern": "/core/misc/drupal", "weight": 0.8 },
+        { "pattern": "/sites/default/files/", "weight": 0.6 }
+      ],
+      "cookies": [ { "name": "SESS", "isPrefix": true, "weight": 0.4 } ],
+      "html": [ { "pattern": "Drupal\\.settings", "weight": 0.5 } ]
+    },
+    {
+      "key": "joomla",
+      "name": "Joomla",
+      "category": "CMS",
+      "meta": [ { "name": "generator", "pattern": "Joomla", "weight": 1.0 } ],
+      "scripts": [
+        { "pattern": "/media/jui/", "weight": 0.7 },
+        { "pattern": "/components/com_", "weight": 0.6 }
+      ],
+      "html": [ { "pattern": "Joomla!", "weight": 0.4 } ]
+    },
+    {
+      "key": "shopify",
+      "name": "Shopify",
+      "category": "Ecommerce",
+      "headers": [
+        { "name": "x-shopid", "pattern": ".+", "weight": 0.8 },
+        { "name": "x-shardid", "pattern": ".+", "weight": 0.7 }
+      ],
+      "scripts": [ { "pattern": "cdn\\.shopify\\.com", "weight": 0.9 } ],
+      "cookies": [ { "name": "_shopify_", "isPrefix": true, "weight": 0.6 } ],
+      "html": [ { "pattern": "Shopify\\.theme", "weight": 0.5 } ]
+    },
+    {
+      "key": "magento",
+      "name": "Magento",
+      "category": "Ecommerce",
+      "cookies": [ { "name": "X-Magento-Vary", "isPrefix": false, "weight": 0.7 } ],
+      "scripts": [
+        { "pattern": "/static/version\\d+/frontend/", "weight": 0.8 },
+        { "pattern": "mage/cookies", "weight": 0.6 }
+      ],
+      "html": [ { "pattern": "mage/translate", "weight": 0.5 } ]
+    },
+    {
+      "key": "woocommerce",
+      "name": "WooCommerce",
+      "category": "Ecommerce",
+      "meta": [ { "name": "generator", "pattern": "WooCommerce", "weight": 1.0 } ],
+      "scripts": [ { "pattern": "/woocommerce/", "weight": 0.8 } ],
+      "html": [ { "pattern": "woocommerce", "weight": 0.4 } ]
+    },
+    {
+      "key": "prestashop",
+      "name": "PrestaShop",
+      "category": "Ecommerce",
+      "meta": [ { "name": "generator", "pattern": "PrestaShop", "weight": 1.0 } ],
+      "cookies": [ { "name": "PrestaShop-", "isPrefix": true, "weight": 0.7 } ],
+      "html": [ { "pattern": "prestashop", "weight": 0.4 } ]
+    },
+    {
+      "key": "opencart",
+      "name": "OpenCart",
+      "category": "Ecommerce",
+      "scripts": [ { "pattern": "catalog/view/javascript", "weight": 0.7 } ],
+      "cookies": [ { "name": "OCSESSID", "isPrefix": false, "weight": 0.6 } ],
+      "html": [ { "pattern": "route=product/product", "weight": 0.4 } ]
+    },
+    {
+      "key": "bigcommerce",
+      "name": "BigCommerce",
+      "category": "Ecommerce",
+      "scripts": [ { "pattern": "cdn\\d+\\.bigcommerce\\.com", "weight": 0.9 } ],
+      "cookies": [ { "name": "SHOP_SESSION_TOKEN", "isPrefix": false, "weight": 0.6 } ],
+      "html": [ { "pattern": "BigCommerce", "weight": 0.4 } ]
+    },
+    {
+      "key": "wix",
+      "name": "Wix",
+      "category": "CMS",
+      "meta": [ { "name": "generator", "pattern": "Wix\\.com", "weight": 1.0 } ],
+      "headers": [ { "name": "x-wix-request-id", "pattern": ".+", "weight": 0.8 } ],
+      "scripts": [
+        { "pattern": "static\\.parastorage\\.com", "weight": 0.8 },
+        { "pattern": "static\\.wixstatic\\.com", "weight": 0.7 }
+      ]
+    },
+    {
+      "key": "squarespace",
+      "name": "Squarespace",
+      "category": "CMS",
+      "meta": [ { "name": "generator", "pattern": "Squarespace", "weight": 1.0 } ],
+      "scripts": [ { "pattern": "static\\d*\\.squarespace\\.com", "weight": 0.9 } ],
+      "cookies": [ { "name": "SS_ANALYTICS_ID", "isPrefix": false, "weight": 0.5 } ],
+      "html": [ { "pattern": "squarespace", "weight": 0.3 } ]
+    },
+    {
+      "key": "webflow",
+      "name": "Webflow",
+      "category": "CMS",
+      "meta": [ { "name": "generator", "pattern": "Webflow", "weight": 1.0 } ],
+      "scripts": [ { "pattern": "assets\\.website-files\\.com", "weight": 0.8 } ],
+      "html": [ { "pattern": "webflow", "weight": 0.4 } ]
+    },
+    {
+      "key": "ghost",
+      "name": "Ghost",
+      "category": "CMS",
+      "meta": [ { "name": "generator", "pattern": "Ghost", "weight": 1.0 } ],
+      "scripts": [ { "pattern": "@tryghost/portal", "weight": 0.8 } ]
+    },
+    {
+      "key": "hugo",
+      "name": "Hugo",
+      "category": "CMS",
+      "meta": [ { "name": "generator", "pattern": "Hugo", "weight": 1.0 } ]
+    },
+    {
+      "key": "jekyll",
+      "name": "Jekyll",
+      "category": "CMS",
+      "meta": [ { "name": "generator", "pattern": "Jekyll", "weight": 1.0 } ]
+    },
+    {
+      "key": "gatsby",
+      "name": "Gatsby",
+      "category": "Framework",
+      "meta": [ { "name": "generator", "pattern": "Gatsby", "weight": 1.0 } ],
+      "scripts": [ { "pattern": "/page-data/", "weight": 0.5 } ],
+      "html": [ { "pattern": "gatsby-", "weight": 0.3 } ]
+    },
+    {
+      "key": "nextjs",
+      "name": "Next.js",
+      "category": "Framework",
+      "headers": [ { "name": "x-powered-by", "pattern": "Next\\.js", "weight": 0.8 } ],
+      "scripts": [ { "pattern": "/_next/static/", "weight": 0.9 } ],
+      "html": [ { "pattern": "__NEXT_DATA__", "weight": 0.8 } ]
+    },
+    {
+      "key": "nuxt",
+      "name": "Nuxt",
+      "category": "Framework",
+      "meta": [ { "name": "generator", "pattern": "Nuxt", "weight": 1.0 } ],
+      "scripts": [ { "pattern": "/_nuxt/", "weight": 0.9 } ],
+      "html": [ { "pattern": "__NUXT__", "weight": 0.8 } ]
+    },
+    {
+      "key": "react",
+      "name": "React",
+      "category": "JavaScript Library",
+      "scripts": [
+        { "pattern": "react(-dom)?(\\.production|\\.development)?\\.min\\.js", "weight": 0.7 },
+        { "pattern": "/react@", "weight": 0.6 }
+      ],
+      "html": [
+        { "pattern": "data-reactroot", "weight": 0.7 },
+        { "pattern": "data-react", "weight": 0.5 }
+      ]
+    },
+    {
+      "key": "vue",
+      "name": "Vue.js",
+      "category": "JavaScript Library",
+      "scripts": [
+        { "pattern": "vue(\\.runtime)?(\\.global)?(\\.prod)?\\.js", "weight": 0.7 },
+        { "pattern": "/vue@", "weight": 0.6 }
+      ],
+      "html": [
+        { "pattern": "data-v-[0-9a-f]{8}", "weight": 0.7 },
+        { "pattern": "__VUE__", "weight": 0.5 }
+      ]
+    },
+    {
+      "key": "angular",
+      "name": "Angular",
+      "category": "Framework",
+      "scripts": [ { "pattern": "/angular(\\.min)?\\.js", "weight": 0.7 } ],
+      "html": [
+        { "pattern": "ng-version", "weight": 0.8 },
+        { "pattern": "ng-app", "weight": 0.5 }
+      ]
+    },
+    {
+      "key": "svelte",
+      "name": "Svelte",
+      "category": "Framework",
+      "html": [ { "pattern": "svelte-[0-9a-z]{6}", "weight": 0.8 } ],
+      "scripts": [ { "pattern": "/_app/immutable/", "weight": 0.5 } ]
+    },
+    {
+      "key": "jquery",
+      "name": "jQuery",
+      "category": "JavaScript Library",
+      "scripts": [
+        { "pattern": "jquery(-[\\d.]+)?(\\.min)?\\.js", "weight": 0.8 },
+        { "pattern": "/jquery/", "weight": 0.4 }
+      ]
+    },
+    {
+      "key": "bootstrap",
+      "name": "Bootstrap",
+      "category": "JavaScript Library",
+      "scripts": [ { "pattern": "bootstrap(\\.bundle)?(\\.min)?\\.js", "weight": 0.8 } ],
+      "html": [ { "pattern": "bootstrap(\\.min)?\\.css", "weight": 0.6 } ]
+    },
+    {
+      "key": "tailwind",
+      "name": "Tailwind CSS",
+      "category": "JavaScript Library",
+      "scripts": [ { "pattern": "tailwindcss", "weight": 0.7 } ],
+      "html": [ { "pattern": "tailwind", "weight": 0.5 } ]
+    },
+    {
+      "key": "google-analytics",
+      "name": "Google Analytics",
+      "category": "Analytics",
+      "scripts": [
+        { "pattern": "googletagmanager\\.com/gtag/js", "weight": 0.9 },
+        { "pattern": "google-analytics\\.com/(analytics|ga)\\.js", "weight": 0.9 },
+        { "pattern": "/gtag/js\\?id=", "weight": 0.8 }
+      ],
+      "html": [
+        { "pattern": "GoogleAnalyticsObject", "weight": 0.6 },
+        { "pattern": "gtag\\(", "weight": 0.5 },
+        { "pattern": "_gaq", "weight": 0.4 }
+      ]
+    },
+    {
+      "key": "google-tag-manager",
+      "name": "Google Tag Manager",
+      "category": "Tag Manager",
+      "scripts": [ { "pattern": "googletagmanager\\.com/gtm\\.js", "weight": 1.0 } ],
+      "html": [
+        { "pattern": "GTM-[A-Z0-9]{6,}", "weight": 0.8 },
+        { "pattern": "googletagmanager\\.com/ns\\.html", "weight": 0.7 }
+      ]
+    },
+    {
+      "key": "adobe-analytics",
+      "name": "Adobe Analytics",
+      "category": "Analytics",
+      "scripts": [
+        { "pattern": "adobedtm\\.com", "weight": 0.8 },
+        { "pattern": "/s_code\\.js", "weight": 0.7 }
+      ],
+      "html": [
+        { "pattern": "s_account", "weight": 0.5 },
+        { "pattern": "s\\.t\\(\\)", "weight": 0.4 }
+      ]
+    },
+    {
+      "key": "matomo",
+      "name": "Matomo",
+      "category": "Analytics",
+      "scripts": [
+        { "pattern": "/matomo\\.js", "weight": 0.9 },
+        { "pattern": "/piwik\\.js", "weight": 0.8 }
+      ],
+      "html": [
+        { "pattern": "_paq", "weight": 0.6 },
+        { "pattern": "matomo", "weight": 0.3 }
+      ]
+    },
+    {
+      "key": "segment",
+      "name": "Segment",
+      "category": "Analytics",
+      "scripts": [ { "pattern": "cdn\\.segment\\.com/analytics\\.js", "weight": 0.9 } ],
+      "html": [ { "pattern": "analytics\\.load\\(", "weight": 0.5 } ]
+    },
+    {
+      "key": "hotjar",
+      "name": "Hotjar",
+      "category": "Analytics",
+      "scripts": [ { "pattern": "static\\.hotjar\\.com", "weight": 0.9 } ],
+      "html": [
+        { "pattern": "hj\\(", "weight": 0.4 },
+        { "pattern": "hotjar", "weight": 0.3 }
+      ]
+    },
+    {
+      "key": "facebook-pixel",
+      "name": "Facebook Pixel",
+      "category": "Marketing",
+      "scripts": [ { "pattern": "connect\\.facebook\\.net/.+/fbevents\\.js", "weight": 0.9 } ],
+      "html": [
+        { "pattern": "fbq\\(", "weight": 0.6 },
+        { "pattern": "facebook\\.com/tr", "weight": 0.5 }
+      ]
+    },
+    {
+      "key": "linkedin-insight",
+      "name": "LinkedIn Insight Tag",
+      "category": "Marketing",
+      "scripts": [ { "pattern": "snap\\.licdn\\.com/li\\.lms-analytics", "weight": 0.9 } ],
+      "html": [ { "pattern": "_linkedin_partner_id", "weight": 0.7 } ]
+    },
+    {
+      "key": "tiktok-pixel",
+      "name": "TikTok Pixel",
+      "category": "Marketing",
+      "scripts": [ { "pattern": "analytics\\.tiktok\\.com", "weight": 0.9 } ],
+      "html": [ { "pattern": "ttq\\.load", "weight": 0.6 } ]
+    },
+    {
+      "key": "hubspot",
+      "name": "HubSpot",
+      "category": "Marketing",
+      "scripts": [
+        { "pattern": "js\\.hs-scripts\\.com", "weight": 0.9 },
+        { "pattern": "js\\.hubspot\\.com", "weight": 0.8 }
+      ],
+      "html": [
+        { "pattern": "_hsp", "weight": 0.4 },
+        { "pattern": "hubspot", "weight": 0.3 }
+      ]
+    },
+    {
+      "key": "cloudflare",
+      "name": "Cloudflare",
+      "category": "CDN",
+      "headers": [
+        { "name": "cf-ray", "pattern": ".+", "weight": 0.8 },
+        { "name": "server", "pattern": "cloudflare", "weight": 0.7 }
+      ],
+      "cookies": [
+        { "name": "__cf_bm", "isPrefix": false, "weight": 0.5 },
+        { "name": "cf_clearance", "isPrefix": false, "weight": 0.5 }
+      ],
+      "scripts": [ { "pattern": "/cdn-cgi/", "weight": 0.6 } ]
+    },
+    {
+      "key": "akamai",
+      "name": "Akamai",
+      "category": "CDN",
+      "headers": [
+        { "name": "server", "pattern": "AkamaiGHost", "weight": 0.8 },
+        { "name": "x-akamai-transformed", "pattern": ".+", "weight": 0.7 }
+      ],
+      "cookies": [
+        { "name": "ak_bmsc", "isPrefix": false, "weight": 0.6 },
+        { "name": "bm_sz", "isPrefix": false, "weight": 0.5 }
+      ],
+      "html": [ { "pattern": "edgesuite\\.net", "weight": 0.5 } ]
+    },
+    {
+      "key": "fastly",
+      "name": "Fastly",
+      "category": "CDN",
+      "headers": [
+        { "name": "x-fastly-request-id", "pattern": ".+", "weight": 0.8 },
+        { "name": "fastly-restarts", "pattern": ".+", "weight": 0.6 },
+        { "name": "x-served-by", "pattern": "cache-", "weight": 0.6 }
+      ]
+    },
+    {
+      "key": "cloudfront",
+      "name": "Amazon CloudFront",
+      "category": "CDN",
+      "headers": [
+        { "name": "x-amz-cf-id", "pattern": ".+", "weight": 0.9 },
+        { "name": "via", "pattern": "cloudfront", "weight": 0.7 }
+      ]
+    },
+    {
+      "key": "vercel",
+      "name": "Vercel",
+      "category": "Hosting",
+      "headers": [
+        { "name": "x-vercel-id", "pattern": ".+", "weight": 0.9 },
+        { "name": "server", "pattern": "Vercel", "weight": 0.8 }
+      ],
+      "scripts": [ { "pattern": "/_vercel/", "weight": 0.6 } ]
+    },
+    {
+      "key": "netlify",
+      "name": "Netlify",
+      "category": "Hosting",
+      "headers": [
+        { "name": "x-nf-request-id", "pattern": ".+", "weight": 0.9 },
+        { "name": "server", "pattern": "Netlify", "weight": 0.8 }
+      ],
+      "html": [ { "pattern": "netlify", "weight": 0.3 } ]
+    },
+    {
+      "key": "nginx",
+      "name": "nginx",
+      "category": "Web Server",
+      "headers": [ { "name": "server", "pattern": "nginx", "weight": 0.9 } ]
+    },
+    {
+      "key": "apache",
+      "name": "Apache",
+      "category": "Web Server",
+      "headers": [ { "name": "server", "pattern": "Apache", "weight": 0.9 } ]
+    },
+    {
+      "key": "iis",
+      "name": "Microsoft IIS",
+      "category": "Web Server",
+      "headers": [
+        { "name": "server", "pattern": "Microsoft-IIS", "weight": 0.9 },
+        { "name": "x-powered-by", "pattern": "ASP\\.NET", "weight": 0.5 }
+      ]
+    },
+    {
+      "key": "php",
+      "name": "PHP",
+      "category": "Language",
+      "headers": [ { "name": "x-powered-by", "pattern": "PHP", "weight": 0.9 } ],
+      "cookies": [ { "name": "PHPSESSID", "isPrefix": false, "weight": 0.7 } ]
+    },
+    {
+      "key": "aspnet",
+      "name": "ASP.NET",
+      "category": "Language",
+      "headers": [
+        { "name": "x-aspnet-version", "pattern": ".+", "weight": 0.9 },
+        { "name": "x-powered-by", "pattern": "ASP\\.NET", "weight": 0.8 }
+      ],
+      "cookies": [
+        { "name": "ASP.NET_SessionId", "isPrefix": false, "weight": 0.7 },
+        { "name": "__RequestVerificationToken", "isPrefix": false, "weight": 0.4 }
+      ]
+    },
+    {
+      "key": "laravel",
+      "name": "Laravel",
+      "category": "Framework",
+      "cookies": [
+        { "name": "laravel_session", "isPrefix": false, "weight": 0.8 },
+        { "name": "XSRF-TOKEN", "isPrefix": false, "weight": 0.3 }
+      ],
+      "html": [ { "pattern": "laravel", "weight": 0.3 } ]
+    },
+    {
+      "key": "django",
+      "name": "Django",
+      "category": "Framework",
+      "cookies": [ { "name": "django_language", "isPrefix": false, "weight": 0.6 } ],
+      "html": [ { "pattern": "csrfmiddlewaretoken", "weight": 0.7 } ]
+    },
+    {
+      "key": "rails",
+      "name": "Ruby on Rails",
+      "category": "Framework",
+      "meta": [ { "name": "csrf-param", "pattern": ".+", "weight": 0.7 } ],
+      "html": [
+        { "pattern": "data-turbo", "weight": 0.5 },
+        { "pattern": "csrf-param", "weight": 0.4 }
+      ]
+    },
+    {
+      "key": "express",
+      "name": "Express",
+      "category": "Framework",
+      "headers": [ { "name": "x-powered-by", "pattern": "Express", "weight": 0.9 } ]
+    }
+  ]
+}

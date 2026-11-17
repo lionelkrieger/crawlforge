@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.Data.Migrations (WP-01-03): versioned, provider-agnostic migrations
+    covering the complete 40-object schema catalog plus deterministic first-run
+    seeding. The library is pure BCL + locked contracts: logical schema definitions
+    are rendered per dialect (SQLite / MySQL) and executed over the IDbProvider
+    abstraction, so no provider-specific package is referenced here.
+  -->
+  <PropertyGroup>
+    <!-- Every public member carries XML documentation (CS1591 enforced). -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+  </ItemGroup>
+</Project>

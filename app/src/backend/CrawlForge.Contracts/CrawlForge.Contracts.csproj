@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.Contracts (WP-00-02) — the shared contract authority.
+    LOCKED after Phase 00: interfaces, enums, and DTOs evolve additively only.
+    Pure BCL by design: zero NuGet packages, zero project references.
+    TFM, nullable, analyzers, and the GC runtime profile come from Directory.Build.props.
+  -->
+  <PropertyGroup>
+    <!-- Every public member carries XML documentation (CS1591 enforced). -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--
+      Agent-scoped outputs (CF_AGENT_ID, AGENT-INSTRUCTIONS §10.2) move the SDK's
+      default obj/bin exclusions to obj\<agent>\ and bin\<agent>\. Explicitly
+      exclude the canonical obj/ and bin/ trees as well so generated files left
+      there by other builds are never compiled as source.
+    -->
+    <Compile Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Compile Remove="bin\**" />
+    <None Remove="bin\**" />
+  </ItemGroup>
+</Project>

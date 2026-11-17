@@ -1,0 +1,18 @@
+# .NET build artifacts — canonical (obj/, bin/) and agent-scoped
+# (obj/<CF_AGENT_ID>/, bin/<CF_AGENT_ID>/) outputs are transient, never committed.
+bin/
+obj/
+TestResults/
+*.user
+*.suo
+.vs/
+
+# Node / frontend
+node_modules/
+dist/
+coverage/
+.vite/
+*.tsbuildinfo
+
+# Local logs / diagnostics (local-only by design; never committed)
+*.log

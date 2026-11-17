@@ -1,0 +1,38 @@
+# CrawlForge repository root .gitignore (created 2026-11-17, baseline-v1)
+
+# Build outputs and dependencies (also covered by app/.gitignore)
+bin/
+obj/
+node_modules/
+dist/
+TestResults/
+coverage/
+.vite/
+*.tsbuildinfo
+.vs/
+*.user
+*.suo
+
+# Packaging outputs and vendored binaries (large, reproducible)
+app/packaging/vendor/
+app/packaging/artifacts/
+
+# Large binary asset: kept on disk, excluded from git (87 MB). Track via Git LFS if pushed to a remote.
+app/assets/onnx-model/model.onnx
+
+# Local tooling environment and machine-specific ACL backups
+tools-env/
+acl-recovery/
+
+# Working backups
+audit-work/.bak/
+
+# Logs, except audit evidence logs
+*.log
+!audit-work/*.log
+
+# Generated benchmark/test run artifacts (databases, exports, logs)
+app/tests/**/artifacts/
+*.db
+*.db-wal
+*.db-shm

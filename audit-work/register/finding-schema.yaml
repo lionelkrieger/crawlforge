@@ -1,0 +1,176 @@
+# CrawlForge gap register — finding schema
+#
+# One finding record describes one gap against one capability in
+# capabilities.yaml. Findings are extracted per source document, then merged
+# by capability ID (see README.md). This file is the written contract: the
+# fields below are exactly the allowed fields, and the enums below are the
+# only allowed values. validate_register.py reads the `enums` and `finding`
+# blocks mechanically; comments carry the human definitions.
+#
+# Severity note: UNDERBUILD-AUDIT.md §4 defines P0 = product-breaking /
+# feature effectively absent, P1 = high, P2 = medium, P3 = low. The
+# definitions below keep that meaning. ux-api-gap-audit.md and
+# 04-gap-analysis.md instead use critical/high/medium/low; when extracting
+# from them, map critical -> P0, high -> P1, medium -> P2, low -> P3.
+
+finding:
+  # Every record has exactly these fields. `required: true` fields must be
+  # present (nullable where noted). No other fields are allowed.
+  fields:
+    id:
+      required: true
+      type: string
+      pattern: "^F-[0-9]{4}$"
+      definition: Sequential finding ID, assigned at merge time. Never reused.
+    capability:
+      required: true
+      type: string
+      definition: Capability ID; must exist in capabilities.yaml.
+    statement:
+      required: true
+      type: string
+      definition: One line — what is wrong or missing.
+    gap_type:
+      required: true
+      type: enum
+      enum: gap_type
+      definition: The kind of gap (see enums.gap_type).
+    layers:
+      required: true
+      type: list
+      item_enum: layers
+      min_items: 1
+      definition: Which layers are affected; non-empty subset of enums.layers.
+    severity:
+      required: true
+      type: enum
+      enum: severity
+      definition: Product impact (see enums.severity).
+    evidence:
+      required: true
+      type: list
+      definition: >-
+        Code evidence. Each item has path (repo-relative file), symbol
+        (class/method/member) and note (what the code shows). An empty list
+        is allowed only when gap_type is spec_gap or design_decision.
+      item_fields: [path, symbol, note]
+    sources:
+      required: true
+      type: list
+      min_items: 1
+      definition: >-
+        Every audit document that mentions this finding. Each item: doc
+        (filename from source_documents below), locator (section/heading/row/
+        table locator in that document), source_id (the document's own ID,
+        e.g. GAP-04 or G07, or null when it has none), claim (one-line
+        paraphrase of what that document states).
+      item_fields: [doc, locator, source_id, claim]
+    status:
+      required: true
+      type: enum
+      enum: status
+      definition: Consolidation state (see enums.status).
+    conflict:
+      required: true
+      type: string_or_null
+      definition: >-
+        One line describing the disagreement when sources disagree; must be
+        non-null when status is conflict, otherwise null.
+    decision_needed:
+      required: true
+      type: bool
+      definition: True when the item needs a product decision from the owner.
+    flow:
+      required: true
+      type: string_or_null
+      definition: End-to-end flow ID; filled in a later step, null until then.
+    notes:
+      required: true
+      type: string_or_null
+      definition: Free-form consolidation notes, or null.
+
+enums:
+  gap_type:
+    unwired: Code exists but is not registered or invoked in the running product.
+    missing_ui: Works via engine/API but no reachable UI.
+    missing_engine: No implementation.
+    spec_gap: Not specified; needs adding to the spec.
+    design_decision: A product choice must be made before building.
+    defect: Implemented but behaves incorrectly.
+  layers:
+    engine: The backend implementation (algorithms, services, crawlers, analyzers).
+    wiring: Registration, invocation, mounting, emission — integration into the running product.
+    api: REST routes, hub events, MCP tools/resources/prompts, IPC exposure.
+    ui: Mounted, reachable React/Electron surfaces.
+  severity:
+    P0: Product-breaking — a core workflow cannot be completed or results are wrong.
+    P1: Major capability missing or misleading.
+    P2: Capability degraded or incomplete.
+    P3: Minor or polish.
+  status:
+    extracted: Copied from one source, unmerged.
+    merged: Deduplicated across sources.
+    conflict: Sources disagree, unresolved.
+    verified: Confirmed against code by an independent check.
+    rejected: Shown to be wrong or not a gap.
+
+# Source document catalogue — every audit document in audit-work.
+# `doc` is the value used in finding.sources[].doc. `short` is the prose
+# alias. `id_scheme` is the document's own numbering; `locator` is how to
+# point at a row inside it. Logs and the task prompt are listed at the end
+# as auxiliary material, not finding sources.
+source_documents:
+  - doc: functionality-audit-checklist.md
+    short: checklist
+    id_scheme: No own IDs. Global row numbers 1-213 across sections A, B, B2, C, D1, D2, E, F, G, H, I, J.
+    locator: "Row number, e.g. 'row 69 (B2)'."
+  - doc: 05-functionality-audit-results.md
+    short: 05-results
+    id_scheme: No own IDs. Section 2 keyed by checklist row number; section 3 extras keyed by capability Name; section 4 cross-references UNDERBUILD G-ids.
+    locator: "'§2 row N', or '§3 suggested section X, <Name>'."
+  - doc: project-configuration-review.md
+    short: config-review
+    id_scheme: No IDs. Numbered sections and subsections (3.1-3.12, 4.1-4.5, 5.1-5.7); gap tables keyed by gap name.
+    locator: "'§5.3, cookie jar row'."
+  - doc: UNDERBUILD-AUDIT.md
+    short: underbuild
+    id_scheme: G01-G29 in the §4 master gap register; priorities P0-P3. Document identifier CF-UNDERBUILD-AUDIT-001.
+    locator: "'§4 G07' or '§5.3'."
+  - doc: ux-api-gap-audit.md
+    short: ux-api-gap
+    id_scheme: GAP-01..GAP-49 in §4 (subsections 4.a-4.g); severity critical/high/medium/low; Source IDs column cites G-ids (04), A-ids (04a), B-ids (04b).
+    locator: "GAP ID, e.g. 'GAP-08 (§4.b)'."
+  - doc: 04-gap-analysis.md
+    short: 04-gap
+    id_scheme: G1-nn..G7-nn across registers §3.1-3.7 (G1 dark API, G2 dark UX, G3 contract drift, G4 doc-only, G5 promise mismatch, G6 channel parity, G7 exposure governance); severity critical/high/medium/low. Note - the task prompt's example 'CRAWL-001' appears in this document only inside the spec identifier FS-CRAWL-001; the register's own row IDs are G<n>-nn.
+    locator: "'G1-08' or '§3.4 G4-01'."
+  - doc: 04a-ux-api-join.md
+    short: 04a-join
+    id_scheme: A1-nn (dark API), A2-nn (dark UX), A3-nn (contract drift).
+    locator: "A-id, e.g. 'A1-05'."
+  - doc: 04b-docs-channel-join.md
+    short: 04b-join
+    id_scheme: B1-nn (doc-only promises), B2-nn (promise-implementation mismatches), B3-nn (channel parity), B4-nn (exposure governance); §2.2 resolution appendix keyed by 03 capability keys.
+    locator: "B-id, e.g. 'B1-08'."
+  - doc: 01-api-exposure-inventory.md
+    short: 01-api
+    id_scheme: Capability keys are route operation keys (e.g. projects.list), hub event names, MCP tool/resource/prompt names, IPC channel names; §5 observations numbered.
+    locator: "'§1.17 schedules.list' or '§5 observation 2'."
+  - doc: 02-ux-surface-inventory.md
+    short: 02-ux
+    id_scheme: Capability keys (e.g. shell.view.hub); §3 Section A unused wrappers by route key; §4 Section B stubs numbered B1..Bn; §5 Section C API-bypassing UI numbered C1..Cn.
+    locator: "Capability key, or '§4 B15'."
+  - doc: 03-documented-feature-inventory.md
+    short: 03-docs
+    id_scheme: Capability keys (e.g. audits.schedule-controls, platform.installation); §3 promised-API names quoted exactly; §5 explicitly-future items.
+    locator: "Capability key, e.g. 'intel.logs-import'."
+
+auxiliary_material:
+  - file: fresh-e2e-run.log
+    role: Build/E2E evidence log cited by UNDERBUILD-AUDIT.md §3; not a finding source.
+  - file: frontend-build.log
+    role: Frontend production-build evidence log; not a finding source.
+  - file: frontend-typecheck.log
+    role: Frontend typecheck evidence log; not a finding source.
+  - file: 06-register-spine-prompt.md
+    role: The task specification for this register; not a finding source.

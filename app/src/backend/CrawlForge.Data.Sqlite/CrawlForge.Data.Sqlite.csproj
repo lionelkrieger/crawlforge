@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.Data.Sqlite (WP-01-01) — embedded SQLite provider: WAL durability,
+    native/managed extension loader, CQRS connection factory, WAL observability hook.
+    TFM, nullable, analyzers, and the GC runtime profile come from Directory.Build.props.
+  -->
+  <PropertyGroup>
+    <!--
+      CPM override (WP-01-01 dispatch): new mid-phase packages are version-pinned here
+      instead of the frozen Directory.Packages.props (AGENT-INSTRUCTIONS §4.4).
+      Restore source is nuget.org only (repo NuGet.Config).
+    -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <!-- Every public member carries XML documentation (CS1591 enforced). -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--
+      Microsoft.Data.Sqlite bundles the native e_sqlite3 engine for every supported
+      platform through SQLitePCLRaw (locally bundled, offline; no runtime downloads).
+    -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.15" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+  </ItemGroup>
+</Project>

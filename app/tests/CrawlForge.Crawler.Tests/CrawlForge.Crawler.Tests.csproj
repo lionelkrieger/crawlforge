@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Phase-02 shared test project (v1.1e): ORCHESTRATOR-MANAGED. Builders own disjoint
+       subfolders only (namespace CrawlForge.Crawler.Tests.<Area>); csproj changes go through the lead.
+       Pre-wired at wave-2A dispatch with the completed phase-00/01 stack for integration-faithful tests. -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Crawler\CrawlForge.Crawler.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Security\CrawlForge.Security.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Sqlite\CrawlForge.Data.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.MySql\CrawlForge.Data.MySql.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Migrations\CrawlForge.Data.Migrations.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Repositories\CrawlForge.Data.Repositories.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.ContentStore\CrawlForge.Data.ContentStore.csproj" />
+  </ItemGroup>
+</Project>

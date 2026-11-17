@@ -1,0 +1,15 @@
+{
+  "name": "@crawlforge/tests-frontend",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared vitest suites for the renderer (contracts/shell/grid/charts/tools/plugins arrive with later workpieces). Discovered by src/frontend's vitest config.",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "puppeteer-core": "25.17.0",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}

@@ -1,0 +1,16 @@
+at,remoteAddress,remotePort,localAddress,localPort,state,phase,isLoopback,isBaseline,knownProductPort
+2026-11-14T20:09:10.0723815+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,unspecified,True,True,False
+2026-11-14T20:09:10.2751154+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:10.2751178+00:00,127.0.0.1,54489,127.0.0.1,54492,Established,audit,True,False,True
+2026-11-14T20:09:10.4893931+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:10.4893951+00:00,127.0.0.1,54489,127.0.0.1,54492,Established,audit,True,False,True
+2026-11-14T20:09:10.7028023+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:10.7028038+00:00,127.0.0.1,54489,127.0.0.1,54492,Established,audit,True,False,True
+2026-11-14T20:09:10.9072457+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:11.1146167+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:11.3284419+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:11.5292875+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:11.7415544+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:11.9437312+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:12.1588827+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False
+2026-11-14T20:09:12.3736920+00:00,127.0.0.1,54322,127.0.0.1,54328,Established,audit,True,True,False

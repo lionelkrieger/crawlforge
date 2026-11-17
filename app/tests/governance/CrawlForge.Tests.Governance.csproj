@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    CrawlForge governance analyzer test suite (WP-00-05).
+    xunit versions come from the shared CPM (Directory.Packages.props).
+    The analyzer project is referenced directly; neither project is in the sln yet
+    (the orchestrator wires them at the wave-0B gate).
+
+    Fixture sources under Fixtures\ contain PLANTED violations and must never be
+    compiled into this assembly; they are analyzed as data by the fixture tests.
+  -->
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>CrawlForge.Tests.Governance</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\tools\governance-analyzer\GovernanceAnalyzer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Fixtures\**\*.cs" />
+    <None Include="Fixtures\**\*" />
+  </ItemGroup>
+
+</Project>

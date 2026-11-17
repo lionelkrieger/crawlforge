@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.E2E.Tests - WP-07-01 cross-module end-to-end verification.
+    Verification only: no product code is edited from this project. All network
+    I/O stays on 127.0.0.1 (loopback fixture origins + the composed backend).
+    Package versions come from Directory.Packages.props (versionless references).
+  -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <!-- Export file validity proofs (criterion #7): OpenXml reader for xlsx,
+         PdfSharp reader for pdf. Both already centrally pinned. -->
+    <PackageReference Include="DocumentFormat.OpenXml" />
+    <PackageReference Include="PdfSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Host\CrawlForge.Host.csproj" />
+  </ItemGroup>
+</Project>

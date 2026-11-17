@@ -1,0 +1,25 @@
+{
+  "name": "@crawlforge/mcp-stdio-adapter",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "CrawlForge packaged stdio child-process bridge to the loopback MCP endpoint. Thin local bridge: no domain logic, no non-loopback sockets, terminates with its parent or the backend.",
+  "main": "dist/index.js",
+  "bin": {
+    "crawlforge-mcp-stdio": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:interop": "vitest run test/interop.test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}

@@ -1,0 +1,143 @@
+# CrawlForge Build Plan — Phase 01: Persistence & Storage (Parallel Wave)
+# Four agents build providers, migrations, and repositories simultaneously against Phase 00 contracts.
+phase_id: "phase-01"
+name: "Persistence and Storage"
+status: "in_progress"
+depends_on_phases: ["phase-00"]
+max_parallel_agents: 4
+parallel_waves:
+  - wave_id: "wave-1A"
+    workpiece_ids: ["WP-01-01", "WP-01-02", "WP-01-03", "WP-01-04"]
+gated_acceptance_criteria: [9, 15, 18]
+
+# v1.1 orchestrator wave gates: run after EVERY wave completes, canonical build surface
+# (CF_AGENT_ID unset). A failed gate blocks the next wave (AGENT-INSTRUCTIONS.md §5.5).
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+
+workpieces:
+  - workpiece_id: "WP-01-01"
+    title: "SQLite Provider — WAL, Native Extension Loader & Provider-Neutral Connection Contract"
+    phase_id: "phase-01"
+    status: "completed"
+    assigned_agent: "cf-wp-01-01"
+    started_at: "2026-11-14T07:30:11Z"
+    completed_at: "2026-11-14T09:46:34Z"
+    parallel_group: "wave-1A"
+    depends_on_workpieces: ["WP-00-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\01-database-providers-and-cqrs.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.Sqlite\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Data.Sqlite.Tests\\"
+    deliverables:
+      - "IDbProvider SQLite implementation: embedded file-based default provider, WAL journal mode, busy-timeout and synchronous settings per spec"
+      - "Native extension loader for the four required extension families: regex, delimited-text, vector-similarity, math/stats — bundled locally, loaded at connection open, provider-capability probe"
+      - "Connection factory with CQRS read/write separation support (read connections vs single-writer discipline)"
+      - "WAL size observability hook consumed by the system-health heartbeat and /metrics families"
+      - "Provider conformance test suite shared with MySQL (identical logical behavior, precedence rule 6)"
+    interfaces_implemented:
+      - "IDbProvider (SQLite dialect)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Data.Sqlite.Tests"
+    acceptance_criteria_refs: []
+
+  - workpiece_id: "WP-01-02"
+    title: "MySQL External Provider & Connection Tester"
+    phase_id: "phase-01"
+    status: "completed"
+    assigned_agent: "cf-wp-00-05"
+    started_at: "2026-11-14T07:30:11Z"
+    completed_at: "2026-11-14T09:34:05Z"
+    reopened_at: "2026-11-14T20:28:30Z"
+    reaccepted_at: "2026-11-14T20:52:10Z"
+    reacceptance_note: "D10 fixed+verified: ReadReportRowsAsync reads the four real count columns (locked AuditScoreDto has NO JSON column — none added), composes deterministic camelCase ContributingCountsJson, maps nullable-int category→AuditCategory name/'overall' (fixes latent GetString-on-INT/NULL bug). Canonical Data.MySql.Tests 163/163 exit 0 + Data.Migrations.Tests 58/58 exit 0 (live MySQL 8.0.28, 0 skipped; ReportRowParityTests exact recorder-statement rows, counts correct both providers, cross-provider CompareReports IDENTICAL) + gov Data.MySql 15/0. Criterion #18 still pending: E2E parity tests blocked by cf-wp-01-01 fixture ResetDatabaseAsync single-batch DROP;CREATE inconsistent-state bug (NOT a D10 reader defect) — fixture fix required before #18 re-proven."
+    reopen_reason: "DEFECT D10 (phase-07 MySQL parity E2E): ProviderSwitchOrchestrator.cs:191 ReadReportRowsAsync queries audit_scores.contributing_counts_json which does not exist in the catalog (Baseline.cs:323-334 has error_count/warning_count/notice_count/pass_count) → SqliteException no-such-column blocks FullAudit_OnMySql_ProducesIdenticalReportOutput + ArchiveSwitch_ToMySql_AndExplicitRevert. Fix: read actual count columns + compose ContributingCountsJson matching AuditScoreRecorder/locked AuditScoreDto (no new column unless contract requires), SQLite+MySQL consistent. Criterion #18 pending until parity re-proven. Assigned cf-wp-00-05 (cf-wp-01-02 retired)."
+    parallel_group: "wave-1A"
+    depends_on_workpieces: ["WP-00-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\01-database-providers-and-cqrs.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.MySql\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Data.MySql.Tests\\"
+    deliverables:
+      - "IDbProvider MySQL implementation for the optional user-owned external client-server database; identical logical schema behavior to SQLite (provider neutrality, precedence rule 6)"
+      - "Connection-test action reporting reachability and credential validity before first use (criterion #18); credentials stored encrypted via ISecretProtector, never hardware-derived"
+      - "Dialect adaptation for aggregate views: materialized precomputed read models where native views are insufficient (§8.1 pattern)"
+      - "Provider switch orchestration contract: migrate schema to MySQL, run full audit with identical report output, revert to SQLite via archive import (criterion #18, exercised end-to-end in Phase 07)"
+      - "Outbound traffic confined strictly to the user-configured server; no other destination"
+    interfaces_implemented:
+      - "IDbProvider (MySQL dialect)"
+      - "IDbConnectionTester"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Data.MySql.Tests"
+    acceptance_criteria_refs: [18]
+
+  - workpiece_id: "WP-01-03"
+    title: "Complete 40-Object Schema Migrations & Deterministic First-Run Seeding"
+    phase_id: "phase-01"
+    status: "completed"
+    assigned_agent: "cf-wp-00-05"
+    started_at: "2026-11-14T07:30:11Z"
+    completed_at: "2026-11-14T09:36:23Z"
+    reopened_at: "2026-11-14T20:10:33Z"
+    reaccepted_at: "2026-11-14T20:28:30Z"
+    reacceptance_note: "D6 fixed+verified: MaxIdentifierLength=64 guard (synthesized+explicit) + explicit short index names aligned MySqlLogicalSchema (ux_semantic_link_opportunities_audit_source_target 50, ix_ngram_site_summaries_audit_zone_order_df 43). Canonical Data.Migrations.Tests 55 pass+1 live-skip exit 0 + live MySQL 8.0.28 proof (version 4/40 tables/both short indexes/0 over-long/idempotent no-op) + 6 IndexNameLengthTests + gov Data.Migrations 13/0 + app 636/0. Incidental stale DomZone test repaired contract-driven. Criterion #18 still pending D10 (contributing_counts_json query, WP-01-02)."
+    reopen_reason: "DEFECT 11 (D6, phase-07 MySQL parity E2E): MySQL startup migration dies — synthesized index names exceed MySQL 64-char cap (SchemaCatalog.Additive.cs:180 ux_semantic_link_opportunities=67, :256 ix_ngram_site_summaries=68; SchemaCatalog.cs:99-103 Idx/Ux join table+cols). MySqlLogicalSchema.cs:140 short name out of sync. Narrow fix: explicit short names for both + name-length guard in Idx/Ux, SQLite/MySQL consistent, idempotency preserved, index naming only. Criterion #18 reopened pending; cf-wp-01-01's 3 blocked MySQL-parity tests flip on landing."
+    parallel_group: "wave-1A"
+    depends_on_workpieces: ["WP-00-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\01-database-providers-and-cqrs.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.Migrations\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Data.Migrations.Tests\\"
+    deliverables:
+      - "Versioned, idempotent, provider-agnostic migrations covering all 40 schema objects: 25 baseline tables + 14 additive tables + ngram_site_summaries aggregate view (materialized read model where required); activated url_embeddings parent table"
+      - "All additive columns (url_records block reason/WAF fields/discovery source list; link_edges.dom_zone; audits snapshot fields; crawl_configurations extension fields; crawl_checkpoints AIMD payload; application_settings preference fields), element groups, metric keys, and rule keys per Appendix A"
+      - "Every required index and relationship from the unified catalog, both dialects"
+      - "schema_migrations ledger per provider; re-run safety proven by double-apply tests (criterion #9)"
+      - "First-run deterministic seeding: single application_settings row with documented defaults, default file-based provider selected, zero identity/license/account columns, no destinations seeded (criteria #9, #5)"
+    interfaces_implemented:
+      - "ISchemaMigrator"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Data.Migrations.Tests"
+    acceptance_criteria_refs: [9]
+
+  - workpiece_id: "WP-01-04"
+    title: "CQRS Repositories, Compressed Content Store, Retention Pruner & Project Archive"
+    phase_id: "phase-01"
+    status: "completed"
+    assigned_agent: "cf-wp-01-03"
+    started_at: "2026-11-14T10:34:32Z"
+    completed_at: "2026-11-14T10:48:30Z"
+    blocker_reason: null
+    parallel_group: "wave-1A"
+    depends_on_workpieces: ["WP-00-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\01-database-providers-and-cqrs.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\03-content-store-and-retention.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.Repositories\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.ContentStore\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Data.Repositories.Tests\\"
+    deliverables:
+      - "CQRS read/write repository implementations over IDbProvider for all catalog entities; streaming/bounded-memory access patterns for 500k+ URL scale (precedence rule 7)"
+      - "Aggregation-into-DB service (§8.1): precomputed metric_summaries read models powering dashboards; audit-score persistence contract"
+      - "Compressed Content Store: content_artifacts index + content-hash-addressed compressed body/rendered-DOM/screenshot storage; streaming write/read; re-audit and cross-audit comparison served fully offline from stored artifacts (criterion #15)"
+      - "Transactional retention pruner covering baseline and additive tables per retention rules; atomic prune with artifact cleanup"
+      - "Project archive export/import (full fidelity incl. content store) enabling provider revert and offline transfer (criteria #15, #18)"
+    interfaces_implemented:
+      - "IReadRepository"
+      - "IWriteRepository"
+      - "IContentStore"
+      - "IRetentionPruner"
+      - "IProjectArchiveService"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Data.Repositories.Tests"
+    acceptance_criteria_refs: [15]

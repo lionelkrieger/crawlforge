@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Phase-04 shared project (v1.1e): ORCHESTRATOR-MANAGED. Builders own disjoint
+       subfolders only; csproj changes go through the lead. Implementation codes against
+       locked Contracts interfaces; dependencies arrive via constructor composition (Host, later phase). -->
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- WP-04-D1 (orchestrator-applied): local ONNX inference for WP-04-02 embeddings. -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" />
+  </ItemGroup>
+</Project>

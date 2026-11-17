@@ -1,0 +1,70 @@
+{
+  "version": "2026.1",
+  "revision": "r1",
+  "signatures": [
+    {
+      "key": "cloudflare-interstitial",
+      "provider": "Cloudflare",
+      "challengeClass": "Interstitial",
+      "headerMarkers": [ "cf-mitigated~challenge|0.6", "server~cloudflare|0.5" ],
+      "cookieMarkers": [ "__cf_bm|0.5", "cf_clearance|0.5" ],
+      "bodyMarkers": [ "challenge-platform|0.6", "cf-chl-|0.6", "Just a moment|0.5" ]
+    },
+    {
+      "key": "cloudflare-captcha",
+      "provider": "Cloudflare",
+      "challengeClass": "Captcha",
+      "headerMarkers": [ "cf-mitigated~challenge|0.6", "server~cloudflare|0.5" ],
+      "cookieMarkers": [ "__cf_bm|0.5" ],
+      "bodyMarkers": [ "cf-captcha-container|0.6", "captcha-container|0.4" ]
+    },
+    {
+      "key": "cloudflare-block",
+      "provider": "Cloudflare",
+      "challengeClass": "BotBlock",
+      "headerMarkers": [ "cf-mitigated~block|0.6", "server~cloudflare|0.5" ],
+      "cookieMarkers": [ "__cf_bm|0.5" ],
+      "bodyMarkers": [ "Access denied|0.4", "Ray ID|0.5", "cloudflare|0.3" ]
+    },
+    {
+      "key": "datadome-interstitial",
+      "provider": "DataDome",
+      "challengeClass": "Interstitial",
+      "headerMarkers": [ "x-datadome|0.6" ],
+      "cookieMarkers": [ "datadome|0.6" ],
+      "bodyMarkers": [ "datadome|0.5", "captcha-delivery|0.6", "Please enable JS and disable any ad blocker|0.5" ]
+    },
+    {
+      "key": "akamai-bot-block",
+      "provider": "Akamai",
+      "challengeClass": "BotBlock",
+      "headerMarkers": [ "server~AkamaiGHOST|0.6" ],
+      "cookieMarkers": [ "_abck|0.5", "bm_sz|0.5" ],
+      "bodyMarkers": [ "Access Denied|0.4", "Reference #|0.5", "akamai|0.3" ]
+    },
+    {
+      "key": "imperva-interstitial",
+      "provider": "Imperva",
+      "challengeClass": "Interstitial",
+      "headerMarkers": [ "x-iinfo|0.6" ],
+      "cookieMarkers": [ "incap_ses|0.6", "visid_incap|0.6" ],
+      "bodyMarkers": [ "incapsula|0.5", "Incapsula incident ID|0.6", "Request unsuccessful|0.4" ]
+    },
+    {
+      "key": "perimeterx-challenge",
+      "provider": "PerimeterX",
+      "challengeClass": "Captcha",
+      "headerMarkers": [ "x-px-block~1|0.6" ],
+      "cookieMarkers": [ "_px|0.6", "_pxhd|0.6", "_pxvid|0.5" ],
+      "bodyMarkers": [ "px-captcha|0.6", "perimeterx|0.5", "Access to this page has been denied|0.5" ]
+    },
+    {
+      "key": "generic-challenge",
+      "provider": "Other",
+      "challengeClass": "Unknown",
+      "headerMarkers": [],
+      "cookieMarkers": [],
+      "bodyMarkers": [ "verify you are human|0.5", "are you a robot|0.5", "unusual traffic|0.5", "bot detection|0.4", "captcha|0.3" ]
+    }
+  ]
+}

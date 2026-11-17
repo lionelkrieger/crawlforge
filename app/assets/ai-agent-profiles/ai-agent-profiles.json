@@ -1,0 +1,104 @@
+{
+  "version": "2026.1",
+  "revision": "r1",
+  "profiles": [
+    {
+      "agentToken": "Googlebot",
+      "userAgentPatterns": [ "Googlebot" ],
+      "purposeClass": "search-index",
+      "vendor": "Google",
+      "policyNotes": "Primary Google search crawler. Robots token 'Googlebot'; specialized variants (Googlebot-Image, Googlebot-News) share the token prefix. Blocking removes pages from Google Search."
+    },
+    {
+      "agentToken": "Bingbot",
+      "userAgentPatterns": [ "Bingbot", "msnbot" ],
+      "purposeClass": "search-index",
+      "vendor": "Microsoft",
+      "policyNotes": "Primary Bing search crawler; also feeds Copilot search grounding. Legacy 'msnbot' tokens retained for historical logs."
+    },
+    {
+      "agentToken": "OAI-SearchBot",
+      "userAgentPatterns": [ "OAI-SearchBot" ],
+      "purposeClass": "ai-rag-citation",
+      "vendor": "OpenAI",
+      "policyNotes": "Fetches pages for ChatGPT search answers with citation links. Distinct from GPTBot: allowing OAI-SearchBot permits citation visibility without granting training use."
+    },
+    {
+      "agentToken": "PerplexityBot",
+      "userAgentPatterns": [ "PerplexityBot" ],
+      "purposeClass": "ai-rag-citation",
+      "vendor": "Perplexity",
+      "policyNotes": "Fetches pages for Perplexity answer engine citations. Perplexity also operates Perplexity-User for user-triggered fetches; this profile covers the declared crawler."
+    },
+    {
+      "agentToken": "GPTBot",
+      "userAgentPatterns": [ "GPTBot" ],
+      "purposeClass": "llm-training",
+      "vendor": "OpenAI",
+      "policyNotes": "OpenAI model-training crawler. Disallowing GPTBot opts content out of OpenAI training while leaving ChatGPT search citation (OAI-SearchBot) independently controllable."
+    },
+    {
+      "agentToken": "ClaudeBot",
+      "userAgentPatterns": [ "ClaudeBot", "Claude-Web", "anthropic-ai" ],
+      "purposeClass": "llm-training",
+      "vendor": "Anthropic",
+      "policyNotes": "Anthropic training crawler. Legacy tokens 'Claude-Web' and 'anthropic-ai' retained for historical coverage."
+    },
+    {
+      "agentToken": "Google-Extended",
+      "userAgentPatterns": [ "Google-Extended" ],
+      "purposeClass": "llm-training",
+      "vendor": "Google",
+      "policyNotes": "Robots.txt-only token controlling Gemini training and grounding use; it never appears as a fetching User-Agent. Does not affect Google Search inclusion (Googlebot)."
+    },
+    {
+      "agentToken": "CCBot",
+      "userAgentPatterns": [ "CCBot" ],
+      "purposeClass": "llm-training",
+      "vendor": "Common Crawl",
+      "policyNotes": "Common Crawl corpus crawler; the corpus is widely used for LLM training. Blocking CCBot excludes content from future Common Crawl snapshots."
+    },
+    {
+      "agentToken": "Applebot-Extended",
+      "userAgentPatterns": [ "Applebot-Extended" ],
+      "purposeClass": "llm-training",
+      "vendor": "Apple",
+      "policyNotes": "Apple AI training token, distinct from Applebot (Siri/search). Controls whether content may be used for Apple foundation model training."
+    },
+    {
+      "agentToken": "Amazonbot",
+      "userAgentPatterns": [ "Amazonbot" ],
+      "purposeClass": "llm-training",
+      "vendor": "Amazon",
+      "policyNotes": "Amazon crawler for Alexa/AI services; documented as improving Amazon AI models. Robots token 'Amazonbot'."
+    },
+    {
+      "agentToken": "Bytespider",
+      "userAgentPatterns": [ "Bytespider" ],
+      "purposeClass": "llm-training",
+      "vendor": "ByteDance",
+      "policyNotes": "ByteDance crawler feeding Doubao and related model training. Frequently observed at high request rates."
+    },
+    {
+      "agentToken": "cohere-ai",
+      "userAgentPatterns": [ "cohere-ai" ],
+      "purposeClass": "llm-training",
+      "vendor": "Cohere",
+      "policyNotes": "Cohere training crawler; documented robots token 'cohere-ai'."
+    },
+    {
+      "agentToken": "DuckAssistBot",
+      "userAgentPatterns": [ "DuckAssistBot" ],
+      "purposeClass": "ai-rag-citation",
+      "vendor": "DuckDuckGo",
+      "policyNotes": "Fetches pages for DuckAssist AI answers (Wikipedia-sourced summaries with citations). Distinct from DuckDuckBot search indexing."
+    },
+    {
+      "agentToken": "YouBot",
+      "userAgentPatterns": [ "YouBot" ],
+      "purposeClass": "ai-rag-citation",
+      "vendor": "You.com",
+      "policyNotes": "You.com answer-engine crawler with source citations."
+    }
+  ]
+}

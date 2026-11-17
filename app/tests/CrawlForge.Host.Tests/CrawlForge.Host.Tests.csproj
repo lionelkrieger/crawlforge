@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.Host.Tests - scaffold verification (WP-00-01).
+    Tests whose fully-qualified names contain "Scaffold" prove acceptance criteria #1
+    (offline first launch + main hub route) and #19 (active GC profile diagnostics).
+  -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Host\CrawlForge.Host.csproj" />
+  </ItemGroup>
+</Project>

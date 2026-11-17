@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.Scale.Benchmarks (WP-07-03): 500k-row scale + 60 FPS verification.
+    Verification-only workpiece: references the real product composition root so
+    every benchmark runs against the actual persistence/execution/diagnostics
+    stack. Suites carry [Trait("Category","Scale")]; the dataset seed additionally
+    carries Category=ScaleSeed so the browser benchmark can prepare data alone.
+    Package versions come from Directory.Packages.props.
+  -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Host\CrawlForge.Host.csproj" />
+  </ItemGroup>
+</Project>

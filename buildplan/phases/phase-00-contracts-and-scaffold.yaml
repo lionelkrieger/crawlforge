@@ -1,0 +1,193 @@
+# CrawlForge Build Plan — Phase 00: Contracts & Scaffold (Synchronization Foundation)
+# Locks the solution skeleton and ALL shared contracts. Every later phase codes against these stubs.
+phase_id: "phase-00"
+name: "Contracts and Scaffold"
+status: "completed"
+depends_on_phases: []
+max_parallel_agents: 3
+parallel_waves:
+  - wave_id: "wave-0A"
+    workpiece_ids: ["WP-00-01"]
+  - wave_id: "wave-0B"
+    workpiece_ids: ["WP-00-02", "WP-00-03", "WP-00-05"]
+  - wave_id: "wave-0C"
+    workpiece_ids: ["WP-00-04"]
+gated_acceptance_criteria: [1, 2, 5, 17, 19, 21]
+
+# v1.1 orchestrator wave gates (AGENT-INSTRUCTIONS.md §5.5), canonical surface (CF_AGENT_ID unset).
+# The governance analyzer and frontend workspace only exist from wave-0B onward, so they are keyed per wave.
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+  after_waves:
+    wave-0B:
+      - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+      - "npm run typecheck --workspace src/frontend"
+    wave-0C:
+      - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+
+workpieces:
+  - workpiece_id: "WP-00-01"
+    title: "Monorepo Scaffold, Server GC Runtime Profile & Offline Packaging Skeleton"
+    phase_id: "phase-00"
+    status: "completed"
+    assigned_agent: "cf-wp-00-01"
+    started_at: "2026-11-14T06:06:10Z"
+    completed_at: "2026-11-14T06:28:43Z"
+    parallel_group: "wave-0A"
+    depends_on_workpieces: []
+    context_files:
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\02-process-model-and-lifecycle.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\02-open-scope-decisions.md"
+    owned_paths:
+      # v1.1a plan correction: skeleton scope = whole-topology stubs (wave-0A runs alone);
+      # later workpieces own their subtrees. No implementation outside CrawlForge.Host.
+      - "E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "E:\\Crawlforge\\app\\Directory.Build.props"
+      - "E:\\Crawlforge\\app\\Directory.Packages.props"
+      - "E:\\Crawlforge\\app\\package.json"
+      - "E:\\Crawlforge\\app\\package-lock.json"
+      - "E:\\Crawlforge\\app\\NuGet.Config"
+      - "E:\\Crawlforge\\app\\tsconfig.base.json"
+      - "E:\\Crawlforge\\app\\.gitignore"
+      - "E:\\Crawlforge\\app\\src\\backend\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\"
+      - "E:\\Crawlforge\\app\\src\\electron\\"
+      - "E:\\Crawlforge\\app\\src\\mcp-stdio-adapter\\"
+      - "E:\\Crawlforge\\app\\tests\\"
+    deliverables:
+      - ".NET 10 solution (CrawlForge.sln) with empty project skeletons for every backend project in the workspace topology; Directory.Build.props sets net10.0, nullable, warnings-as-errors, and System.GC.Server=true / GCConcurrent=true runtime profile"
+      - "Agent-scoped MSBuild outputs in Directory.Build.props (v1.1): when CF_AGENT_ID is set, BaseIntermediateOutputPath=obj\\$(CF_AGENT_ID)\\ and BaseOutputPath=bin\\$(CF_AGENT_ID)\\ (relative paths resolve per project); unset = canonical obj/bin. Enables collision-free concurrent builds/tests (AGENT-INSTRUCTIONS.md §10.2)"
+      - ".gitignore covering bin/, obj/, TestResults/, node_modules/ so agent-scoped build artifacts are never committed"
+      - "Skeleton-only scope (v1.1a): empty .csproj stubs for every backend project and test project in the workspace topology, all wired into CrawlForge.sln; no implementation code in subtrees owned by later workpieces (contracts, analysers, UI surfaces). Test stubs reference xunit + Microsoft.NET.Test.Sdk so dotnet test runs green with zero tests"
+      - "Directory.Packages.props central package management pinning shared package versions; later workpieces add versionless PackageReference entries to their own .csproj only"
+      - "npm workspaces root package.json wiring src/frontend (React + Vite), src/electron, src/mcp-stdio-adapter; tsconfig.base.json with strict mode; workspace stubs define the typecheck (tsc --noEmit, non-emitting) and test (vitest run) scripts that later verification_commands invoke"
+      - "CrawlForge.Host composition root: loopback-only Kestrel binding, dynamic free-port selection, module discovery hook (IHostModule) so later phases register controllers/hub/metrics without editing shared files"
+      - "Startup/shutdown lifecycle skeleton per process-model spec: graceful drain, background-service host, feature-availability defaults (all features locally enabled)"
+      - "First-launch initialization path that completes with no network and opens the main hub route (criterion #1 smoke test)"
+      - "Version/diagnostics surface stub exposing the active GC profile (criterion #19 verification hook)"
+    interfaces_implemented:
+      - "IHostModule"
+      - "IBackendLifecycle"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Host.Tests --filter FullyQualifiedName~Scaffold"
+      - "npm install --workspaces --ignore-scripts"
+    acceptance_criteria_refs: [1, 19]
+
+  - workpiece_id: "WP-00-02"
+    title: "CrawlForge.Contracts — Shared C# Interfaces, Enums & DTOs (Contract Lock)"
+    phase_id: "phase-00"
+    status: "completed"
+    assigned_agent: "cf-wp-00-02"
+    started_at: "2026-11-14T06:28:43Z"
+    completed_at: "2026-11-14T06:58:26Z"
+    parallel_group: "wave-0B"
+    depends_on_workpieces: ["WP-00-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\01-clean-room-and-exclusions.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\01-rest-api-contract.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Contracts\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Contracts.Tests\\"
+    deliverables:
+      - "All shared C# contracts derived from the schema catalog and REST contract: entity DTOs for the 25 baseline tables + 15 additive objects, enums (status class, severity, category incl. Log Intelligence / AI Search (GEO) / Analytics & Tagging, discovery source incl. list, dom_zone six-zone, WAF provider/challenge class)"
+      - "Crawl-engine interfaces: ILimitsResolver, IRobotsTxtParser, IAimdPolitenessController, IUrlCanonicalizer, IUrlRewriteEngine, IPriorityFrontier, ICrawlCheckpointService, IHttpFetcher, IRedirectChainRecorder, ISignedRequestHandler, IPreCrawlValidator, IWafChallengeEvaluator, IWafSignatureCatalogue, IListModeIngestor, IRedirectMatrixValidator, IRenderingPool, ILoopbackInterceptingProxy, IScheduledAuditService"
+      - "Audit interfaces: IAuditPipeline, ITolerantDomParser, IElementInventoryExtractor, IContentScopeResolver, ISinglePageAnalyzer, IAuditRuleAnalyzer (generic rule host), IIndexabilityAnalyzer, IHeaderHtmlEquivalencyAnalyzer, IResponseRenderedComparer, ISoft404Detector, IContentQualityAnalyzer, ISpellingChecker, IReadabilityCalculator, IShingleNearDuplicateDetector, ISerpPixelMeasurer, ILinkZoneClassifier, IWeightedLinkEquityCalculator, IStructuredDataValidator, II18nAnalyzer, IMobileFriendlinessAnalyzer, ITechnologyDetector, IAccessibilityAnalyzer, ICoreWebVitalsAnalyzer, IPerformanceBudgetEvaluator, ICodeCoverageAnalyzer, ICustomContentExtractor, ICustomContentSearch, IJsSnippetRunner, IAuditScoringService, IFindingSuppressionService"
+      - "Intelligence interfaces: INgramAnalyzer, IStopWordFilter, ILocalEmbeddingProvider, ISemanticLinkAnalyzer, IGeoReadinessAnalyzer, IAiBotGovernanceMatrix, ILlmsTxtGenerator, IMarTechAuditor, IDataLayerInspector, IConsentModeAnalyzer, ILogFileParser, IBotVerifier, ILogCorrelationEngine"
+      - "Persistence/security/API interfaces: IDbProvider, ISchemaMigrator, IReadRepository, IWriteRepository, IContentStore, IRetentionPruner, IProjectArchiveService, ISecretProtector, ILoopbackPortHandshake, ICrashDumpHandler, IRealtimeHub, IMetricsExposition, IExportEngine, IExportDestinationDelivery, IMcpToolSurface, IMcpResourceSurface, IMcpPromptSurface, IAutomationActionLog"
+      - "Uniform REST envelope, pagination, and error DTOs; zero license/account/entitlement/identity members anywhere (criterion #5); contract shape tests asserting additive-only field policy"
+    interfaces_implemented:
+      - "(defines all shared contracts — this workpiece is the contract authority)"
+    verification_commands:
+      - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Contracts"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Contracts.Tests"
+    acceptance_criteria_refs: [5]
+
+  - workpiece_id: "WP-00-03"
+    title: "TypeScript API/Hub Contracts & Frontend Workspace Types (Contract Lock)"
+    phase_id: "phase-00"
+    status: "completed"
+    assigned_agent: "cf-wp-00-03"
+    started_at: "2026-11-14T06:28:43Z"
+    completed_at: "2026-11-14T07:05:27Z"
+    parallel_group: "wave-0B"
+    depends_on_workpieces: ["WP-00-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\01-rest-api-contract.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\01-electron-shell-and-ui-stack.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\contracts\\"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\contracts\\"
+    deliverables:
+      - "TypeScript DTO types mirroring every REST route request/response (88 routes: 51 baseline + 37 additive) with the uniform envelope and pagination types"
+      - "Discriminated-union types for all 19 hub events (11 baseline incl. subscribe/unsubscribe channel + 8 additive: waf-blocks, host-throttle, system-health, matrix-row-validated, log-import-progress, log-import-completed, embedding-progress, embedding-completed) with additive payload fields"
+      - "Zustand normalized store shape contract (entity tables, selectors) and plugin lifecycle hook bus types (onLoad / onTabActivate / onDataUpdate / onCrawlComplete) per the state-store contract"
+      - "Typed loopback API client surface (fetch wrapper + SignalR client contract) consumed by all frontend workpieces; no runtime code beyond type guards"
+    interfaces_implemented:
+      - "ApiContracts (TS)"
+      - "HubEventContracts (TS)"
+      - "StoreContracts (TS)"
+    verification_commands:
+      - "npm run typecheck --workspace src/frontend"
+      - "npm run test --workspace src/frontend -- contracts"
+    acceptance_criteria_refs: []
+
+  - workpiece_id: "WP-00-04"
+    title: "Security Runtime — App-Entropy Secret Protection, Loopback Handshake & Minidump Crash Handler"
+    phase_id: "phase-00"
+    status: "completed"
+    assigned_agent: "cf-wp-00-04"
+    started_at: "2026-11-14T06:58:26Z"
+    completed_at: "2026-11-14T07:27:16Z"
+    parallel_group: "wave-0C"
+    depends_on_workpieces: ["WP-00-01", "WP-00-02"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\02-process-model-and-lifecycle.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\04-metrics-and-diagnostics.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Security\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Security.Tests\\"
+    deliverables:
+      - "ISecretProtector implementation: app-generated local random-entropy key (never hardware/OS-derived), authenticated encryption at rest for site, destination, proxy, external-database, and automation-token credentials (criterion #17)"
+      - "ILoopbackPortHandshake implementation: backend writes the selected loopback port + readiness token to the local handshake file; Electron supervisor discovery contract; loopback-only enforcement"
+      - "ICrashDumpHandler implementation: native minidump on abnormal backend termination, local-only storage, user-viewable/purgeable artifact registry, zero automatic transmission (criterion #21)"
+      - "Local structured logging sink with no identity dimensions; diagnostics artifact purge API consumed later by the settings surface"
+    interfaces_implemented:
+      - "ISecretProtector"
+      - "ILoopbackPortHandshake"
+      - "ICrashDumpHandler"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Security.Tests"
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+    acceptance_criteria_refs: [17, 21]
+
+  - workpiece_id: "WP-00-05"
+    title: "Governance Static Analyzer — Negative-Requirement Verifier & Clean-Room CI Gate"
+    phase_id: "phase-00"
+    status: "completed"
+    assigned_agent: "cf-wp-00-05"
+    started_at: "2026-11-14T06:28:43Z"
+    completed_at: "2026-11-14T07:27:16Z"
+    parallel_group: "wave-0B"
+    depends_on_workpieces: ["WP-00-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\01-clean-room-and-exclusions.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tools\\governance-analyzer\\"
+      - "E:\\Crawlforge\\app\\tests\\governance\\"
+    deliverables:
+      - "Static source analyzer enforcing all 17 negative requirements (FS-001 §3 rows 1–8 + FS-002 §1.6 E1–E9): banned-API rules for registry/WMI/machine-ID reads, license/account/entitlement identifiers, remote flag/telemetry endpoints, non-loopback listeners, remote catalogue fetches, cloud embedding/LLM endpoints"
+      - "Network-boundary lint: every outbound call site must route through the approved target classes (crawl target/proxy, user destination, user external DB, consented DNS)"
+      - "Identity-dimension lint for events/metrics/logs/plugin surfaces (privacy invariant, precedence rule 8)"
+      - "CLI entry point + machine-readable report; wired as a verification gate usable by every later workpiece; fixture suite proving each rule fires on a planted violation and passes clean code (criterion #2 static evidence)"
+    interfaces_implemented:
+      - "IGovernanceAnalyzer (local tool contract)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\governance"
+      - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+    acceptance_criteria_refs: [2]

@@ -1,0 +1,23 @@
+﻿  Determining projects to restore...
+  Restored E:\Crawlforge\app\tests\CrawlForge.E2E.Tests\CrawlForge.E2E.Tests.csproj (in 1.4 sec).
+  14 of 15 projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.3.26522.148\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [E:\Crawlforge\app\tests\CrawlForge.E2E.Tests\CrawlForge.E2E.Tests.csproj]
+C:\Program Files\dotnet\sdk\11.0.100-rc.3.26522.148\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [E:\Crawlforge\app\src\backend\CrawlForge.Data.ContentStore\CrawlForge.Data.ContentStore.csproj]
+C:\Program Files\dotnet\sdk\11.0.100-rc.3.26522.148\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [E:\Crawlforge\app\src\backend\CrawlForge.Host\CrawlForge.Host.csproj]
+C:\Program Files\dotnet\sdk\11.0.100-rc.3.26522.148\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [E:\Crawlforge\app\src\backend\CrawlForge.Audit\CrawlForge.Audit.csproj]
+C:\Program Files\dotnet\sdk\11.0.100-rc.3.26522.148\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [E:\Crawlforge\app\src\backend\CrawlForge.Contracts\CrawlForge.Contracts.csproj]
+C:\Program Files\dotnet\sdk\11.0.100-rc.3.26522.148\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [E:\Crawlforge\app\src\backend\CrawlForge.Api\CrawlForge.Api.csproj]
+  CrawlForge.Contracts -> E:\Crawlforge\app\src\backend\CrawlForge.Contracts\bin\Debug\net10.0\CrawlForge.Contracts.dll
+  CrawlForge.Data.Migrations -> E:\Crawlforge\app\src\backend\CrawlForge.Data.Migrations\bin\Debug\net10.0\CrawlForge.Data.Migrations.dll
+  CrawlForge.Data.Repositories -> E:\Crawlforge\app\src\backend\CrawlForge.Data.Repositories\bin\Debug\net10.0\CrawlForge.Data.Repositories.dll
+  CrawlForge.Data.Sqlite -> E:\Crawlforge\app\src\backend\CrawlForge.Data.Sqlite\bin\Debug\net10.0\CrawlForge.Data.Sqlite.dll
+  CrawlForge.Intelligence -> E:\Crawlforge\app\src\backend\CrawlForge.Intelligence\bin\Debug\net10.0\CrawlForge.Intelligence.dll
+  CrawlForge.Data.ContentStore -> E:\Crawlforge\app\src\backend\CrawlForge.Data.ContentStore\bin\Debug\net10.0\CrawlForge.Data.ContentStore.dll
+  CrawlForge.Security -> E:\Crawlforge\app\src\backend\CrawlForge.Security\bin\Debug\net10.0\CrawlForge.Security.dll
+  CrawlForge.Crawler -> E:\Crawlforge\app\src\backend\CrawlForge.Crawler\bin\Debug\net10.0\CrawlForge.Crawler.dll
+  CrawlForge.Audit -> E:\Crawlforge\app\src\backend\CrawlForge.Audit\bin\Debug\net10.0\CrawlForge.Audit.dll
+  CrawlForge.Data.MySql -> E:\Crawlforge\app\src\backend\CrawlForge.Data.MySql\bin\Debug\net10.0\CrawlForge.Data.MySql.dll
+  CrawlForge.Export -> E:\Crawlforge\app\src\backend\CrawlForge.Export\bin\Debug\net10.0\CrawlForge.Export.dll
+  CrawlForge.Mcp -> E:\Crawlforge\app\src\backend\CrawlForge.Mcp\bin\Debug\net10.0\CrawlForge.Mcp.dll
+  CrawlForge.Api -> E:\Crawlforge\app\src\backend\CrawlForge.Api\bin\Debug\net10.0\CrawlForge.Api.dll
+C:\Program Files\dotnet\sdk\11.0.100-rc.3.26522.148\Sdks\Microsoft.NET.Sdk.StaticWebAssets\targets\Microsoft.NET.Sdk.StaticWebAssets.JSModules.targets(233,3): error : The following scoped css bundles do not have matching endpoints: _framework/Microsoft.NET.Sdk.BlazorWeb.DotNetWatch#[.{fingerprint}]!.lib.module.js [E:\Crawlforge\app\src\backend\CrawlForge.Host\CrawlForge.Host.csproj]

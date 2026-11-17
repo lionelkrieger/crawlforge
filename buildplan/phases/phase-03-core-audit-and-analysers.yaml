@@ -1,0 +1,263 @@
+# CrawlForge Build Plan — Phase 03: Core Audit & Analysers (Parallel Wave)
+# Wave 3A: six agents on disjoint analyser folders. Wave 3B: custom extraction/search/JS + scoring integrate against the pipeline contract.
+phase_id: "phase-03"
+name: "Core Audit and Analysers"
+status: "completed"
+depends_on_phases: ["phase-00", "phase-01", "phase-02"]
+max_parallel_agents: 6
+parallel_waves:
+  - wave_id: "wave-3A"
+    workpiece_ids: ["WP-03-01", "WP-03-02", "WP-03-03", "WP-03-04", "WP-03-05", "WP-03-06"]
+  - wave_id: "wave-3B"
+    workpiece_ids: ["WP-03-07", "WP-03-08"]
+gated_acceptance_criteria: [10, 13, 24, 25, 26, 27, 28, 29, 30, 31, 32, 37, 48]
+
+# v1.1 orchestrator wave gates: run after EVERY wave completes, canonical build surface
+# (CF_AGENT_ID unset). A failed gate blocks the next wave (AGENT-INSTRUCTIONS.md §5.5).
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+
+workpieces:
+  - workpiece_id: "WP-03-01"
+    title: "8-Step Audit Pipeline, Tolerant DOM Parser, Element Inventory & Content Area Scoping"
+    phase_id: "phase-03"
+    status: "completed"
+    assigned_agent: "cf-wp-00-02"
+    started_at: "2026-11-14T11:30:23Z"
+    completed_at: "2026-11-14T12:15:23Z"
+    parallel_group: "wave-3A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Pipeline\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Scoping\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Pipeline\\"
+    deliverables:
+      - "8-step Audit Pipeline orchestrator (§7.2) consuming stored artifacts only — never re-fetching for re-audit; rule host invoking IAuditRuleAnalyzer implementations with per-rule failure isolation"
+      - "Tolerant DOM parser and Element Extraction Inventory (§7.3): url_elements groups incl. additive content_scope, llms_structure, consent_state, datalayer_snapshot, serp_metrics, header_directives"
+      - "Rule taxonomy + finding model (§7.4–§7.5): rule keys, categories, severities, evidence JSON, recommendation keys; suppression-aware emission contract"
+      - "Content Area Scoping: Scoped Visible Text Tree from Include/Exclude CSS+XPath selectors, content_scope_profiles persistence, invalid selectors rejected at configuration, scope-preview tool contract; unconfigured project reproduces baseline exactly (criterion #37)"
+      - "Single-page analysis (§7.7) returning findings without creating a crawl project (criterion #10); scoped-text propagation contract so all content metrics operate on scoped text while head facts and link discovery stay unchanged"
+    interfaces_implemented:
+      - "IAuditPipeline"
+      - "ITolerantDomParser"
+      - "IElementInventoryExtractor"
+      - "IContentScopeResolver"
+      - "ISinglePageAnalyzer"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Pipeline"
+    acceptance_criteria_refs: [10, 37]
+
+  - workpiece_id: "WP-03-02"
+    title: "Indexability, Status & Soft-404, Header-vs-HTML Equivalency, Response-vs-Rendered"
+    phase_id: "phase-03"
+    status: "completed"
+    assigned_agent: "cf-wp-00-04"
+    started_at: "2026-11-14T11:30:23Z"
+    completed_at: "2026-11-14T12:06:54Z"
+    parallel_group: "wave-3A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Indexability\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Indexability\\"
+    deliverables:
+      - "Indexability and status-class rules: robots state, meta robots, canonical chain validation, status classification per the rule taxonomy"
+      - "Soft-404 detection (§7.12): success-status pages with error-like content flagged distinctly from hard errors (criterion #28)"
+      - "HTTP header vs HTML directive equivalency (§15.4): X-Robots-Tag and Link header canonical/hreflang compared against HTML; conflicts emit indexability.header-html-conflict, canonical.header-html-conflict, hreflang.header-html-conflict as Error findings with dual evidence (criterion #48 header-equivalency facet)"
+      - "Response-vs-rendered comparison (§7.18): status, directives, content and link deltas between raw response and rendered DOM"
+      - "header_directives element group population; all rules re-run offline from stored artifacts on re-audit"
+    interfaces_implemented:
+      - "IIndexabilityAnalyzer"
+      - "ISoft404Detector"
+      - "IHeaderHtmlEquivalencyAnalyzer"
+      - "IResponseRenderedComparer"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Indexability"
+    acceptance_criteria_refs: [28]
+
+  - workpiece_id: "WP-03-03"
+    title: "Content Quality — Shingles, Flesch, Hunspell Spelling & Pixel-Width SERP/Social Measurement"
+    phase_id: "phase-03"
+    status: "completed"
+    assigned_agent: "cf-wp-01-02"
+    started_at: "2026-11-14T11:30:23Z"
+    completed_at: "2026-11-14T12:08:58Z"
+    parallel_group: "wave-3A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\ContentQuality\\"
+      - "E:\\Crawlforge\\app\\assets\\dictionaries\\"
+      - "E:\\Crawlforge\\app\\assets\\font-metrics\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\ContentQuality\\"
+    deliverables:
+      - "Shingle-based near-duplicate content detection operating on scoped visible text"
+      - "Flesch readability, reading-time, and text-to-HTML metrics from visible text (criterion #28 readability facet)"
+      - "Hunspell spelling checks with bundled dictionaries: token-level evidence, page-language honoring, user_dictionary suppression (criterion #13); no remote dictionary fetch"
+      - "Pixel-width SERP & Social Card measurement (§15.3) with bundled font-metric tables: title/description pixel budgets, title-pixel-truncation and description-pixel-truncation findings, serp_metrics element group (criterion #48 pixel facet)"
+      - "All content metrics consume the Scoped Visible Text Tree when scoping is configured; baseline-identical when unconfigured"
+    interfaces_implemented:
+      - "IContentQualityAnalyzer"
+      - "IShingleNearDuplicateDetector"
+      - "IReadabilityCalculator"
+      - "ISpellingChecker"
+      - "ISerpPixelMeasurer"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~ContentQuality"
+    acceptance_criteria_refs: [13]
+
+  - workpiece_id: "WP-03-04"
+    title: "DOM-Zone Link Classification & Weighted PageRank / Link Equity"
+    phase_id: "phase-03"
+    status: "completed"
+    assigned_agent: "cf-wp-00-01"
+    started_at: "2026-11-14T11:30:23Z"
+    completed_at: "2026-11-14T12:08:13Z"
+    parallel_group: "wave-3A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\LinkGraph\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\LinkGraph\\"
+    deliverables:
+      - "DOM-zone link classification (§15.1): every link_edge carries dom_zone ∈ {in-content, nav, header, footer, sidebar, breadcrumb} with zone evidence"
+      - "Weighted PageRank / link equity calculator (§15.2): configured zone weights with in-content highest; weighted equity differs from unweighted per configuration; link-equity-weighted metric key"
+      - "Orphan detection and graph aggregates over link_edges at 500k+ URL scale with bounded memory (streaming iteration)"
+      - "Graph read-model contract consumed by the Sigma.js/Graphology network surfaces in Phase 06"
+      - "Criterion #48 ownership: coordinates zone-weighting verification with the pixel (WP-03-03) and header-equivalency (WP-03-02) facets; full criterion re-verified in Phase 07"
+    interfaces_implemented:
+      - "ILinkZoneClassifier"
+      - "IWeightedLinkEquityCalculator"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~LinkGraph"
+    acceptance_criteria_refs: [48]
+
+  - workpiece_id: "WP-03-05"
+    title: "Structured Data & Rich Results, Internationalization, Mobile-Friendliness & Technology Detection"
+    phase_id: "phase-03"
+    status: "completed"
+    assigned_agent: "cf-wp-01-03"
+    started_at: "2026-11-14T11:30:23Z"
+    completed_at: "2026-11-14T12:05:44Z"
+    parallel_group: "wave-3A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\StructuredData\\"
+      - "E:\\Crawlforge\\app\\assets\\tech-fingerprints\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\StructuredData\\"
+    deliverables:
+      - "Structured data validator (§7.13): JSON-LD and Microdata parsing, required-property validation, rich-result eligibility reporting with a structured error taxonomy (criterion #27)"
+      - "Internationalization rules: hreflang set validation, reciprocity, self-reference, language/region code checks across HTML and Link headers"
+      - "Mobile-friendliness (§7.14, optional category): viewport, tap-target, font-size and responsive signals; rendering-dependent checks flagged when rendering is off"
+      - "Technology detection (§7.15): matches only the bundled fingerprint catalogue asset, per-URL detections with confidence into technology_detections, zero remote catalogue fetch (criterion #29)"
+      - "All rules emit through the shared finding model and re-run offline from stored bodies/DOM on re-audit"
+    interfaces_implemented:
+      - "IStructuredDataValidator"
+      - "II18nAnalyzer"
+      - "IMobileFriendlinessAnalyzer"
+      - "ITechnologyDetector"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~StructuredData"
+    acceptance_criteria_refs: [27, 29]
+
+  - workpiece_id: "WP-03-06"
+    title: "Automated Accessibility Engine & Rendered Core Web Vitals / Budgets / Code Coverage"
+    phase_id: "phase-03"
+    status: "completed"
+    assigned_agent: "cf-wp-00-03"
+    started_at: "2026-11-14T11:30:23Z"
+    completed_at: "2026-11-14T12:17:57Z"
+    parallel_group: "wave-3A"
+    depends_on_workpieces: ["WP-00-02", "WP-02-06"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\03-accessibility-and-cwv-performance.md"
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Accessibility\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Performance\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Accessibility\\"
+    deliverables:
+      - "Accessibility rule families (§7.10): violations with element locators and remediation, aggregation into the accessibility surface, contribution to scoring; render-dependent checks flagged when rendering is off (criterion #25)"
+      - "Rendered Core Web Vitals (§7.11): lab LCP/CLS/INP-proxy metrics per page captured through the rendering pool, offline against the crawl target only (criterion #26)"
+      - "User-defined performance budgets emitting exceedance findings; code-coverage (unused CSS/JS) and page-composition metrics from proxy capture"
+      - "Performance metric keys into metric_summaries for dashboards; per-page evidence persisted for offline re-reporting"
+      - "Optional-category gating: both categories respect local toggles with no remote resolution"
+    interfaces_implemented:
+      - "IAccessibilityAnalyzer"
+      - "ICoreWebVitalsAnalyzer"
+      - "IPerformanceBudgetEvaluator"
+      - "ICodeCoverageAnalyzer"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Accessibility"
+    acceptance_criteria_refs: [25, 26]
+
+  - workpiece_id: "WP-03-07"
+    title: "Custom Content Extraction, Custom Content Search & Custom JS Snippets"
+    phase_id: "phase-03"
+    status: "completed"
+    assigned_agent: "cf-wp-00-04"
+    started_at: "2026-11-14T12:15:23Z"
+    completed_at: "2026-11-14T12:34:19Z"
+    parallel_group: "wave-3B"
+    depends_on_workpieces: ["WP-00-02", "WP-03-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\04-custom-extraction-search-js.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Custom\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Custom\\"
+    deliverables:
+      - "Custom Content Extraction (§7.9): CSS/XPath/Regex rules producing typed values with path scoping, per-page value caps and length caps, invalid/truncated flags into extracted_content; dynamic per-rule columns for explorer/exports; extraction failures never fail the audit (criterion #24)"
+      - "Custom Content Search (§7.16): positive/negative terms with path scoping, per-URL match counts and snippets into content_search_results (criterion #30)"
+      - "Custom JavaScript Snippets (§7.17): isolated wrapper with per-snippet timeout, typed results as dynamic columns into snippet_results; a snippet failure on one page never fails the audit or other pages (criterion #31)"
+      - "Re-audit with changed rules re-extracts/re-runs from stored bodies without network access; scoped-text interaction per the scoping contract"
+      - "Dynamic-column schema contract consumed by the query builder and export engine"
+    interfaces_implemented:
+      - "ICustomContentExtractor"
+      - "ICustomContentSearch"
+      - "IJsSnippetRunner"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Custom"
+    acceptance_criteria_refs: [24, 30, 31]
+
+  - workpiece_id: "WP-03-08"
+    title: "Audit Scoring, Finding Suppression & Cross-Audit Comparability"
+    phase_id: "phase-03"
+    status: "completed"
+    assigned_agent: "cf-wp-01-03"
+    started_at: "2026-11-14T12:15:23Z"
+    completed_at: "2026-11-14T12:34:52Z"
+    parallel_group: "wave-3B"
+    depends_on_workpieces: ["WP-00-02", "WP-03-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\01-database-providers-and-cqrs.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Scoring\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Scoring\\"
+    deliverables:
+      - "Audit scoring (§8.1): per-category and overall scores into audit_scores, comparable across audits, driving the score trend surface (criterion #32)"
+      - "Finding Suppression (§7.5): project-scoped finding_suppressions, reversible; suppressed findings/rules excluded from default counts and scores"
+      - "Suppression-aware aggregation pipeline so dashboards and exports read precomputed aggregates consistent with the active suppression set"
+      - "Cross-audit comparison read model (new/resolved findings, metric deltas) served fully offline from stored aggregates and the content store"
+      - "Score recomputation on re-audit and on suppression change without re-fetching any URL"
+    interfaces_implemented:
+      - "IAuditScoringService"
+      - "IFindingSuppressionService"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~Scoring"
+    acceptance_criteria_refs: [32]

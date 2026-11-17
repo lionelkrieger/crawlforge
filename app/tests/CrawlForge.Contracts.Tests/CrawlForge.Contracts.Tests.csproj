@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.Contracts.Tests (WP-00-02): contract shape tests asserting
+    criterion #5 (zero license/account/entitlement/identity members) and the
+    additive-only field policy. Package versions come from Directory.Packages.props.
+  -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+      Agent-scoped outputs (CF_AGENT_ID, AGENT-INSTRUCTIONS §10.2) move the SDK's
+      default obj/bin exclusions to obj\<agent>\ and bin\<agent>\. Explicitly
+      exclude the canonical obj/ and bin/ trees as well so generated files left
+      there by other builds are never compiled as source.
+    -->
+    <Compile Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Compile Remove="bin\**" />
+    <None Remove="bin\**" />
+  </ItemGroup>
+</Project>

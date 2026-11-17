@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crawlforge:plugin-manifest",
+  "title": "CrawlForge local plugin manifest (plugin.json)",
+  "description": "FS-CRAWL-002 §6.3 manifest contract. Local user-authored artifacts only: no remote registry, marketplace, or remote code channel (E1); no licensing or feature gating (E6). Validation is implemented by src/frontend/src/plugins/manifestValidator.ts against this bundled schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "version", "description", "engine", "entry"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique lowercase reverse-DNS-style identifier (at least two dot-separated segments).",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$"
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "version": {
+      "type": "string",
+      "description": "Semantic version.",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$"
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "author": {
+      "type": "string",
+      "description": "Free text; no identity verification of any kind."
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minAppVersion"],
+      "properties": {
+        "minAppVersion": {
+          "type": "string",
+          "description": "Minimum product version; incompatible plugins are disabled with a diagnostic.",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$"
+        }
+      }
+    },
+    "entry": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Relative path to the local JS module inside the plugin directory. Traversal, absolute paths, and remote URLs are rejected by the validator.",
+      "pattern": "^(?!.*\\.\\.)(?![/\\\\])(?![A-Za-z]:).+$"
+    },
+    "styles": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional relative path to local CSS.",
+      "pattern": "^(?!.*\\.\\.)(?![/\\\\])(?![A-Za-z]:).+$"
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode"],
+          "description": "Default mode is none. Every destination reference requires an explicit user grant; grants reach only user destination rules (§2.6 boundary preserved).",
+          "properties": {
+            "mode": { "type": "string", "enum": ["none", "destinations"] },
+            "destinationRefs": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true,
+              "default": []
+            }
+          }
+        }
+      }
+    },
+    "contributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tabs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "label": { "type": "string", "minLength": 1 },
+              "icon": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "columnFormatters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["target", "columnKey"],
+            "properties": {
+              "target": { "type": "string", "minLength": 1 },
+              "columnKey": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "filterPresets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "ruleTree"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "ruleTree": {}
+            }
+          }
+        }
+      }
+    },
+    "hooks": {
+      "type": "array",
+      "description": "Lifecycle hooks the plugin implements (subset of the four contract hooks).",
+      "items": {
+        "type": "string",
+        "enum": ["onLoad", "onTabActivate", "onDataUpdate", "onCrawlComplete"]
+      },
+      "uniqueItems": true
+    },
+    "labels": {
+      "type": "object",
+      "description": "Localized label maps: locale -> label key -> localized text.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    WP-07-04 final acceptance harness (verification-only). Maps all 48 master
+    acceptance criteria to automated evidence: wave-7A proof pointers verified
+    on disk, raw benchmark gate re-verification, targeted live checks for the
+    remainder areas, and offline packaging verification. No product code is
+    referenced for modification — the Host project reference is read-only
+    composition for the live checks.
+  -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Host\CrawlForge.Host.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,144 @@
+{
+  "version": "2026.1",
+  "revision": "r1",
+  "families": [
+    {
+      "key": "googlebot-smartphone",
+      "name": "Googlebot Smartphone",
+      "purpose": "search",
+      "matchOrder": 10,
+      "userAgentPatterns": [ "Googlebot.*Mobile|Mobile.*Googlebot" ],
+      "dnsSuffixes": [ ".googlebot.com", ".google.com" ],
+      "cidrs": [
+        "66.249.64.0/19",
+        "64.233.160.0/19",
+        "72.14.192.0/18",
+        "209.85.128.0/17",
+        "216.239.32.0/19",
+        "64.68.80.0/20",
+        "66.102.0.0/20",
+        "74.125.0.0/16",
+        "2001:4860:4801::/48"
+      ]
+    },
+    {
+      "key": "googlebot-desktop",
+      "name": "Googlebot Desktop",
+      "purpose": "search",
+      "matchOrder": 20,
+      "userAgentPatterns": [ "Googlebot" ],
+      "dnsSuffixes": [ ".googlebot.com", ".google.com" ],
+      "cidrs": [
+        "66.249.64.0/19",
+        "64.233.160.0/19",
+        "72.14.192.0/18",
+        "209.85.128.0/17",
+        "216.239.32.0/19",
+        "64.68.80.0/20",
+        "66.102.0.0/20",
+        "74.125.0.0/16",
+        "2001:4860:4801::/48"
+      ]
+    },
+    {
+      "key": "bingbot",
+      "name": "Bingbot",
+      "purpose": "search",
+      "matchOrder": 30,
+      "userAgentPatterns": [ "bingbot" ],
+      "dnsSuffixes": [ ".search.msn.com" ],
+      "cidrs": [
+        "157.55.39.0/24",
+        "207.46.13.0/24",
+        "40.77.167.0/24",
+        "13.66.139.0/24",
+        "13.66.144.0/24",
+        "52.167.144.0/24",
+        "199.30.24.0/23"
+      ]
+    },
+    {
+      "key": "applebot",
+      "name": "Applebot",
+      "purpose": "search",
+      "matchOrder": 40,
+      "userAgentPatterns": [ "Applebot" ],
+      "dnsSuffixes": [ ".applebot.apple.com" ],
+      "cidrs": [ "17.0.0.0/8" ]
+    },
+    {
+      "key": "oai-searchbot",
+      "name": "OAI-SearchBot",
+      "purpose": "ai-search",
+      "matchOrder": 50,
+      "userAgentPatterns": [ "OAI-SearchBot" ],
+      "dnsSuffixes": [ ".openai.com" ],
+      "cidrs": [ "20.15.240.0/20", "20.169.80.0/20" ]
+    },
+    {
+      "key": "perplexitybot",
+      "name": "PerplexityBot",
+      "purpose": "ai-search",
+      "matchOrder": 60,
+      "userAgentPatterns": [ "PerplexityBot" ],
+      "dnsSuffixes": [ ".perplexity.ai" ],
+      "cidrs": []
+    },
+    {
+      "key": "gptbot",
+      "name": "GPTBot",
+      "purpose": "ai-training",
+      "matchOrder": 70,
+      "userAgentPatterns": [ "GPTBot" ],
+      "dnsSuffixes": [ ".openai.com" ],
+      "cidrs": [ "20.15.240.0/20", "20.169.80.0/20" ]
+    },
+    {
+      "key": "claudebot",
+      "name": "ClaudeBot",
+      "purpose": "ai-training",
+      "matchOrder": 80,
+      "userAgentPatterns": [ "ClaudeBot" ],
+      "dnsSuffixes": [ ".anthropic.com" ],
+      "cidrs": [ "20.171.0.0/16" ]
+    },
+    {
+      "key": "other-bot",
+      "name": "Other Bot",
+      "purpose": "search",
+      "matchOrder": 900,
+      "userAgentPatterns": [
+        "\\bbot\\b",
+        "crawler",
+        "spider",
+        "slurp",
+        "curl/",
+        "wget/",
+        "python-requests",
+        "headlesschrome",
+        "facebookexternalhit",
+        "twitterbot",
+        "linkedinbot",
+        "telegrambot",
+        "whatsapp",
+        "discordbot",
+        "slackbot",
+        "semrushbot",
+        "ahrefsbot",
+        "mj12bot",
+        "dotbot",
+        "petalbot",
+        "bytespider",
+        "amazonbot",
+        "duckduckbot",
+        "baiduspider",
+        "yandexbot",
+        "sogou",
+        "ia_archiver",
+        "archive\\.org_bot"
+      ],
+      "dnsSuffixes": [],
+      "cidrs": []
+    }
+  ]
+}

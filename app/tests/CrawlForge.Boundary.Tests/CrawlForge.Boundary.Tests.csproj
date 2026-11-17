@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.Boundary.Tests - WP-07-02 air-gap / network-boundary verification.
+    Runtime proofs for acceptance criteria #1, #2, #3, #5, #14, #16, #17, #20, #21,
+    #22 (boundary aspects), #39 (plugin network), plus the bundled-asset manifest
+    check. Verification only: no product code is modified by this project.
+    Package versions come from Directory.Packages.props.
+  -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The composition root references every product assembly; module discovery
+         loads them all from the test output directory at backend start. -->
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Host\CrawlForge.Host.csproj" />
+    <!-- The governance analyzer engine is invoked in-process for the static
+         layer of the identity/boundary proofs (NR-01 full-tree evidence). -->
+    <ProjectReference Include="..\..\tools\governance-analyzer\GovernanceAnalyzer.csproj" />
+  </ItemGroup>
+</Project>

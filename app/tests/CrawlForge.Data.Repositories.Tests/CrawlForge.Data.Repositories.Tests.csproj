@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    WP-01-04 test suite: repositories, aggregation, content store, retention pruner,
+    and project archive. Uses a test-local IDbProvider double backed directly by
+    Microsoft.Data.Sqlite (no dependency on in-progress sibling provider projects).
+    CPM is overridden here so the test-only SQLite package can be pinned locally;
+    shared files stay frozen.
+  -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.15" />
+    <!-- DEFECT D12: live MySQL archive-revert proof against the user-configured
+         test server (CF_MYSQL_TEST_*); version mirrors CrawlForge.Data.MySql. -->
+    <PackageReference Include="MySqlConnector" Version="2.6.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Repositories\CrawlForge.Data.Repositories.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.ContentStore\CrawlForge.Data.ContentStore.csproj" />
+    <!-- WP-01-04 reopen: the harness DDL is the REAL migrated schema, never EntityMap-derived. -->
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Migrations\CrawlForge.Data.Migrations.csproj" />
+  </ItemGroup>
+</Project>

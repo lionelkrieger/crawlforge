@@ -1,0 +1,59 @@
+<Project>
+  <!--
+    Central package management (WP-00-01). Shared package versions are pinned here;
+    later workpieces add versionless <PackageReference> entries to their own .csproj only.
+    Mid-phase version additions go through the serialized dependency amendment protocol
+    (AGENT-INSTRUCTIONS.md §11).
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <!-- WP-02-D1 (serialized dependency amendment, orchestrator): headless Chromium driver
+         for WP-02-06. Browser binary resolved LOCALLY only (packaged assets / user-configured
+         path / local Edge-Chrome install); runtime browser download is prohibited. -->
+    <PackageVersion Include="PuppeteerSharp" Version="25.17.1" />
+    <!-- WP-03-D1 (serialized dependency amendment, orchestrator; requested cf-wp-00-02/WP-03-01):
+         tolerant HTML5 parser + native CSS selectors, XPath extension for mixed CSS+XPath
+         content scoping. Pure managed, offline, no native binaries.
+         Version correction: 1.3.0 carries advisory GHSA-pgww-w46g-26qg (NU1902); pinned to
+         latest stable 1.10.3 + aligned XPath 2.0.10. -->
+    <PackageVersion Include="AngleSharp" Version="1.10.3" />
+    <PackageVersion Include="AngleSharp.XPath" Version="2.0.10" />
+    <!-- WP-03-D2 (serialized dependency amendment, orchestrator; requested cf-wp-01-02/WP-03-03):
+         pure-managed Hunspell .dic/.aff reader for bundled-dictionary spelling checks
+         (criterion #13). No native deps, no remote dictionary fetch. -->
+    <PackageVersion Include="WeCantSpell.Hunspell" Version="7.0.1" />
+    <!-- WP-03-D4 (serialized dependency amendment, orchestrator; requested cf-wp-00-04/WP-03-07):
+         pure-managed sandboxed JS interpreter for §7.17 custom snippets — no CLR interop,
+         timeout/statement/memory constraints, offline, no native deps. -->
+    <PackageVersion Include="Jint" Version="4.18.0" />
+    <!-- WP-04-D1 (serialized dependency amendment, orchestrator; requested cf-wp-00-02/WP-04-02):
+         ONNX runtime for strictly LOCAL embedding inference — managed API + bundled native CPU
+         runtime; opens no network. -->
+    <PackageVersion Include="Microsoft.ML.OnnxRuntime" Version="1.20.1" />
+    <!-- WP-05-D1 (serialized dependency amendment, orchestrator; requested cf-wp-00-03/WP-05-02):
+         in-memory TestServer for hub/controller integration tests (shared by WP-05-01 + WP-05-02). -->
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.15" />
+    <!-- WP-05-D2 (serialized dependency amendment, orchestrator; requested cf-wp-01-02/WP-05-03):
+         export formats + user destination transports, all MIT. PdfSharp chosen over QuestPDF
+         (unconditional MIT vs revenue-conditioned Community license).
+         REFINEMENT (builder-requested): ClosedXML dropped — in-memory DOM cannot honor the
+         500k-row bounded-memory bound; DocumentFormat.OpenXml forward-only OpenXmlWriter instead. -->
+    <PackageVersion Include="DocumentFormat.OpenXml" Version="3.5.1" />
+    <!-- PdfSharp downgraded 6.5.0 → 6.2.4 (builder-observed): 6.5.0 introduced a vendor
+         license-key gate (PdfSharpLicenseException on new PdfDocument()) — conflicts with the
+         offline/no-vendor posture. 6.2.4 nuspec license expression = MIT, gate-free. -->
+    <PackageVersion Include="PdfSharp" Version="6.2.4" />
+    <PackageVersion Include="FluentFTP" Version="50.0.0" />
+    <!-- SSH.NET bumped 2025.0.0 → 2026.0.0: NU1903 GHSA-mggc-4xg6-vcxf + GHSA-q939-rpr3-3284
+         (ScpClient RCE / arbitrary file write), both first-patched exactly at 2026.0.0. -->
+    <PackageVersion Include="SSH.NET" Version="2026.0.0" />
+    <!-- Transitive pin: PdfSharp pulls System.Security.Cryptography.Pkcs 8.0.1 (NU1902/NU1903,
+         CVE-2026-70162 / CVE-2026-84008 DoS). Patched >= 10.0.13; pinned to latest 10.0.x for net10. -->
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.15" />
+  </ItemGroup>
+</Project>

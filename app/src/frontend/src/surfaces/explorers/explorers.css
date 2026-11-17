@@ -1,0 +1,283 @@
+/**
+ * Explorer surface styling — night surfaces, ember identity, signal
+ * telemetry accents; semantic badges and meters share the shell language.
+ *
+ * @module surfaces/explorers/explorers.css
+ */
+
+.cf-explorer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  position: relative;
+  animation: cf-explorer-enter 240ms ease;
+}
+@keyframes cf-explorer-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+.cf-explorer-header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.cf-explorer-glyph {
+  font-size: 22px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--mantine-color-night-6), var(--mantine-color-night-8));
+  border: 1px solid var(--mantine-color-night-4);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 color-mix(in srgb, var(--mantine-color-ember-5) 18%, transparent);
+}
+.cf-explorer-heading { min-width: 0; }
+.cf-explorer-title {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: 0.01em;
+  background: linear-gradient(90deg, var(--mantine-color-night-0), var(--mantine-color-ember-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cf-explorer-tagline { margin: 2px 0 0; font-size: 12px; color: var(--mantine-color-night-3); }
+
+.cf-explorer-views {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 4px;
+  background: var(--mantine-color-night-8);
+  border: 1px solid var(--mantine-color-night-5);
+  border-radius: 9px;
+  padding: 3px;
+}
+.cf-explorer-view {
+  border: none;
+  background: transparent;
+  color: var(--mantine-color-night-2);
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.cf-explorer-view:hover { color: var(--mantine-color-ember-3); }
+.cf-explorer-view-active {
+  background: linear-gradient(135deg, var(--mantine-color-ember-7), var(--mantine-color-ember-9));
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── States ─────────────────────────────────────────────────────────── */
+.cf-explorer-offline {
+  background: color-mix(in srgb, var(--cf-warning) 12%, var(--mantine-color-night-8));
+  border: 1px solid color-mix(in srgb, var(--cf-warning) 40%, transparent);
+  color: var(--mantine-color-yellow-3, #ffe066);
+  border-radius: 8px;
+  padding: 9px 13px;
+  font-size: 12.5px;
+}
+.cf-explorer-empty {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 320px;
+  color: var(--mantine-color-night-3);
+}
+.cf-explorer-empty-glyph { font-size: 40px; opacity: 0.7; }
+.cf-explorer-empty h3 { margin: 10px 0 4px; color: var(--mantine-color-night-1); }
+.cf-explorer-empty p { margin: 0; font-size: 13px; }
+.cf-explorer-hint { margin: 0; font-size: 12px; color: var(--mantine-color-night-4); font-style: italic; }
+
+/* ── Summary chips ───────────────────────────────────────────────────── */
+.cf-explorer-summary { display: flex; gap: 8px; flex-wrap: wrap; }
+.cf-summary-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  border-radius: 8px;
+  padding: 6px 11px;
+  font-size: 12px;
+  border: 1px solid var(--mantine-color-night-5);
+  background: linear-gradient(180deg, var(--mantine-color-night-7), var(--mantine-color-night-8));
+}
+.cf-summary-label { color: var(--mantine-color-night-3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.cf-summary-value { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--mantine-color-night-0); }
+.cf-summary-success { border-color: color-mix(in srgb, var(--cf-success) 45%, transparent); }
+.cf-summary-success .cf-summary-value { color: var(--cf-success); }
+.cf-summary-warning { border-color: color-mix(in srgb, var(--cf-warning) 45%, transparent); }
+.cf-summary-warning .cf-summary-value { color: var(--cf-warning); }
+.cf-summary-danger { border-color: color-mix(in srgb, var(--cf-danger) 45%, transparent); }
+.cf-summary-danger .cf-summary-value { color: var(--cf-danger); }
+.cf-summary-info { border-color: color-mix(in srgb, var(--cf-info) 45%, transparent); }
+.cf-summary-info .cf-summary-value { color: var(--cf-info); }
+
+/* ── Badges ──────────────────────────────────────────────────────────── */
+.cf-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 5px;
+  padding: 2px 7px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.cf-badge-neutral { background: var(--mantine-color-night-6); color: var(--mantine-color-night-1); border-color: var(--mantine-color-night-4); }
+.cf-badge-success { background: color-mix(in srgb, var(--cf-success) 16%, transparent); color: var(--cf-success); border-color: color-mix(in srgb, var(--cf-success) 40%, transparent); }
+.cf-badge-warning { background: color-mix(in srgb, var(--cf-warning) 16%, transparent); color: var(--cf-warning); border-color: color-mix(in srgb, var(--cf-warning) 40%, transparent); }
+.cf-badge-danger { background: color-mix(in srgb, var(--cf-danger) 16%, transparent); color: var(--cf-danger); border-color: color-mix(in srgb, var(--cf-danger) 40%, transparent); }
+.cf-badge-info { background: color-mix(in srgb, var(--cf-info) 16%, transparent); color: var(--cf-info); border-color: color-mix(in srgb, var(--cf-info) 40%, transparent); }
+.cf-badge-ember { background: color-mix(in srgb, var(--mantine-color-ember-6) 20%, transparent); color: var(--mantine-color-ember-3); border-color: color-mix(in srgb, var(--mantine-color-ember-6) 45%, transparent); }
+
+/* ── Cells ───────────────────────────────────────────────────────────── */
+.cf-cell-empty { color: var(--mantine-color-night-4); }
+.cf-url-cell {
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 11.5px;
+  color: var(--mantine-color-signal-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: rtl;
+  text-align: left;
+}
+.cf-url-muted { color: var(--mantine-color-night-3); }
+.cf-text-cell { overflow: hidden; text-overflow: ellipsis; }
+.cf-mono { font-family: var(--mantine-font-family-monospace); font-size: 11.5px; }
+.cf-number-cell { font-variant-numeric: tabular-nums; font-family: var(--mantine-font-family-monospace); font-size: 12px; }
+.cf-timestamp-cell { font-size: 11.5px; color: var(--mantine-color-night-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.cf-percent-cell { display: inline-flex; align-items: center; gap: 7px; width: 100%; }
+.cf-percent-track {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--mantine-color-night-6);
+  overflow: hidden;
+  min-width: 36px;
+}
+.cf-percent-fill { display: block; height: 100%; border-radius: 3px; transition: width 200ms ease; }
+.cf-percent-ember { background: linear-gradient(90deg, var(--mantine-color-ember-7), var(--mantine-color-ember-4)); }
+.cf-percent-info { background: linear-gradient(90deg, var(--mantine-color-signal-7, #0b7285), var(--cf-info)); }
+.cf-percent-success { background: linear-gradient(90deg, color-mix(in srgb, var(--cf-success) 70%, #000), var(--cf-success)); }
+.cf-percent-warning { background: linear-gradient(90deg, color-mix(in srgb, var(--cf-warning) 70%, #000), var(--cf-warning)); }
+.cf-percent-danger { background: linear-gradient(90deg, color-mix(in srgb, var(--cf-danger) 70%, #000), var(--cf-danger)); }
+.cf-percent-neutral { background: var(--mantine-color-night-3); }
+.cf-percent-label { font-size: 11px; font-variant-numeric: tabular-nums; color: var(--mantine-color-night-1); min-width: 44px; text-align: right; }
+
+.cf-multivalue-cell { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.cf-multivalue-preview { overflow: hidden; text-overflow: ellipsis; font-size: 11.5px; }
+
+.cf-hopchain-cell { display: inline-flex; gap: 3px; font-family: var(--mantine-font-family-monospace); font-size: 11px; }
+.cf-hop { padding: 1px 4px; border-radius: 4px; background: var(--mantine-color-night-6); }
+.cf-hop-2xx { color: var(--cf-success); }
+.cf-hop-3xx { color: var(--cf-info); }
+.cf-hop-4xx { color: var(--cf-warning); }
+.cf-hop-5xx { color: var(--cf-danger); }
+
+/* ── Drill-down drawer ───────────────────────────────────────────────── */
+.cf-drilldown {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 92%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: linear-gradient(180deg, var(--mantine-color-night-7), var(--mantine-color-night-9));
+  border-left: 1px solid var(--mantine-color-night-4);
+  box-shadow: -12px 0 32px rgba(0, 0, 0, 0.45);
+  padding: 16px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mantine-color-ember-7) var(--mantine-color-night-8);
+  animation: cf-drilldown-in 200ms ease;
+}
+@keyframes cf-drilldown-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.cf-drilldown::-webkit-scrollbar { width: 8px; }
+.cf-drilldown::-webkit-scrollbar-track { background: var(--mantine-color-night-8); }
+.cf-drilldown::-webkit-scrollbar-thumb { background: var(--mantine-color-ember-7); border-radius: 6px; }
+.cf-drilldown-header { display: flex; align-items: flex-start; gap: 10px; }
+.cf-drilldown-title { margin: 0; font-size: 14px; color: var(--mantine-color-ember-3); word-break: break-all; }
+.cf-drilldown-subtitle { margin: 3px 0 0; font-size: 11.5px; color: var(--mantine-color-night-3); }
+.cf-drilldown-close {
+  margin-left: auto;
+  background: var(--mantine-color-night-6);
+  border: 1px solid var(--mantine-color-night-4);
+  border-radius: 6px;
+  color: var(--mantine-color-night-2);
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+.cf-drilldown-close:hover { border-color: var(--cf-danger); color: var(--cf-danger); }
+.cf-drilldown-fields, .cf-drilldown-section { display: flex; flex-direction: column; gap: 7px; }
+.cf-drilldown-field { display: flex; flex-direction: column; gap: 2px; }
+.cf-drilldown-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mantine-color-night-4); }
+.cf-drilldown-value { font-size: 12.5px; color: var(--mantine-color-night-0); word-break: break-word; }
+.cf-drilldown-section { border-top: 1px solid var(--mantine-color-night-5); padding-top: 10px; }
+.cf-drilldown-section-heading { margin: 0; font-size: 12px; color: var(--mantine-color-signal-3); }
+.cf-drilldown-loading, .cf-drilldown-none { font-size: 12px; color: var(--mantine-color-night-4); font-style: italic; margin: 0; }
+
+/* ── Export handoff ──────────────────────────────────────────────────── */
+.cf-handoff {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 25;
+  background: var(--mantine-color-night-8);
+  border: 1px solid var(--mantine-color-night-4);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: cf-handoff-in 180ms ease;
+}
+@keyframes cf-handoff-in {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.cf-handoff-header { display: flex; align-items: center; }
+.cf-handoff-header h3 { margin: 0; font-size: 13px; color: var(--mantine-color-ember-3); }
+.cf-handoff-note { margin: 0; font-size: 11.5px; color: var(--mantine-color-night-3); }
+.cf-handoff-json {
+  margin: 0;
+  max-height: 220px;
+  overflow: auto;
+  background: var(--mantine-color-night-9);
+  border: 1px solid var(--mantine-color-night-5);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 11px;
+  font-family: var(--mantine-font-family-monospace);
+  color: var(--mantine-color-signal-3);
+  scrollbar-width: thin;
+  scrollbar-color: var(--mantine-color-ember-7) var(--mantine-color-night-9);
+}
+.cf-handoff-copy {
+  align-self: flex-start;
+  background: linear-gradient(135deg, var(--mantine-color-ember-6), var(--mantine-color-ember-8));
+  border: none;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+.cf-handoff-copy:hover { filter: brightness(1.12); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-explorer, .cf-drilldown, .cf-handoff { animation: none; }
+  .cf-percent-fill { transition: none; }
+}

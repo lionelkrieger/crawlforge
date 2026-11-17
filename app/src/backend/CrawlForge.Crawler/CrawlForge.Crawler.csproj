@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Phase-02 shared project (v1.1e): ORCHESTRATOR-MANAGED. Builders own disjoint
+       subfolders only; csproj changes go through the lead. Implementation codes against
+       locked Contracts interfaces; dependencies arrive via constructor composition (Host, later phase). -->
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- WP-02-D1: rendering driver (WP-02-06). Local browser binary resolution only. -->
+    <PackageReference Include="PuppeteerSharp" />
+  </ItemGroup>
+</Project>

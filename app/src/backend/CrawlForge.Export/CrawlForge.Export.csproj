@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Phase-05 (WP-05-03 owns this project): ORCHESTRATOR-MANAGED csproj.
+       Export packages (Excel/PDF/etc.) arrive via serialized amendments through the lead. -->
+  <ItemGroup>
+    <!-- WP-05-D2 (orchestrator-applied, refined): forward-only OpenXml XLSX + PDF + destination transports. -->
+    <PackageReference Include="DocumentFormat.OpenXml" />
+    <PackageReference Include="PdfSharp" />
+    <PackageReference Include="FluentFTP" />
+    <PackageReference Include="SSH.NET" />
+    <!-- Transitive pin (orchestrator): overrides PdfSharp's vulnerable Pkcs 8.0.1 → 10.0.15. -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+    <ProjectReference Include="..\CrawlForge.Audit\CrawlForge.Audit.csproj" />
+    <ProjectReference Include="..\CrawlForge.Intelligence\CrawlForge.Intelligence.csproj" />
+    <ProjectReference Include="..\CrawlForge.Security\CrawlForge.Security.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.Sqlite\CrawlForge.Data.Sqlite.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.MySql\CrawlForge.Data.MySql.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.Migrations\CrawlForge.Data.Migrations.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.Repositories\CrawlForge.Data.Repositories.csproj" />
+    <ProjectReference Include="..\CrawlForge.Data.ContentStore\CrawlForge.Data.ContentStore.csproj" />
+  </ItemGroup>
+</Project>

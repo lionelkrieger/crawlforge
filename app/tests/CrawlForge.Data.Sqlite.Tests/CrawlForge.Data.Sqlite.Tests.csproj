@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.Data.Sqlite.Tests (WP-01-01) — provider conformance suite (logical cases
+    shared with the MySQL provider, precedence rule 6) plus provider unit tests.
+    No external services: every test runs against a private temporary embedded file.
+  -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+    <!--
+      CPM override (WP-01-01 dispatch): with central management disabled in this project,
+      every package is version-pinned here. Test-tooling versions mirror the frozen
+      Directory.Packages.props pins; Microsoft.Data.Sqlite mirrors the provider pin.
+    -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.15" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Sqlite\CrawlForge.Data.Sqlite.csproj" />
+  </ItemGroup>
+</Project>

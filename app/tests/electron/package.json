@@ -1,0 +1,14 @@
+{
+  "name": "@crawlforge/tests-electron",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Vitest suites for the Electron shell (supervisor/window-catalog tests arrive with phase-06).",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}

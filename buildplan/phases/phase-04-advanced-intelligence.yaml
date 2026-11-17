@@ -1,0 +1,166 @@
+# CrawlForge Build Plan — Phase 04: Advanced Intelligence (Parallel Wave)
+# Five agents on disjoint intelligence modules; all additive passes over the same stored dataset.
+phase_id: "phase-04"
+name: "Advanced Intelligence"
+status: "completed"
+depends_on_phases: ["phase-00", "phase-01", "phase-02", "phase-03"]
+max_parallel_agents: 5
+parallel_waves:
+  - wave_id: "wave-4A"
+    workpiece_ids: ["WP-04-01", "WP-04-02", "WP-04-03", "WP-04-04", "WP-04-05"]
+gated_acceptance_criteria: [38, 44, 45, 46, 47]
+
+# v1.1 orchestrator wave gates: run after EVERY wave completes, canonical build surface
+# (CF_AGENT_ID unset). A failed gate blocks the next wave (AGENT-INSTRUCTIONS.md §5.5).
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+
+workpieces:
+  - workpiece_id: "WP-04-01"
+    title: "4-Zone N-Gram & Topical Density Analyzer"
+    phase_id: "phase-04"
+    status: "completed"
+    assigned_agent: "cf-wp-01-02"
+    started_at: "2026-11-14T12:36:16Z"
+    completed_at: "2026-11-14T13:14:59Z"
+    parallel_group: "wave-4A"
+    depends_on_workpieces: ["WP-00-02", "WP-03-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\05-ngrams-and-vector-semantics.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\NGrams\\"
+      - "E:\\Crawlforge\\app\\assets\\stopwords\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\NGrams\\"
+    deliverables:
+      - "4-zone N-gram analyzer (Titles/H1s/Body/Headings zones per spec) with tokenization and per-language stop-word pipeline; bundled stop-word assets + user_stopwords local additions; no remote fetch (E2)"
+      - "ngram_frequencies (per-URL, per-zone, per-order counts + TF) and ngram_site_summaries (site-wide DF, total frequency, mean TF, primary-term counts) populated as a materialized read model where the provider lacks views"
+      - "Keyword cannibalization: two indexable URLs sharing an identical primary 2-gram/3-gram in Titles/H1s produce content.keyword-cannibalization with cluster evidence; topical-gap detection (content.topical-gap)"
+      - "Mandatory bounds: discard-and-count without failing the audit; enabled by default within bounds (precedence rule 4); body/headings zones operate on scoped text (criterion #38)"
+      - "Read contracts for GET /api/audits/{id}/ngrams, /ngrams/cannibalization, /ngrams/gaps and the MCP ngram-analysis resource; metric keys ngram-top, cannibalization-clusters, topical-gaps"
+    interfaces_implemented:
+      - "INgramAnalyzer"
+      - "IStopWordFilter"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests --filter FullyQualifiedName~NGrams"
+    acceptance_criteria_refs: [38]
+
+  - workpiece_id: "WP-04-02"
+    title: "Local Vector Embeddings & Semantic Internal Linking Pipeline"
+    phase_id: "phase-04"
+    status: "completed"
+    assigned_agent: "cf-wp-00-02"
+    started_at: "2026-11-14T12:36:16Z"
+    completed_at: "2026-11-14T13:09:11Z"
+    parallel_group: "wave-4A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\05-ngrams-and-vector-semantics.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\Embeddings\\"
+      - "E:\\Crawlforge\\app\\assets\\onnx-model\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\Embeddings\\"
+    deliverables:
+      - "ILocalEmbeddingProvider: bundled offline ONNX model runtime + optional user-configured loopback-only daemon (e.g. Ollama) with address validation rejecting non-loopback; never any external embedding API (criterion #45)"
+      - "content_embeddings persistence (model id, dimension, vector blob) + SemanticLinkingPipeline: chunking, cosine similarity, semantic link candidates with thresholds, embedding cache keyed by content hash so re-audit reuses vectors"
+      - "ISemanticLinkAnalyzer suggestions persisted as suggestions only — never auto-applied; semantic-link-candidates metric key; bounded batch inference with cancellation"
+      - "Model asset + tokenizer bundled under app assets with checksum manifest; provider switch between ONNX and loopback daemon without data migration"
+      - "Read contracts for GET /api/audits/{id}/semantic-links and the MCP semantic-links resource"
+    interfaces_implemented:
+      - "ILocalEmbeddingProvider"
+      - "ISemanticLinkAnalyzer"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests --filter FullyQualifiedName~Embeddings"
+    acceptance_criteria_refs: [45]
+
+  - workpiece_id: "WP-04-03"
+    title: "GEO / AI-Search Readiness, llms.txt Validation & AI-Agent Bot Governance"
+    phase_id: "phase-04"
+    status: "completed"
+    assigned_agent: "cf-wp-01-03"
+    started_at: "2026-11-14T12:36:16Z"
+    completed_at: "2026-11-14T13:08:13Z"
+    parallel_group: "wave-4A"
+    depends_on_workpieces: ["WP-00-02", "WP-03-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\06-geo-ai-search-and-bot-governance.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\Geo\\"
+      - "E:\\Crawlforge\\app\\assets\\ai-agent-profiles\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\Geo\\"
+    deliverables:
+      - "IGeoReadinessAnalyzer (§13): passage citability, answer-first structure, entity clarity, llms_structure element group consumption; AI Search (GEO) category findings geo.* with evidence"
+      - "ILlmsTxtValidator: llms.txt / llms-full.txt discovery, syntax and link validation against the crawled URL set, geo.llms-* findings; offline re-validation from stored bodies"
+      - "IBotGovernanceAdvisor: bundled AI-agent profile asset (user-agent patterns, purpose search/rag/training, vendor policy notes) cross-referenced with robots state → per-agent allow/block advisory matrix; advisory only, never modifies robots.txt (criterion #46)"
+      - "geo-readiness and bot-governance metric keys; read contracts for GET /api/audits/{id}/geo and /api/projects/{id}/bot-governance plus MCP geo-readiness resource"
+      - "All additive passes over the stored dataset; enabled by default within bounds; no remote profile refresh (E2)"
+    interfaces_implemented:
+      - "IGeoReadinessAnalyzer"
+      - "ILlmsTxtValidator"
+      - "IBotGovernanceAdvisor"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests --filter FullyQualifiedName~Geo"
+    acceptance_criteria_refs: [46]
+
+  - workpiece_id: "WP-04-04"
+    title: "MarTech / Analytics / Tag Integrity & Consent-State Auditing"
+    phase_id: "phase-04"
+    status: "completed"
+    assigned_agent: "cf-wp-00-03"
+    started_at: "2026-11-14T12:36:16Z"
+    completed_at: "2026-11-14T13:12:41Z"
+    parallel_group: "wave-4A"
+    depends_on_workpieces: ["WP-00-02", "WP-02-06"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\07-martech-analytics-and-tag-integrity.md"
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\MarTech\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\MarTech\\"
+    deliverables:
+      - "IMarTechDetector (§14): tag-manager containers, analytics vendors, consent platforms detected from stored HTML/JS and proxy network capture; datalayer_snapshot + consent_state element group consumption"
+      - "ITagIntegrityAnalyzer: duplicate container firing, missing/duplicate pageview tags, dataLayer push anomalies; tag.* findings with network evidence from the captured waterfall"
+      - "IConsentStateAnalyzer: consent-before-tags sequencing from capture timestamps, consent platform presence vs firing tags; consent.* findings; rendering-off mode degrades to static signals with explicit notices"
+      - "Analytics & Tagging category; martech-stack, tag-integrity-issues, consent-violations metric keys; read contracts for GET /api/audits/{id}/martech and the MCP martech-stack resource"
+      - "Offline re-analysis from stored capture + bodies; no remote vendor lookups (E2); enabled by default within bounds (criterion #47)"
+    interfaces_implemented:
+      - "IMarTechDetector"
+      - "ITagIntegrityAnalyzer"
+      - "IConsentStateAnalyzer"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests --filter FullyQualifiedName~MarTech"
+    acceptance_criteria_refs: [47]
+
+  - workpiece_id: "WP-04-05"
+    title: "Server-Log Analyzer, Verified-Bot Classification & True-Orphan Correlation"
+    phase_id: "phase-04"
+    status: "completed"
+    assigned_agent: "cf-wp-00-01"
+    started_at: "2026-11-14T12:36:16Z"
+    completed_at: "2026-11-14T13:18:44Z"
+    parallel_group: "wave-4A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\08-server-log-intelligence.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\02-complete-schema-catalog.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Intelligence\\LogAnalyzer\\"
+      - "E:\\Crawlforge\\app\\assets\\bot-cidr\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\LogAnalyzer\\"
+    deliverables:
+      - "ILogFileParser (§11): Common/Combined + W3C formats, streaming with malformed-line discard counters, gzip support, bounded memory at multi-GB scale; log_imports + log_entries persistence"
+      - "IBotVerifier: bundled bot CIDR/UA asset with reverse-DNS verification policy (forward-confirmed rDNS) executed ONLY against user-supplied log data offline — no live DNS at audit time unless the user explicitly runs the verify tool; unverified bots labeled, never silently trusted (criterion #44)"
+      - "ILogCorrelationEngine: joins log hits to crawled URLs by canonical URL; True Orphan (hit but unlinked), Crawl Budget Waste (bot-heavy low-value), Indexable But Uncrawled classes with per-class evidence and counts"
+      - "Log Intelligence category; logs.true-orphan / logs.crawl-budget-waste / logs.uncrawled-indexable findings; log-true-orphans, log-budget-waste, log-uncrawled-indexable, log-bot-hits metric keys"
+      - "Read contracts for GET /api/audits/{id}/log-correlation and POST /api/projects/{id}/log-imports plus the MCP log-correlation resource; import progress emission contract"
+    interfaces_implemented:
+      - "ILogFileParser"
+      - "IBotVerifier"
+      - "ILogCorrelationEngine"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests --filter FullyQualifiedName~LogAnalyzer"
+    acceptance_criteria_refs: [44]

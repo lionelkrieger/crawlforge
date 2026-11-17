@@ -1,0 +1,136 @@
+# CrawlForge Build Plan — Phase 05: API Hub, Exports & MCP (Parallel Wave)
+# Four agents expose the completed engine surface; all bind loopback only.
+phase_id: "phase-05"
+name: "API Hub, Exports and MCP"
+status: "completed"
+depends_on_phases: ["phase-00", "phase-01", "phase-02", "phase-03", "phase-04"]
+max_parallel_agents: 4
+parallel_waves:
+  - wave_id: "wave-5A"
+    workpiece_ids: ["WP-05-01", "WP-05-02", "WP-05-03", "WP-05-04"]
+gated_acceptance_criteria: [7, 8, 14, 16, 20, 23, 41]
+
+# v1.1 orchestrator wave gates: run after EVERY wave completes, canonical build surface
+# (CF_AGENT_ID unset). A failed gate blocks the next wave (AGENT-INSTRUCTIONS.md §5.5).
+orchestrator_gates:
+  after_each_wave:
+    - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln"
+    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
+
+workpieces:
+  - workpiece_id: "WP-05-01"
+    title: "Core & Extended Loopback REST Controllers — All 88 Routes"
+    phase_id: "phase-05"
+    status: "completed"
+    assigned_agent: "cf-wp-01-01"
+    started_at: "2026-11-14T13:22:42Z"
+    completed_at: "2026-11-14T15:58:07Z"
+    parallel_group: "wave-5A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\01-rest-api-contract.md"
+      - "E:\\Crawlforge\\architecture\\02-data-and-persistence\\01-database-providers-and-cqrs.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Api\\Controllers\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Api.Tests\\Controllers\\"
+    deliverables:
+      - "All 88 loopback REST routes (51 baseline §10.2 + 37 additive Appendix B): projects, configurations, audits lifecycle, URL/finding/link explorers, schedules, settings, destinations, plugins, WAF signatures, hosts, ngrams, scope-preview, system health/compact, redirect-matrix, rewrite-preview, logs, semantics, geo, analytics, tools"
+      - "Uniform response envelope, pagination, filtering, and error/edge behavior per §10.1/§10.4; additive routes preserve parent semantics (optional fields only)"
+      - "Staging-vs-production host-mapped comparison endpoints aligning audit and content comparison by path"
+      - "Settings surface routes with local-only toggles and zero license/account/entitlement payloads (criterion #8); every feature available without remote resolution"
+      - "Route-by-route contract tests against the locked DTOs; loopback-only binding verified; no authorization layer beyond the local boundary"
+    interfaces_implemented:
+      - "REST route contracts (ApiContracts)"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Api.Tests --filter FullyQualifiedName~Controllers"
+    acceptance_criteria_refs: [8]
+
+  - workpiece_id: "WP-05-02"
+    title: "SignalR Real-Time Hub (19 Events), system-health Heartbeat, Compact Action & /metrics"
+    phase_id: "phase-05"
+    status: "completed"
+    assigned_agent: "cf-wp-00-03"
+    started_at: "2026-11-14T13:22:42Z"
+    completed_at: "2026-11-14T13:43:17Z"
+    parallel_group: "wave-5A"
+    depends_on_workpieces: ["WP-00-02", "WP-00-01"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\04-metrics-and-diagnostics.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Api\\Hubs\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Api\\Metrics\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Api.Tests\\Hubs\\"
+    deliverables:
+      - "SignalR hub implementing all 19 events: 11 baseline (crawl-progress, url-batch, stage-changed, findings-updated, audit-completed, audit-failed, backend-lifecycle, schedule-fired, schedule-run-completed, export-delivery, subscribe/unsubscribe) + 8 additive (waf-blocks, host-throttle, system-health, matrix-row-validated, log-import-progress, log-import-completed, embedding-progress, embedding-completed)"
+      - "Throttling rules exactly as specified: crawl-progress ≤ 1/s, url-batch throttled batches, host-throttle coalesced ≤ 1/s per host, waf-blocks/matrix-row-validated/log-import-progress/embedding-progress ≤ 1/s"
+      - "system-health heartbeat every 2 seconds while the shell is connected (idle or running): working-set RAM, managed heap, GC generation counts, SQLite WAL bytes (nullable); POST /api/system/compact performs Compact / Trim Working Set + WAL checkpoint with before/after snapshots (criterion #41)"
+      - "Pull-only loopback /metrics in standardized Prometheus exposition format with no identity dimensions and zero push/transmit (criterion #20); host-throttle and memory/GC/WAL metric families"
+      - "Additive payload fields on parent events; per-audit channel subscription with no authorization beyond the local boundary"
+    interfaces_implemented:
+      - "IRealtimeHub"
+      - "IMetricsExposition"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Api.Tests --filter FullyQualifiedName~Hubs"
+    acceptance_criteria_refs: [20, 41]
+
+  - workpiece_id: "WP-05-03"
+    title: "Local Export Engine & Encrypted User Export Destinations"
+    phase_id: "phase-05"
+    status: "completed"
+    assigned_agent: "cf-wp-01-02"
+    started_at: "2026-11-14T13:22:42Z"
+    completed_at: "2026-11-14T13:58:08Z"
+    parallel_group: "wave-5A"
+    depends_on_workpieces: ["WP-00-02", "WP-01-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Export\\"
+      - "E:\\Crawlforge\\app\\assets\\export-templates\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Export.Tests\\"
+    deliverables:
+      - "Local Export Engine: multi-sheet Excel, CSV, self-contained HTML report bundle, PDF, and XML sitemap generation from local aggregates and stored artifacts — valid local files, fully offline (criterion #7)"
+      - "Dynamic per-rule extraction/snippet columns honored in every tabular export format; filtered URL sets drive sitemap generation"
+      - "Encrypted user export destinations (export_destinations): off by default, none seeded, user-supplied credentials only, encrypted at rest via ISecretProtector; delivery state machine (delivered/retrying/failed) with export-delivery hub emission contract"
+      - "Disabling all destinations restores zero non-crawl outbound traffic (criterion #14); transfers occur only to user-configured endpoints"
+      - "Scheduled completion-action export hook consumed by the scheduler; streaming export writers bounded in memory at 500k+ rows"
+    interfaces_implemented:
+      - "IExportEngine"
+      - "IExportDestinationDelivery"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Export.Tests"
+    acceptance_criteria_refs: [7, 14]
+
+  - workpiece_id: "WP-05-04"
+    title: "Local MCP Server — stdio Adapter + Loopback SSE, 8 Tools / 15 Resources / 5 Prompts"
+    phase_id: "phase-05"
+    status: "completed"
+    assigned_agent: "cf-wp-00-02"
+    started_at: "2026-11-14T13:22:42Z"
+    completed_at: "2026-11-14T14:09:42Z"
+    parallel_group: "wave-5A"
+    depends_on_workpieces: ["WP-00-02", "WP-00-04"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\03-local-mcp-server-and-agents.md"
+      - "E:\\Crawlforge\\architecture\\01-foundation-and-governance\\03-network-boundary-and-security.md"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Mcp\\"
+      - "E:\\Crawlforge\\app\\src\\mcp-stdio-adapter\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Mcp.Tests\\"
+    deliverables:
+      - "Local MCP server with both transports: packaged stdio adapter child process bridging to the loopback API, and loopback SSE endpoint; standard protocol handshake on both; invalid tokens rejected; unreachable from non-loopback addresses; token rotation invalidates prior clients (criterion #16)"
+      - "All 8 lifecycle tools: start-audit, pause-audit, resume-audit, cancel-audit, re-audit, analyze-single-page, run-schedule-now, get-audit-progress"
+      - "All 15 resources: 7 baseline (audit-summary, high-severity-findings, url-detail, audit-list, schedule-status, crawl-progress, extracted-content) + 8 additive (ngram-analysis, waf-blocks, host-throttle, redirect-matrix-results, log-correlation, semantic-link-opportunities, geo-readiness, analytics-coverage) with additive payload fields on parent resources"
+      - "All 5 prompts: audit-health-briefing, high-severity-triage, audit-delta-briefing, ngram-topical-briefing, semantic-topical-briefing (side-effect free)"
+      - "Delegated AI control flows (start → poll → detect completion → re-audit → read high-severity findings) with every invocation recorded in automation_action_log, user-viewable and purgeable (criterion #23); locally generated token credentials encrypted at rest; no settings/credential/configuration management via MCP"
+    interfaces_implemented:
+      - "IMcpToolSurface"
+      - "IMcpResourceSurface"
+      - "IMcpPromptSurface"
+      - "IAutomationActionLog"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Mcp.Tests"
+      - "npm run typecheck --workspace src/mcp-stdio-adapter"
+    acceptance_criteria_refs: [16, 23]

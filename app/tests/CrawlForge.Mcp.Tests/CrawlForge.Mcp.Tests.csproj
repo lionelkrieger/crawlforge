@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Phase-05 (WP-05-04 owns this test project): ORCHESTRATOR-MANAGED csproj. -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Mcp\CrawlForge.Mcp.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Audit\CrawlForge.Audit.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Crawler\CrawlForge.Crawler.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Intelligence\CrawlForge.Intelligence.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Security\CrawlForge.Security.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Sqlite\CrawlForge.Data.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.MySql\CrawlForge.Data.MySql.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Migrations\CrawlForge.Data.Migrations.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Repositories\CrawlForge.Data.Repositories.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.ContentStore\CrawlForge.Data.ContentStore.csproj" />
+  </ItemGroup>
+</Project>
