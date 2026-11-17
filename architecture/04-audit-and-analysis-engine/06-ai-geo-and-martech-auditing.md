@@ -5,7 +5,7 @@
 
 | Source document | Version | Sections reproduced in this file |
 |---|---|---|
-| FS-CRAWL-002 — `crawlforge-extensions-and-ui-stack.md` | v1.1 | §13 (complete section), §14 (complete section) |
+| FS-CRAWL-002 — `baseline/crawlforge-extensions-and-ui-stack.md` | v1.1 | §13 (complete section), §14 (complete section) |
 
 **Notation.** Cross-references inside the reproduced text retain the source convention: a bare `§n` refers to **FS-CRAWL-001**; `FS-CRAWL-002 §n` refers to the extension specification. The [README traceability matrix](../README.md) maps every source section to its file(s) in this hierarchy.
 

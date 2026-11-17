@@ -4,16 +4,28 @@
 |---|---|
 | Identifier | FS-CRAWL-ARCH (modular decomposition) |
 | Title | CrawlForge Architecture Hierarchy — Domain-Organized Decomposition of FS-CRAWL-001 & FS-CRAWL-002 |
-| Version | 1.0 |
-| Status | Issued — structural modularization, 100% lossless fidelity |
-| Source masters (immutable) | `E:\Crawlforge\functional-specification.md` (FS-CRAWL-001 v1.4) · `E:\Crawlforge\crawlforge-extensions-and-ui-stack.md` (FS-CRAWL-002 v1.1) |
-| Scope of this phase | Structural modularization only. **No** implementation plans, build sequences, or code scaffolds. |
-| Fidelity guarantee | Every rule, formula, parameter default, table, additive column, index, REST route, hub event, MCP tool/resource/prompt, and acceptance criterion from both masters is reproduced **verbatim and unabridged** in its domain file. No summarization, paraphrase, or omission inside sub-documents. |
+| Version | 2.0 |
+| Status | **Master (living).** Amended only through change records (`changes/INDEX.md`). |
+| Baseline sources (historical, frozen) | `architecture/baseline/functional-specification.md` (FS-CRAWL-001 v1.4) · `architecture/baseline/crawlforge-extensions-and-ui-stack.md` (FS-CRAWL-002 v1.1) |
+| Scope | v1.0: structural modularization only (no implementation plans, build sequences or code scaffolds). v2.0: living master specification; build plans are derived from it. |
+| Authority | This hierarchy is the authoritative specification. It was derived losslessly from FS-CRAWL-001 v1.4 and FS-CRAWL-002 v1.1 (see `baseline/`) and is amended only through change records. v1.0 fidelity guarantee: every rule, formula, default, table, route, event, MCP tool/resource/prompt and acceptance criterion from both baseline documents was reproduced verbatim (see section 4). |
 | Chinese Wall | Maintained. All clean-room constraints, precedence invariants (FS-CRAWL-002 §1.4 rules 1–9), and negative requirements (FS-CRAWL-001 §1.2, §3; FS-CRAWL-002 §1.2, §1.6 E1–E9) are preserved in full. |
 
 > **This README is the only summarizing document.** It is the Architectural Summary, Directory Guide, and Fidelity Verification Ledger. Every other file in this hierarchy is a verbatim, unabridged reproduction of source text. The two root master files remain **untouched** as the immutable sources of truth.
 
+> **v2.0 (2026-11-17, CR-001):** the baseline documents are frozen in `baseline/` as historical record. From v2.0 this hierarchy is the living master. Domain-file text reproduced from the baseline remains in force unless a change record amends it; amendments are marked inline and the replaced text is kept in an amendment history block. Capability traceability lines (`> Capabilities: ...`) link sections to the capability register in `audit-work/register/` (see `TRACEABILITY.md`).
+
 ---
+
+## 0. Change Protocol (from v2.0)
+
+Operating rules: `audit-work/SOURCE-OF-TRUTH-LOOP.md`. In summary:
+
+1. No architecture text is edited without a change record `changes/CR-nnn.md`, typed `addition`, `amendment`, `traceability` or `clarification`, citing the owner decisions (`audit-work/decisions-log.md`, `D-nnn`) and register capabilities/findings (`CAP-...`, `F-nnnn`) that drive it.
+2. Only CRs with status `approved` in `changes/INDEX.md` may be applied. The owner approves.
+3. Amended text is marked inline `**[Amended by CR-nnn, D-nnn]**`; the replaced text moves to an "Amendment history" block at the end of that domain file.
+4. Every spec section carries a traceability line under its heading: `> Capabilities: CAP-... · Decisions: D-... · Change records: CR-...`. `TRACEABILITY.md` is generated from these lines by `audit-work/register/check_traceability.py`.
+5. One CR, one git commit.
 
 ## 1. System Overview
 
