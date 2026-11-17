@@ -67,7 +67,7 @@ Execution modes: **incremental** (per-URL passes run during the crawl) and **ful
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.4 Rule taxonomy (generic, industry-standard) — verbatim and unabridged**
 
 ### 7.4 Rule taxonomy (generic, industry-standard)
-> Capabilities: CAP-A-007, CAP-B-036, CAP-B-037, CAP-B-038, CAP-B-039, CAP-B-040, CAP-B-041, CAP-B-042, CAP-B-043, CAP-B-044, CAP-B-045, CAP-B-046, CAP-B-047, CAP-B-048, CAP-B-049, CAP-B-050, CAP-B-051, CAP-B-052, CAP-B-053, CAP-B-054, CAP-B-055, CAP-B-056, CAP-B-057, CAP-B-058, CAP-B-059, CAP-B-060, CAP-B-061, CAP-B-062, CAP-B-063, CAP-C-087, CAP-C-090, CAP-C-091, CAP-C-092, CAP-C-095, CAP-C-096, CAP-C-097, CAP-D2-111, CAP-D2-113, CAP-D2-114, CAP-D2-116, CAP-E-122, CAP-E-125, CAP-F-139, CAP-F-148
+> Capabilities: CAP-A-007, CAP-B-036, CAP-B-037, CAP-B-038, CAP-B-039, CAP-B-040, CAP-B-041, CAP-B-042, CAP-B-043, CAP-B-044, CAP-B-045, CAP-B-046, CAP-B-047, CAP-B-048, CAP-B-049, CAP-B-050, CAP-B-051, CAP-B-052, CAP-B-053, CAP-B-054, CAP-B-055, CAP-B-056, CAP-B-057, CAP-B-058, CAP-B-059, CAP-B-060, CAP-B-061, CAP-B-062, CAP-B-063, CAP-C-087, CAP-C-090, CAP-C-091, CAP-C-092, CAP-C-095, CAP-C-096, CAP-C-097, CAP-D2-111, CAP-D2-113, CAP-D2-114, CAP-D2-116, CAP-E-122, CAP-E-125, CAP-F-139, CAP-F-148, CAP-D2-115, CAP-D2-117 · Decisions: D-017 · Change records: CR-017
 
 | Category | Example checks (abstract) |
 |---|---|
@@ -76,7 +76,7 @@ Execution modes: **incremental** (per-URL passes run during the crawl) and **ful
 | Linking | Broken internal and external links; excessive redirect depth; uninformative anchor text; excessive outbound links; very deep pages; link-equity distribution (section 8.1) |
 | Images | Missing or empty alternative text; broken sources; oversized payloads; missing dimensions |
 | Performance heuristics | Total page weight; resource counts; render-blocking resources; uncompressed text resources; missing or short cache lifetimes; large document trees; slow responses. Rendered lab metrics and Core Web Vitals: section 7.11 |
-| Security & protocol | Mixed content; non-HTTPS pages; insecure form actions; missing security headers; absent HTTP-to-HTTPS redirection |
+| Security & protocol | Mixed content; non-HTTPS pages; insecure form actions; missing security headers; absent HTTP-to-HTTPS redirection; cookie security attributes (Secure, HttpOnly, SameSite); information disclosure (for example server and framework version headers, directory listings, verbose error pages) | **[Amended by CR-017, D-017]**
 | Structured data | Parse errors; missing required properties per vocabulary; deprecated types; rich-result eligibility (section 7.13) |
 | Internationalization | Invalid language/region codes; missing return tags; missing self-reference; default-language handling |
 | Mobile readiness | Viewport presence and validity; responsive-design signals; tap-target sizing and font legibility (section 7.14) |
@@ -123,6 +123,16 @@ Each finding carries:
 > Capabilities: CAP-G-X01
 
 - An ad-hoc mode fetches and audits a single URL without creating a project or crawl. The same pipeline applies; results are shown immediately and may optionally be saved as a lightweight local record.
+
+### 7.20 Template identification
+> Capabilities: CAP-E-128, CAP-C-099, CAP-I-197, CAP-B2-080 · Decisions: D-017 · Change records: CR-017
+
+**[Added by CR-017]**
+
+- Every audit assigns each HTML URL to a **page template**, identified by grouping URLs on structural similarity of the document (a DOM structure signature) together with URL path patterns. The grouping principle is specified; the concrete similarity technique is an implementation choice.
+- Templates are named by their dominant URL pattern and can be renamed by the user.
+- Findings, performance results and structured-data errors can be grouped and counted by template, so a problem shared by a template is reported once with its affected URLs.
+- Adaptive capture (§5.6.1) and click-discovery deduplication (§5.6.4) use templates when available, falling back to URL path patterns.
 
 ---
 
@@ -213,3 +223,13 @@ Re-audit (§7.2) re-derives scoped trees and all dependent metrics from the cont
 **Acceptance hook:** FS-CRAWL-002 §9, criterion #37.
 
 ---
+
+---
+
+## Amendment history
+
+### CR-017 (2026-11-17; D-017)
+
+Replaced text in §7.4 (Security & protocol row):
+
+> | Security & protocol | Mixed content; non-HTTPS pages; insecure form actions; missing security headers; absent HTTP-to-HTTPS redirection |

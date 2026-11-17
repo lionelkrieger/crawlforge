@@ -42,9 +42,9 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.13 Structured data validation — verbatim and unabridged**
 
 ### 7.13 Structured data validation
-> Capabilities: CAP-B-067, CAP-B-068, CAP-B2-069, CAP-B2-070, CAP-B2-072, CAP-B2-073, CAP-B2-074, CAP-B2-075, CAP-B2-076
+> Capabilities: CAP-B-067, CAP-B-068, CAP-B2-069, CAP-B2-070, CAP-B2-072, CAP-B2-073, CAP-B2-074, CAP-B2-075, CAP-B2-076, CAP-B2-071 · Decisions: D-017 · Change records: CR-017
 
-- Embedded structured data is parsed from JSON-LD and Microdata into a normalized graph resolved against a bundled open vocabulary.
+- Embedded structured data is parsed from JSON-LD, Microdata and RDFa into a normalized graph resolved against a bundled open vocabulary. **[Amended by CR-017, D-017]**
 - Validation covers syntax (well-formedness, context and type presence) and semantics (required and expected properties per type).
 - **Rich-result eligibility:** for each supported search-gallery feature type, the engine checks the property set required for eligibility and reports eligible / ineligible / missing-required-field, naming the specific fields involved.
 - Errors use a structured, human-readable taxonomy (e.g. missing type, invalid value, missing required field, malformed block) rather than free text only.
@@ -166,3 +166,13 @@ REST: GET `/api/audits/{id}/links` gains a `domZone` filter and weighted-equity 
 **Acceptance hook:** FS-CRAWL-002 §9, criterion #48.
 
 ---
+
+---
+
+## Amendment history
+
+### CR-017 (2026-11-17; D-017)
+
+Replaced text in §7.13 (first bullet):
+
+> - Embedded structured data is parsed from JSON-LD and Microdata into a normalized graph resolved against a bundled open vocabulary.

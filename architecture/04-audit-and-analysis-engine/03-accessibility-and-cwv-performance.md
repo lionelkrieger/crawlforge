@@ -26,11 +26,21 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.11 Rendered performance and Core Web Vitals (optional category) — verbatim and unabridged**
 
 ### 7.11 Rendered performance and Core Web Vitals (optional category)
-> Capabilities: CAP-C-082, CAP-C-084, CAP-C-085, CAP-C-088, CAP-C-089, CAP-C-X02, CAP-C-X03, CAP-C-X04
+> Capabilities: CAP-C-082, CAP-C-084, CAP-C-085, CAP-C-088, CAP-C-089, CAP-C-X02, CAP-C-X03, CAP-C-X04 · Decisions: D-012 · Change records: CR-013
 
 - Requires rendering mode (section 5.6). For each rendered page the engine captures standard lab metrics — largest contentful paint, cumulative layout shift, total blocking time, first contentful paint, and time to first byte — using their publicly documented definitions.
 - **Performance budgets:** the user defines per-metric thresholds; exceedance emits a finding. Budgets are stored with the audit configuration and applied per audit.
 - **Code coverage:** the fraction of fetched stylesheet and script bytes actually used during render is measured; large unused payloads emit findings.
 - **Page composition metrics:** total DOM nodes, maximum tree depth/width, image counts and sizes, and smallest rendered font size are captured for mobile and front-end heuristics.
 - Per-request network timing already captured in the rendering network-waterfall summary (section 5.6) is reused here.
-- Aggregations: metric distribution histograms, worst-performing pages, and budget pass-rate. Optional field-data enrichment from an external provider is an open scope decision (section 15) and is not required by this version.
+- Aggregations: metric distribution histograms, worst-performing pages, and budget pass-rate. Field data and Lighthouse results from PageSpeed Insights are available through the user-connected integration (`08-integrations`), when enabled. **[Amended by CR-013, D-012]**
+
+---
+
+## Amendment history
+
+### CR-013 (2026-11-17; D-012)
+
+Replaced text in §7.11 (aggregations bullet):
+
+> - Aggregations: metric distribution histograms, worst-performing pages, and budget pass-rate. Optional field-data enrichment from an external provider is an open scope decision (section 15) and is not required by this version.

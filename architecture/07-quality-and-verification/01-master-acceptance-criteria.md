@@ -77,3 +77,20 @@
 48. **Zone-weighted equity, SERP pixels & header equivalency.** Every `link_edge` carries a `dom_zone` classification; weighted link equity differs from unweighted according to configured zone weights with in-content links weighted highest; pixel-width measurement emits `title-pixel-truncation` and `description-pixel-truncation` against configured budgets with a live SERP & Social Card Preview; `X-Robots-Tag`/`Link` header vs HTML conflicts emit `indexability.header-html-conflict`, `canonical.header-html-conflict`, and `hreflang.header-html-conflict` as Error findings with dual evidence.
 
 ---
+
+## 10. End-to-End Acceptance Criteria (v2.0)
+> Decisions: D-007, D-016 · Change records: CR-015
+
+**[Added by CR-015]** Numbered continuously from #48. Each passes only under the acceptance rule in `03-fixture-site.md` §2: a full audit through the UI or MCP against the fixture site produces the expected results for the named traps.
+
+49. **HTTP flow.** Create a project, configure it, run a non-JS audit, view the results grid, export CSV and XLSX. Traps: redirect chain and loop, noindex, robots-blocked, broken links, duplicate titles, thin page.
+50. **Rendered flow.** The same with JS capture. Traps: JavaScript-only link, script-injected content, consent banner.
+51. **Dual flow.** Raw-versus-rendered comparison. Traps: late meta change, script-injected content.
+52. **Adaptive flow.** Only JavaScript-dependent URL groups switch to rendered capture; manual per-pattern overrides are respected.
+53. **Site types.** Traps: hash route, client-side redirect, postback link, cookieless session, ViewState, rendered soft 404.
+54. **SPA and click discovery.** Traps: websocket live-data page settles within the wait rule; click-only navigation is discovered; the "Place bet" control is never triggered and the fixture server records no non-GET request.
+55. **Crawl safety.** The crawler trap is detected and throttled; the cookie-dependent redirect is handled.
+56. **Configuration editor.** A non-default configuration created and edited in the UI changes audit behaviour as configured.
+57. **MCP flow.** An MCP client creates a project and configuration, runs an audit to completion and reads paged findings with evidence.
+58. **Integrations.** Search Console, GA4 and PageSpeed Insights sync and join against recorded API responses (test double), per-data-type toggles are honoured, and the offline CSV import produces the same joins.
+

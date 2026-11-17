@@ -78,7 +78,7 @@ This hierarchy reorganizes the union of both documents into **seven areas of con
         negative requirements (#1–8, E1–E9) · process model & lifecycle · Server GC
         network boundary & security (loopback-only, encryption at rest, DNS consent)
    07 · QUALITY & VERIFICATION — 48 mandatory acceptance criteria (#1–#48)
-        open product-owner scope decisions (#1–#5)
+        open product-D-017s (#1–#5)
   ══════════════════════════════════════════════════════════════════════════════
 ```
 
@@ -194,8 +194,21 @@ E:\Crawlforge\architecture\
 
 | File | Area of concern | Key contents (tables / contracts) |
 |---|---|---|
-| `01-master-acceptance-criteria.md` | Master acceptance checklist | FS-001 §14 (**#1–#34**) + FS-002 §9 (**#35–#48**) = **48 mandatory criteria**, unabridged. |
-| `02-open-scope-decisions.md` | Open scope decisions | FS-001 §15 (unresolved product-owner decisions **#1–#5**). |
+| `01-master-acceptance-criteria.md` | Master acceptance checklist | FS-001 §14 (**#1–#34**) + FS-002 §9 (**#35–#48**) = **48 mandatory criteria**, unabridged; plus v2.0 §10 end-to-end criteria **#49–#58** (CR-015). |
+| `02-open-scope-decisions.md` | Open scope decisions | FS-001 §15 (product-owner decisions **#1–#5**; items 2, 3, 5 resolved in v2.0) plus deferred capabilities (CR-017). |
+| `03-fixture-site.md` | Fixture site and end-to-end acceptance | Trap set, JSON expected results, acceptance rule (CR-015). Criteria **#49–#58** are in `01-master-acceptance-criteria.md` §10. |
+
+### 08 · Integrations (v2.0)
+
+| File | Area of concern | Key contents (tables / contracts) |
+|---|---|---|
+| `01-google-integrations.md` | Search Console, GA4, PageSpeed Insights | Own OAuth client / API key, per-project toggles, sync, local cache, CSV fallback (CR-013). |
+
+### 09 · Distribution (v2.0)
+
+| File | Area of concern | Key contents (tables / contracts) |
+|---|---|---|
+| `01-packaging-and-release.md` | Packaging and release | Installer, code signing, GitHub Releases, licence audit, platforms (CR-014). |
 
 ---
 

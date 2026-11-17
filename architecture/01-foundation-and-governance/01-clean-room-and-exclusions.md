@@ -70,6 +70,21 @@ This document defines the complete functional behavior of a standalone, non-comm
 - Outside contributions are accepted only under a **contributor licence agreement (CLA)** that grants the project owner the right to relicense the contribution. When the project goes public, a standard individual CLA is used with an automated CLA check on the repository (for example the CLA Assistant bot) before any contribution is merged.
 - Every bundled dependency and data asset must have a licence compatible with distribution under AGPL-3.0. Compatibility is verified by the licence audit (`09-distribution`), a **required release-checklist step**, automated where tooling allows; it is not an automatic hard block.
 
+### 1.5 Product scope exclusions (owner decisions)
+> Decisions: D-006, D-009, D-013, D-008 · Change records: CR-016, CR-017
+
+**[Added by CR-016 and CR-017]**
+
+| Capability | Status | Decision / CR |
+|---|---|---|
+| Email reports | Not in scope | D-006, CR-016 |
+| Webhooks, including notification-webhook export destinations | Not in scope; MCP status and completion (§11.5) covers the use case | D-013, CR-016 |
+| Multi-user access and permissions | Not in scope; one user per desktop install | D-009, CR-016 |
+| Cloud drive, spreadsheet-service and object-storage export destinations | Not in scope for now; local folder, FTP and SFTP are the destinations (§8.5) | CR-016 |
+| Backlink-provider data enrichment | Not in scope for now; may be proposed in its own CR | CR-003 |
+| XML data export | Not in scope; CSV and JSON Lines cover data and agent use (§11.8) | CR-017 |
+| Impact assessment, developer implementation briefs, template-level pattern analysis | Delivered **via MCP**: performed by the user's AI client on CrawlForge evidence (§11.7, §11.8), not by CrawlForge | D-008, CR-017 |
+
 ---
 
 ---

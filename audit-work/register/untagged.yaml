@@ -1,111 +1,75 @@
 # Capabilities with no specifying architecture section (CR-002).
 # Removed from this list when a CR that specifies them is applied and their tag is added.
 untagged:
-  CAP-A-X08:
-    status: spec gap
-    ref: CR-013
-  CAP-B2-071:
-    status: spec gap, scope decision pending
-    ref: CR-017
   CAP-B2-077:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-B2-078:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-B2-079:
-    status: spec gap, scope decision pending
-    ref: CR-017
-  CAP-B2-080:
-    status: spec gap, scope decision pending
-    ref: CR-017
-  CAP-C-081:
-    status: spec gap
-    ref: CR-013
-  CAP-C-083:
-    status: spec gap
-    ref: CR-013
-  CAP-C-099:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-D1-106:
-    status: spec gap, scope decision pending
-    ref: CR-017
-  CAP-D2-115:
-    status: spec gap, scope decision pending
-    ref: CR-017
-  CAP-D2-117:
-    status: spec gap, scope decision pending
-    ref: CR-017
-  CAP-E-128:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-E-131:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-E-133:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-E-134:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-E-135:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-E-136:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-F-145:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-F-147:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-F-150:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-F-151:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-F-152:
-    status: spec gap, scope decision pending
-    ref: CR-017
-  CAP-G-164:
-    status: spec gap, scope decision pending
-    ref: CR-017
-  CAP-H-171:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-H-176:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: out of scope
+    ref: D-017; CR-017; architecture 01/01 §1.5
   CAP-H-187:
     status: out of scope
-    ref: D-013; CR-016
+    ref: D-013; CR-016; architecture 01/01 §1.5
   CAP-H-189:
     status: out of scope
-    ref: D-006; CR-016
+    ref: D-006; CR-016; architecture 01/01 §1.5
   CAP-H-191:
     status: out of scope
-    ref: D-009; CR-016
+    ref: D-009; CR-016; architecture 01/01 §1.5
   CAP-H-X01:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-I-195:
-    status: spec gap, scope decision pending
-    ref: CR-017
-  CAP-I-197:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-I-198:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: deferred
+    ref: D-017; CR-017; architecture 07/02 §15.1
   CAP-J-205:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: via MCP (AI client)
+    ref: D-008, D-017; CR-017; architecture 01/01 §1.5
   CAP-J-206:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: via MCP (AI client)
+    ref: D-008, D-017; CR-017; architecture 01/01 §1.5
   CAP-J-211:
-    status: spec gap, scope decision pending
-    ref: CR-017
+    status: via MCP (AI client)
+    ref: D-008, D-017; CR-017; architecture 01/01 §1.5

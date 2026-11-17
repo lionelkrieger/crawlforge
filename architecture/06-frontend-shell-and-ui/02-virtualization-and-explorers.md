@@ -47,20 +47,21 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 8.4 Export — verbatim and unabridged**
 
 ### 8.4 Export
-> Capabilities: CAP-G-167, CAP-H-173, CAP-H-174, CAP-H-177, CAP-H-175, CAP-G-165 · Decisions: D-014 · Change records: CR-011
+> Capabilities: CAP-G-167, CAP-H-173, CAP-H-174, CAP-H-177, CAP-H-175, CAP-G-165, CAP-G-164 · Decisions: D-014, D-017 · Change records: CR-011, CR-017
 
 - Local file exports: a multi-sheet spreadsheet workbook (summary, URLs, findings, links, and custom extraction when enabled), CSV per dataset, a self-contained HTML report bundle, and an optional PDF summary. Custom extraction exports use the same dynamic-column expansion as the explorer (section 7.9).
 - Exports may additionally be delivered to optional user-configured destinations (section 8.5).
 - Agent dataset exports: CSV, JSON Lines and Markdown datasets, and a read-only SQLite audit snapshot (section 11.8). **[Added by CR-011, D-014]**
+- Full page text export per page as plain text, alongside the Markdown export. **[Added by CR-017]**
 
 ---
 
 > **Verbatim source — FS-CRAWL-001 v1.4: 8.5 Optional export destinations — verbatim and unabridged**
 
 ### 8.5 Optional export destinations
-> Capabilities: CAP-H-X02
+> Capabilities: CAP-H-X02 · Decisions: D-013 · Change records: CR-016
 
-- **Off by default;** no destination exists until the user creates one. Destination classes: a cloud drive/spreadsheet service, an object-storage endpoint, and a notification webhook — all addressed with the **user's own credentials**, never vendor accounts.
+- **Off by default;** no destination exists until the user creates one. Destination classes: a local or network folder, an FTP server and an SFTP server, addressed with the user's own credentials, never vendor accounts. Cloud drive, spreadsheet-service and object-storage destinations, and notification webhooks, are out of scope for now (section 1.5 of `01-clean-room-and-exclusions.md`). **[Amended by CR-016, D-006, D-013]**
 - Each destination stores: a user-chosen name; class; endpoint details; credential payload **encrypted at rest** (section 9.1).
 - A **test-connection** action verifies reachability and credentials before first use.
 - Transfers occur only when the user initiates an export to the destination, or pre-authorizes it as a schedule completion action (section 6.5).
@@ -80,7 +81,7 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 8.7 Standalone diagnostic and authoring tools — verbatim and unabridged**
 
 ### 8.7 Standalone diagnostic and authoring tools
-> Capabilities: CAP-G-166, CAP-G-X01, CAP-H-170, CAP-H-X03
+> Capabilities: CAP-G-166, CAP-G-X01, CAP-H-170, CAP-H-X03, CAP-H-171 · Decisions: D-017 · Change records: CR-017
 
 A set of self-contained tools operates without requiring a full audit; each is reachable from the shell and, where stateless, from the automation interface:
 
@@ -90,6 +91,7 @@ A set of self-contained tools operates without requiring a full audit; each is r
 - **Render tester:** renders a single URL and returns a screenshot, the post-render document, and console messages — a preview of rendering-mode behavior.
 - **XML sitemap generator:** builds a sitemap from an audit's URL set, filterable by indexability and status, with optional change-frequency and priority hints; the result is exported as a standards-conformant sitemap file (and sitemap index when split by size).
 - **Interactive query builder:** composes nested AND/OR filter rules over URL columns (operators such as contains, starts/ends-with, equals, in-set, between, regex, and numeric comparison), including dynamic custom-extraction and snippet columns; saved queries apply to the explorers and exports. A raw-SQL administration tool is an open scope decision (section 15) and is not required by this version.
+- **Segments:** a saved query can be applied as a named segment, a URL subset that filters every report surface, chart and export; segment counts are shown on the dashboard. **[Added by CR-017]**
 
 ### 8.8 Configuration editor and project settings
 > Capabilities: CAP-K-X01, CAP-K-X02, CAP-K-X04 · Decisions: D-004, D-005 · Change records: CR-012
@@ -252,3 +254,13 @@ A new report surface, additive to the §8.2 catalog:
 **Acceptance hook:** FS-CRAWL-002 §9, criterion #48.
 
 ---
+
+---
+
+## Amendment history
+
+### CR-016 (2026-11-17; D-006, D-013)
+
+Replaced text in §8.5 (destination classes):
+
+> - **Off by default;** no destination exists until the user creates one. Destination classes: a cloud drive/spreadsheet service, an object-storage endpoint, and a notification webhook — all addressed with the **user's own credentials**, never vendor accounts.

@@ -43,3 +43,29 @@ Replaced text in §15 item 3:
 Replaced text in §15 item 5:
 
 > 5. **Raw-SQL administration tool** — whether a direct query interface over the local database is offered as a power-user/debug tool (the interactive query builder per section 8.7 is already specified). Not required by this version.
+
+### 15.1 Deferred capabilities (CR-017)
+> Decisions: D-017 · Change records: CR-017
+
+**[Added by CR-017]** Recorded as deferred: not specified now and not built in the next build-plan extension; revisited after the core end-to-end flows (#49 to #58) pass acceptance.
+
+| Capability | Title |
+|---|---|
+| CAP-B2-077 | Detect conflicting entity information |
+| CAP-B2-078 | Compare structured data against visible page content |
+| CAP-B2-079 | Inconsistent organisation identity across a domain |
+| CAP-D1-106 | Keyboard accessibility |
+| CAP-E-131 | Topic and entity relationships |
+| CAP-E-133 | Important pages with insufficient internal links |
+| CAP-E-134 | Pages receiving internal links from irrelevant sections |
+| CAP-E-135 | Navigation inconsistencies |
+| CAP-E-136 | Pages with no route from the main navigation |
+| CAP-F-145 | Heading-to-content consistency |
+| CAP-F-147 | Content freshness indicators |
+| CAP-F-150 | Title and body-content alignment |
+| CAP-F-151 | Entity extraction |
+| CAP-F-152 | Content-template comparison |
+| CAP-I-195 | Prioritise by confidence |
+| CAP-I-198 | Root-cause grouping |
+| CAP-H-X01 | Offline website copy export |
+
