@@ -18,3 +18,4 @@
 
 - A criterion from #49 onward passes only when a full audit, started through the product's normal entry points (UI or MCP), against the fixture site, produces the expected results for the traps the criterion names. Unit tests alone never satisfy a criterion.
 - Criteria #1 to #48 are re-verified against the fixture site in a **re-baselining pass**, applying the same rule.
+- **UI reachability (added by CR-018):** for every capability with a UI binding (`06-frontend-shell-and-ui/04-ui-surface-map.md`), acceptance includes reaching it through its navigation path in the running product: configure, trigger and view as bound. A capability whose bound surface is not reachable, or renders a placeholder, is not complete, whatever its backend tests show.

@@ -67,6 +67,43 @@ for cid in sorted(untagged, key=key):
     out.append(f"| {cid} | {caps[cid]['title']} | {u['status']} | {u['ref']} |")
 (ARCH / "TRACEABILITY.md").write_text("\n".join(out) + "\n", encoding="utf-8")
 
+# --- UI bindings (CR-018) -------------------------------------------------
+UIMAP = ARCH / "06-frontend-shell-and-ui" / "04-ui-surface-map.md"
+surfaces, bound, exempt = set(), {}, set()
+section = None
+for line in UIMAP.read_text(encoding="utf-8").split("\n"):
+    if line.startswith("### "):
+        section = line
+    m = re.match(r"^\| (UI-\d\d) \|", line)
+    if m and section and "Surface catalogue" in section:
+        surfaces.add(m.group(1))
+    m = re.match(r"^\| (CAP-[A-Z0-9]+-[X0-9]+) \|", line)
+    if m and section:
+        if "Exempt" in section:
+            exempt.add(m.group(1))
+        elif "Binding table" in section:
+            cols = [c.strip() for c in line.strip("|").split(" | ")]
+            bound[m.group(1)] = cols[2:5]
+used = set()
+for cid, cols in bound.items():
+    refs = re.findall(r"UI-\d\d", " ".join(cols))
+    if not refs:
+        errors.append(f"{cid}: UI binding names no surface")
+    for r in refs:
+        used.add(r)
+        if r not in surfaces:
+            errors.append(f"{cid}: UI binding names unknown surface {r}")
+    if cid not in caps:
+        errors.append(f"{cid}: UI binding for unknown capability")
+for cid in where:
+    if cid not in bound and cid not in exempt:
+        errors.append(f"{cid}: in scope but has no UI binding and no exemption")
+for r in re.findall(r"UI-(\d\d)\.\.UI-(\d\d)", " ".join(" ".join(c) for c in bound.values())):
+    for n in range(int(r[0]), int(r[1]) + 1):
+        used.add(f"UI-{n:02d}")
+for r in sorted(surfaces - used):
+    errors.append(f"{r}: dead surface (bound by no capability)")
+
 if errors:
     print("FAIL"); [print(" ", e) for e in errors]; sys.exit(1)
-print(f"PASS: {len(where)} tagged, {len(untagged)} untagged and accounted for, {len(caps)} total. Wrote architecture/TRACEABILITY.md")
+print(f"PASS: {len(where)} tagged, {len(untagged)} untagged and accounted for, {len(caps)} total; UI: {len(bound)} bound, {len(exempt)} exempt, {len(surfaces)} surfaces. Wrote architecture/TRACEABILITY.md")

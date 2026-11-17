@@ -190,6 +190,8 @@ E:\Crawlforge\architecture\
 | `02-virtualization-and-explorers.md` | Virtualization, surfaces, tools | FS-002 §7.1 (50-row DOM virtualization) & §8.3 (TanStack/AG Grid); FS-001 §8.2, §8.4–§8.7 (16 baseline report surfaces, exports, destinations, standalone tools); FS-002 §10.9, §11.9, §12.10, §13.3, §13.6, §14.6, §15.6 (6 extended surfaces + `scope-preview`/`rewrite-preview`/`llms.txt` tools). |
 | `03-local-ui-plugin-system.md` | Local UI plugins | FS-002 §6.1–§6.8 (plugin directories, `plugin.json` manifest, sandbox CSP & capability bridge, `onLoad`/`onTabActivate`/`onDataUpdate`/`onCrawlComplete` hooks, UI contributions, `ui_plugins` registry). |
 
+> **v2.0 addition (CR-018):** `06-frontend-shell-and-ui/04-ui-surface-map.md` holds the UI surface catalogue (UI-01 to UI-24) and the configure/trigger/view binding for every in-scope capability.
+
 ### 07 · Quality & Verification
 
 | File | Area of concern | Key contents (tables / contracts) |
