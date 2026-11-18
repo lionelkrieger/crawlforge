@@ -13,7 +13,7 @@ parallel_waves:
   - wave_id: "wave-8B"
     workpiece_ids: ["WP-08-03", "WP-08-04"]
   - wave_id: "wave-8C"      # serial shared wiring
-    workpiece_ids: ["WP-08-05"]
+    workpiece_ids: ["WP-08-05", "WP-08-A1"]
 gated_acceptance_criteria: []
 
 orchestrator_gates:
@@ -248,3 +248,53 @@ workpieces:
       - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode http --traps noindex"
     done_when: "Full phase-08 gate list passes on the canonical surface (CF_AGENT_ID unset); fixture harness runs noindex through the REST entry point and the UI walker reaches UI-01/UI-10."
     acceptance_criteria_refs: [49]
+
+  # Orchestrator amendment (§11, triage per §5.5/§7.4): the first canonical
+  # `dotnet test CrawlForge.sln` gate run (2026-11-18, logs phase-08-20261118-205122)
+  # exposed 5 PRE-EXISTING failures in baseline-era suites, none caused by phase-08
+  # work: (1) EvidenceIntegrityTests.Wave7A_PhaseLedger reads the v1.1 phase-07 ledger
+  # at its pre-migration path (v2.0 moved it to buildplan/v1.1/phases/); (2-5)
+  # AimdHostThrottleE2ETests asserts pre-HOTFIX-01 hub field names
+  # (previousRate/newRate/previousConcurrency/newConcurrency vs the locked
+  # rateBefore/rateAfter/concurrencyBefore/concurrencyAfter), and the four
+  # MySqlParityE2ETests facts hard-require the v1.1 sign-off machine's live MySQL
+  # 8.0.28 with no availability guard (sibling MySQL suites skip gracefully via
+  # CF_MYSQL_TEST_HOST). Serialized repair; no product code, no weakened assertion.
+  - workpiece_id: "WP-08-A1"
+    title: "Amendment A1 — Repair pre-existing stale gate tests (orchestrator, §11)"
+    phase_id: "phase-08"
+    status: "in_progress"
+    assigned_agent: "lead"
+    started_at: "2026-11-18T19:58:22Z"
+    parallel_group: "wave-8C"
+    depends_on_workpieces: []
+    context_files:
+      - "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\05-api-hub-and-mcp\\02-realtime-websocket-hub.md"
+        sections: ["10.3"]
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+        sections: ["14"]
+    capabilities:
+      - { id: "CAP-L-X01", baseline_state: "partial" }   # diagnostics/verification infrastructure
+    ui_surfaces: []
+    fixture_traps: ["noindex"]   # gate unblock: the phase-08 after_waves noindex fixture run is part of done_when
+    contract_tests:
+      - payload: "host-throttle hub event (locked HOTFIX-01 shape, hub spec §10.3)"
+        test: "AimdHostThrottleE2ETests.LiveAudit_429Pressure_PersistsHistory_EmitsHubEvents_WritesMetricSummary asserts rateBefore/rateAfter/concurrencyBefore/concurrencyAfter from the live producer"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Acceptance.Tests\\EvidenceIntegrityTests.cs"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests\\AimdHostThrottleE2ETests.cs"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests\\MySqlParityE2ETests.cs"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests\\Fixtures\\LiveMySqlParityFact.cs"
+    deliverables:
+      - "EvidenceIntegrityTests.Wave7A_PhaseLedger reads the v1.1 archive ledger (buildplan/v1.1/phases/phase-07-integration-and-acceptance.yaml); all four evidence assertions unchanged"
+      - "AimdHostThrottleE2ETests hub-payload assertions use the locked HOTFIX-01 field names (rateBefore/rateAfter/concurrencyBefore/concurrencyAfter); stale pre-hotfix reads removed; history-DTO and envelope assertions unchanged"
+      - "MySqlParityE2ETests live-server facts skip gracefully when no MySQL server is configured (CF_MYSQL_TEST_HOST convention, identical to Data.MySql.Tests LiveServerFact); every assertion preserved when a server is present; settings honor CF_MYSQL_TEST_* overrides"
+      - "No product code changes; no assertion weakened; no verification command skipped"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Acceptance.Tests"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests"
+    done_when: "Both repaired suites pass on the canonical surface (CF_AGENT_ID unset; MySQL facts skip without a configured server), and the full phase-08 gate list passes including the noindex fixture run."
+    acceptance_criteria_refs: [18]

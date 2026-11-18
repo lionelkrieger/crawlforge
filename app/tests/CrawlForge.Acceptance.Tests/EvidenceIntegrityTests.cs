@@ -195,7 +195,9 @@ public sealed class EvidenceIntegrityTests
     [Fact]
     public void Wave7A_PhaseLedger_RecordsCanonicalWave7AVerification()
     {
-        var yaml = File.ReadAllText(Resolve("../buildplan/phases/phase-07-integration-and-acceptance.yaml"));
+        // WP-08-A1: the v2.0 plan migration archived the v1.1 ledger under
+        // buildplan/v1.1/; the evidence-integrity assertions are unchanged.
+        var yaml = File.ReadAllText(Resolve("../buildplan/v1.1/phases/phase-07-integration-and-acceptance.yaml"));
         Assert.Contains("80/80", yaml);
         Assert.Contains("10/10", yaml);
         Assert.Contains("134/134", yaml);

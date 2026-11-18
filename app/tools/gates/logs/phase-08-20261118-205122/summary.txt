@@ -1,0 +1,17 @@
+[20:51:22] Phase gates: phase-08 (phase-08-hotfix-record-and-foundations.yaml) — SDK 10.0.404, canonical surface (CF_AGENT_ID unset)
+[20:51:22] Logs: E:\Crawlforge\app\tools\gates\logs\phase-08-20261118-205122
+[20:51:22] #1 [after_each_wave] RUN (cwd=E:\Crawlforge\app): dotnet build E:\Crawlforge\app\src\backend\CrawlForge.Host -c Debug
+[20:51:31] #1 OK exit=0 (10s)
+[20:51:31] #2 [after_each_wave] RUN (cwd=E:\Crawlforge): cd E:\Crawlforge\app\src\frontend && npm run build
+[20:51:40] #2 OK exit=0 (8s)
+[20:51:40] #3 [after_each_wave] RUN (cwd=E:\Crawlforge): cd E:\Crawlforge\app\src\electron && npx tsc -p tsconfig.build.json
+[20:51:47] #3 OK exit=0 (8s)
+[20:51:47] #4 [after_each_wave] KnownGap filter appended (phase-08 §12): dotnet test E:\Crawlforge\app\CrawlForge.sln --filter "KnownGap!=WP-09-06"
+[20:51:47] #4 [after_each_wave] RUN (cwd=E:\Crawlforge\app): dotnet test E:\Crawlforge\app\CrawlForge.sln --filter "KnownGap!=WP-09-06"
+[21:55:49] #4 FAILED exit=1 after 3841s — log: E:\Crawlforge\app\tools\gates\logs\phase-08-20261118-205122\04-dotnet-test-ECrawlforgeappCrawlForgesln---filter.log
+[21:55:49] Summary (3867s total):
+[21:55:49]   #1 [after_each_wave] exit=0 10s  dotnet build E:\Crawlforge\app\src\backend\CrawlForge.Host -c Debug
+[21:55:49]   #2 [after_each_wave] exit=0 8s  cd E:\Crawlforge\app\src\frontend && npm run build
+[21:55:49]   #3 [after_each_wave] exit=0 8s  cd E:\Crawlforge\app\src\electron && npx tsc -p tsconfig.build.json
+[21:55:49]   #4 [after_each_wave] exit=1 3841s  dotnet test E:\Crawlforge\app\CrawlForge.sln --filter "KnownGap!=WP-09-06"
+[21:55:49] PHASE GATES: FAIL (fail-fast; remaining commands not run)

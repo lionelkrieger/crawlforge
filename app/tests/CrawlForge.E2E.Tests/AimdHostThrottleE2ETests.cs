@@ -85,10 +85,13 @@ public sealed class AimdHostThrottleE2ETests
             Assert.Equal(auditId, payload.GetProperty("auditId").GetInt64());
             Assert.Contains("127.0.0.1", payload.GetProperty("host").GetString());
             Assert.False(string.IsNullOrEmpty(payload.GetProperty("trigger").GetString()));
-            Assert.True(payload.GetProperty("previousRate").GetDouble() > 0);
-            Assert.True(payload.GetProperty("newRate").GetDouble() > 0);
-            Assert.True(payload.TryGetProperty("previousConcurrency", out _));
-            Assert.True(payload.TryGetProperty("newConcurrency", out _));
+            // WP-08-A1: locked HOTFIX-01 wire shape (hub spec §10.3 "rate
+            // before/after; concurrency before/after" → rateBefore/rateAfter/
+            // concurrencyBefore/concurrencyAfter, as the frontend guards read).
+            Assert.True(payload.GetProperty("rateBefore").GetDouble() > 0);
+            Assert.True(payload.GetProperty("rateAfter").GetDouble() > 0);
+            Assert.True(payload.TryGetProperty("concurrencyBefore", out _));
+            Assert.True(payload.TryGetProperty("concurrencyAfter", out _));
             Assert.True(payload.TryGetProperty("timestamp", out _));
         }
         Assert.Contains(hubEvents, e =>

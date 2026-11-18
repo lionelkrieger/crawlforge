@@ -15,10 +15,14 @@ namespace CrawlForge.E2E.Tests;
 
 /// <summary>
 /// WP-07-01 criterion #18 — LIVE MySQL parity. The user-configured external
-/// server (127.0.0.1:3306, root/empty password, MySQL 8.0.28) is exercised
+/// server (defaults 127.0.0.1:3306, root/empty password, MySQL 8.0.28 as on the
+/// v1.1 sign-off machine; CF_MYSQL_TEST_* overrides honored) is exercised
 /// through the locked provider slot-in: <see cref="E2EBackend.StartAsync"/>
 /// overrides <c>IDbProvider</c> after module registration, so the composed
 /// backend migrates, crawls, analyzes, and scores entirely on MySQL.
+/// WP-08-A1: every fact uses <see cref="LiveMySqlParityFactAttribute"/> and skips
+/// gracefully when no live server is configured (same convention as the
+/// Data.MySql.Tests live-server suites); all assertions run unchanged when one is.
 ///
 /// Proven here:
 /// • connection test verdicts (positive / bad credentials / missing database);
@@ -37,20 +41,23 @@ public sealed class MySqlParityE2ETests
 {
     private const string DatabaseName = "crawlforge_e2e";
 
+    // WP-08-A1: defaults match the v1.1 sign-off machine (127.0.0.1:3306,
+    // root/empty); CF_MYSQL_TEST_* overrides follow the Data.MySql.Tests
+    // live-server convention. The dedicated E2E database name is fixed.
     private static MySqlDatabaseSettings Settings => new()
     {
-        Host = "127.0.0.1",
-        Port = 3306,
+        Host = Environment.GetEnvironmentVariable("CF_MYSQL_TEST_HOST") ?? "127.0.0.1",
+        Port = int.TryParse(Environment.GetEnvironmentVariable("CF_MYSQL_TEST_PORT"), out var port) ? port : 3306,
         Database = DatabaseName,
-        UserId = "root",
-        Password = string.Empty
+        UserId = Environment.GetEnvironmentVariable("CF_MYSQL_TEST_USER") ?? "root",
+        Password = Environment.GetEnvironmentVariable("CF_MYSQL_TEST_PASSWORD") ?? string.Empty
     };
 
     private readonly ITestOutputHelper _output;
 
     public MySqlParityE2ETests(ITestOutputHelper output) => _output = output;
 
-    [Fact]
+    [LiveMySqlParityFact]
     public async Task ConnectionTest_ReportsLiveVerdicts_AndRecordsServerVersion()
     {
         await ResetDatabaseAsync();
@@ -83,7 +90,7 @@ public sealed class MySqlParityE2ETests
         Assert.False(missing.MigrationCompatible);
     }
 
-    [Fact]
+    [LiveMySqlParityFact]
     public async Task FullAudit_OnMySql_ProducesIdenticalReportOutput_AsSqlite()
     {
         await ResetDatabaseAsync();
@@ -139,7 +146,7 @@ public sealed class MySqlParityE2ETests
             mysqlFindings.Select(f => f.RuleKey).OrderBy(k => k, StringComparer.Ordinal));
     }
 
-    [Fact]
+    [LiveMySqlParityFact]
     public async Task ArchiveSwitch_ToMySql_AndExplicitRevert_ToEmbedded()
     {
         await ResetDatabaseAsync();
@@ -211,7 +218,7 @@ public sealed class MySqlParityE2ETests
         Assert.Contains(revertedArtifacts, a => a.Kind == ContentArtifactKind.Body);
     }
 
-    [Fact]
+    [LiveMySqlParityFact]
     public async Task MySqlMigrations_AreIdempotent_AndDialectPure()
     {
         await ResetDatabaseAsync();
