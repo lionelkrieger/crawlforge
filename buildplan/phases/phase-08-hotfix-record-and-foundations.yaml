@@ -111,9 +111,10 @@ workpieces:
   - workpiece_id: "WP-08-03"
     title: "Contract-Conformance Harness — Every Cross-Layer Payload (REST, Hub, IPC, MCP, Storage-to-Engine)"
     phase_id: "phase-08"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "cf-wp-08-03"
     started_at: "2026-11-17T22:43:59Z"
+    completed_at: "2026-11-18T11:02:20Z"
     parallel_group: "wave-8B"
     depends_on_workpieces: ["WP-08-01", "WP-08-02"]
     context_files:
