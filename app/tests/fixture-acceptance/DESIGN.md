@@ -173,6 +173,80 @@ cases; retry-then-success records the failed attempt; all-fail returns the
 failed result; non-race failures are never retried; fixture reset + safety
 check before/after EACH attempt).
 
+## UI-interaction determinism (lead send-back 2026-11-18, fixed)
+
+The lead's independent re-run of the exact verification command failed exit 2
+("UI project creation did not produce a project row",
+results/20261118T002104Z): the submit click never fired — a Mantine modal
+animation moved the button between rect read and input dispatch, and the old
+click/fill returned `{clicked:false}` / `{ok:false}` which the callers ignored;
+a fixed post-submit sleep masked the miss. Fixes (UI-interaction scope only;
+verdict logic untouched):
+
+- `node/cdp.mjs click`: re-find the element and read a FRESH rect immediately
+  before each dispatch (up to 3 attempts), verify landing via
+  `document.activeElement`, and fall back to real DOM `click()`/`dblclick`
+  events if input events keep missing. If the element existed before dispatch
+  and vanished after (its own action removed it, e.g. submit closes the
+  modal), report `clicked:true, vanishedAfterDispatch:true` — the caller's
+  evidence wait verifies the effect. Persistent failure is returned to the
+  caller, never swallowed.
+- `node/cdp.mjs fill`: read the value back after a controlled-input settle and
+  report `ok` only when it equals the requested value.
+- `harness/cdp.py click/fill`: `_retry_action` asserts the success key, retries
+  with 0.4 s backoff until a 10 s timeout, then raises `CdpError` (transport
+  errors propagate immediately). `must_wait_for` raises on timeout.
+- `run_fixture_acceptance.py ui_entry_audit`: fixed post-submit/post-start
+  sleeps replaced by EVIDENCE waits — poll (≤25 s) for the POST /api/projects
+  network event OR the named project row via REST; poll (≤20 s) for a NEW
+  audit id > baseline for the config OR POST /api/audits. On failure the
+  modal/hub visible state (dump) + screenshot are captured into ui-entry.json
+  BEFORE raising. Hub row visibility gets a bounded 6 s refresh window before
+  the recorded REST fallback decision.
+- Walker call sites audited: UI-02 records each click attempt's CdpError
+  explicitly and still exercises the remaining affordances; UI-04 records
+  not_reachable with evidence when the dialog does not open; UI-10's open
+  click failure is recorded per attempt and classification stays dump-driven;
+  UI-19 already recorded per-tool errors. No call site silently ignores a
+  failed interaction any more.
+- Regression tests: `tests/test_cdp_retry.py` (retry-then-success, persistent
+  failure raises, fill value mismatch raises, transport error propagates
+  without retry, must_wait_for semantics) — CDP child mocked, no live app.
+
+### Root cause of the start-audit failure (live-probe verified)
+
+`HubDashboard.startAudit` (HubDashboard.tsx:213-246) starts the audit and then
+calls `navigation.openAudit(...)`, which navigates away from the hub — so the
+Start audit button legitimately VANISHES mid-click. The old click helper
+treated the post-dispatch disappearance as a miss and retried until timeout
+(run 20261118T003239Z: "element not found: testid=start-audit-17", 25 attempts,
+even though the audit had started). Two further product behaviours were
+measured with a live CDP probe (temporary, removed):
+- The hub project list does NOT auto-refresh on external changes and `nav-hub`
+  does not reload it; only the New project dialog's submit (`loadProjects()`)
+  and shell start load it. The UI-entry flow creates through the dialog, so the
+  new row IS refreshed into the hub.
+- The hub window is bounded (frontend DEFAULT_LIST_LIMIT=50, backend default
+  limit 50, ascending). With the accumulated harness list (<50) every row
+  renders; if the list ever exceeds the window the newest row can fall off.
+
+Fixes built on the click/fill hardening above:
+- `node/cdp.mjs click`: if the element existed before dispatch and is gone
+  after, return `clicked:true, vanishedAfterDispatch:true` (its own action
+  removed it); the caller's evidence wait verifies the effect.
+- `ui_entry_audit`: wait for the SPECIFIC `start-audit-{pid}` button (≤12 s)
+  before deciding reachability; if it never renders, REST fallback with
+  `proven=false` (recorded product behaviour, never a silent pass). `ui_start_fn`
+  dispatches the click inside try/except and treats the NEW audit row via REST
+  (id > baseline) as the SOURCE OF TRUTH for success — a click-helper error
+  caused by the button's own navigation no longer fails the flow; if no audit
+  appears within 20 s the hub state (dump + screenshot) is captured before
+  raising. Project creation likewise verifies via the REST project row, not a
+  fixed sleep.
+
+Acceptance: exact verification command run 3 consecutive times from cold
+start, all exit 0 (results dirs reported to lead).
+
 ## UI walker (CR-018 / 06/04 §1, §3)
 
 Every surface UI-01..UI-24 is attempted along its SPEC path from the main hub

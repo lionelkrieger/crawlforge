@@ -124,6 +124,11 @@ const DUMP_EXPR = `(() => {
   return { title: document.title, url: location.href, text: document.body.innerText.slice(0, 8000), buttons, inputs, testids };
 })()`;
 
+// Expression that RE-FINDS the element on every evaluation (survives React
+// re-renders between dispatches). Used by the hardened click/fill paths.
+const EL_EXPR = (how, value) =>
+  `(${FIND_ELEMENT.toString()})(${JSON.stringify(how)}, ${JSON.stringify(value)})`;
+
 async function rectOf(c, how, value) {
   const expr = `(() => {
     const find = ${FIND_ELEMENT.toString()};
@@ -201,18 +206,54 @@ async function runCommand(c, cmd, a) {
       return { path: a.path };
     }
     case 'click': {
+      // Animation-race hardening (lead send-back 2026-11-18): re-read a FRESH
+      // rect immediately before each dispatch, verify the click landed via
+      // focus, and fall back to real DOM click events if input events keep
+      // missing a moving target (e.g. Mantine modal animation). Failure is
+      // reported to the caller, never swallowed.
       const how = a.testid ? 'testid' : a.selector ? 'selector' : a.placeholder ? 'placeholder' : 'text';
       const val = a.testid ?? a.selector ?? a.placeholder ?? a.text;
-      const rect = await rectOf(c, how, val);
-      if (!rect) return { clicked: false, error: `element not found: ${how}=${val}` };
-      await mouseClick(c, rect.x, rect.y, 1);
-      if (a.double) { await mouseClick(c, rect.x, rect.y, 2); }
-      return { clicked: true, rect };
+      const elExpr = EL_EXPR(how, val);
+      const exists = await c.evaluate(`!!(${elExpr})`);
+      if (!exists) return { clicked: false, error: `element not found: ${how}=${val}` };
+      await c.evaluate(`(() => { const el = ${elExpr}; if (el) el.scrollIntoView({ block: 'center', inline: 'center' }); return !!el; })()`);
+      await new Promise(r => setTimeout(r, 100));
+      let rect = null;
+      let method = 'input';
+      for (let attempt = 0; attempt < 3; attempt++) {
+        rect = await rectOf(c, how, val); // fresh find + fresh rect each attempt
+        if (!rect) return { clicked: false, error: `element detached or invisible: ${how}=${val}` };
+        await mouseClick(c, rect.x, rect.y, 1);
+        if (a.double) { await mouseClick(c, rect.x, rect.y, 2); }
+        await new Promise(r => setTimeout(r, 80));
+        const after = await c.evaluate(`(() => { const el = ${elExpr};
+          return { present: !!el, focused: !!el && document.activeElement === el }; })()`);
+        if (after.focused) break;
+        if (!after.present) {
+          // The element existed before dispatch and is gone now: its own
+          // action most likely removed it (e.g. submit closes the modal).
+          // Report success; the caller's EVIDENCE wait verifies the effect.
+          return { clicked: true, rect, method: 'input', vanishedAfterDispatch: true };
+        }
+        if (attempt === 2) {
+          // DOM fallback: dispatch the same events a user click produces.
+          await c.evaluate(`(() => { const el = ${elExpr}; if (!el) return false; el.click();
+            ${a.double ? `el.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, view: window }));` : ''}
+            return true; })()`);
+          method = 'dom-fallback';
+          await new Promise(r => setTimeout(r, 80));
+        }
+      }
+      return { clicked: true, rect, method };
     }
     case 'fill': {
       const how = a.testid ? 'testid' : a.selector ? 'selector' : 'placeholder';
       const val = a.testid ?? a.selector ?? a.placeholder;
-      return fillInput(c, how, val, a.value ?? '');
+      const r = await fillInput(c, how, val, a.value ?? '');
+      if (!r || r.ok === false) return r ?? { ok: false, error: 'input not found' };
+      await new Promise(res => setTimeout(res, 60)); // controlled-input settle
+      const settled = await c.evaluate(`(() => { const el = ${EL_EXPR(how, val)}; return el ? el.value : null; })()`);
+      return { ok: settled === (a.value ?? ''), value: settled, expected: a.value ?? '' };
     }
     case 'key': await pressKey(c, a.key, a.modifiers ?? 0); return { pressed: a.key };
     case 'type': await typeText(c, a.text ?? ''); return { typed: (a.text ?? '').length };

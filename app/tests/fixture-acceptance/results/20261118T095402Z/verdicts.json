@@ -1,0 +1,339 @@
+{
+  "harness": "WP-08-04 fixture acceptance harness",
+  "version": "1.0.0",
+  "timestamp": "20261118T095402Z",
+  "git_head": "10a1e5a086acd8f3ca0c5c3d1f1c86edbe59fd8b",
+  "fixture_base_url": "http://127.0.0.1:47311",
+  "expected_results_sha256": "9068684d683e7f4dcedabef4223d35ed69421e49ed4af591e353288a2d780211",
+  "modes_requested": [
+    "http"
+  ],
+  "selected_traps": [
+    "noindex",
+    "canonical-conflict",
+    "soft-404-server",
+    "missing-alt"
+  ],
+  "selected_surfaces": [],
+  "tls": {
+    "active": false,
+    "note": null
+  },
+  "cdp_port": 9222,
+  "app_launched_by_harness": true,
+  "environment": {
+    "cdp_port_notes": [],
+    "fixture_started_by_harness": true,
+    "fixture_reused_existing": false,
+    "session_events_file": "results/ENVIRONMENT-NOTES.md (pre-run session measurements)"
+  },
+  "global_assertions": [
+    {
+      "id": "no-non-get-requests",
+      "check": "GET /__fixture/requests -> nonGet is empty after any audit",
+      "criteria": [
+        54
+      ],
+      "ok": true,
+      "per_audit": [
+        {
+          "audit_id": "31",
+          "entry": "UI Start audit button (CDP) + REST limit-bounding + REST poll",
+          "nonGet": [],
+          "ok": true,
+          "evidence": "nonGet == [] after audit"
+        }
+      ]
+    }
+  ],
+  "product_defects": null,
+  "modes": {
+    "http": {
+      "traps": {
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 31: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 31: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 31: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404; indexability.soft-404[warning] indexability soft 404)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 31: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        }
+      },
+      "counts": {
+        "pass": 4,
+        "partial": 0,
+        "fail": 0,
+        "not_testable": 0
+      },
+      "evidence_pool": [
+        "31"
+      ],
+      "pooling_note": "probe-2 convention: bulk runs pooled for the acceptance matrix; per-run verdicts in runs[]"
+    }
+  },
+  "runs": [
+    {
+      "run_id": "http-ui",
+      "mode": "http",
+      "entry_point": "UI Start audit button (CDP) + REST limit-bounding + REST poll",
+      "project_id": "20",
+      "project_name": "Fixture harness http 20261118T095402Z",
+      "configuration_id": "24",
+      "audit_id": "31",
+      "limit_overrides": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      },
+      "state": "completed",
+      "transitions": [
+        {
+          "t": 0.0,
+          "state": "running",
+          "phase": "crawling",
+          "counters": {
+            "queued": 0,
+            "fetched": 0,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 181.3,
+          "state": "running",
+          "phase": "analyzing",
+          "counters": {
+            "queued": 0,
+            "fetched": 171,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 197.4,
+          "state": "completed",
+          "phase": "finalizing",
+          "counters": {
+            "queued": 0,
+            "fetched": 171,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        }
+      ],
+      "duration_s": 197.4,
+      "timed_out": false,
+      "configuration_setup": "Project + default config created through UI dialog; rendering.enabled=false (default); limits bounded via REST PUT.",
+      "start_attempts": [],
+      "safety": {
+        "ok": true,
+        "evidence": "nonGet == [] after audit",
+        "tag_hits": {
+          "total": 0,
+          "beforeConsent": 0,
+          "granted": 0,
+          "hits": []
+        }
+      },
+      "url_count": 174,
+      "finding_count": 1428,
+      "link_count": 1545,
+      "rendering_inert": {
+        "inert": false,
+        "evidence": "rendering.enabled=False; 'no rendered tree is available' findings=0; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=None",
+        "no_tree_findings": 0,
+        "js_target_present": false,
+        "js_content_words": null
+      },
+      "click_activity": {
+        "active": false,
+        "click_link_rows": 0,
+        "spa_view_urls": 0,
+        "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+      },
+      "traps": {
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 31: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 31: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 31: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404; indexability.soft-404[warning] indexability soft 404)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 31: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        }
+      },
+      "counts": {
+        "pass": 4,
+        "partial": 0,
+        "fail": 0,
+        "not_testable": 0
+      }
+    }
+  ],
+  "ui_entry": {
+    "flow": "UI New project dialog -> REST PUT limits -> UI Start audit -> CDP UI-10 inspection",
+    "note_no_ui_limit_controls": "UI-04 configuration editor absent; limits bounded via REST PUT /api/configurations/{id} (subset update), read back to verify.",
+    "create_api_calls": [
+      "POST http://127.0.0.1:62724/api/projects {\"name\":\"Fixture harness http 20261118T095402Z\",\"description\":\"WP-08-04 fixture acceptance — UI entry (CR-023)\"}",
+      "POST http://127.0.0.1:62724/api/projects/20/configurations {\"name\":\"Default configuration\",\"startUrls\":[\"http://127.0.0.1:47311/\"],\"respectRobotsTxt\":true}",
+      "GET http://127.0.0.1:62724/api/projects "
+    ],
+    "create_post_seen": true,
+    "project_id": "20",
+    "configuration_id": "24",
+    "rest_limit_bounding": {
+      "put_payload": {
+        "limits": {
+          "maxUrls": 220,
+          "maxDepth": 6,
+          "maxDurationSeconds": 180,
+          "maxResponseBytes": null
+        }
+      },
+      "read_back_limits": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      }
+    },
+    "start_button_visible_in_hub": true,
+    "project_row_visible_in_hub": true,
+    "start_api_calls": [
+      "GET http://127.0.0.1:62724/api/projects/20/configurations ",
+      "POST http://127.0.0.1:62724/api/audits {\"configurationId\":\"24\"}",
+      "GET http://127.0.0.1:62724/api/audits "
+    ],
+    "start_post_seen": true,
+    "start_click_note": "clicked (method=input, vanished=True)",
+    "start_attempts": [],
+    "ui10_running_dump": {
+      "title": "CrawlForge",
+      "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+      "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\nAudit 31\nCOMPLETED\n\nPhase · started 18 Nov 11:54:13\n\nCRAWL PROGRESS\n\n171 fetched · — queued · — · ETA —\n\nERRORS\n—\nBLOCKED\n—\nWAF BLOCKED\n0\nELAPSED\n—\n\nHOST THROTTLE (AIMD)\n\nHost\tRate\tConcurrency\tTTFB EWMA\tState\n\n\n127.0.0.1\n\n\t3.1/s\t1\t1 ms\t\nNOMINAL\n\nREPORT SURFACES\n\nURL / finding / link grids, charts, and the link graph mount into this workspace from the report workpieces; all render locally from aggregate endpoints. Live telemetry above is already streaming for this audit.\n\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n161/1000\n\nAUDIT-COMPLETED\n11:57:28\nSTAGE-CHANGED\n11:57:28\nCRAWL-PROGRESS\n11:57:28\nCRAWL-PROGRESS\n11:57:27\nCRAWL-PROGRESS\n11:57:26\nCRAWL-PROGRESS\n11:57:25\nCRAWL-PROGRESS\n11:57:24\nCRAWL-PROGRESS\n11:57:23\nCRAWL-PROGRESS\n11:57:22\nCRAWL-PROGRESS\n11:57:21\nCRAWL-PROGRESS\n11:57:20\nCRAWL-PROGRESS\n11:57:19\nCRAWL-PROGRESS\n11:57:18\nCRAWL-PROGRESS\n11:57:17\nCRAWL-PROGRESS\n11:57:16\nCRAWL-PROGRESS\n11:57:15\nCRAWL-PROGRESS\n11:57:14\nSTAGE-CHANGED\n11:57:14\nHOST-THROTTLE\n11:57:13\nCRAWL-PROGRESS\n11:57:13\nCRAWL-PROGRESS\n11:57:12\nHOST-THROTTLE\n11:57:12\nCRAWL-PROGRESS\n11:57:11\nCRAWL-PROGRESS\n11:57:10\nCRAWL-PROGRESS\n11:57:09\nHOST-THROTTLE\n11:57:09\nCRAWL-PROGRESS\n11:57:08\nCRAWL-PROGRESS\n11:57:06\nHOST-THROTTLE\n11:57:06\nCRAWL-PROGRESS\n11:57:04\nCRAWL-PROGRESS\n11:57:02\nCRAWL-PROGRESS\n11:57:00\nHOST-THROTTLE\n11:57:00\nCRAWL-PROGRESS\n11:56:56\nCRAWL-PROGRESS\n11:56:45\nHOST-THROTTLE\n11:56:45\nCRAWL-PROGRESS\n11:56:25\nCRAWL-PROGRESS\n11:56:05\nHOST-THROTTLE\n11:56:05\nCRAWL-PROGRESS\n11:55:50\nHOST-THROTTLE\n11:55:50\nCRAWL-PROGRESS\n11:55:44\nHOST-THROTTLE\n11:55:44\nCRAWL-PROGRESS\n11:55:42\nCRAWL-PROGRESS\n11:55:41\nHOST-THROTTLE\n11:55:40\nCRAWL-PROGRESS\n11:55:40\nCRAWL-PROGRESS\n11:55:39\nHOST-THROTTLE\n11:55:38\nCRAWL-PROGRESS\n11:55:38\nCRAWL-PROGRESS\n11:55:37\nHOST-THROTTLE\n11:55:36\nCRAWL-PROGRESS\n11:55:36\nCRAWL-PROGRESS\n11:55:35\nCRAWL-PROGRESS\n11:55:34\nHOST-THROTTLE\n11:55:34\nCRAWL-PROGRESS\n11:55:32\nCRAWL-PROGRESS\n11:55:31\nHOST-THROTTLE\n11:55:31\nCRAWL-PROGRESS\n11:55:29\nCRAWL-PROGRESS\n11:55:28\nHOST-THROTTLE\n11:55:28\nCRAWL-PROGRESS\n11:55:26\nCRAWL-PROGRESS\n11:55:25\nCRAWL-PROGRESS\n11:55:23\nCRAWL-PROGRESS\n11:55:21\nCRAWL-PROGRESS\n11:55:20\nCRAWL-PROGRESS\n11:55:19\nCRAWL-PROGRESS\n11:55:18\nCRAWL-PROGRESS\n11:55:17\nHOST-THROTTLE\n11:55:17\nCRAWL-PROGRESS\n11:55:16\nHOST-THROTTLE\n11:55:15\nCRAWL-PROGRESS\n11:55:15\nHOST-THROTTLE\n11:55:14\nCRAWL-PROGRESS\n11:55:14\nCRAWL-PROGRESS\n11:55:13\nHOST-THROTTLE\n11:55:13\nCRAWL-PROGRESS\n11:55:12\nHOST-THROTTLE\n11:55:11\nCRAWL-PROGRESS\n11:55:11\nCRAWL-PROGRESS\n11:55:10\nHOST-THROTTLE\n11:55:10\nCRAWL-PROGRESS\n11:55:09\nCRAWL-PROGRESS\n11:55:08\nCRAWL-PROGRESS\n11:55:07\nCRAWL-PROGRESS\n11:55:06\nCRAWL-PROGRESS\n11:55:04\nCRAWL-PROGRESS\n11:55:03\nCRAWL-PROGRESS\n11:55:02\nCRAWL-PROGRESS\n11:55:01\nCRAWL-PROGRESS\n11:55:00\nHOST-THROTTLE\n11:55:00\nCRAWL-PROGRESS\n11:54:59\nCRAWL-PROGRESS\n11:54:58\nHOST-THROTTLE\n11:54:58\nCRAWL-PROGRESS\n11:54:57\nHOST-THROTTLE\n11:54:57\nCRAWL-PROGRESS\n11:54:56\nHOST-THROTTLE\n11:54:56\nCRAWL-PROGRESS\n11:54:55\nHOST-THROTTLE\n11:54:54\nCRAWL-PROGRESS\n11:54:54\nCRAWL-PROGRESS\n11:54:53\nHOST-THROTTLE\n11:54:53\nCRAWL-PROGRESS\n11:54:52\nHOST-THROTTLE\n11:54:51\nCRAWL-PROGRESS\n11:54:51\nCRAWL-PROGRESS\n11:54:50\nHOST-THROTTLE\n11:54:49\nCRAWL-PROGRESS\n11:54:49\nHOST-THROTTLE\n11:54:48\nCRAWL-PROGRESS\n11:54:47\nHOST-THROTTLE\n11:54:47\nCRAWL-PROGRESS\n11:54:46\nHOST-THROTTLE\n11:54:45\nCRAWL-PROGRESS\n11:54:45\nCRAWL-PROGRESS\n11:54:44\nHOST-THROTTLE\n11:54:44\nCRAWL-PROGRESS\n11:54:43\nCRAWL-PROGRESS\n11:54:42\nCRAWL-PROGRESS\n11:54:41\nCRAWL-PROGRESS\n11:54:40\nCRAWL-PROGRESS\n11:54:39\nCRAWL-PROGRESS\n11:54:38\nCRAWL-PROGRESS\n11:54:37\nCRAWL-PROGRESS\n11:54:36\nCRAWL-PROGRESS\n11:54:35\nCRAWL-PROGRESS\n11:54:34\nHOST-THROTTLE\n11:54:33\nCRAWL-PROGRESS\n11:54:33\nCRAWL-PROGRESS\n11:54:32\nHOST-THROTTLE\n11:54:31\nCRAWL-PROGRESS\n11:54:31\nHOST-THROTTLE\n11:54:30\nCRAWL-PROGRESS\n11:54:30\nHOST-THROTTLE\n11:54:29\nCRAWL-PROGRESS\n11:54:29\nCRAWL-PROGRESS\n11:54:28\nHOST-THROTTLE\n11:54:27\nCRAWL-PROGRESS\n11:54:27\nHOST-THROTTLE\n11:54:26\nCRAWL-PROGRESS\n11:54:26\nHOST-THROTTLE\n11:54:25\nCRAWL-PROGRESS\n11:54:25\nHOST-THROTTLE\n11:54:24\nCRAWL-PROGRESS\n11:54:23\nCRAWL-PROGRESS\n11:54:22\nHOST-THROTTLE\n11:54:22\nCRAWL-PROGRESS\n11:54:21\nHOST-THROTTLE\n11:54:21\nCRAWL-PROGRESS\n11:54:20\nHOST-THROTTLE\n11:54:19\nCRAWL-PROGRESS\n11:54:19\nCRAWL-PROGRESS\n11:54:18\nHOST-THROTTLE\n11:54:18\nCRAWL-PROGRESS\n11:54:17\nCRAWL-PROGRESS\n11:54:16\nCRAWL-PROGRESS\n11:54:15\nHOST-THROTTLE\n11:54:14\nCRAWL-PROGRESS\n11:54:14\nWS\n181 MiB\nHeap\n25.1 MiB\nGC\n95/7/5\nWAL\n4.04 MiB\nJS\n10.7 MiB\nbeat\n11:57:30\nCompact",
+      "buttons": [
+        "Open command palette (Ctrl+K)",
+        "Main hub",
+        "Audits",
+        "Report",
+        "Tools",
+        "Settings",
+        "Toggle activity pane",
+        "Resize Main workspace and Live activity (Enter toggles collapse)",
+        "Compact and trim working set"
+      ],
+      "inputs": [],
+      "testids": [
+        "cf-appshell",
+        "palette-trigger",
+        "connection-pill",
+        "cf-nav-rail",
+        "nav-hub",
+        "nav-audits",
+        "nav-report",
+        "nav-tools",
+        "nav-settings",
+        "cf-split",
+        "cf-split-first",
+        "primary-pane",
+        "toggle-secondary-pane",
+        "view-content",
+        "report-view",
+        "report-state",
+        "report-progress",
+        "hosts-table",
+        "cf-split-divider",
+        "cf-split-second",
+        "secondary-pane",
+        "activity-feed",
+        "activity-count",
+        "cf-statusbar",
+        "status-ws",
+        "status-heap",
+        "status-gc",
+        "status-wal",
+        "status-js",
+        "status-heartbeat",
+        "compact-button"
+      ]
+    },
+    "ui10_completed_dump": {
+      "title": "CrawlForge",
+      "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+      "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\nAudit 1\nFAILED\n\nPhase finalizing · started 17 Nov 19:05:19\n\nCRAWL PROGRESS\n\n0 fetched · 0 queued\n\nERRORS\n0\nBLOCKED\n0\nWAF BLOCKED\n0\nELAPSED\n—\n\nHOST THROTTLE (AIMD)\n\nHost\tRate\tConcurrency\tTTFB EWMA\tState\n\n\n127.0.0.1\n\n\t3.1/s\t1\t1 ms\t\nNOMINAL\n\nREPORT SURFACES\n\nURL / finding / link grids, charts, and the link graph mount into this workspace from the report workpieces; all render locally from aggregate endpoints. Live telemetry above is already streaming for this audit.\n\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n161/1000\n\nAUDIT-COMPLETED\n11:57:28\nSTAGE-CHANGED\n11:57:28\nCRAWL-PROGRESS\n11:57:28\nCRAWL-PROGRESS\n11:57:27\nCRAWL-PROGRESS\n11:57:26\nCRAWL-PROGRESS\n11:57:25\nCRAWL-PROGRESS\n11:57:24\nCRAWL-PROGRESS\n11:57:23\nCRAWL-PROGRESS\n11:57:22\nCRAWL-PROGRESS\n11:57:21\nCRAWL-PROGRESS\n11:57:20\nCRAWL-PROGRESS\n11:57:19\nCRAWL-PROGRESS\n11:57:18\nCRAWL-PROGRESS\n11:57:17\nCRAWL-PROGRESS\n11:57:16\nCRAWL-PROGRESS\n11:57:15\nCRAWL-PROGRESS\n11:57:14\nSTAGE-CHANGED\n11:57:14\nHOST-THROTTLE\n11:57:13\nCRAWL-PROGRESS\n11:57:13\nCRAWL-PROGRESS\n11:57:12\nHOST-THROTTLE\n11:57:12\nCRAWL-PROGRESS\n11:57:11\nCRAWL-PROGRESS\n11:57:10\nCRAWL-PROGRESS\n11:57:09\nHOST-THROTTLE\n11:57:09\nCRAWL-PROGRESS\n11:57:08\nCRAWL-PROGRESS\n11:57:06\nHOST-THROTTLE\n11:57:06\nCRAWL-PROGRESS\n11:57:04\nCRAWL-PROGRESS\n11:57:02\nCRAWL-PROGRESS\n11:57:00\nHOST-THROTTLE\n11:57:00\nCRAWL-PROGRESS\n11:56:56\nCRAWL-PROGRESS\n11:56:45\nHOST-THROTTLE\n11:56:45\nCRAWL-PROGRESS\n11:56:25\nCRAWL-PROGRESS\n11:56:05\nHOST-THROTTLE\n11:56:05\nCRAWL-PROGRESS\n11:55:50\nHOST-THROTTLE\n11:55:50\nCRAWL-PROGRESS\n11:55:44\nHOST-THROTTLE\n11:55:44\nCRAWL-PROGRESS\n11:55:42\nCRAWL-PROGRESS\n11:55:41\nHOST-THROTTLE\n11:55:40\nCRAWL-PROGRESS\n11:55:40\nCRAWL-PROGRESS\n11:55:39\nHOST-THROTTLE\n11:55:38\nCRAWL-PROGRESS\n11:55:38\nCRAWL-PROGRESS\n11:55:37\nHOST-THROTTLE\n11:55:36\nCRAWL-PROGRESS\n11:55:36\nCRAWL-PROGRESS\n11:55:35\nCRAWL-PROGRESS\n11:55:34\nHOST-THROTTLE\n11:55:34\nCRAWL-PROGRESS\n11:55:32\nCRAWL-PROGRESS\n11:55:31\nHOST-THROTTLE\n11:55:31\nCRAWL-PROGRESS\n11:55:29\nCRAWL-PROGRESS\n11:55:28\nHOST-THROTTLE\n11:55:28\nCRAWL-PROGRESS\n11:55:26\nCRAWL-PROGRESS\n11:55:25\nCRAWL-PROGRESS\n11:55:23\nCRAWL-PROGRESS\n11:55:21\nCRAWL-PROGRESS\n11:55:20\nCRAWL-PROGRESS\n11:55:19\nCRAWL-PROGRESS\n11:55:18\nCRAWL-PROGRESS\n11:55:17\nHOST-THROTTLE\n11:55:17\nCRAWL-PROGRESS\n11:55:16\nHOST-THROTTLE\n11:55:15\nCRAWL-PROGRESS\n11:55:15\nHOST-THROTTLE\n11:55:14\nCRAWL-PROGRESS\n11:55:14\nCRAWL-PROGRESS\n11:55:13\nHOST-THROTTLE\n11:55:13\nCRAWL-PROGRESS\n11:55:12\nHOST-THROTTLE\n11:55:11\nCRAWL-PROGRESS\n11:55:11\nCRAWL-PROGRESS\n11:55:10\nHOST-THROTTLE\n11:55:10\nCRAWL-PROGRESS\n11:55:09\nCRAWL-PROGRESS\n11:55:08\nCRAWL-PROGRESS\n11:55:07\nCRAWL-PROGRESS\n11:55:06\nCRAWL-PROGRESS\n11:55:04\nCRAWL-PROGRESS\n11:55:03\nCRAWL-PROGRESS\n11:55:02\nCRAWL-PROGRESS\n11:55:01\nCRAWL-PROGRESS\n11:55:00\nHOST-THROTTLE\n11:55:00\nCRAWL-PROGRESS\n11:54:59\nCRAWL-PROGRESS\n11:54:58\nHOST-THROTTLE\n11:54:58\nCRAWL-PROGRESS\n11:54:57\nHOST-THROTTLE\n11:54:57\nCRAWL-PROGRESS\n11:54:56\nHOST-THROTTLE\n11:54:56\nCRAWL-PROGRESS\n11:54:55\nHOST-THROTTLE\n11:54:54\nCRAWL-PROGRESS\n11:54:54\nCRAWL-PROGRESS\n11:54:53\nHOST-THROTTLE\n11:54:53\nCRAWL-PROGRESS\n11:54:52\nHOST-THROTTLE\n11:54:51\nCRAWL-PROGRESS\n11:54:51\nCRAWL-PROGRESS\n11:54:50\nHOST-THROTTLE\n11:54:49\nCRAWL-PROGRESS\n11:54:49\nHOST-THROTTLE\n11:54:48\nCRAWL-PROGRESS\n11:54:47\nHOST-THROTTLE\n11:54:47\nCRAWL-PROGRESS\n11:54:46\nHOST-THROTTLE\n11:54:45\nCRAWL-PROGRESS\n11:54:45\nCRAWL-PROGRESS\n11:54:44\nHOST-THROTTLE\n11:54:44\nCRAWL-PROGRESS\n11:54:43\nCRAWL-PROGRESS\n11:54:42\nCRAWL-PROGRESS\n11:54:41\nCRAWL-PROGRESS\n11:54:40\nCRAWL-PROGRESS\n11:54:39\nCRAWL-PROGRESS\n11:54:38\nCRAWL-PROGRESS\n11:54:37\nCRAWL-PROGRESS\n11:54:36\nCRAWL-PROGRESS\n11:54:35\nCRAWL-PROGRESS\n11:54:34\nHOST-THROTTLE\n11:54:33\nCRAWL-PROGRESS\n11:54:33\nCRAWL-PROGRESS\n11:54:32\nHOST-THROTTLE\n11:54:31\nCRAWL-PROGRESS\n11:54:31\nHOST-THROTTLE\n11:54:30\nCRAWL-PROGRESS\n11:54:30\nHOST-THROTTLE\n11:54:29\nCRAWL-PROGRESS\n11:54:29\nCRAWL-PROGRESS\n11:54:28\nHOST-THROTTLE\n11:54:27\nCRAWL-PROGRESS\n11:54:27\nHOST-THROTTLE\n11:54:26\nCRAWL-PROGRESS\n11:54:26\nHOST-THROTTLE\n11:54:25\nCRAWL-PROGRESS\n11:54:25\nHOST-THROTTLE\n11:54:24\nCRAWL-PROGRESS\n11:54:23\nCRAWL-PROGRESS\n11:54:22\nHOST-THROTTLE\n11:54:22\nCRAWL-PROGRESS\n11:54:21\nHOST-THROTTLE\n11:54:21\nCRAWL-PROGRESS\n11:54:20\nHOST-THROTTLE\n11:54:19\nCRAWL-PROGRESS\n11:54:19\nCRAWL-PROGRESS\n11:54:18\nHOST-THROTTLE\n11:54:18\nCRAWL-PROGRESS\n11:54:17\nCRAWL-PROGRESS\n11:54:16\nCRAWL-PROGRESS\n11:54:15\nHOST-THROTTLE\n11:54:14\nCRAWL-PROGRESS\n11:54:14\nWS\n199 MiB\nHeap\n21.7 MiB\nGC\n97/8/5\nWAL\n4.04 MiB\nJS\n10.7 MiB\nbeat\n11:57:34\nCompact",
+      "buttons": [
+        "Open command palette (Ctrl+K)",
+        "Main hub",
+        "Audits",
+        "Report",
+        "Tools",
+        "Settings",
+        "Toggle activity pane",
+        "Resize Main workspace and Live activity (Enter toggles collapse)",
+        "Compact and trim working set"
+      ],
+      "inputs": [],
+      "testids": [
+        "cf-appshell",
+        "palette-trigger",
+        "connection-pill",
+        "cf-nav-rail",
+        "nav-hub",
+        "nav-audits",
+        "nav-report",
+        "nav-tools",
+        "nav-settings",
+        "cf-split",
+        "cf-split-first",
+        "primary-pane",
+        "toggle-secondary-pane",
+        "view-content",
+        "report-view",
+        "report-state",
+        "report-progress",
+        "hosts-table",
+        "cf-split-divider",
+        "cf-split-second",
+        "secondary-pane",
+        "activity-feed",
+        "activity-count",
+        "cf-statusbar",
+        "status-ws",
+        "status-heap",
+        "status-gc",
+        "status-wal",
+        "status-js",
+        "status-heartbeat",
+        "compact-button"
+      ]
+    },
+    "proven": true
+  },
+  "exit_code": 0,
+  "exit_reason": "no fail among selected traps; global safety assertions hold",
+  "verdict_enum": [
+    "pass",
+    "partial",
+    "fail",
+    "not_testable"
+  ]
+}

@@ -104,9 +104,29 @@ class CdpSession:
         self.call("shot", timeout=90.0, path=str(p))
         return str(p)
 
+    def _retry_action(self, cmd: str, args: dict, ok_key: str, timeout: float) -> dict:
+        """Assert success; retry with short backoff until timeout; raise
+        CdpError on persistent failure. A missed click/fill (e.g. a Mantine
+        modal animation moving the target) is NEVER silently swallowed
+        (lead send-back 2026-11-18, UI-entry determinism finding)."""
+        deadline = time.monotonic() + timeout
+        last = None
+        attempt = 0
+        while True:
+            attempt += 1
+            last = self.call(cmd, **args)
+            if isinstance(last, dict) and last.get(ok_key):
+                if attempt > 1:
+                    last = {**last, "attempts": attempt}
+                return last
+            if time.monotonic() >= deadline:
+                raise CdpError(f"CDP {cmd} did not succeed within {timeout}s "
+                               f"(attempts={attempt}): {json.dumps(last)[:400]}")
+            time.sleep(0.4)
+
     def click(self, *, testid: str | None = None, text: str | None = None,
               selector: str | None = None, placeholder: str | None = None,
-              double: bool = False) -> dict:
+              double: bool = False, timeout: float = 10.0) -> dict:
         args: dict = {"double": double}
         if testid is not None:
             args["testid"] = testid
@@ -118,10 +138,10 @@ class CdpSession:
             args["placeholder"] = placeholder
         else:
             raise ValueError("click needs testid/text/selector/placeholder")
-        return self.call("click", **args)
+        return self._retry_action("click", args, "clicked", timeout)
 
     def fill(self, value: str, *, testid: str | None = None, selector: str | None = None,
-             placeholder: str | None = None) -> dict:
+             placeholder: str | None = None, timeout: float = 10.0) -> dict:
         args: dict = {"value": value}
         if testid is not None:
             args["testid"] = testid
@@ -131,7 +151,7 @@ class CdpSession:
             args["placeholder"] = placeholder
         else:
             raise ValueError("fill needs testid/selector/placeholder")
-        return self.call("fill", **args)
+        return self._retry_action("fill", args, "ok", timeout)
 
     def key(self, name: str, modifiers: int = 0):
         return self.call("key", key=name, modifiers=modifiers)
@@ -153,6 +173,13 @@ class CdpSession:
         else:
             args["selector"] = selector
         return self.call("waitFor", timeout=timeout_ms / 1000 + 15, **args)
+
+    def must_wait_for(self, *, testid: str | None = None, selector: str | None = None,
+                      timeout_ms: int = 15000) -> dict:
+        r = self.wait_for(testid=testid, selector=selector, timeout_ms=timeout_ms)
+        if not r.get("found"):
+            raise CdpError(f"wait_for timed out after {timeout_ms}ms: testid={testid} selector={selector}")
+        return r
 
     def count(self, selector: str) -> int:
         return self.call("count", selector=selector)

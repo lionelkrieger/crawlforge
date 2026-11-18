@@ -189,25 +189,46 @@ def ui_entry_audit(rest: RestClient, cdp: CdpSession, fixture: FixtureServer, re
     cdp.click(testid="nav-hub")
     cdp.wait(900)
     cdp.click(testid="new-project-button")
-    cdp.wait_for(testid="create-project-modal", timeout_ms=10000)
+    cdp.must_wait_for(testid="create-project-modal", timeout_ms=10000)
     cdp.wait(400)
     cdp.fill(name, testid="project-name-input")
     cdp.fill(fixture.base_url + "/", testid="project-url-input")
     cdp.fill(f"{WORKPIECE} fixture acceptance — UI entry (CR-023)", testid="project-description-input")
     cdp.shot(results.path("screenshots") / "UI-01-new-project-filled.png")
     cdp.click(testid="create-project-submit")
-    cdp.wait(3000)
+    # Evidence wait (lead send-back 2026-11-18): poll for the POST /api/projects
+    # network event OR the named project row via REST — never a fixed sleep.
+    project = None
+    post_seen = False
+    deadline = time.monotonic() + 25.0
+    while time.monotonic() < deadline:
+        ev = cdp.events()
+        if any(r.get("method") == "POST" and (r.get("url") or "").rstrip("/").endswith("/api/projects")
+               for r in ev.get("requests") or []):
+            post_seen = True
+        projects = rest.paged("/api/projects")
+        project = next((p for p in projects if p.get("name") == name), None)
+        if project is not None:
+            break
+        time.sleep(0.7)
     create_events = cdp.events(clear=True)
     evidence["create_api_calls"] = [
         f"{r.get('method')} {r.get('url')} {(r.get('postData') or '')[:300]}"
         for r in create_events.get("requests") or [] if "/api/" in (r.get("url") or "")
     ]
-    cdp.shot(results.path("screenshots") / "UI-01-after-create.png")
-    # Resolve the created project + its default configuration through REST read.
-    projects = rest.paged("/api/projects")
-    project = next((p for p in projects if p.get("name") == name), None)
+    evidence["create_post_seen"] = post_seen
     if project is None:
-        raise RuntimeError("UI project creation did not produce a project row (POST /api/projects failed?)")
+        # Capture the modal's visible validation/state BEFORE raising.
+        try:
+            evidence["submit_failure_dump"] = cdp.dump()
+            cdp.shot(results.path("screenshots") / "UI-01-submit-failed.png")
+        except CdpError as e:
+            evidence["submit_failure_capture_error"] = str(e)
+        evidence["proven"] = False
+        results.write_json("ui-entry.json", evidence)
+        raise RuntimeError("UI project creation did not produce a project row within 25s "
+                           f"(POST /api/projects seen={post_seen}); modal state captured in ui-entry.json")
+    cdp.shot(results.path("screenshots") / "UI-01-after-create.png")
     pid = project["id"]
     configs = rest.paged(f"/api/projects/{pid}/configurations")
     if not configs:
@@ -218,34 +239,79 @@ def ui_entry_audit(rest: RestClient, cdp: CdpSession, fixture: FixtureServer, re
     bounded = bound_configuration_limits(rest, cid, BULK_LIMITS)
     evidence["rest_limit_bounding"] = {"put_payload": {"limits": BULK_LIMITS}, "read_back_limits": bounded.get("limits")}
     log(f"UI entry: project {pid} created via dialog; config {cid} bounded via REST PUT {BULK_LIMITS}")
-    # Press Start audit in the UI.
-    row_present = cdp.count(f"[data-testid='project-row-{pid}']") > 0
-    evidence["project_row_visible_in_hub"] = row_present
-
-    def latest_audit_for_config() -> str:
-        audits = rest.paged("/api/audits", params={"projectId": str(pid)})
-        mine = [a for a in audits if str(a.get("configurationId")) == str(cid)]
-        if not mine:
-            raise RuntimeError("Start audit did not create an audit (POST /api/audits missing?)")
-        return str(max(mine, key=lambda a: int(a["id"]))["id"])
+    # Press Start audit in the UI. The New project dialog's submit already calls
+    # loadProjects(), so the hub refreshes to include the new row. Wait for the
+    # SPECIFIC Start audit button (what we actually click) with a generous
+    # timeout; the click helper scrolls it into view. If it never renders (e.g.
+    # the bounded hub window pushed it off on a very long list), fall back to
+    # REST start with proven=false rather than failing the run.
+    button_present = False
+    btn_deadline = time.monotonic() + 12.0
+    while time.monotonic() < btn_deadline:
+        button_present = cdp.count(f"[data-testid='start-audit-{pid}']") > 0
+        if button_present:
+            break
+        time.sleep(0.5)
+    evidence["start_button_visible_in_hub"] = button_present
+    evidence["project_row_visible_in_hub"] = cdp.count(f"[data-testid='project-row-{pid}']") > 0
 
     def ui_start_fn() -> str:
+        baseline = rest.paged("/api/audits", params={"projectId": str(pid)})
+        baseline_max = max((int(a["id"]) for a in baseline
+                            if str(a.get("configurationId")) == str(cid)), default=0)
         cdp.events(clear=True)
-        cdp.click(testid=f"start-audit-{pid}")
-        cdp.wait(3500)
+        # The Start button's onClick starts the audit and then NAVIGATES away
+        # (HubDashboard.startAudit -> navigation.openAudit), so the button can
+        # vanish mid-click. The click helper tolerates that (vanishedAfterDispatch),
+        # but the SOURCE OF TRUTH for success is the new audit row, not the DOM
+        # focus check. Dispatch the click, then verify the effect via REST; a
+        # click-helper error is recorded but does not by itself fail the flow.
+        click_note = "clicked"
+        try:
+            r = cdp.click(testid=f"start-audit-{pid}", timeout=6.0)
+            click_note = f"clicked (method={r.get('method')}, vanished={r.get('vanishedAfterDispatch', False)})"
+        except CdpError as e:
+            click_note = f"click helper reported failure (effect wait decides): {e}"
+        new_id = None
+        post_seen = False
+        deadline = time.monotonic() + 20.0
+        while time.monotonic() < deadline:
+            ev = cdp.events()
+            if any(r.get("method") == "POST" and "/api/audits" in (r.get("url") or "")
+                   for r in ev.get("requests") or []):
+                post_seen = True
+            audits = rest.paged("/api/audits", params={"projectId": str(pid)})
+            mine = [a for a in audits if str(a.get("configurationId")) == str(cid)]
+            if mine:
+                top = max(mine, key=lambda a: int(a["id"]))
+                if int(top["id"]) > baseline_max:
+                    new_id = str(top["id"])
+                    break
+            time.sleep(0.6)
         start_events = cdp.events(clear=True)
         evidence.setdefault("start_api_calls", [
             f"{r.get('method')} {r.get('url')} {(r.get('postData') or '')[:300]}"
             for r in start_events.get("requests") or [] if "/api/" in (r.get("url") or "")
         ])
-        return latest_audit_for_config()
+        evidence["start_post_seen"] = post_seen
+        evidence["start_click_note"] = click_note
+        if new_id is None:
+            try:
+                evidence["start_failure_dump"] = cdp.dump()
+                cdp.shot(results.path("screenshots") / "UI-10-start-failed.png")
+            except CdpError as e:
+                evidence["start_failure_capture_error"] = str(e)
+            results.write_json("ui-entry.json", evidence)
+            raise RuntimeError(f"UI Start audit did not create an audit within 20s "
+                               f"(POST /api/audits seen={post_seen}; {click_note}); hub state captured in ui-entry.json")
+        return new_id
 
-    if not row_present:
-        evidence["fallback"] = ("project row outside the hub's bounded project window; Start audit button not "
-                                "reachable — started via REST for this run (ui_entry.proven=false)")
-        log("UI entry: WARNING — project row not visible in hub window; REST fallback")
+    if not button_present:
+        evidence["fallback"] = ("Start audit button for the new project never rendered in the hub's bounded "
+                                "project window within 12s; started via REST for this run (ui_entry.proven=false)")
+        log("UI entry: WARNING — Start audit button not visible in hub window; REST fallback")
         start_fn = lambda: start_audit_rest(rest, cid, BULK_LIMITS)  # noqa: E731
-        entry_point = "REST fallback (UI row outside bounded window)"
+        entry_point = "REST fallback (UI Start button not rendered)"
         proven = False
     else:
         start_fn = ui_start_fn

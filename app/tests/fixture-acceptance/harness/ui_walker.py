@@ -164,14 +164,18 @@ class UiWalker:
         pname = self.ctx.get("project_name") or ""
         d = self.dump()
         if pid:
-            r = self.cdp.click(testid=f"project-row-{pid}")
-            self.cdp.wait(1500)
-            d = self.cdp.dump()
-            attempts.append({"action": f"click project-row-{pid}", "result": r, "url": d.get("url")})
-            r2 = self.cdp.click(testid=f"project-row-{pid}", double=True)
-            self.cdp.wait(1500)
-            d = self.cdp.dump()
-            attempts.append({"action": "dblclick project row", "result": r2, "url": d.get("url")})
+            # Clicks are asserted+retried by CdpSession; a persistent failure is
+            # recorded EXPLICITLY per attempt (never silently swallowed) and the
+            # remaining navigation affordances are still exercised.
+            for action, kwargs in ((f"click project-row-{pid}", {"testid": f"project-row-{pid}"}),
+                                   ("dblclick project row", {"testid": f"project-row-{pid}", "double": True})):
+                try:
+                    r = self.cdp.click(**kwargs)
+                    self.cdp.wait(1500)
+                    d = self.cdp.dump()
+                    attempts.append({"action": action, "result": r, "url": d.get("url")})
+                except CdpError as e:
+                    attempts.append({"action": action, "error": str(e)})
         # command palette project pick (the only other navigation affordance)
         self.cdp.ctrl_k()
         self.cdp.wait(700)
@@ -216,7 +220,13 @@ class UiWalker:
     def ui_04(self):
         self.ensure_hub()
         self.cdp.click(testid="new-project-button")
-        self.cdp.wait_for(testid="create-project-modal", timeout_ms=8000)
+        modal = self.cdp.wait_for(testid="create-project-modal", timeout_ms=8000)
+        if not modal.get("found"):
+            self.record("UI-04", "not_reachable",
+                        "New project dialog did not open after an asserted, retried click on new-project-button "
+                        f"(waitFor result={modal}); no configuration editor surface exists.",
+                        self.shot("UI-04-modal-absent"))
+            return
         self.cdp.wait(500)
         d = self.dump()
         inputs = d.get("inputs") or []
@@ -270,15 +280,19 @@ class UiWalker:
         aid = self.ctx.get("audit_id")
         attempts = [{"action": "nav-audits", "audits_view": _testid(d, "audits-view")}]
         opened = False
-        if aid and _testid(d, f"open-audit-{aid}"):
-            self.cdp.click(testid=f"open-audit-{aid}")
-            opened = True
-        else:
-            r = self.cdp.click(text="Open report")
-            opened = bool(r.get("clicked"))
+        open_error = None
+        try:
+            if aid and _testid(d, f"open-audit-{aid}"):
+                self.cdp.click(testid=f"open-audit-{aid}")
+                opened = True
+            else:
+                r = self.cdp.click(text="Open report")
+                opened = bool(r.get("clicked"))
+        except CdpError as e:
+            open_error = str(e)  # explicit evidence; classification stays dump-driven
         self.cdp.wait(2000)
         d = self.dump()
-        attempts.append({"action": f"open audit {aid}", "opened": opened})
+        attempts.append({"action": f"open audit {aid}", "opened": opened, **({"error": open_error} if open_error else {})})
         shot = self.shot("UI-10-run-view")
         state_el = _testid(d, "report-state")
         real_state = bool(re.search(r"\b(COMPLETED|RUNNING|QUEUED|PAUSED|FAILED|CANCELLED)\b", d.get("text") or ""))

@@ -1,0 +1,12 @@
+{
+  "method": "cdp Browser.close",
+  "electron_pids": [
+    12836,
+    12788
+  ],
+  "backend_pids": [
+    32760
+  ],
+  "residual": [],
+  "ports_free": true
+}

@@ -1,0 +1,4 @@
+{
+  "error": "RuntimeError: UI project creation did not produce a project row (POST /api/projects failed?)",
+  "traceback": "Traceback (most recent call last):\n  File \"E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py\", line 590, in main\n    run, data, ui_entry_evidence = ui_entry_audit(rest, cdp, fixture, results, ts, traps, selected_traps)\n                                   ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py\", line 210, in ui_entry_audit\n    raise RuntimeError(\"UI project creation did not produce a project row (POST /api/projects failed?)\")\nRuntimeError: UI project creation did not produce a project row (POST /api/projects failed?)\n"
+}
