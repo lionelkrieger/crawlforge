@@ -1,0 +1,94 @@
+{
+  "resources": [
+    {
+      "uri": "crawlforge://audits/{auditId}/summary",
+      "name": "audit-summary",
+      "description": "Audit overview: status, scores, metric summaries, finding counts, WAF counts.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/high-severity-findings",
+      "name": "high-severity-findings",
+      "description": "Error and Warning findings with evidence and recommendations.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/urls/{urlId}",
+      "name": "url-detail",
+      "description": "URL record with findings, WAF detection, scope diagnostics, top n-grams, SERP metrics, semantic relations.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits",
+      "name": "audit-list",
+      "description": "All audits with status and phase.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://schedules",
+      "name": "schedule-status",
+      "description": "Schedule definitions with next-due and recent runs.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/progress",
+      "name": "crawl-progress",
+      "description": "Live progress with throttle summary and redirect-matrix counters.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/urls/{urlId}/content",
+      "name": "extracted-content",
+      "description": "Custom extraction values and stored body text for one URL.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/ngrams",
+      "name": "ngram-analysis",
+      "description": "N-gram site summaries and per-URL frequencies (zone/order filters).",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/waf-blocks",
+      "name": "waf-blocks",
+      "description": "WAF detections with provider, challenge class, and evidence.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/host-throttle",
+      "name": "host-throttle",
+      "description": "Per-host AIMD throttle history.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/redirect-matrix",
+      "name": "redirect-matrix-results",
+      "description": "Redirect matrix rows and counters.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/log-correlation?import={logImportId}",
+      "name": "log-correlation",
+      "description": "True orphans, budget waste, and uncrawled indexable URLs for a log import.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/semantic-links",
+      "name": "semantic-link-opportunities",
+      "description": "Semantic link opportunities and cannibalization clusters (suggestions only).",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/geo-readiness",
+      "name": "geo-readiness",
+      "description": "llms.txt validation results and AI-bot governance summary.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "crawlforge://audits/{auditId}/analytics-coverage",
+      "name": "analytics-coverage",
+      "description": "Per-container analytics coverage across indexable pages.",
+      "mimeType": "application/json"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    CrawlForge.ContractConformance.Tests (WP-08-03) — cross-layer payload
+    conformance harness. Every inventoried payload (REST 88 route groups /
+    108 ops, hub 18 spec events + catalog drift, Electron IPC bridge, MCP
+    8 tools / 15 resources / 5 prompts, storage rows) is asserted against a
+    LIVE headless backend started by the harness itself (launch-crawlforge.ps1
+    step-2 build command, own scratch data directory, own fixture on 47312).
+
+    Verification only: no product code is edited from this project. The single
+    known-failing test carries [Trait("KnownGap","WP-09-06")] (REST counter-key
+    mismatch, hotfix-01-report.md §6); gates run with the filter KnownGap!=WP-09-06.
+
+    No new packages: xUnit + Test.Sdk come from Directory.Packages.props; the
+    SignalR client is a minimal JSON-protocol implementation over the BCL
+    ClientWebSocket (Microsoft.AspNetCore.SignalR.Client is not centrally
+    pinned); SQLite inspection uses Microsoft.Data.Sqlite transitively via
+    CrawlForge.Data.Sqlite. TFM/nullable/analyzers/CF_AGENT_ID output isolation
+    come from Directory.Build.props.
+  -->
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Host is the composition root (exe); referencing it brings the whole
+         backend surface (Api controllers for reflection, Contracts DTOs,
+         Crawler/Export/Intelligence typed hub payloads, Data.* providers). -->
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Host\CrawlForge.Host.csproj" />
+    <!-- Explicit: Microsoft.Data.Sqlite (scratch-DB schema inspection) and
+         SchemaNames/EntityMap (locked DTO-to-table mapping). Both are already
+         in the solution; no new dependency is introduced. -->
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Sqlite\CrawlForge.Data.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\backend\CrawlForge.Data.Repositories\CrawlForge.Data.Repositories.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The committed payload inventory is content copied to the output so the
+         inventory tests can load it regardless of the working directory. -->
+    <None Include="inventory\payload-inventory.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

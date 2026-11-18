@@ -1,0 +1,40 @@
+[
+  {
+    "receivedAt": "2026-11-18T10:18:14.2682186\u002B00:00",
+    "payload": {
+      "exportJobId": 1,
+      "auditId": 1,
+      "format": "csv",
+      "status": "queued"
+    }
+  },
+  {
+    "receivedAt": "2026-11-18T10:18:14.6023802\u002B00:00",
+    "payload": {
+      "exportJobId": 1,
+      "auditId": 1,
+      "format": "csv",
+      "status": "completed",
+      "filePath": "C:\\Users\\lione\\AppData\\Local\\CrawlForge-conformance-wp0803\\run-20261118-101705-3428c302\\exports\\export-1.zip"
+    }
+  },
+  {
+    "receivedAt": "2026-11-18T10:18:25.8095879\u002B00:00",
+    "payload": {
+      "exportJobId": 2,
+      "auditId": 1,
+      "format": "csv",
+      "status": "queued"
+    }
+  },
+  {
+    "receivedAt": "2026-11-18T10:18:26.0917673\u002B00:00",
+    "payload": {
+      "exportJobId": 2,
+      "auditId": 1,
+      "format": "csv",
+      "status": "completed",
+      "filePath": "C:\\Users\\lione\\AppData\\Local\\CrawlForge-conformance-wp0803\\run-20261118-101705-3428c302\\exports\\export-2.zip"
+    }
+  }
+]

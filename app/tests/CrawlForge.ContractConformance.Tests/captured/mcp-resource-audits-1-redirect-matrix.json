@@ -1,0 +1,9 @@
+{
+  "contents": [
+    {
+      "uri": "crawlforge://audits/1/redirect-matrix",
+      "mimeType": "application/json",
+      "text": "{\u0022auditId\u0022:1,\u0022mappings\u0022:[{\u0022id\u0022:3,\u0022auditId\u0022:1,\u0022sourceUrl\u0022:\u0022http://127.0.0.1:47312/redirect/chain-1\u0022,\u0022expectedTargetUrl\u0022:\u0022http://127.0.0.1:47312/pages/redirect-target.html\u0022,\u0022ordinal\u0022:0}],\u0022counters\u0022:{\u0022total\u0022:1}}"
+    }
+  ]
+}

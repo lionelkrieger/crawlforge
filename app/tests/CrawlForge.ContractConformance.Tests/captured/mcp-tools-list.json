@@ -1,0 +1,156 @@
+{
+  "tools": [
+    {
+      "name": "start-audit",
+      "description": "Starts an audit exactly as the REST start operation (configuration reference; optional limit overrides).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "description": "Owning project identifier"
+          },
+          "configurationId": {
+            "type": "integer",
+            "description": "Crawl configuration to snapshot"
+          },
+          "limitOverrides": {
+            "type": "object",
+            "description": "Optional per-audit limit overrides"
+          }
+        },
+        "required": [
+          "projectId",
+          "configurationId"
+        ]
+      }
+    },
+    {
+      "name": "pause-audit",
+      "description": "Checkpoints and pauses a running audit.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "auditId": {
+            "type": "integer",
+            "description": "Audit identifier"
+          }
+        },
+        "required": [
+          "auditId"
+        ]
+      }
+    },
+    {
+      "name": "resume-audit",
+      "description": "Rehydrates and resumes a paused audit.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "auditId": {
+            "type": "integer",
+            "description": "Audit identifier"
+          }
+        },
+        "required": [
+          "auditId"
+        ]
+      }
+    },
+    {
+      "name": "cancel-audit",
+      "description": "Drains workers and finalizes partial data.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "auditId": {
+            "type": "integer",
+            "description": "Audit identifier"
+          }
+        },
+        "required": [
+          "auditId"
+        ]
+      }
+    },
+    {
+      "name": "re-audit",
+      "description": "Triggers a follow-up analysis pass over the same dataset; returns the new audit identifier.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "auditId": {
+            "type": "integer",
+            "description": "Audit to re-analyze"
+          },
+          "refresh": {
+            "type": "boolean",
+            "description": "Refresh stored content first (default false)"
+          }
+        },
+        "required": [
+          "auditId"
+        ]
+      }
+    },
+    {
+      "name": "analyze-single-page",
+      "description": "Ad-hoc single-page audit: findings and element inventory for one URL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Target URL"
+          },
+          "render": {
+            "type": "boolean",
+            "description": "Render before analysis (default false)"
+          },
+          "ruleKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional rule filter"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      }
+    },
+    {
+      "name": "run-schedule-now",
+      "description": "Manual trigger of a schedule; returns the started audit identifier.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "scheduleId": {
+            "type": "integer",
+            "description": "Schedule definition identifier"
+          }
+        },
+        "required": [
+          "scheduleId"
+        ]
+      }
+    },
+    {
+      "name": "get-audit-progress",
+      "description": "Reads live progress for an audit (status, phase, counters).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "auditId": {
+            "type": "integer",
+            "description": "Audit identifier"
+          }
+        },
+        "required": [
+          "auditId"
+        ]
+      }
+    }
+  ]
+}

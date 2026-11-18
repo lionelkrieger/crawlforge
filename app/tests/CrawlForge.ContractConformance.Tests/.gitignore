@@ -1,0 +1,5 @@
+# Runtime handshake artifacts carry one-time loopback session tokens for the
+# harness's own scratch backend; they are regenerated every run and are not
+# committed (the live captures that ARE committed contain no credentials).
+captured/loopback-handshake.json
+captured/mcp-endpoint.json

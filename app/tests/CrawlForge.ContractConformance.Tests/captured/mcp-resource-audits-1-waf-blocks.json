@@ -1,0 +1,9 @@
+{
+  "contents": [
+    {
+      "uri": "crawlforge://audits/1/waf-blocks",
+      "mimeType": "application/json",
+      "text": "{\u0022auditId\u0022:1,\u0022detections\u0022:[]}"
+    }
+  ]
+}

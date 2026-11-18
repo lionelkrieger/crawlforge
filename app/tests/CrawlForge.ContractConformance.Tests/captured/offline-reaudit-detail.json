@@ -1,0 +1,20 @@
+{
+  "id": "3",
+  "projectId": "1",
+  "configurationId": "2",
+  "state": "completed",
+  "phase": "finalizing",
+  "startedAt": "2026-11-18T10:18:21.5176859\u002B00:00",
+  "completedAt": "2026-11-18T10:18:21.7449139\u002B00:00",
+  "counters": {
+    "queued": 0,
+    "fetched": 8,
+    "error": 0,
+    "blocked": 0,
+    "wafBlocked": null
+  },
+  "elapsedSeconds": 0.227,
+  "throughputPerSecond": 35.207,
+  "estimatedRemainderSeconds": null,
+  "errorMessage": null
+}

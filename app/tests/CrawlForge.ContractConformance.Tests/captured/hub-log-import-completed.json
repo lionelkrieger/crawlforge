@@ -1,0 +1,35 @@
+{
+  "importId": 1,
+  "finalCounters": {
+    "linesParsed": 5,
+    "linesAccepted": 5,
+    "linesRejected": 0
+  },
+  "correlation": {
+    "orphanCount": 0,
+    "budgetWasteCount": 0,
+    "uncrawledIndexableCount": 182
+  },
+  "status": "completed",
+  "counters": {
+    "linesParsed": 5,
+    "linesAccepted": 5,
+    "linesRejected": 0,
+    "linesOutOfWindow": 0,
+    "errorSamples": [],
+    "firstSeen": "2026-11-17T22:00:00\u002B00:00",
+    "lastSeen": "2026-11-17T22:00:00\u002B00:00",
+    "bytesServed": 2560,
+    "queryVariantTotal": 0,
+    "uniqueUrls": 5,
+    "botIpSamples": [],
+    "catalogueVersion": "2026.1",
+    "catalogueRevision": "r1"
+  },
+  "summary": {
+    "uniqueUrls": 5,
+    "searchBotUrls": 0,
+    "totalHits": 5,
+    "searchBotHits": 0
+  }
+}

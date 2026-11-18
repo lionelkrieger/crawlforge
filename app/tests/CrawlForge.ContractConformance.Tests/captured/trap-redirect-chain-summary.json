@@ -1,0 +1,33 @@
+{
+  "countsByStatus": {
+    "2xx": 182,
+    "5xx": 2,
+    "1xx": 1,
+    "4xx": 1
+  },
+  "countsBySeverity": {
+    "notice": 822,
+    "warning": 515,
+    "pass": 183,
+    "error": 2
+  },
+  "countsByCategory": {
+    "accessibility": 363,
+    "content": 428,
+    "structureddata": 365,
+    "indexability": 366
+  },
+  "crawlHealth": {
+    "totalUrls": 186,
+    "fetched": 183,
+    "errorCount": 0,
+    "blockedCount": 0,
+    "averageTtfbMs": 0.579
+  },
+  "waf": null,
+  "throttle": {
+    "throttledHostCount": 1,
+    "meanEffectiveRate": 6.25,
+    "adjustmentCount": 16
+  }
+}

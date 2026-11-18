@@ -1,0 +1,19 @@
+{
+  "dataDirectory": "C:\\Users\\lione\\AppData\\Local\\CrawlForge-conformance-wp0803\\run-20261118-101705-3428c302",
+  "baseAddress": "http://127.0.0.1:57122",
+  "projectId": 1,
+  "configurationId": 1,
+  "boundedConfigurationId": 2,
+  "auditId": 1,
+  "offlineSourceAuditId": 2,
+  "reauditId": 3,
+  "matrixAuditId": 1,
+  "scheduleId": 1,
+  "destinationId": 1,
+  "exportId": 1,
+  "logImportId": 1,
+  "queryId": 1,
+  "noindexUrlId": "2",
+  "redirectChainUrlId": "3",
+  "fixturePort": 47312
+}

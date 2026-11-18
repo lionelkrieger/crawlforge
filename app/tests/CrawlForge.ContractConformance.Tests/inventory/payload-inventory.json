@@ -1,0 +1,2145 @@
+{
+  "version": 1,
+  "workpiece": "WP-08-03",
+  "sources": {
+    "rest": "app/src/frontend/src/contracts/api/routes.ts (frozen API_ROUTES; architecture/05-api-hub-and-mcp/01-rest-api-contract.md §10.1/§10.2/§10.4 + Appendix B)",
+    "hub": "architecture/05-api-hub-and-mcp/02-realtime-websocket-hub.md §7.2/§10.3 + Appendix C; app/src/frontend/src/contracts/hub/events.ts + guards.ts; app/src/backend/CrawlForge.Api/Hubs/HubEventCatalog.cs",
+    "ipc": "architecture/06-frontend-shell-and-ui/01-electron-shell-and-ui-stack.md §2.1/§2.2/§8.1 (FS-CRAWL-001 §12); channel names frozen by the accepted WP-06-02 shell: app/src/electron/src/preload/bridge.ts IPC_CHANNELS + app/src/electron/src/preload.ts + app/src/electron/src/main.ts wireIpc",
+    "mcp": "architecture/05-api-hub-and-mcp/03-local-mcp-server-and-agents.md §11 + Appendix D; app/src/backend/CrawlForge.Mcp/McpToolSurface.cs, McpResourceSurface.cs, McpPromptSurface.cs",
+    "storage": "architecture/02-data-and-persistence/02-complete-schema-catalog.md §9.2 + Appendix A; app/src/backend/CrawlForge.Data.Repositories/SchemaNames.cs + EntityMapping.cs"
+  },
+  "rest": {
+    "expectedGroups": 88,
+    "expectedOperations": 108,
+    "operations": [
+      {
+        "key": "health.get",
+        "method": "GET",
+        "path": "/api/health",
+        "group": "health",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.HealthAndVersion_AreEnveloped"
+        ]
+      },
+      {
+        "key": "version.get",
+        "method": "GET",
+        "path": "/api/version",
+        "group": "version",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.HealthAndVersion_AreEnveloped"
+        ]
+      },
+      {
+        "key": "metrics.get",
+        "method": "GET",
+        "path": "/metrics",
+        "group": "metrics",
+        "additive": false,
+        "enveloped": false,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.Metrics_IsPrometheusText_NotEnveloped"
+        ]
+      },
+      {
+        "key": "settings.get",
+        "method": "GET",
+        "path": "/api/settings",
+        "group": "settings-read",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "settings.update",
+        "method": "PUT",
+        "path": "/api/settings",
+        "group": "settings-update",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "settings.databaseTest",
+        "method": "POST",
+        "path": "/api/settings/database/test",
+        "group": "database-test",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "diagnostics.listArtifacts",
+        "method": "GET",
+        "path": "/api/diagnostics/artifacts",
+        "group": "diagnostic-artifacts",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "diagnostics.purgeArtifacts",
+        "method": "DELETE",
+        "path": "/api/diagnostics/artifacts",
+        "group": "diagnostic-artifacts",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "projects.list",
+        "method": "GET",
+        "path": "/api/projects",
+        "group": "projects-list",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "projects.create",
+        "method": "POST",
+        "path": "/api/projects",
+        "group": "projects-create",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.ValidationError_CarriesFieldErrorsMap"
+        ]
+      },
+      {
+        "key": "projects.get",
+        "method": "GET",
+        "path": "/api/projects/{id}",
+        "group": "projects-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "projects.update",
+        "method": "PUT",
+        "path": "/api/projects/{id}",
+        "group": "projects-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "projects.delete",
+        "method": "DELETE",
+        "path": "/api/projects/{id}",
+        "group": "projects-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "configurations.list",
+        "method": "GET",
+        "path": "/api/projects/{id}/configurations",
+        "group": "configurations-project",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "configurations.create",
+        "method": "POST",
+        "path": "/api/projects/{id}/configurations",
+        "group": "configurations-project",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "configurations.get",
+        "method": "GET",
+        "path": "/api/configurations/{id}",
+        "group": "configurations-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "configurations.update",
+        "method": "PUT",
+        "path": "/api/configurations/{id}",
+        "group": "configurations-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "configurations.delete",
+        "method": "DELETE",
+        "path": "/api/configurations/{id}",
+        "group": "configurations-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.start",
+        "method": "POST",
+        "path": "/api/audits",
+        "group": "audits-start",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.DuplicateAuditStart_IsIdempotentWhileActive",
+          "AuditCountersWireConformanceTests.RestAuditDetail_ConsumerKeys"
+        ]
+      },
+      {
+        "key": "audits.list",
+        "method": "GET",
+        "path": "/api/audits",
+        "group": "audits-list",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.Pagination_OffsetLimitTotal_BehavePerContract"
+        ]
+      },
+      {
+        "key": "audits.get",
+        "method": "GET",
+        "path": "/api/audits/{id}",
+        "group": "audits-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "AuditCountersWireConformanceTests.RestAuditDetail_ConsumerKeys",
+          "AuditCountersWireConformanceTests.RestCounters_MatchEngineCounters"
+        ]
+      },
+      {
+        "key": "audits.pause",
+        "method": "POST",
+        "path": "/api/audits/{id}/pause",
+        "group": "audits-lifecycle",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.InvalidStateTransition_ConformsToEnvelope"
+        ]
+      },
+      {
+        "key": "audits.resume",
+        "method": "POST",
+        "path": "/api/audits/{id}/resume",
+        "group": "audits-lifecycle",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.InvalidStateTransition_ConformsToEnvelope"
+        ]
+      },
+      {
+        "key": "audits.cancel",
+        "method": "POST",
+        "path": "/api/audits/{id}/cancel",
+        "group": "audits-lifecycle",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.InvalidStateTransition_ConformsToEnvelope"
+        ]
+      },
+      {
+        "key": "audits.reaudit",
+        "method": "POST",
+        "path": "/api/audits/{id}/reaudit",
+        "group": "audits-reaudit",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "StorageEngineConformanceTests.OfflineReaudit_ReadsStoredArtifacts_ZeroNetwork",
+          "RestEnvelopeConformanceTests.ReauditWireContract_Shape",
+          "RestEnvelopeConformanceTests.Reaudit_RestStartedAudit_SpecShape",
+          "McpWireConformanceTests.ToolCall_ReAudit_ReturnsNewAuditId"
+        ]
+      },
+      {
+        "key": "audits.listUrls",
+        "method": "GET",
+        "path": "/api/audits/{id}/urls",
+        "group": "audits-urls",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "FixtureTrapCaptureTests.NoindexTrap_PayloadsCapturedAndAsserted",
+          "FixtureTrapCaptureTests.RedirectChainTrap_PayloadsCapturedAndAsserted"
+        ]
+      },
+      {
+        "key": "audits.getUrl",
+        "method": "GET",
+        "path": "/api/audits/{id}/urls/{urlId}",
+        "group": "audits-url-detail",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "FixtureTrapCaptureTests.NoindexTrap_PayloadsCapturedAndAsserted",
+          "FixtureTrapCaptureTests.RedirectChainTrap_PayloadsCapturedAndAsserted"
+        ]
+      },
+      {
+        "key": "audits.listLinks",
+        "method": "GET",
+        "path": "/api/audits/{id}/links",
+        "group": "audits-links",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.listFindings",
+        "method": "GET",
+        "path": "/api/audits/{id}/findings",
+        "group": "audits-findings",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "FixtureTrapCaptureTests.NoindexTrap_PayloadsCapturedAndAsserted"
+        ]
+      },
+      {
+        "key": "audits.summary",
+        "method": "GET",
+        "path": "/api/audits/{id}/summary",
+        "group": "audits-summary",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "FixtureTrapCaptureTests.NoindexTrap_PayloadsCapturedAndAsserted"
+        ]
+      },
+      {
+        "key": "audits.chartSeries",
+        "method": "GET",
+        "path": "/api/audits/{id}/charts/{metric}",
+        "group": "audits-charts",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.graph",
+        "method": "GET",
+        "path": "/api/audits/{id}/graph",
+        "group": "audits-graph",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.compare",
+        "method": "GET",
+        "path": "/api/audits/compare",
+        "group": "audits-compare",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "analysis.singlePage",
+        "method": "POST",
+        "path": "/api/analysis/single-page",
+        "group": "single-page-analysis",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "exports.create",
+        "method": "POST",
+        "path": "/api/exports",
+        "group": "exports-create",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "exports.download",
+        "method": "GET",
+        "path": "/api/exports/{id}/file",
+        "group": "exports-file",
+        "additive": false,
+        "enveloped": false,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.ExportDownload_IsBinaryExemptFromEnvelope"
+        ]
+      },
+      {
+        "key": "schedules.list",
+        "method": "GET",
+        "path": "/api/projects/{id}/schedules",
+        "group": "schedules-project",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "schedules.create",
+        "method": "POST",
+        "path": "/api/projects/{id}/schedules",
+        "group": "schedules-project",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "schedules.get",
+        "method": "GET",
+        "path": "/api/schedules/{id}",
+        "group": "schedules-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "schedules.update",
+        "method": "PUT",
+        "path": "/api/schedules/{id}",
+        "group": "schedules-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "schedules.delete",
+        "method": "DELETE",
+        "path": "/api/schedules/{id}",
+        "group": "schedules-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "schedules.enable",
+        "method": "POST",
+        "path": "/api/schedules/{id}/enable",
+        "group": "schedules-toggle",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "schedules.disable",
+        "method": "POST",
+        "path": "/api/schedules/{id}/disable",
+        "group": "schedules-toggle",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "schedules.runNow",
+        "method": "POST",
+        "path": "/api/schedules/{id}/run-now",
+        "group": "schedules-run-now",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "schedules.listRuns",
+        "method": "GET",
+        "path": "/api/schedules/{id}/runs",
+        "group": "schedules-runs",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "destinations.list",
+        "method": "GET",
+        "path": "/api/destinations",
+        "group": "destinations-list-create",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "destinations.create",
+        "method": "POST",
+        "path": "/api/destinations",
+        "group": "destinations-list-create",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "destinations.update",
+        "method": "PUT",
+        "path": "/api/destinations/{id}",
+        "group": "destinations-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "destinations.delete",
+        "method": "DELETE",
+        "path": "/api/destinations/{id}",
+        "group": "destinations-item",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "destinations.test",
+        "method": "POST",
+        "path": "/api/destinations/{id}/test",
+        "group": "destinations-test",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "dictionary.list",
+        "method": "GET",
+        "path": "/api/dictionary",
+        "group": "dictionary",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "dictionary.add",
+        "method": "POST",
+        "path": "/api/dictionary",
+        "group": "dictionary",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "dictionary.remove",
+        "method": "DELETE",
+        "path": "/api/dictionary",
+        "group": "dictionary",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.compareContent",
+        "method": "GET",
+        "path": "/api/audits/compare/content",
+        "group": "audits-compare-content",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.listExtractedContent",
+        "method": "GET",
+        "path": "/api/audits/{id}/extracted-content",
+        "group": "audits-extracted-content",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.extractionSummary",
+        "method": "GET",
+        "path": "/api/audits/{id}/extracted-content/summary",
+        "group": "audits-extraction-summary",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.listSearchResults",
+        "method": "GET",
+        "path": "/api/audits/{id}/search-results",
+        "group": "audits-search-results",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.listSnippetResults",
+        "method": "GET",
+        "path": "/api/audits/{id}/snippet-results",
+        "group": "audits-snippet-results",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.listTechnologies",
+        "method": "GET",
+        "path": "/api/audits/{id}/technologies",
+        "group": "audits-technologies",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "audits.scores",
+        "method": "GET",
+        "path": "/api/audits/{id}/scores",
+        "group": "audits-scores",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "suppressions.create",
+        "method": "POST",
+        "path": "/api/projects/{id}/suppressions",
+        "group": "suppressions",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "suppressions.delete",
+        "method": "DELETE",
+        "path": "/api/projects/{id}/suppressions/{key}",
+        "group": "suppressions",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "tools.robotsTest",
+        "method": "POST",
+        "path": "/api/tools/robots-test",
+        "group": "tools-robots-test",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "tools.urlCheck",
+        "method": "POST",
+        "path": "/api/tools/url-check",
+        "group": "tools-url-check",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "tools.structuredDataCheck",
+        "method": "POST",
+        "path": "/api/tools/structured-data-check",
+        "group": "tools-structured-data-check",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "tools.renderTest",
+        "method": "POST",
+        "path": "/api/tools/render-test",
+        "group": "tools-render-test",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "tools.sitemapGenerate",
+        "method": "POST",
+        "path": "/api/tools/sitemap-generate",
+        "group": "tools-sitemap-generate",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "queries.list",
+        "method": "GET",
+        "path": "/api/queries",
+        "group": "queries",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "queries.create",
+        "method": "POST",
+        "path": "/api/queries",
+        "group": "queries",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "queries.update",
+        "method": "PUT",
+        "path": "/api/queries",
+        "group": "queries",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "queries.delete",
+        "method": "DELETE",
+        "path": "/api/queries",
+        "group": "queries",
+        "additive": false,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "waf.listBlocks",
+        "method": "GET",
+        "path": "/api/audits/{id}/waf-blocks",
+        "group": "waf-blocks",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "waf.blocksSummary",
+        "method": "GET",
+        "path": "/api/audits/{id}/waf-blocks/summary",
+        "group": "waf-blocks-summary",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "waf.listSignatures",
+        "method": "GET",
+        "path": "/api/waf-signatures",
+        "group": "waf-signatures-list",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "waf.createSignature",
+        "method": "POST",
+        "path": "/api/waf-signatures",
+        "group": "waf-signatures-create",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "waf.updateSignature",
+        "method": "PUT",
+        "path": "/api/waf-signatures/{key}",
+        "group": "waf-signatures-update",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "waf.deleteSignature",
+        "method": "DELETE",
+        "path": "/api/waf-signatures/{key}",
+        "group": "waf-signatures-delete",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "hosts.list",
+        "method": "GET",
+        "path": "/api/audits/{id}/hosts",
+        "group": "hosts",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "hosts.override",
+        "method": "POST",
+        "path": "/api/audits/{id}/hosts/{host}/override",
+        "group": "hosts-override",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "ngrams.list",
+        "method": "GET",
+        "path": "/api/audits/{id}/ngrams",
+        "group": "ngrams",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "ngrams.cannibalization",
+        "method": "GET",
+        "path": "/api/audits/{id}/ngrams/cannibalization",
+        "group": "ngrams-cannibalization",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "ngrams.gaps",
+        "method": "GET",
+        "path": "/api/audits/{id}/ngrams/gaps",
+        "group": "ngrams-gaps",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "tools.scopePreview",
+        "method": "POST",
+        "path": "/api/tools/scope-preview",
+        "group": "tools-scope-preview",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "plugins.list",
+        "method": "GET",
+        "path": "/api/plugins",
+        "group": "plugins-list",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "plugins.update",
+        "method": "PUT",
+        "path": "/api/plugins/{id}",
+        "group": "plugins-update",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "plugins.rescan",
+        "method": "POST",
+        "path": "/api/plugins/rescan",
+        "group": "plugins-rescan",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "plugins.delete",
+        "method": "DELETE",
+        "path": "/api/plugins/{id}",
+        "group": "plugins-delete",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "system.health",
+        "method": "GET",
+        "path": "/api/system/health",
+        "group": "system-health",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "system.compact",
+        "method": "POST",
+        "path": "/api/system/compact",
+        "group": "system-compact",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "matrix.upload",
+        "method": "POST",
+        "path": "/api/audits/{id}/redirect-matrix",
+        "group": "redirect-matrix-upload",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "RestEnvelopeConformanceTests.MatrixAutoSeed_StartsValidationAudit_SpecShape"
+        ]
+      },
+      {
+        "key": "matrix.results",
+        "method": "GET",
+        "path": "/api/audits/{id}/redirect-matrix/results",
+        "group": "redirect-matrix-results",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope",
+          "HubEventWireConformanceTests.MatrixRowValidated_LivePayload_SpecShape"
+        ]
+      },
+      {
+        "key": "tools.rewritePreview",
+        "method": "POST",
+        "path": "/api/tools/rewrite-preview",
+        "group": "tools-rewrite-preview",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "logs.import",
+        "method": "POST",
+        "path": "/api/projects/{id}/logs/import",
+        "group": "logs-import",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "logs.list",
+        "method": "GET",
+        "path": "/api/projects/{id}/logs",
+        "group": "logs-list",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "logs.delete",
+        "method": "DELETE",
+        "path": "/api/logs/{id}",
+        "group": "logs-delete",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "logs.correlation",
+        "method": "GET",
+        "path": "/api/audits/{id}/logs/correlation",
+        "group": "logs-correlation",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "logs.verifyDns",
+        "method": "POST",
+        "path": "/api/logs/{id}/verify-dns",
+        "group": "logs-verify-dns",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "semantics.run",
+        "method": "POST",
+        "path": "/api/audits/{id}/semantics/run",
+        "group": "semantics-run",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "semantics.similar",
+        "method": "GET",
+        "path": "/api/audits/{id}/semantics/similar",
+        "group": "semantics-similar",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "semantics.linkOpportunities",
+        "method": "GET",
+        "path": "/api/audits/{id}/semantics/link-opportunities",
+        "group": "semantics-link-opportunities",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "semantics.clusters",
+        "method": "GET",
+        "path": "/api/audits/{id}/semantics/clusters",
+        "group": "semantics-clusters",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "settings.embeddingTest",
+        "method": "POST",
+        "path": "/api/settings/embedding/test",
+        "group": "embedding-test",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "geo.llmsTxt",
+        "method": "GET",
+        "path": "/api/audits/{id}/geo/llms-txt",
+        "group": "geo-llms-txt",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "geo.governance",
+        "method": "GET",
+        "path": "/api/audits/{id}/geo/governance",
+        "group": "geo-governance",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "tools.llmsGenerate",
+        "method": "POST",
+        "path": "/api/tools/llms-generate",
+        "group": "tools-llms-generate",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "tools.llmsValidate",
+        "method": "POST",
+        "path": "/api/tools/llms-validate",
+        "group": "tools-llms-validate",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "analytics.list",
+        "method": "GET",
+        "path": "/api/audits/{id}/analytics",
+        "group": "analytics",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "analytics.coverage",
+        "method": "GET",
+        "path": "/api/audits/{id}/analytics/coverage",
+        "group": "analytics-coverage",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      }
+    ]
+  },
+  "hub": {
+    "specEvents": 18,
+    "catalogEvents": 19,
+    "events": [
+      {
+        "name": "crawl-progress",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "AuditExecutionEngine.PublishProgressAsync (Host/Execution/AuditExecutionEngine.cs:1663)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.CrawlProgress_LivePayload_ProducerShape",
+          "HubEventWireConformanceTests.CrawlProgress_FrontendContractShape",
+          "HubEventWireConformanceTests.AuditScopedEvents_CarryNumericAuditId_SystemicDrift",
+          "HubEventWireConformanceTests.AuditScopedEvents_CarryStringAuditId_FrontendContract",
+          "AuditCountersWireConformanceTests.HubCounters_EngineKeys_MatchStoredCounters"
+        ],
+        "gap": "WP-09-06 counter keys + WP-09-11 missing throughput/phase fields; numeric auditId (G-G)"
+      },
+      {
+        "name": "stage-changed",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "AuditExecutionEngine.PublishStageAsync (AuditExecutionEngine.cs:1647)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.StageChanged_LivePayload_SpecShape"
+        ],
+        "gap": null
+      },
+      {
+        "name": "audit-completed",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "AuditExecutionEngine.FinalizeAsync (AuditExecutionEngine.cs:1240)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.AuditCompleted_LivePayload_SpecShape",
+          "HubEventWireConformanceTests.AuditCompleted_FrontendCountersKeys"
+        ],
+        "gap": "WP-09-06 finalCounters keys"
+      },
+      {
+        "name": "audit-failed",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "AuditExecutionEngine.FinalizeAsync (AuditExecutionEngine.cs:1240)",
+        "liveCapture": false,
+        "coveredBy": [
+          "HubEventWireConformanceTests.AuditFailed_ContractShape"
+        ],
+        "gap": "no deterministic failure trigger in the fixture; producer covered by Host.Tests FailedAuditVisibilityTests"
+      },
+      {
+        "name": "system-health",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "SystemHealthSampler (Api/Hubs/SystemHealthSampler.cs)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.SystemHealth_LivePayload_Heartbeat",
+          "HubEventWireConformanceTests.SystemHealth_FrontendGcCounterNames"
+        ],
+        "gap": "G-S: spec table plural gcGen*Counts vs consistently singular implementation (backend+frontend+guard+StatusBar)"
+      },
+      {
+        "name": "host-throttle",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "AimdPolitenessController → HubHostThrottleSink (Crawler/Politeness; Host/Execution)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.HostThrottle_LivePayload_LockedNames",
+          "HubEventWireConformanceTests.HostThrottle_ProducerSide_LockedNames"
+        ],
+        "gap": null
+      },
+      {
+        "name": "schedule-fired",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "ScheduleEventPublisher (Crawler/Scheduling/ScheduleHubEvents.cs:33)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.ScheduleFired_LivePayload_ProducerShape",
+          "HubEventWireConformanceTests.ScheduleFired_FrontendContractShape"
+        ],
+        "gap": "G-D: scheduleDefinitionId vs scheduleId; numeric ids"
+      },
+      {
+        "name": "schedule-run-completed",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "ScheduleEventPublisher (ScheduleHubEvents.cs:51)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.ScheduleRunCompleted_LivePayload_ProducerShape",
+          "HubEventWireConformanceTests.ScheduleRunCompleted_FrontendContractShape"
+        ],
+        "gap": "G-E: completionActions vs completionActionResults; numeric ids"
+      },
+      {
+        "name": "export-delivery",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "ExportDeliveryService (Export/ExportModels.cs:171)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.ExportDelivery_LivePayload_ProducerShape",
+          "HubEventWireConformanceTests.ExportDelivery_FrontendContractShape"
+        ],
+        "gap": "G-F: exportJobId vs exportId; numeric ids"
+      },
+      {
+        "name": "matrix-row-validated",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "RedirectMatrixValidator via GET redirect-matrix/results (Crawler/ListMode/RedirectMatrixValidator.cs:279; RedirectMatrixController.cs:128)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.MatrixRowValidated_LivePayload_SpecShape",
+          "HubEventWireConformanceTests.MatrixRowValidated_FrontendContractShape"
+        ],
+        "gap": "G-MATRIX-VERDICT: numeric enum verdict + numeric urlId/auditId vs events.ts:180-184 string types (G-G family)"
+      },
+      {
+        "name": "log-import-progress",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "LogImportService.PublishProgressAsync (Intelligence/LogAnalyzer/LogImportService.cs:425)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.LogImportProgress_LivePayload_ProducerShape",
+          "HubEventWireConformanceTests.LogImportProgress_FrontendInterfaceShape"
+        ],
+        "gap": "G-G: numeric importId vs string EntityId; nested counters shape conforms (events.ts:193-197)"
+      },
+      {
+        "name": "log-import-completed",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "LogImportService.PublishCompletedAsync (LogImportService.cs:460)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.LogImportCompleted_LivePayload_SpecShape"
+        ],
+        "gap": null
+      },
+      {
+        "name": "url-batch",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "NONE (CODEMAP §6: no producer)",
+        "liveCapture": false,
+        "coveredBy": [
+          "HubEventWireConformanceTests.UrlBatch_NoProducer_ContractSide"
+        ],
+        "gap": "G05: no producer"
+      },
+      {
+        "name": "findings-updated",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "NONE (CODEMAP §6: no producer)",
+        "liveCapture": false,
+        "coveredBy": [
+          "HubEventWireConformanceTests.FindingsUpdated_NoProducer_ContractSide"
+        ],
+        "gap": "G05: no producer"
+      },
+      {
+        "name": "backend-lifecycle",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "NONE (CODEMAP §6: no producer)",
+        "liveCapture": false,
+        "coveredBy": [
+          "HubEventWireConformanceTests.BackendLifecycle_NoProducer_ContractSide"
+        ],
+        "gap": "G05: no producer"
+      },
+      {
+        "name": "waf-blocks",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "NONE (CODEMAP §6: no producer)",
+        "liveCapture": false,
+        "coveredBy": [
+          "HubEventWireConformanceTests.WafBlocks_NoProducer_ContractSide"
+        ],
+        "gap": "G05: no producer"
+      },
+      {
+        "name": "embedding-progress",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "NONE (CODEMAP §6: no producer)",
+        "liveCapture": false,
+        "coveredBy": [
+          "HubEventWireConformanceTests.EmbeddingProgress_NoProducer_ContractSide"
+        ],
+        "gap": "G05: no producer"
+      },
+      {
+        "name": "embedding-completed",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "NONE (CODEMAP §6: no producer)",
+        "liveCapture": false,
+        "coveredBy": [
+          "HubEventWireConformanceTests.EmbeddingCompleted_NoProducer_ContractSide"
+        ],
+        "gap": "G05: no producer"
+      },
+      {
+        "name": "local-notification",
+        "inSpec": false,
+        "inFrontend": false,
+        "inCatalog": true,
+        "producer": "HubLocalNotificationSink (ScheduleHubEvents.cs:119)",
+        "liveCapture": false,
+        "coveredBy": [
+          "HubEventWireConformanceTests.LocalNotification_CatalogOnlyDrift",
+          "HubEventWireConformanceTests.LocalNotification_NotInFrontendContract"
+        ],
+        "gap": "G-N: in backend HubEventCatalog only; absent from spec §10.3 and frontend events.ts"
+      },
+      {
+        "name": "export-progress",
+        "inSpec": false,
+        "inFrontend": false,
+        "inCatalog": false,
+        "producer": "ExportEngine (emitted; not in HubEventCatalog or frontend)",
+        "liveCapture": true,
+        "coveredBy": [
+          "HubEventWireConformanceTests.ExportProgress_DriftRecorded",
+          "HubEventWireConformanceTests.ExportProgress_Uncataloged"
+        ],
+        "gap": "G-I: emitted on the wire but absent from the backend catalog and the frontend contract"
+      }
+    ],
+    "clientChannels": {
+      "coveredBy": [
+        "HubEventWireConformanceTests.SubscribeUnsubscribe_ChannelContract"
+      ],
+      "note": "client→server hub methods (CrawlForgeHub.Subscribe/Unsubscribe(string[] auditIds)); audit-scoped routing by numeric auditId (G-G)"
+    }
+  },
+  "ipc": {
+    "expectedBridgeChannels": 9,
+    "expectedTotalChannels": 11,
+    "channels": [
+      {
+        "channel": "crawlforge:file-dialog",
+        "direction": "renderer→main",
+        "kind": "invoke",
+        "source": "bridge.ts IPC_CHANNELS.fileDialog",
+        "coveredBy": [
+          "IpcContractConformanceTests.BridgeChannels_FrozenNine_MatchSpec",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel",
+          "IpcContractConformanceTests.FileDialogRequest_ModesLocked"
+        ]
+      },
+      {
+        "channel": "crawlforge:notification",
+        "direction": "renderer→main",
+        "kind": "invoke",
+        "source": "bridge.ts IPC_CHANNELS.notification",
+        "coveredBy": [
+          "IpcContractConformanceTests.BridgeChannels_FrozenNine_MatchSpec",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel"
+        ]
+      },
+      {
+        "channel": "crawlforge:taskbar-progress",
+        "direction": "renderer→main",
+        "kind": "invoke",
+        "source": "bridge.ts IPC_CHANNELS.taskbarProgress",
+        "coveredBy": [
+          "IpcContractConformanceTests.BridgeChannels_FrozenNine_MatchSpec",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel"
+        ]
+      },
+      {
+        "channel": "crawlforge:window-minimize",
+        "direction": "renderer→main",
+        "kind": "invoke",
+        "source": "bridge.ts IPC_CHANNELS.windowMinimize",
+        "coveredBy": [
+          "IpcContractConformanceTests.BridgeChannels_FrozenNine_MatchSpec",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel"
+        ]
+      },
+      {
+        "channel": "crawlforge:window-maximize",
+        "direction": "renderer→main",
+        "kind": "invoke",
+        "source": "bridge.ts IPC_CHANNELS.windowMaximize",
+        "coveredBy": [
+          "IpcContractConformanceTests.BridgeChannels_FrozenNine_MatchSpec",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel"
+        ]
+      },
+      {
+        "channel": "crawlforge:window-close",
+        "direction": "renderer→main",
+        "kind": "invoke",
+        "source": "bridge.ts IPC_CHANNELS.windowClose",
+        "coveredBy": [
+          "IpcContractConformanceTests.BridgeChannels_FrozenNine_MatchSpec",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel"
+        ]
+      },
+      {
+        "channel": "crawlforge:backend-restart",
+        "direction": "renderer→main",
+        "kind": "invoke",
+        "source": "bridge.ts IPC_CHANNELS.backendRestart",
+        "coveredBy": [
+          "IpcContractConformanceTests.BridgeChannels_FrozenNine_MatchSpec",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel"
+        ]
+      },
+      {
+        "channel": "crawlforge:diagnostics-purge",
+        "direction": "renderer→main",
+        "kind": "invoke",
+        "source": "bridge.ts IPC_CHANNELS.diagnosticsPurge",
+        "coveredBy": [
+          "IpcContractConformanceTests.BridgeChannels_FrozenNine_MatchSpec",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel"
+        ]
+      },
+      {
+        "channel": "crawlforge:backend-status",
+        "direction": "main→renderer",
+        "kind": "send/on",
+        "source": "bridge.ts IPC_CHANNELS.backendStatus + preload onBackendStatus",
+        "coveredBy": [
+          "IpcContractConformanceTests.BridgeChannels_FrozenNine_MatchSpec",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel",
+          "IpcContractConformanceTests.ShellBridge_MembersMatchContract"
+        ]
+      },
+      {
+        "channel": "crawlforge:get-bridge",
+        "direction": "renderer→main",
+        "kind": "invoke",
+        "source": "preload.ts literal (descriptor fetch)",
+        "coveredBy": [
+          "IpcContractConformanceTests.PreloadInline_ChannelsMatchBridge",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel",
+          "IpcContractConformanceTests.BridgeDescriptor_ValidationContract"
+        ]
+      },
+      {
+        "channel": "crawlforge:hydrated",
+        "direction": "renderer→main",
+        "kind": "send",
+        "source": "preload.ts literal (hydration signal)",
+        "coveredBy": [
+          "IpcContractConformanceTests.PreloadInline_ChannelsMatchBridge",
+          "IpcContractConformanceTests.MainProcess_HandlesEveryBridgeChannel"
+        ]
+      }
+    ]
+  },
+  "mcp": {
+    "expectedTools": 8,
+    "expectedResources": 15,
+    "expectedPrompts": 5,
+    "tools": [
+      {
+        "name": "start-audit",
+        "coveredBy": [
+          "McpWireConformanceTests.ToolsList_MatchesLockedSurface",
+          "McpWireConformanceTests.ToolCall_StartAudit_ReturnsConformantContent"
+        ]
+      },
+      {
+        "name": "pause-audit",
+        "coveredBy": [
+          "McpWireConformanceTests.ToolsList_MatchesLockedSurface",
+          "McpWireConformanceTests.ToolCall_PauseResumeCancel_ErrorShapeConformant"
+        ]
+      },
+      {
+        "name": "resume-audit",
+        "coveredBy": [
+          "McpWireConformanceTests.ToolsList_MatchesLockedSurface",
+          "McpWireConformanceTests.ToolCall_PauseResumeCancel_ErrorShapeConformant"
+        ]
+      },
+      {
+        "name": "cancel-audit",
+        "coveredBy": [
+          "McpWireConformanceTests.ToolsList_MatchesLockedSurface",
+          "McpWireConformanceTests.ToolCall_PauseResumeCancel_ErrorShapeConformant"
+        ]
+      },
+      {
+        "name": "re-audit",
+        "coveredBy": [
+          "McpWireConformanceTests.ToolsList_MatchesLockedSurface",
+          "McpWireConformanceTests.ToolCall_ReAudit_ReturnsNewAuditId"
+        ]
+      },
+      {
+        "name": "analyze-single-page",
+        "coveredBy": [
+          "McpWireConformanceTests.ToolsList_MatchesLockedSurface",
+          "McpWireConformanceTests.ToolCall_AnalyzeSinglePage_ConformantContent"
+        ]
+      },
+      {
+        "name": "run-schedule-now",
+        "coveredBy": [
+          "McpWireConformanceTests.ToolsList_MatchesLockedSurface",
+          "McpWireConformanceTests.ToolCall_RunScheduleNow_ConformantContent"
+        ]
+      },
+      {
+        "name": "get-audit-progress",
+        "coveredBy": [
+          "McpWireConformanceTests.ToolsList_MatchesLockedSurface",
+          "McpWireConformanceTests.ToolCall_GetAuditProgress_ReturnsCounters"
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "uri": "crawlforge://audits/{auditId}/summary",
+        "name": "audit-summary",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_AuditSummary_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/high-severity-findings",
+        "name": "high-severity-findings",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_HighSeverityFindings_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/urls/{urlId}",
+        "name": "url-detail",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_UrlDetail_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits",
+        "name": "audit-list",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_AuditList_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://schedules",
+        "name": "schedule-status",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_ScheduleStatus_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/progress",
+        "name": "crawl-progress",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_Progress_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/urls/{urlId}/content",
+        "name": "extracted-content",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_ExtractedContent_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/ngrams",
+        "name": "ngram-analysis",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_Ngrams_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/waf-blocks",
+        "name": "waf-blocks",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_WafBlocks_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/host-throttle",
+        "name": "host-throttle",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_HostThrottle_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/redirect-matrix",
+        "name": "redirect-matrix-results",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_RedirectMatrix_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/log-correlation?import={logImportId}",
+        "name": "log-correlation",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_LogCorrelation_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/semantic-links",
+        "name": "semantic-link-opportunities",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_SemanticLinks_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/geo-readiness",
+        "name": "geo-readiness",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_GeoReadiness_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      },
+      {
+        "uri": "crawlforge://audits/{auditId}/analytics-coverage",
+        "name": "analytics-coverage",
+        "coveredBy": [
+          "McpWireConformanceTests.ResourcesList_MatchesLockedSurface",
+          "McpWireConformanceTests.ResourceRead_AnalyticsCoverage_ConformantJson"
+        ],
+        "gap": "G-MCP-PAGING: default 200 rows, no cursor (spec §11.7/CR-011: default 50, max 500, cursor)"
+      }
+    ],
+    "prompts": [
+      {
+        "name": "audit-health-briefing",
+        "coveredBy": [
+          "McpWireConformanceTests.PromptsList_MatchesLockedSurface",
+          "McpWireConformanceTests.PromptGet_AuditHealthBriefing_ConformantMessages"
+        ]
+      },
+      {
+        "name": "high-severity-triage",
+        "coveredBy": [
+          "McpWireConformanceTests.PromptsList_MatchesLockedSurface",
+          "McpWireConformanceTests.PromptGet_HighSeverityTriage_ConformantMessages"
+        ]
+      },
+      {
+        "name": "audit-delta-briefing",
+        "coveredBy": [
+          "McpWireConformanceTests.PromptsList_MatchesLockedSurface",
+          "McpWireConformanceTests.PromptGet_AuditDeltaBriefing_ConformantMessages"
+        ]
+      },
+      {
+        "name": "ngram-topical-briefing",
+        "coveredBy": [
+          "McpWireConformanceTests.PromptsList_MatchesLockedSurface",
+          "McpWireConformanceTests.PromptGet_NgramTopicalBriefing_ConformantMessages"
+        ]
+      },
+      {
+        "name": "semantic-topical-briefing",
+        "coveredBy": [
+          "McpWireConformanceTests.PromptsList_MatchesLockedSurface",
+          "McpWireConformanceTests.PromptGet_SemanticTopicalBriefing_ConformantMessages"
+        ]
+      }
+    ]
+  },
+  "storage": {
+    "expectedEntities": 40,
+    "entities": [
+      {
+        "entity": "ApplicationSettingsDto",
+        "table": "application_settings",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "ProjectDto",
+        "table": "projects",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "CrawlConfigurationDto",
+        "table": "crawl_configurations",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns",
+          "StorageEngineConformanceTests.JsonColumns_AreValidJsonText"
+        ]
+      },
+      {
+        "entity": "AuditDto",
+        "table": "audits",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns",
+          "StorageEngineConformanceTests.CountersJson_EngineProducerKeys",
+          "StorageEngineConformanceTests.TimestampColumns_RoundTripText",
+          "StorageEngineConformanceTests.EnumAndFlagColumns_AreInteger"
+        ]
+      },
+      {
+        "entity": "SchemaMigrationDto",
+        "table": "schema_migrations",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "SavedViewDto",
+        "table": "saved_views",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "FindingDto",
+        "table": "findings",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "MetricSummaryDto",
+        "table": "metric_summaries",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "ExtractedContentDto",
+        "table": "extracted_content",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "ContentSearchResultDto",
+        "table": "content_search_results",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "SnippetResultDto",
+        "table": "snippet_results",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "TechnologyDetectionDto",
+        "table": "technology_detections",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "AuditScoreDto",
+        "table": "audit_scores",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "FindingSuppressionDto",
+        "table": "finding_suppressions",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "UrlRecordDto",
+        "table": "url_records",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns",
+          "StorageEngineConformanceTests.RedirectChain_FinalTargetOnly_G27",
+          "StorageEngineConformanceTests.Noindex_UrlRecord_Shape",
+          "StorageEngineConformanceTests.EnumAndFlagColumns_AreInteger"
+        ]
+      },
+      {
+        "entity": "UrlElementDto",
+        "table": "url_elements",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "LinkEdgeDto",
+        "table": "link_edges",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "CrawlCheckpointDto",
+        "table": "crawl_checkpoints",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "ContentArtifactDto",
+        "table": "content_artifacts",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns",
+          "StorageEngineConformanceTests.RenderedDomArtifacts_Absent_G03"
+        ]
+      },
+      {
+        "entity": "UrlEmbeddingDto",
+        "table": "url_embeddings",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "ScheduleDefinitionDto",
+        "table": "schedule_definitions",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "ScheduleRunDto",
+        "table": "schedule_runs",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "ExportDestinationDto",
+        "table": "export_destinations",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "UserDictionaryEntryDto",
+        "table": "user_dictionary",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "AutomationActionLogDto",
+        "table": "automation_action_log",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "ContentScopeProfileDto",
+        "table": "content_scope_profiles",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "NgramFrequencyDto",
+        "table": "ngram_frequencies",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "NgramSiteSummaryDto",
+        "table": "ngram_site_summaries",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "UserStopwordDto",
+        "table": "user_stopwords",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "UiPluginDto",
+        "table": "ui_plugins",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "RedirectMappingDto",
+        "table": "redirect_mappings",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "LogImportDto",
+        "table": "log_imports",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "LogUrlAggregateDto",
+        "table": "log_url_aggregates",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "SemanticLinkOpportunityDto",
+        "table": "semantic_link_opportunities",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "SemanticClusterDto",
+        "table": "semantic_clusters",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "GovernanceMatrixRowDto",
+        "table": "governance_matrix",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "AnalyticsDetectionDto",
+        "table": "analytics_detections",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "WafDetectionDto",
+        "table": "waf_detections",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "WafUserSignatureDto",
+        "table": "waf_user_signatures",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      },
+      {
+        "entity": "HostThrottleEventDto",
+        "table": "host_throttle_events",
+        "coveredBy": [
+          "StorageEngineConformanceTests.EveryCatalogEntity_TableExistsWithMappedColumns"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "id": "2",
+  "canonicalUrl": "http://127.0.0.1:47312/pages/noindex.html",
+  "statusCode": 200,
+  "statusClass": "2xx",
+  "contentType": "text/html; charset=utf-8",
+  "depth": 0,
+  "indexable": true,
+  "title": "Noindex page",
+  "blockReason": null,
+  "wafProvider": null,
+  "responseHeaders": {
+    "content-type": "text/html; charset=utf-8"
+  },
+  "elementInventory": {
+    "counts": {
+      "document_head": 1,
+      "headings": 1,
+      "resources": 1,
+      "text_statistics": 1,
+      "link_relations": 1,
+      "consent_state": 1,
+      "datalayer_snapshot": 1,
+      "serp_metrics": 1,
+      "content_scope": 1,
+      "header_directives": 1
+    },
+    "totalElements": 10
+  },
+  "findings": [
+    {
+      "id": "9",
+      "ruleKey": "accessibility.color-contrast",
+      "severity": "notice",
+      "category": "accessibility",
+      "urlId": "2",
+      "message": "Check \u0027accessibility.color-contrast\u0027 requires rendering (layout/computed style) and was not evaluated: rendering mode is disabled for this audit.",
+      "evidence": {
+        "snippet": null,
+        "selector": null,
+        "details": {
+          "ruleKey": "accessibility.color-contrast",
+          "ruleSetVersion": "1.0.0",
+          "family": "contrast",
+          "remediation": "Raise the text/background contrast ratio to at least 4.5:1 (3:1 for large text).",
+          "requiresRendering": true,
+          "details": {
+            "requiresRendering": "true",
+            "renderingEnabled": "false"
+          },
+          "firstSeenAuditId": 1
+        }
+      }
+    },
+    {
+      "id": "10",
+      "ruleKey": "accessibility.landmark-main",
+      "severity": "warning",
+      "category": "accessibility",
+      "urlId": "2",
+      "message": "The page has no main landmark (main element or role=\u0022main\u0022).",
+      "evidence": {
+        "snippet": null,
+        "selector": null,
+        "details": {
+          "ruleKey": "accessibility.landmark-main",
+          "ruleSetVersion": "1.0.0",
+          "family": "structure",
+          "remediation": "Wrap the primary content in a main element or an element with role=\u0022main\u0022.",
+          "requiresRendering": false,
+          "firstSeenAuditId": 1
+        }
+      }
+    },
+    {
+      "id": "11",
+      "ruleKey": "content.metrics",
+      "severity": "notice",
+      "category": "content",
+      "urlId": "2",
+      "message": "content metrics",
+      "evidence": {
+        "snippet": null,
+        "selector": null,
+        "details": {
+          "fleschReadingEase": -34.62435064935062,
+          "fleschKincaidGradeLevel": 56.34662337662337,
+          "wordCount": 154,
+          "sentenceCount": 1,
+          "syllableCount": 155,
+          "readingTimeMinutes": 0.77,
+          "textToHtmlRatio": 0.8232286340394448,
+          "scoped": true,
+          "spellingIssueCount": 0,
+          "serp": [
+            {
+              "role": "title",
+              "text": "Noindex page",
+              "fontProfileKey": "arial-desktop-title",
+              "widthPixels": 123.4,
+              "budgetPixels": 580,
+              "overflowPixels": 0,
+              "isTruncated": false,
+              "truncatedText": null
+            }
+          ],
+          "firstSeenAuditId": 1
+        }
+      }
+    },
+    {
+      "id": "12",
+      "ruleKey": "mobile.responsive-signals-missing",
+      "severity": "notice",
+      "category": "structureddata",
+      "urlId": "2",
+      "message": "mobile responsive signals missing",
+      "evidence": {
+        "snippet": null,
+        "selector": null,
+        "details": {
+          "reason": "no media queries, srcset/sizes, or picture elements found in the document",
+          "firstSeenAuditId": 1
+        }
+      }
+    },
+    {
+      "id": "13",
+      "ruleKey": "mobile.render-required",
+      "severity": "notice",
+      "category": "structureddata",
+      "urlId": "2",
+      "message": "mobile render required",
+      "evidence": {
+        "snippet": null,
+        "selector": null,
+        "details": {
+          "renderingMode": "None",
+          "skippedChecks": [
+            "tap-target-sizing",
+            "tap-target-spacing",
+            "content-to-viewport-fit"
+          ],
+          "reason": "render-dependent mobile checks require a rendered document; enable rendering to evaluate them",
+          "firstSeenAuditId": 1
+        }
+      }
+    },
+    {
+      "id": "14",
+      "ruleKey": "indexability.noindex",
+      "severity": "notice",
+      "category": "indexability",
+      "urlId": "2",
+      "message": "indexability noindex",
+      "evidence": {
+        "snippet": null,
+        "selector": null,
+        "details": {
+          "source": "meta-robots",
+          "agent": "*",
+          "directives": [
+            "noindex",
+            "follow"
+          ],
+          "raw": "noindex, follow",
+          "firstSeenAuditId": 1
+        }
+      }
+    }
+  ],
+  "inboundLinks": [
+    {
+      "sourceUrlId": "1",
+      "targetUrlId": "2",
+      "sourceUrl": "http://127.0.0.1:47312/",
+      "targetUrl": "http://127.0.0.1:47312/pages/noindex.html",
+      "internal": true,
+      "anchorText": "Noindex page",
+      "domZone": "navigation",
+      "equityWeight": null,
+      "weightedEquity": 3.340810438295399E-05
+    }
+  ],
+  "outboundLinks": [],
+  "redirectChain": [],
+  "wafDetection": null,
+  "scopeDiagnostics": {
+    "included": true,
+    "matchedIncludeSelectors": [],
+    "matchedExcludeSelectors": [],
+    "scopedWordCount": 154,
+    "totalWordCount": 154
+  },
+  "topNgrams": [
+    {
+      "ngram": "noidx0",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    },
+    {
+      "ngram": "noidx1",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    },
+    {
+      "ngram": "noidx10",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    },
+    {
+      "ngram": "noidx11",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    },
+    {
+      "ngram": "noidx12",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    },
+    {
+      "ngram": "noidx13",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    },
+    {
+      "ngram": "noidx2",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    },
+    {
+      "ngram": "noidx3",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    },
+    {
+      "ngram": "noidx4",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    },
+    {
+      "ngram": "noidx5",
+      "n": 1,
+      "zone": "body",
+      "count": 9,
+      "density": 0.06,
+      "urlId": "2"
+    }
+  ],
+  "serpMetrics": null,
+  "headerConflicts": null,
+  "semanticRelations": null
+}

@@ -1,0 +1,7 @@
+[
+  {
+    "CanonicalUrl": "http://127.0.0.1:47312/redirect/chain-1",
+    "RedirectTargetUrl": "http://127.0.0.1:47312/pages/redirect-target.html",
+    "FinalStatusCode": 200
+  }
+]

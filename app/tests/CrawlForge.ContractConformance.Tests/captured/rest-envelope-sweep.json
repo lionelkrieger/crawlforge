@@ -1,0 +1,1087 @@
+{
+  "operations": 108,
+  "routeGroups": 88,
+  "violations": [],
+  "results": [
+    {
+      "key": "health.get",
+      "method": "GET",
+      "path": "/api/health",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "version.get",
+      "method": "GET",
+      "path": "/api/version",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "metrics.get",
+      "method": "GET",
+      "path": "/metrics",
+      "status": 200,
+      "contentType": "text/plain",
+      "enveloped": false,
+      "expectedSuccess": false,
+      "outcome": "exempt-non-json"
+    },
+    {
+      "key": "settings.get",
+      "method": "GET",
+      "path": "/api/settings",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "settings.update",
+      "method": "PUT",
+      "path": "/api/settings",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "settings.databaseTest",
+      "method": "POST",
+      "path": "/api/settings/database/test",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "diagnostics.listArtifacts",
+      "method": "GET",
+      "path": "/api/diagnostics/artifacts",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "projects.list",
+      "method": "GET",
+      "path": "/api/projects",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "projects.create",
+      "method": "POST",
+      "path": "/api/projects",
+      "status": 201,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "projects.get",
+      "method": "GET",
+      "path": "/api/projects/1",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "projects.update",
+      "method": "PUT",
+      "path": "/api/projects/2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "configurations.list",
+      "method": "GET",
+      "path": "/api/projects/2/configurations",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "configurations.create",
+      "method": "POST",
+      "path": "/api/projects/2/configurations",
+      "status": 201,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "configurations.get",
+      "method": "GET",
+      "path": "/api/configurations/3",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "configurations.update",
+      "method": "PUT",
+      "path": "/api/configurations/3",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.start",
+      "method": "POST",
+      "path": "/api/audits",
+      "status": 201,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.list",
+      "method": "GET",
+      "path": "/api/audits",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.get",
+      "method": "GET",
+      "path": "/api/audits/1",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.pause",
+      "method": "POST",
+      "path": "/api/audits/1/pause",
+      "status": 409,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.resume",
+      "method": "POST",
+      "path": "/api/audits/1/resume",
+      "status": 409,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.cancel",
+      "method": "POST",
+      "path": "/api/audits/1/cancel",
+      "status": 409,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.reaudit",
+      "method": "POST",
+      "path": "/api/audits/2/reaudit",
+      "status": 201,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.listUrls",
+      "method": "GET",
+      "path": "/api/audits/1/urls",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.getUrl",
+      "method": "GET",
+      "path": "/api/audits/1/urls/2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.listLinks",
+      "method": "GET",
+      "path": "/api/audits/1/links",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.listFindings",
+      "method": "GET",
+      "path": "/api/audits/1/findings",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.summary",
+      "method": "GET",
+      "path": "/api/audits/1/summary",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.chartSeries",
+      "method": "GET",
+      "path": "/api/audits/1/charts/status-classes",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.graph",
+      "method": "GET",
+      "path": "/api/audits/1/graph?type=link-network",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.compare",
+      "method": "GET",
+      "path": "/api/audits/compare?auditIdA=1\u0026auditIdB=3",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "analysis.singlePage",
+      "method": "POST",
+      "path": "/api/analysis/single-page",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "exports.create",
+      "method": "POST",
+      "path": "/api/exports",
+      "status": 201,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "exports.download",
+      "method": "GET",
+      "path": "/api/exports/1/file",
+      "status": 200,
+      "contentType": "application/zip",
+      "enveloped": false,
+      "expectedSuccess": false,
+      "outcome": "exempt-non-json"
+    },
+    {
+      "key": "schedules.list",
+      "method": "GET",
+      "path": "/api/projects/2/schedules",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "schedules.create",
+      "method": "POST",
+      "path": "/api/projects/2/schedules",
+      "status": 201,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "schedules.get",
+      "method": "GET",
+      "path": "/api/schedules/2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "schedules.update",
+      "method": "PUT",
+      "path": "/api/schedules/2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "schedules.enable",
+      "method": "POST",
+      "path": "/api/schedules/1/enable",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "schedules.disable",
+      "method": "POST",
+      "path": "/api/schedules/1/disable",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "schedules.runNow",
+      "method": "POST",
+      "path": "/api/schedules/1/run-now",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "schedules.listRuns",
+      "method": "GET",
+      "path": "/api/schedules/2/runs",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "destinations.list",
+      "method": "GET",
+      "path": "/api/destinations",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "destinations.create",
+      "method": "POST",
+      "path": "/api/destinations",
+      "status": 201,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "destinations.update",
+      "method": "PUT",
+      "path": "/api/destinations/2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "destinations.test",
+      "method": "POST",
+      "path": "/api/destinations/2/test",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "dictionary.list",
+      "method": "GET",
+      "path": "/api/dictionary",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "dictionary.add",
+      "method": "POST",
+      "path": "/api/dictionary",
+      "status": 201,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.compareContent",
+      "method": "GET",
+      "path": "/api/audits/compare/content?auditIdA=1\u0026auditIdB=3\u0026canonicalUrl=http%3A%2F%2F127.0.0.1%3A47312%2F",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.listExtractedContent",
+      "method": "GET",
+      "path": "/api/audits/1/extracted-content",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.extractionSummary",
+      "method": "GET",
+      "path": "/api/audits/1/extracted-content/summary",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.listSearchResults",
+      "method": "GET",
+      "path": "/api/audits/1/search-results",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.listSnippetResults",
+      "method": "GET",
+      "path": "/api/audits/1/snippet-results",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.listTechnologies",
+      "method": "GET",
+      "path": "/api/audits/1/technologies",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "audits.scores",
+      "method": "GET",
+      "path": "/api/audits/1/scores",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "suppressions.create",
+      "method": "POST",
+      "path": "/api/projects/2/suppressions",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "tools.robotsTest",
+      "method": "POST",
+      "path": "/api/tools/robots-test",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "tools.urlCheck",
+      "method": "POST",
+      "path": "/api/tools/url-check",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "tools.structuredDataCheck",
+      "method": "POST",
+      "path": "/api/tools/structured-data-check",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "tools.renderTest",
+      "method": "POST",
+      "path": "/api/tools/render-test",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "tools.sitemapGenerate",
+      "method": "POST",
+      "path": "/api/tools/sitemap-generate",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "queries.list",
+      "method": "GET",
+      "path": "/api/queries",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "queries.create",
+      "method": "POST",
+      "path": "/api/queries",
+      "status": 201,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "queries.update",
+      "method": "PUT",
+      "path": "/api/queries",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "waf.listBlocks",
+      "method": "GET",
+      "path": "/api/audits/1/waf-blocks",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "waf.blocksSummary",
+      "method": "GET",
+      "path": "/api/audits/1/waf-blocks/summary",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "waf.listSignatures",
+      "method": "GET",
+      "path": "/api/waf-signatures",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "waf.createSignature",
+      "method": "POST",
+      "path": "/api/waf-signatures",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "waf.updateSignature",
+      "method": "PUT",
+      "path": "/api/waf-signatures/conformance-missing-key",
+      "status": 404,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "hosts.list",
+      "method": "GET",
+      "path": "/api/audits/1/hosts",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "hosts.override",
+      "method": "POST",
+      "path": "/api/audits/1/hosts/127.0.0.1%3A47312/override",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "ngrams.list",
+      "method": "GET",
+      "path": "/api/audits/1/ngrams",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "ngrams.cannibalization",
+      "method": "GET",
+      "path": "/api/audits/1/ngrams/cannibalization",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "ngrams.gaps",
+      "method": "GET",
+      "path": "/api/audits/1/ngrams/gaps",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "tools.scopePreview",
+      "method": "POST",
+      "path": "/api/tools/scope-preview",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "plugins.list",
+      "method": "GET",
+      "path": "/api/plugins",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "plugins.update",
+      "method": "PUT",
+      "path": "/api/plugins/999999",
+      "status": 404,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "plugins.rescan",
+      "method": "POST",
+      "path": "/api/plugins/rescan",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "system.health",
+      "method": "GET",
+      "path": "/api/system/health",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "system.compact",
+      "method": "POST",
+      "path": "/api/system/compact",
+      "status": 409,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "matrix.upload",
+      "method": "POST",
+      "path": "/api/audits/1/redirect-matrix",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "matrix.results",
+      "method": "GET",
+      "path": "/api/audits/1/redirect-matrix/results",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "tools.rewritePreview",
+      "method": "POST",
+      "path": "/api/tools/rewrite-preview",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "logs.import",
+      "method": "POST",
+      "path": "/api/projects/2/logs/import",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "logs.list",
+      "method": "GET",
+      "path": "/api/projects/2/logs",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "logs.correlation",
+      "method": "GET",
+      "path": "/api/audits/1/logs/correlation?importId=1",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "logs.verifyDns",
+      "method": "POST",
+      "path": "/api/logs/2/verify-dns",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "semantics.run",
+      "method": "POST",
+      "path": "/api/audits/1/semantics/run",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "semantics.similar",
+      "method": "GET",
+      "path": "/api/audits/1/semantics/similar?urlId=2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "semantics.linkOpportunities",
+      "method": "GET",
+      "path": "/api/audits/1/semantics/link-opportunities",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "semantics.clusters",
+      "method": "GET",
+      "path": "/api/audits/1/semantics/clusters",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "settings.embeddingTest",
+      "method": "POST",
+      "path": "/api/settings/embedding/test",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "geo.llmsTxt",
+      "method": "GET",
+      "path": "/api/audits/1/geo/llms-txt",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "geo.governance",
+      "method": "GET",
+      "path": "/api/audits/1/geo/governance",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "tools.llmsGenerate",
+      "method": "POST",
+      "path": "/api/tools/llms-generate",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "tools.llmsValidate",
+      "method": "POST",
+      "path": "/api/tools/llms-validate",
+      "status": 400,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "analytics.list",
+      "method": "GET",
+      "path": "/api/audits/1/analytics",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "analytics.coverage",
+      "method": "GET",
+      "path": "/api/audits/1/analytics/coverage",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "diagnostics.purgeArtifacts",
+      "method": "DELETE",
+      "path": "/api/diagnostics/artifacts",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "configurations.delete",
+      "method": "DELETE",
+      "path": "/api/configurations/3",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "schedules.delete",
+      "method": "DELETE",
+      "path": "/api/schedules/2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "destinations.delete",
+      "method": "DELETE",
+      "path": "/api/destinations/2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "dictionary.remove",
+      "method": "DELETE",
+      "path": "/api/dictionary",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "suppressions.delete",
+      "method": "DELETE",
+      "path": "/api/projects/2/suppressions/conformance-missing-key",
+      "status": 404,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "queries.delete",
+      "method": "DELETE",
+      "path": "/api/queries?id=2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "waf.deleteSignature",
+      "method": "DELETE",
+      "path": "/api/waf-signatures/conformance-missing-key",
+      "status": 404,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "plugins.delete",
+      "method": "DELETE",
+      "path": "/api/plugins/999999",
+      "status": 404,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "logs.delete",
+      "method": "DELETE",
+      "path": "/api/logs/2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    },
+    {
+      "key": "projects.delete",
+      "method": "DELETE",
+      "path": "/api/projects/2",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
+      "outcome": "conformant"
+    }
+  ]
+}

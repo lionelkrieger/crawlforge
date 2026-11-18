@@ -1,0 +1,12 @@
+{
+  "id": "3",
+  "canonicalUrl": "http://127.0.0.1:47312/redirect/chain-1",
+  "statusCode": 200,
+  "statusClass": "2xx",
+  "contentType": "text/html; charset=utf-8",
+  "depth": 0,
+  "indexable": true,
+  "title": "Redirect chain target",
+  "blockReason": null,
+  "wafProvider": null
+}

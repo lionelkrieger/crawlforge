@@ -1,0 +1,27 @@
+[
+  {
+    "name": "crawl-progress",
+    "auditIdKind": "Number",
+    "sample": "1"
+  },
+  {
+    "name": "stage-changed",
+    "auditIdKind": "Number",
+    "sample": "1"
+  },
+  {
+    "name": "audit-completed",
+    "auditIdKind": "Number",
+    "sample": "1"
+  },
+  {
+    "name": "host-throttle",
+    "auditIdKind": "Number",
+    "sample": "1"
+  },
+  {
+    "name": "matrix-row-validated",
+    "auditIdKind": "Number",
+    "sample": "1"
+  }
+]

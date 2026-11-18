@@ -1,0 +1,10 @@
+{
+  "auditId": 1,
+  "finalCounters": {
+    "discovered": 186,
+    "fetched": 183,
+    "analyzed": 182,
+    "failed": 2
+  },
+  "reportReady": true
+}

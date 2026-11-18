@@ -1,0 +1,9 @@
+{
+  "gap": "G-REAUDIT-SNAPSHOT",
+  "request": "POST /api/audits/1/reaudit {refresh:false}",
+  "status": 500,
+  "contentType": "",
+  "body": "",
+  "expectedSpecBehavior": "201 envelope with {auditId, sourceAuditId, state} (ReauditResponse)",
+  "owners": "WP-09-06 (Api/Controllers overwrite side) \u002B WP-09-11 (Host/Execution PayloadJson read side)"
+}

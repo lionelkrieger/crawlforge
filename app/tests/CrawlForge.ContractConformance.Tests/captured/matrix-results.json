@@ -1,0 +1,27 @@
+[
+  {
+    "urlId": "3",
+    "sourceUrl": "http://127.0.0.1:47312/redirect/chain-1",
+    "expectedTargetUrl": "http://127.0.0.1:47312/pages/redirect-target.html",
+    "verdict": "pass",
+    "hopChain": [
+      {
+        "url": "http://127.0.0.1:47312/redirect/chain-1",
+        "statusCode": 301,
+        "location": "http://127.0.0.1:47312/redirect/chain-2"
+      },
+      {
+        "url": "http://127.0.0.1:47312/redirect/chain-2",
+        "statusCode": 302,
+        "location": "http://127.0.0.1:47312/redirect/chain-3"
+      },
+      {
+        "url": "http://127.0.0.1:47312/redirect/chain-3",
+        "statusCode": 301,
+        "location": "http://127.0.0.1:47312/pages/redirect-target.html"
+      }
+    ],
+    "canonicalUrl": null,
+    "evidence": "http://127.0.0.1:47312/pages/redirect-target.html"
+  }
+]

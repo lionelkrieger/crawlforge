@@ -1,0 +1,64 @@
+{
+  "prompts": [
+    {
+      "name": "audit-health-briefing",
+      "description": "Composes the audit summary into an agent-ready health briefing; no side effects.",
+      "arguments": [
+        {
+          "name": "auditId",
+          "description": "Audit identifier",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "high-severity-triage",
+      "description": "Composes high-severity findings into a triage briefing; no side effects.",
+      "arguments": [
+        {
+          "name": "auditId",
+          "description": "Audit identifier",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "audit-delta-briefing",
+      "description": "Composes a cross-audit comparison into a delta briefing; no side effects.",
+      "arguments": [
+        {
+          "name": "baseAuditId",
+          "description": "Earlier audit identifier",
+          "required": true
+        },
+        {
+          "name": "targetAuditId",
+          "description": "Later audit identifier",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "ngram-topical-briefing",
+      "description": "Composes ngram-analysis \u002B audit-summary into a topical briefing; no side effects.",
+      "arguments": [
+        {
+          "name": "auditId",
+          "description": "Audit identifier",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "semantic-topical-briefing",
+      "description": "Composes semantic-link-opportunities \u002B audit-summary into a topical briefing; no side effects.",
+      "arguments": [
+        {
+          "name": "auditId",
+          "description": "Audit identifier",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

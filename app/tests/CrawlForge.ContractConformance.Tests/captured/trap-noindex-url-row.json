@@ -1,0 +1,12 @@
+{
+  "id": "2",
+  "canonicalUrl": "http://127.0.0.1:47312/pages/noindex.html",
+  "statusCode": 200,
+  "statusClass": "2xx",
+  "contentType": "text/html; charset=utf-8",
+  "depth": 0,
+  "indexable": true,
+  "title": "Noindex page",
+  "blockReason": null,
+  "wafProvider": null
+}
