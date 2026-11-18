@@ -4,7 +4,7 @@
 # automated fixture acceptance harness (fixture site + normal entry points + UI path walk).
 phase_id: "phase-08"
 name: "Hotfix Record and Foundations"
-status: "in_progress"
+status: "completed"
 depends_on_phases: []
 max_parallel_agents: 2
 parallel_waves:
@@ -215,9 +215,10 @@ workpieces:
   - workpiece_id: "WP-08-05"
     title: "Phase 08 Serial Wiring — Solution, Gates & Harness Integration"
     phase_id: "phase-08"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "lead"
     started_at: "2026-11-18T11:02:20Z"
+    completed_at: "2026-11-18T21:51:31Z"
     parallel_group: "wave-8C"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:
@@ -263,9 +264,10 @@ workpieces:
   - workpiece_id: "WP-08-A1"
     title: "Amendment A1 — Repair pre-existing stale gate tests (orchestrator, §11)"
     phase_id: "phase-08"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "lead"
     started_at: "2026-11-18T19:58:22Z"
+    completed_at: "2026-11-18T21:51:31Z"
     parallel_group: "wave-8C"
     depends_on_workpieces: []
     context_files:
@@ -314,9 +316,10 @@ workpieces:
   - workpiece_id: "WP-08-A2"
     title: "Amendment A2 — Thread-safe embedding test double + load-robust E2E wait (orchestrator, §11)"
     phase_id: "phase-08"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "lead"
     started_at: "2026-11-18T20:40:00Z"
+    completed_at: "2026-11-18T21:51:31Z"
     parallel_group: "wave-8C"
     depends_on_workpieces: []
     context_files:

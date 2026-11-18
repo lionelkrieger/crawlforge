@@ -1,0 +1,33 @@
+[22:41:22] Phase gates: phase-08 (phase-08-hotfix-record-and-foundations.yaml) — SDK 10.0.404, canonical surface (CF_AGENT_ID unset)
+[22:41:22] Logs: E:\Crawlforge\app\tools\gates\logs\phase-08-20261118-224122
+[22:41:22] #1 [after_each_wave] RUN (cwd=E:\Crawlforge\app): dotnet build E:\Crawlforge\app\src\backend\CrawlForge.Host -c Debug
+[22:41:33] #1 OK exit=0 (11s)
+[22:41:33] #2 [after_each_wave] RUN (cwd=E:\Crawlforge): cd E:\Crawlforge\app\src\frontend && npm run build
+[22:41:35] #2 OK exit=0 (2s)
+[22:41:35] #3 [after_each_wave] RUN (cwd=E:\Crawlforge): cd E:\Crawlforge\app\src\electron && npx tsc -p tsconfig.build.json
+[22:41:38] #3 OK exit=0 (3s)
+[22:41:38] #4 [after_each_wave] KnownGap filter appended (phase-08 §12): dotnet test E:\Crawlforge\app\CrawlForge.sln --filter "KnownGap!=WP-09-06"
+[22:41:38] #4 [after_each_wave] RUN (cwd=E:\Crawlforge\app): dotnet test E:\Crawlforge\app\CrawlForge.sln --filter "KnownGap!=WP-09-06"
+[23:31:28] #4 OK exit=0 (2990s)
+[23:31:28] #5 [after_each_wave] RUN (cwd=E:\Crawlforge\app): dotnet run --project E:\Crawlforge\app\tools\governance-analyzer -- --root E:\Crawlforge\app\src --fail-on-violation
+[23:31:41] #5 OK exit=0 (14s)
+[23:31:41] #6 [after_each_wave] RUN (cwd=E:\Crawlforge): python E:\Crawlforge\audit-work\register\check_traceability.py
+[23:31:43] #6 OK exit=0 (1s)
+[23:31:43] check_traceability.py rewrote TRACEABILITY.md with CRLF (content identical) — restored committed LF version.
+[23:31:43] #7 [after_each_wave] RUN (cwd=E:\Crawlforge): python E:\Crawlforge\audit-work\register\check_buildplan.py
+[23:31:45] #7 OK exit=0 (1s)
+[23:31:45] #8 [wave-8C] RUN (cwd=E:\Crawlforge\app): dotnet test E:\Crawlforge\app\tests\CrawlForge.ContractConformance.Tests --filter KnownGap!=WP-09-06
+[23:49:01] #8 OK exit=0 (1037s)
+[23:49:01] #9 [wave-8C] RUN (cwd=E:\Crawlforge): python E:\Crawlforge\app\tests\fixture-acceptance\run_fixture_acceptance.py --mode http --traps noindex,canonical-conflict,soft-404-server,missing-alt
+[23:51:31] #9 OK exit=0 (150s)
+[23:51:31] Summary (4209s total):
+[23:51:31]   #1 [after_each_wave] exit=0 11s  dotnet build E:\Crawlforge\app\src\backend\CrawlForge.Host -c Debug
+[23:51:31]   #2 [after_each_wave] exit=0 2s  cd E:\Crawlforge\app\src\frontend && npm run build
+[23:51:31]   #3 [after_each_wave] exit=0 3s  cd E:\Crawlforge\app\src\electron && npx tsc -p tsconfig.build.json
+[23:51:31]   #4 [after_each_wave] exit=0 2990s  dotnet test E:\Crawlforge\app\CrawlForge.sln --filter "KnownGap!=WP-09-06"
+[23:51:31]   #5 [after_each_wave] exit=0 14s  dotnet run --project E:\Crawlforge\app\tools\governance-analyzer -- --root E:\Crawlforge\app\src --fail-on-violation
+[23:51:31]   #6 [after_each_wave] exit=0 1s  python E:\Crawlforge\audit-work\register\check_traceability.py
+[23:51:31]   #7 [after_each_wave] exit=0 1s  python E:\Crawlforge\audit-work\register\check_buildplan.py
+[23:51:31]   #8 [wave-8C] exit=0 1037s  dotnet test E:\Crawlforge\app\tests\CrawlForge.ContractConformance.Tests --filter KnownGap!=WP-09-06
+[23:51:31]   #9 [wave-8C] exit=0 150s  python E:\Crawlforge\app\tests\fixture-acceptance\run_fixture_acceptance.py --mode http --traps noindex,canonical-conflict,soft-404-server,missing-alt
+[23:51:31] PHASE GATES: PASS — all 9 commands exit 0
