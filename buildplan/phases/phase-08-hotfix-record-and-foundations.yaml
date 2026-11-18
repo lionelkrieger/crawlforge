@@ -215,7 +215,9 @@ workpieces:
   - workpiece_id: "WP-08-05"
     title: "Phase 08 Serial Wiring — Solution, Gates & Harness Integration"
     phase_id: "phase-08"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "lead"
+    started_at: "2026-11-18T11:02:20Z"
     parallel_group: "wave-8C"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:

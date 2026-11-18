@@ -1,0 +1,177 @@
+{
+  "harness": "WP-08-04 fixture acceptance harness",
+  "version": "1.0.0",
+  "timestamp": "20261118T111304Z",
+  "git_head": "d84304edadd3b5e7cff4c0d8955f2ac51af0073e",
+  "fixture_base_url": "http://127.0.0.1:47311",
+  "expected_results_sha256": "9068684d683e7f4dcedabef4223d35ed69421e49ed4af591e353288a2d780211",
+  "modes_requested": [
+    "http"
+  ],
+  "selected_traps": [
+    "noindex"
+  ],
+  "selected_surfaces": [
+    "UI-01",
+    "UI-10"
+  ],
+  "tls": {
+    "active": false,
+    "note": null
+  },
+  "cdp_port": 9222,
+  "app_launched_by_harness": true,
+  "environment": {
+    "cdp_port_notes": [],
+    "fixture_started_by_harness": true,
+    "fixture_reused_existing": false,
+    "session_events_file": "results/ENVIRONMENT-NOTES.md (pre-run session measurements)"
+  },
+  "global_assertions": [
+    {
+      "id": "no-non-get-requests",
+      "check": "GET /__fixture/requests -> nonGet is empty after any audit",
+      "criteria": [
+        54
+      ],
+      "ok": true,
+      "per_audit": [
+        {
+          "audit_id": "35",
+          "entry": "REST POST /api/audits",
+          "nonGet": [],
+          "ok": true,
+          "evidence": "nonGet == [] after audit"
+        }
+      ]
+    }
+  ],
+  "product_defects": null,
+  "modes": {
+    "http": {
+      "traps": {
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 35: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        }
+      },
+      "counts": {
+        "pass": 1,
+        "partial": 0,
+        "fail": 0,
+        "not_testable": 0
+      },
+      "evidence_pool": [
+        "35"
+      ],
+      "pooling_note": "probe-2 convention: bulk runs pooled for the acceptance matrix; per-run verdicts in runs[]"
+    }
+  },
+  "runs": [
+    {
+      "run_id": "http-rest",
+      "mode": "http",
+      "entry_point": "REST POST /api/audits",
+      "project_id": "24",
+      "project_name": "Fixture harness http 20261118T111304Z",
+      "configuration_id": "28",
+      "audit_id": "35",
+      "limit_overrides": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      },
+      "state": "completed",
+      "transitions": [
+        {
+          "t": 0.0,
+          "state": "running",
+          "phase": "crawling",
+          "counters": {
+            "queued": 0,
+            "fetched": 0,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 134.9,
+          "state": "running",
+          "phase": "analyzing",
+          "counters": {
+            "queued": 0,
+            "fetched": 183,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 159.0,
+          "state": "completed",
+          "phase": "finalizing",
+          "counters": {
+            "queued": 0,
+            "fetched": 183,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        }
+      ],
+      "duration_s": 159.0,
+      "timed_out": false,
+      "configuration_setup": "REST-only configuration; rendering={\"enabled\": false, \"deviceProfile\": null, \"infiniteScroll\": false, \"captureConsole\": false}",
+      "start_attempts": [],
+      "safety": {
+        "ok": true,
+        "evidence": "nonGet == [] after audit",
+        "tag_hits": {
+          "total": 0,
+          "beforeConsent": 0,
+          "granted": 0,
+          "hits": []
+        }
+      },
+      "url_count": 186,
+      "finding_count": 1522,
+      "link_count": 1641,
+      "rendering_inert": {
+        "inert": false,
+        "evidence": "rendering.enabled=False; 'no rendered tree is available' findings=0; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=None",
+        "no_tree_findings": 0,
+        "js_target_present": false,
+        "js_content_words": null
+      },
+      "click_activity": {
+        "active": false,
+        "click_link_rows": 0,
+        "spa_view_urls": 0,
+        "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+      },
+      "traps": {
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 35: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        }
+      },
+      "counts": {
+        "pass": 1,
+        "partial": 0,
+        "fail": 0,
+        "not_testable": 0
+      }
+    }
+  ],
+  "ui_entry": null,
+  "exit_code": 0,
+  "exit_reason": "no fail among selected traps; global safety assertions hold",
+  "verdict_enum": [
+    "pass",
+    "partial",
+    "fail",
+    "not_testable"
+  ]
+}

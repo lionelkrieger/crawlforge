@@ -1,0 +1,31 @@
+{
+  "UI-01": {
+    "id": "UI-01",
+    "surface": "Main hub › Projects",
+    "spec_path": "Shell start screen (first run proceeds to New project)",
+    "status": "reachable_and_functional",
+    "evidence": "Hub renders real local aggregates: 23 project rows, 34 audit rows, New project button present=True. Project creation through the New project dialog is exercised by the UI-entry audit.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261118T111304Z\\screenshots\\UI-01-hub.png",
+    "attempts": [],
+    "project_rows": 23,
+    "audit_rows": 34
+  },
+  "UI-10": {
+    "id": "UI-10",
+    "surface": "Audit run view",
+    "spec_path": "Project overview › Start audit, or Audits › running audit",
+    "status": "reachable_and_functional",
+    "evidence": "Audit run view renders real run data for audit 35: state badge, progress/counters and host-throttle telemetry present; lifecycle controls mounted for active runs.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261118T111304Z\\screenshots\\UI-10-run-view.png",
+    "attempts": [
+      {
+        "action": "nav-audits",
+        "audits_view": true
+      },
+      {
+        "action": "open audit 35",
+        "opened": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+# Gate run logs: the compact per-run summary.txt is committable evidence;
+# full command logs (bulky build/test output) stay on disk for review.
+*
+!.gitignore
+!*/
+!**/summary.txt

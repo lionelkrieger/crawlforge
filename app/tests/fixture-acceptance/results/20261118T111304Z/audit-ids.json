@@ -1,0 +1,24 @@
+{
+  "projects": [
+    {
+      "id": "24",
+      "name": "Fixture harness http 20261118T111304Z",
+      "run": "http-rest"
+    }
+  ],
+  "configurations": [
+    {
+      "id": "28",
+      "run": "http-rest"
+    }
+  ],
+  "audits": [
+    {
+      "id": "35",
+      "run": "http-rest",
+      "entry": "REST POST /api/audits",
+      "state": "completed"
+    }
+  ],
+  "schedules": []
+}
