@@ -1,0 +1,75 @@
+{
+  "projects": [
+    {
+      "id": "8",
+      "name": "Fixture harness http 20261117T235434Z",
+      "run": "http-ui"
+    },
+    {
+      "id": "9",
+      "name": "Fixture harness js 20261117T235434Z",
+      "run": "js-rest"
+    },
+    {
+      "id": "10",
+      "name": "Fixture harness MCP 20261117T235434Z",
+      "run": "mcp"
+    },
+    {
+      "id": "11",
+      "name": "Fixture harness scheduled 20261117T235434Z",
+      "run": "scheduled"
+    }
+  ],
+  "configurations": [
+    {
+      "id": "13",
+      "run": "http-ui"
+    },
+    {
+      "id": "14",
+      "run": "js-rest"
+    },
+    {
+      "id": "15",
+      "run": "mcp"
+    },
+    {
+      "id": "16",
+      "run": "scheduled"
+    }
+  ],
+  "audits": [
+    {
+      "id": "17",
+      "run": "http-ui",
+      "entry": "UI Start audit button (CDP) + REST limit-bounding + REST poll",
+      "state": "completed"
+    },
+    {
+      "id": "18",
+      "run": "js-rest",
+      "entry": "REST POST /api/audits",
+      "state": "failed"
+    },
+    {
+      "id": "19",
+      "run": "mcp",
+      "entry": "MCP stdio adapter start-audit (REST-bounded config)",
+      "state": "completed"
+    },
+    {
+      "id": "21",
+      "run": "scheduled",
+      "entry": "REST POST /api/projects/{id}/schedules + /api/schedules/{id}/run-now",
+      "state": "completed"
+    }
+  ],
+  "schedules": [
+    {
+      "id": "1",
+      "run": "scheduled",
+      "cleanup": "deleted (harness-owned artifact)"
+    }
+  ]
+}

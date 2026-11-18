@@ -1,0 +1,4 @@
+{
+  "error": "LaunchError: no renderer page target on CDP 9222 after 240.0s",
+  "traceback": "Traceback (most recent call last):\n  File \"E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py\", line 526, in main\n    log(f\"launcher finished; waiting for app readiness on CDP {cdp_port}\")\n                 ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Crawlforge\\app\\tests\\fixture-acceptance\\harness\\launch.py\", line 118, in wait_app_ready\n    raise LaunchError(f\"no renderer page target on CDP {cdp_port} after {timeout_s}s\")\nharness.launch.LaunchError: no renderer page target on CDP 9222 after 240.0s\n"
+}

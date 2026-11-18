@@ -1,0 +1,10 @@
+# WP-08-04 harness evidence: bulky binaries and raw pulls stay on disk;
+# machine-readable verdicts and small logs are committed.
+screenshots/
+*-data.json
+*-trap-details.json
+*.log
+electron-stdout.log
+electron-stderr.log
+launch-console.log
+fixture-server.log

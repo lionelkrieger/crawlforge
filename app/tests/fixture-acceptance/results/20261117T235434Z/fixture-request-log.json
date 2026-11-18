@@ -1,0 +1,34 @@
+[
+  {
+    "audit_id": "17",
+    "entry": "UI Start audit button (CDP) + REST limit-bounding + REST poll",
+    "nonGet": [],
+    "tagHits": [],
+    "ok": true,
+    "evidence": "nonGet == [] after audit"
+  },
+  {
+    "audit_id": "18",
+    "entry": "REST POST /api/audits",
+    "nonGet": [],
+    "tagHits": [],
+    "ok": true,
+    "evidence": "nonGet == [] after audit"
+  },
+  {
+    "audit_id": "19",
+    "entry": "MCP stdio adapter start-audit (REST-bounded config)",
+    "nonGet": [],
+    "tagHits": [],
+    "ok": true,
+    "evidence": "nonGet == [] after audit"
+  },
+  {
+    "audit_id": "21",
+    "entry": "REST POST /api/projects/{id}/schedules + /api/schedules/{id}/run-now",
+    "nonGet": [],
+    "tagHits": [],
+    "ok": true,
+    "evidence": "nonGet == [] after audit"
+  }
+]

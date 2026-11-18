@@ -1,0 +1,135 @@
+{
+  "flow": "UI New project dialog -> REST PUT limits -> UI Start audit -> CDP UI-10 inspection",
+  "note_no_ui_limit_controls": "UI-04 configuration editor absent; limits bounded via REST PUT /api/configurations/{id} (subset update), read back to verify.",
+  "create_api_calls": [
+    "POST http://127.0.0.1:64307/api/projects {\"name\":\"Fixture harness http 20261118T000959Z\",\"description\":\"WP-08-04 fixture acceptance — UI entry (CR-023)\"}",
+    "POST http://127.0.0.1:64307/api/projects/13/configurations {\"name\":\"Default configuration\",\"startUrls\":[\"http://127.0.0.1:47311/\"],\"respectRobotsTxt\":true}",
+    "GET http://127.0.0.1:64307/api/projects "
+  ],
+  "project_id": "13",
+  "configuration_id": "18",
+  "rest_limit_bounding": {
+    "put_payload": {
+      "limits": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      }
+    },
+    "read_back_limits": {
+      "maxUrls": 220,
+      "maxDepth": 6,
+      "maxDurationSeconds": 180,
+      "maxResponseBytes": null
+    }
+  },
+  "project_row_visible_in_hub": true,
+  "start_api_calls": [
+    "GET http://127.0.0.1:64307/api/projects/13/configurations ",
+    "POST http://127.0.0.1:64307/api/audits {\"configurationId\":\"18\"}",
+    "GET http://127.0.0.1:64307/api/audits "
+  ],
+  "start_attempts": [],
+  "ui10_running_dump": {
+    "title": "CrawlForge",
+    "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+    "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\nAudit 23\nCOMPLETED\n\nPhase · started 18 Nov 02:10:14\n\nCRAWL PROGRESS\n\n183 fetched · — queued · — · ETA —\n\nERRORS\n—\nBLOCKED\n—\nWAF BLOCKED\n0\nELAPSED\n—\n\nHOST THROTTLE (AIMD)\n\nHost\tRate\tConcurrency\tTTFB EWMA\tState\n\n\n127.0.0.1\n\n\t3.9/s\t1\t0 ms\t\nNOMINAL\n\nREPORT SURFACES\n\nURL / finding / link grids, charts, and the link graph mount into this workspace from the report workpieces; all render locally from aggregate endpoints. Live telemetry above is already streaming for this audit.\n\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n167/1000\n\nAUDIT-COMPLETED\n02:12:28\nSTAGE-CHANGED\n02:12:28\nCRAWL-PROGRESS\n02:12:27\nCRAWL-PROGRESS\n02:12:26\nCRAWL-PROGRESS\n02:12:25\nCRAWL-PROGRESS\n02:12:24\nCRAWL-PROGRESS\n02:12:23\nCRAWL-PROGRESS\n02:12:22\nCRAWL-PROGRESS\n02:12:21\nCRAWL-PROGRESS\n02:12:20\nCRAWL-PROGRESS\n02:12:19\nCRAWL-PROGRESS\n02:12:18\nCRAWL-PROGRESS\n02:12:17\nCRAWL-PROGRESS\n02:12:16\nCRAWL-PROGRESS\n02:12:15\nCRAWL-PROGRESS\n02:12:14\nCRAWL-PROGRESS\n02:12:13\nCRAWL-PROGRESS\n02:12:12\nCRAWL-PROGRESS\n02:12:11\nSTAGE-CHANGED\n02:12:10\nHOST-THROTTLE\n02:12:10\nCRAWL-PROGRESS\n02:12:10\nCRAWL-PROGRESS\n02:12:09\nHOST-THROTTLE\n02:12:08\nCRAWL-PROGRESS\n02:12:07\nHOST-THROTTLE\n02:12:07\nCRAWL-PROGRESS\n02:12:06\nCRAWL-PROGRESS\n02:12:05\nHOST-THROTTLE\n02:12:04\nCRAWL-PROGRESS\n02:12:04\nCRAWL-PROGRESS\n02:12:03\nCRAWL-PROGRESS\n02:12:02\nCRAWL-PROGRESS\n02:12:01\nCRAWL-PROGRESS\n02:12:00\nCRAWL-PROGRESS\n02:11:59\nCRAWL-PROGRESS\n02:11:58\nCRAWL-PROGRESS\n02:11:57\nCRAWL-PROGRESS\n02:11:56\nCRAWL-PROGRESS\n02:11:55\nHOST-THROTTLE\n02:11:55\nCRAWL-PROGRESS\n02:11:54\nHOST-THROTTLE\n02:11:53\nCRAWL-PROGRESS\n02:11:53\nHOST-THROTTLE\n02:11:52\nCRAWL-PROGRESS\n02:11:52\nHOST-THROTTLE\n02:11:51\nCRAWL-PROGRESS\n02:11:51\nCRAWL-PROGRESS\n02:11:50\nHOST-THROTTLE\n02:11:49\nCRAWL-PROGRESS\n02:11:49\nCRAWL-PROGRESS\n02:11:48\nHOST-THROTTLE\n02:11:47\nCRAWL-PROGRESS\n02:11:47\nHOST-THROTTLE\n02:11:46\nCRAWL-PROGRESS\n02:11:45\nHOST-THROTTLE\n02:11:45\nCRAWL-PROGRESS\n02:11:44\nCRAWL-PROGRESS\n02:11:43\nHOST-THROTTLE\n02:11:43\nCRAWL-PROGRESS\n02:11:42\nHOST-THROTTLE\n02:11:42\nCRAWL-PROGRESS\n02:11:41\nCRAWL-PROGRESS\n02:11:40\nCRAWL-PROGRESS\n02:11:39\nHOST-THROTTLE\n02:11:39\nCRAWL-PROGRESS\n02:11:38\nCRAWL-PROGRESS\n02:11:37\nHOST-THROTTLE\n02:11:37\nCRAWL-PROGRESS\n02:11:36\nCRAWL-PROGRESS\n02:11:34\nHOST-THROTTLE\n02:11:34\nCRAWL-PROGRESS\n02:11:33\nCRAWL-PROGRESS\n02:11:32\nCRAWL-PROGRESS\n02:11:30\nCRAWL-PROGRESS\n02:11:29\nCRAWL-PROGRESS\n02:11:28\nCRAWL-PROGRESS\n02:11:27\nCRAWL-PROGRESS\n02:11:26\nCRAWL-PROGRESS\n02:11:25\nHOST-THROTTLE\n02:11:24\nCRAWL-PROGRESS\n02:11:24\nHOST-THROTTLE\n02:11:23\nCRAWL-PROGRESS\n02:11:23\nCRAWL-PROGRESS\n02:11:22\nHOST-THROTTLE\n02:11:21\nCRAWL-PROGRESS\n02:11:21\nCRAWL-PROGRESS\n02:11:20\nHOST-THROTTLE\n02:11:19\nCRAWL-PROGRESS\n02:11:19\nHOST-THROTTLE\n02:11:18\nCRAWL-PROGRESS\n02:11:17\nCRAWL-PROGRESS\n02:11:16\nHOST-THROTTLE\n02:11:16\nCRAWL-PROGRESS\n02:11:15\nCRAWL-PROGRESS\n02:11:14\nHOST-THROTTLE\n02:11:14\nCRAWL-PROGRESS\n02:11:13\nCRAWL-PROGRESS\n02:11:12\nCRAWL-PROGRESS\n02:11:11\nHOST-THROTTLE\n02:11:11\nCRAWL-PROGRESS\n02:11:10\nCRAWL-PROGRESS\n02:11:08\nHOST-THROTTLE\n02:11:08\nCRAWL-PROGRESS\n02:11:06\nCRAWL-PROGRESS\n02:11:04\nHOST-THROTTLE\n02:11:04\nCRAWL-PROGRESS\n02:11:02\nCRAWL-PROGRESS\n02:11:00\nCRAWL-PROGRESS\n02:10:58\nCRAWL-PROGRESS\n02:10:56\nCRAWL-PROGRESS\n02:10:55\nCRAWL-PROGRESS\n02:10:54\nHOST-THROTTLE\n02:10:53\nCRAWL-PROGRESS\n02:10:52\nHOST-THROTTLE\n02:10:52\nCRAWL-PROGRESS\n02:10:51\nCRAWL-PROGRESS\n02:10:50\nHOST-THROTTLE\n02:10:50\nCRAWL-PROGRESS\n02:10:49\nHOST-THROTTLE\n02:10:49\nCRAWL-PROGRESS\n02:10:48\nCRAWL-PROGRESS\n02:10:47\nHOST-THROTTLE\n02:10:47\nCRAWL-PROGRESS\n02:10:46\nCRAWL-PROGRESS\n02:10:45\nCRAWL-PROGRESS\n02:10:44\nCRAWL-PROGRESS\n02:10:43\nCRAWL-PROGRESS\n02:10:42\nCRAWL-PROGRESS\n02:10:41\nCRAWL-PROGRESS\n02:10:40\nCRAWL-PROGRESS\n02:10:39\nCRAWL-PROGRESS\n02:10:38\nHOST-THROTTLE\n02:10:37\nCRAWL-PROGRESS\n02:10:36\nCRAWL-PROGRESS\n02:10:35\nHOST-THROTTLE\n02:10:35\nCRAWL-PROGRESS\n02:10:34\nCRAWL-PROGRESS\n02:10:33\nHOST-THROTTLE\n02:10:33\nCRAWL-PROGRESS\n02:10:32\nHOST-THROTTLE\n02:10:32\nCRAWL-PROGRESS\n02:10:31\nHOST-THROTTLE\n02:10:30\nCRAWL-PROGRESS\n02:10:30\nCRAWL-PROGRESS\n02:10:29\nHOST-THROTTLE\n02:10:29\nCRAWL-PROGRESS\n02:10:28\nHOST-THROTTLE\n02:10:27\nCRAWL-PROGRESS\n02:10:27\nHOST-THROTTLE\n02:10:26\nCRAWL-PROGRESS\n02:10:26\nHOST-THROTTLE\n02:10:25\nCRAWL-PROGRESS\n02:10:25\nCRAWL-PROGRESS\n02:10:24\nHOST-THROTTLE\n02:10:24\nCRAWL-PROGRESS\n02:10:23\nHOST-THROTTLE\n02:10:23\nCRAWL-PROGRESS\n02:10:22\nHOST-THROTTLE\n02:10:21\nCRAWL-PROGRESS\n02:10:21\nCRAWL-PROGRESS\n02:10:20\nHOST-THROTTLE\n02:10:20\nCRAWL-PROGRESS\n02:10:19\nCRAWL-PROGRESS\n02:10:18\nCRAWL-PROGRESS\n02:10:16\nHOST-THROTTLE\n02:10:16\nCRAWL-PROGRESS\n02:10:15\nWS\n181 MiB\nHeap\n27.8 MiB\nGC\n112/8/5\nWAL\n4.37 MiB\nJS\n9.54 MiB\nbeat\n02:12:28\nCompact",
+    "buttons": [
+      "Open command palette (Ctrl+K)",
+      "Main hub",
+      "Audits",
+      "Report",
+      "Tools",
+      "Settings",
+      "Toggle activity pane",
+      "Resize Main workspace and Live activity (Enter toggles collapse)",
+      "Compact and trim working set"
+    ],
+    "inputs": [],
+    "testids": [
+      "cf-appshell",
+      "palette-trigger",
+      "connection-pill",
+      "cf-nav-rail",
+      "nav-hub",
+      "nav-audits",
+      "nav-report",
+      "nav-tools",
+      "nav-settings",
+      "cf-split",
+      "cf-split-first",
+      "primary-pane",
+      "toggle-secondary-pane",
+      "view-content",
+      "report-view",
+      "report-state",
+      "report-progress",
+      "hosts-table",
+      "cf-split-divider",
+      "cf-split-second",
+      "secondary-pane",
+      "activity-feed",
+      "activity-count",
+      "cf-statusbar",
+      "status-ws",
+      "status-heap",
+      "status-gc",
+      "status-wal",
+      "status-js",
+      "status-heartbeat",
+      "compact-button"
+    ]
+  },
+  "ui10_completed_dump": {
+    "title": "CrawlForge",
+    "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+    "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\nAudit 1\nFAILED\n\nPhase finalizing · started 17 Nov 19:05:19\n\nCRAWL PROGRESS\n\n0 fetched · 0 queued\n\nERRORS\n0\nBLOCKED\n0\nWAF BLOCKED\n0\nELAPSED\n—\n\nHOST THROTTLE (AIMD)\n\nHost\tRate\tConcurrency\tTTFB EWMA\tState\n\n\n127.0.0.1\n\n\t3.9/s\t1\t0 ms\t\nNOMINAL\n\nREPORT SURFACES\n\nURL / finding / link grids, charts, and the link graph mount into this workspace from the report workpieces; all render locally from aggregate endpoints. Live telemetry above is already streaming for this audit.\n\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n167/1000\n\nAUDIT-COMPLETED\n02:12:28\nSTAGE-CHANGED\n02:12:28\nCRAWL-PROGRESS\n02:12:27\nCRAWL-PROGRESS\n02:12:26\nCRAWL-PROGRESS\n02:12:25\nCRAWL-PROGRESS\n02:12:24\nCRAWL-PROGRESS\n02:12:23\nCRAWL-PROGRESS\n02:12:22\nCRAWL-PROGRESS\n02:12:21\nCRAWL-PROGRESS\n02:12:20\nCRAWL-PROGRESS\n02:12:19\nCRAWL-PROGRESS\n02:12:18\nCRAWL-PROGRESS\n02:12:17\nCRAWL-PROGRESS\n02:12:16\nCRAWL-PROGRESS\n02:12:15\nCRAWL-PROGRESS\n02:12:14\nCRAWL-PROGRESS\n02:12:13\nCRAWL-PROGRESS\n02:12:12\nCRAWL-PROGRESS\n02:12:11\nSTAGE-CHANGED\n02:12:10\nHOST-THROTTLE\n02:12:10\nCRAWL-PROGRESS\n02:12:10\nCRAWL-PROGRESS\n02:12:09\nHOST-THROTTLE\n02:12:08\nCRAWL-PROGRESS\n02:12:07\nHOST-THROTTLE\n02:12:07\nCRAWL-PROGRESS\n02:12:06\nCRAWL-PROGRESS\n02:12:05\nHOST-THROTTLE\n02:12:04\nCRAWL-PROGRESS\n02:12:04\nCRAWL-PROGRESS\n02:12:03\nCRAWL-PROGRESS\n02:12:02\nCRAWL-PROGRESS\n02:12:01\nCRAWL-PROGRESS\n02:12:00\nCRAWL-PROGRESS\n02:11:59\nCRAWL-PROGRESS\n02:11:58\nCRAWL-PROGRESS\n02:11:57\nCRAWL-PROGRESS\n02:11:56\nCRAWL-PROGRESS\n02:11:55\nHOST-THROTTLE\n02:11:55\nCRAWL-PROGRESS\n02:11:54\nHOST-THROTTLE\n02:11:53\nCRAWL-PROGRESS\n02:11:53\nHOST-THROTTLE\n02:11:52\nCRAWL-PROGRESS\n02:11:52\nHOST-THROTTLE\n02:11:51\nCRAWL-PROGRESS\n02:11:51\nCRAWL-PROGRESS\n02:11:50\nHOST-THROTTLE\n02:11:49\nCRAWL-PROGRESS\n02:11:49\nCRAWL-PROGRESS\n02:11:48\nHOST-THROTTLE\n02:11:47\nCRAWL-PROGRESS\n02:11:47\nHOST-THROTTLE\n02:11:46\nCRAWL-PROGRESS\n02:11:45\nHOST-THROTTLE\n02:11:45\nCRAWL-PROGRESS\n02:11:44\nCRAWL-PROGRESS\n02:11:43\nHOST-THROTTLE\n02:11:43\nCRAWL-PROGRESS\n02:11:42\nHOST-THROTTLE\n02:11:42\nCRAWL-PROGRESS\n02:11:41\nCRAWL-PROGRESS\n02:11:40\nCRAWL-PROGRESS\n02:11:39\nHOST-THROTTLE\n02:11:39\nCRAWL-PROGRESS\n02:11:38\nCRAWL-PROGRESS\n02:11:37\nHOST-THROTTLE\n02:11:37\nCRAWL-PROGRESS\n02:11:36\nCRAWL-PROGRESS\n02:11:34\nHOST-THROTTLE\n02:11:34\nCRAWL-PROGRESS\n02:11:33\nCRAWL-PROGRESS\n02:11:32\nCRAWL-PROGRESS\n02:11:30\nCRAWL-PROGRESS\n02:11:29\nCRAWL-PROGRESS\n02:11:28\nCRAWL-PROGRESS\n02:11:27\nCRAWL-PROGRESS\n02:11:26\nCRAWL-PROGRESS\n02:11:25\nHOST-THROTTLE\n02:11:24\nCRAWL-PROGRESS\n02:11:24\nHOST-THROTTLE\n02:11:23\nCRAWL-PROGRESS\n02:11:23\nCRAWL-PROGRESS\n02:11:22\nHOST-THROTTLE\n02:11:21\nCRAWL-PROGRESS\n02:11:21\nCRAWL-PROGRESS\n02:11:20\nHOST-THROTTLE\n02:11:19\nCRAWL-PROGRESS\n02:11:19\nHOST-THROTTLE\n02:11:18\nCRAWL-PROGRESS\n02:11:17\nCRAWL-PROGRESS\n02:11:16\nHOST-THROTTLE\n02:11:16\nCRAWL-PROGRESS\n02:11:15\nCRAWL-PROGRESS\n02:11:14\nHOST-THROTTLE\n02:11:14\nCRAWL-PROGRESS\n02:11:13\nCRAWL-PROGRESS\n02:11:12\nCRAWL-PROGRESS\n02:11:11\nHOST-THROTTLE\n02:11:11\nCRAWL-PROGRESS\n02:11:10\nCRAWL-PROGRESS\n02:11:08\nHOST-THROTTLE\n02:11:08\nCRAWL-PROGRESS\n02:11:06\nCRAWL-PROGRESS\n02:11:04\nHOST-THROTTLE\n02:11:04\nCRAWL-PROGRESS\n02:11:02\nCRAWL-PROGRESS\n02:11:00\nCRAWL-PROGRESS\n02:10:58\nCRAWL-PROGRESS\n02:10:56\nCRAWL-PROGRESS\n02:10:55\nCRAWL-PROGRESS\n02:10:54\nHOST-THROTTLE\n02:10:53\nCRAWL-PROGRESS\n02:10:52\nHOST-THROTTLE\n02:10:52\nCRAWL-PROGRESS\n02:10:51\nCRAWL-PROGRESS\n02:10:50\nHOST-THROTTLE\n02:10:50\nCRAWL-PROGRESS\n02:10:49\nHOST-THROTTLE\n02:10:49\nCRAWL-PROGRESS\n02:10:48\nCRAWL-PROGRESS\n02:10:47\nHOST-THROTTLE\n02:10:47\nCRAWL-PROGRESS\n02:10:46\nCRAWL-PROGRESS\n02:10:45\nCRAWL-PROGRESS\n02:10:44\nCRAWL-PROGRESS\n02:10:43\nCRAWL-PROGRESS\n02:10:42\nCRAWL-PROGRESS\n02:10:41\nCRAWL-PROGRESS\n02:10:40\nCRAWL-PROGRESS\n02:10:39\nCRAWL-PROGRESS\n02:10:38\nHOST-THROTTLE\n02:10:37\nCRAWL-PROGRESS\n02:10:36\nCRAWL-PROGRESS\n02:10:35\nHOST-THROTTLE\n02:10:35\nCRAWL-PROGRESS\n02:10:34\nCRAWL-PROGRESS\n02:10:33\nHOST-THROTTLE\n02:10:33\nCRAWL-PROGRESS\n02:10:32\nHOST-THROTTLE\n02:10:32\nCRAWL-PROGRESS\n02:10:31\nHOST-THROTTLE\n02:10:30\nCRAWL-PROGRESS\n02:10:30\nCRAWL-PROGRESS\n02:10:29\nHOST-THROTTLE\n02:10:29\nCRAWL-PROGRESS\n02:10:28\nHOST-THROTTLE\n02:10:27\nCRAWL-PROGRESS\n02:10:27\nHOST-THROTTLE\n02:10:26\nCRAWL-PROGRESS\n02:10:26\nHOST-THROTTLE\n02:10:25\nCRAWL-PROGRESS\n02:10:25\nCRAWL-PROGRESS\n02:10:24\nHOST-THROTTLE\n02:10:24\nCRAWL-PROGRESS\n02:10:23\nHOST-THROTTLE\n02:10:23\nCRAWL-PROGRESS\n02:10:22\nHOST-THROTTLE\n02:10:21\nCRAWL-PROGRESS\n02:10:21\nCRAWL-PROGRESS\n02:10:20\nHOST-THROTTLE\n02:10:20\nCRAWL-PROGRESS\n02:10:19\nCRAWL-PROGRESS\n02:10:18\nCRAWL-PROGRESS\n02:10:16\nHOST-THROTTLE\n02:10:16\nCRAWL-PROGRESS\n02:10:15\nWS\n199 MiB\nHeap\n26.6 MiB\nGC\n120/9/5\nWAL\n4.37 MiB\nJS\n9.54 MiB\nbeat\n02:12:32\nCompact",
+    "buttons": [
+      "Open command palette (Ctrl+K)",
+      "Main hub",
+      "Audits",
+      "Report",
+      "Tools",
+      "Settings",
+      "Toggle activity pane",
+      "Resize Main workspace and Live activity (Enter toggles collapse)",
+      "Compact and trim working set"
+    ],
+    "inputs": [],
+    "testids": [
+      "cf-appshell",
+      "palette-trigger",
+      "connection-pill",
+      "cf-nav-rail",
+      "nav-hub",
+      "nav-audits",
+      "nav-report",
+      "nav-tools",
+      "nav-settings",
+      "cf-split",
+      "cf-split-first",
+      "primary-pane",
+      "toggle-secondary-pane",
+      "view-content",
+      "report-view",
+      "report-state",
+      "report-progress",
+      "hosts-table",
+      "cf-split-divider",
+      "cf-split-second",
+      "secondary-pane",
+      "activity-feed",
+      "activity-count",
+      "cf-statusbar",
+      "status-ws",
+      "status-heap",
+      "status-gc",
+      "status-wal",
+      "status-js",
+      "status-heartbeat",
+      "compact-button"
+    ]
+  },
+  "proven": true
+}

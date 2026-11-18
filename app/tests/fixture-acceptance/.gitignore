@@ -1,0 +1,3 @@
+# Python bytecode (harness is stdlib-only; nothing here is a build artifact)
+__pycache__/
+*.pyc

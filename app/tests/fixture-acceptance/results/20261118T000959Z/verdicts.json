@@ -1,0 +1,1362 @@
+{
+  "harness": "WP-08-04 fixture acceptance harness",
+  "version": "1.0.0",
+  "timestamp": "20261118T000959Z",
+  "git_head": "93e07d33aa7f911801e301b949f5a077220efd1c",
+  "fixture_base_url": "http://127.0.0.1:47311",
+  "expected_results_sha256": "9068684d683e7f4dcedabef4223d35ed69421e49ed4af591e353288a2d780211",
+  "modes_requested": [
+    "http",
+    "js"
+  ],
+  "selected_traps": "all",
+  "selected_surfaces": "all",
+  "tls": {
+    "active": false,
+    "note": null
+  },
+  "cdp_port": 9223,
+  "app_launched_by_harness": true,
+  "environment": {
+    "cdp_port_notes": [
+      "port 9222 held by an unresponsive ghost listener (netstat pids=[17600], no live process); skipped — binding over it fails (devtools 0x2740)"
+    ],
+    "fixture_started_by_harness": true,
+    "fixture_reused_existing": false,
+    "session_events_file": "results/ENVIRONMENT-NOTES.md (pre-run session measurements)"
+  },
+  "global_assertions": [
+    {
+      "id": "no-non-get-requests",
+      "check": "GET /__fixture/requests -> nonGet is empty after any audit",
+      "criteria": [
+        54
+      ],
+      "ok": true,
+      "per_audit": [
+        {
+          "audit_id": "23",
+          "entry": "UI Start audit button (CDP) + REST limit-bounding + REST poll",
+          "nonGet": [],
+          "ok": true,
+          "evidence": "nonGet == [] after audit"
+        },
+        {
+          "audit_id": "24",
+          "entry": "REST POST /api/audits",
+          "nonGet": [],
+          "ok": true,
+          "evidence": "nonGet == [] after audit"
+        },
+        {
+          "audit_id": "25",
+          "entry": "MCP stdio adapter start-audit (REST-bounded config)",
+          "nonGet": [],
+          "ok": true,
+          "evidence": "nonGet == [] after audit"
+        },
+        {
+          "audit_id": "27",
+          "entry": "REST POST /api/projects/{id}/schedules + /api/schedules/{id}/run-now",
+          "nonGet": [],
+          "ok": true,
+          "evidence": "nonGet == [] after audit"
+        }
+      ]
+    }
+  ],
+  "product_defects": null,
+  "modes": {
+    "http": {
+      "traps": {
+        "redirect-chain": {
+          "result": "partial",
+          "evidence": "audit 23+24: /redirect/chain-1 stored as statusCode=200 (title='Redirect chain target'), redirectChain length=1 statuses=[200]; the required hop-by-hop 301>302>301 record and a redirect-chain finding are absent (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics). Final target reached=True."
+        },
+        "redirect-loop": {
+          "result": "partial",
+          "evidence": "audit 23+24: /redirect/loop-a stored as statusCode=0 (statusClass=5xx); the crawl did not hang (audit completed), but no loop finding or loop classification was emitted (findings on URL: none)."
+        },
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 23+24: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "robots-blocked": {
+          "result": "partial",
+          "evidence": "audit 23+24: /private/blocked.html was not fetched (statusCode=0) but blockReason=None and no robots finding was emitted (findings on URL: none); the URL is not affirmatively reported as blocked by robots.txt."
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 23+24: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "broken-links": {
+          "result": "partial",
+          "evidence": "audit 23+24: internal 404 recorded for /pages/does-not-exist.html (statusCode=404), but no broken-internal/broken-external finding (rule probe: none); broken.example.invalid checked=False (rows=0)."
+        },
+        "orphan": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/orphan.html is absent from the URL inventory although it is listed in /sitemap.xml; sitemap-only discovery does not exist, so the orphan can never be reported."
+        },
+        "js-only-link": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "script-injected-content": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "late-meta-change": {
+          "result": "not_testable",
+          "evidence": "trap requires dual capture; --mode http cannot exercise it (expected-results.json capture='dual')."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 23+24: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404; indexability.soft-404[warning] indexability soft 404)."
+        },
+        "soft-404-client-route": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "hash-route": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "client-side-redirect": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "postback-links": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/postback.aspx crawled statusCode=200 but the two javascript:__doPostBack links are not reported as uncrawlable navigation (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.spelling[warning] content spelling; content.metrics[notice] content metrics)."
+        },
+        "cookieless-session": {
+          "result": "fail",
+          "evidence": "audit 23+24: cookieless-session URL stored unchanged (raw session-segment rows=1, e.g. http://127.0.0.1:47311/(S(abc123xyz))/pages/session.aspx); no session-segment normalization or finding."
+        },
+        "large-viewstate": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/viewstate-large.aspx crawled statusCode=200 (~152 KB __VIEWSTATE hidden input) but no ViewState size measurement or >100 KB finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.thin-text[notice] content thin text; content.metrics[notice] content metrics)."
+        },
+        "crawler-trap-filter": {
+          "result": "fail",
+          "evidence": "audit 23+24: 144 faceted-filter combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 220, \"maxDepth\": 6, \"maxDurationSeconds\": 180, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "crawler-trap-calendar": {
+          "result": "fail",
+          "evidence": "audit 23+24: 11 calendar combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 220, \"maxDepth\": 6, \"maxDurationSeconds\": 180, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "cookie-gate": {
+          "result": "fail",
+          "evidence": "audit 23+24: /cookie-gate/ stored statusCode=0 with no successful cookie-gated navigation and no loop finding (findings: none)."
+        },
+        "consent-banner": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "service-worker": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "structured-data-errors": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/structured-data.html crawled statusCode=200 (Article missing required properties + malformed JSON-LD block) but no structured-data validation finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 23+24: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        },
+        "mixed-content": {
+          "result": "not_testable",
+          "evidence": "trap flags requires_tls; the fixture is served over plain HTTP (no --tls-cert/--tls-key), so mixed content cannot exist."
+        },
+        "hreflang-no-return": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/hreflang-en.html crawled but no missing-return-tag finding; i18n.hreflang-valid pass findings=1 (emitting a pass while reciprocity is missing)."
+        },
+        "duplicate-titles": {
+          "result": "partial",
+          "evidence": "audit 23+24: both pages crawled with identical title 'Duplicate title'; content.keyword-cannibalization emitted (1) but no duplicate-title finding."
+        },
+        "thin-page": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/thin.html has totalWordCount=6 but no content.thin-text finding on this URL (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing); thin-content detection missed the named fixture page."
+        },
+        "live-websocket": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "click-only-navigation": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "never-place-bet": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        }
+      },
+      "counts": {
+        "pass": 4,
+        "partial": 5,
+        "fail": 10,
+        "not_testable": 12
+      },
+      "evidence_pool": [
+        "23",
+        "24"
+      ],
+      "pooling_note": "probe-2 convention: bulk runs pooled for the acceptance matrix; per-run verdicts in runs[]"
+    },
+    "js": {
+      "traps": {
+        "redirect-chain": {
+          "result": "partial",
+          "evidence": "audit 23+24: /redirect/chain-1 stored as statusCode=200 (title='Redirect chain target'), redirectChain length=1 statuses=[200]; the required hop-by-hop 301>302>301 record and a redirect-chain finding are absent (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics). Final target reached=True."
+        },
+        "redirect-loop": {
+          "result": "partial",
+          "evidence": "audit 23+24: /redirect/loop-a stored as statusCode=0 (statusClass=5xx); the crawl did not hang (audit completed), but no loop finding or loop classification was emitted (findings on URL: none)."
+        },
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 23+24: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "robots-blocked": {
+          "result": "partial",
+          "evidence": "audit 23+24: /private/blocked.html was not fetched (statusCode=0) but blockReason=None and no robots finding was emitted (findings on URL: none); the URL is not affirmatively reported as blocked by robots.txt."
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 23+24: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "broken-links": {
+          "result": "partial",
+          "evidence": "audit 23+24: internal 404 recorded for /pages/does-not-exist.html (statusCode=404), but no broken-internal/broken-external finding (rule probe: none); broken.example.invalid checked=False (rows=0)."
+        },
+        "orphan": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/orphan.html is absent from the URL inventory although it is listed in /sitemap.xml; sitemap-only discovery does not exist, so the orphan can never be reported."
+        },
+        "js-only-link": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); /pages/js-only-target.html is absent although rendering.enabled=true."
+        },
+        "script-injected-content": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); /pages/js-content.html totalWordCount=2 (raw markup only)."
+        },
+        "late-meta-change": {
+          "result": "not_testable",
+          "evidence": "trap requires dual capture; --mode js cannot exercise it (expected-results.json capture='dual')."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 23+24: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404; indexability.soft-404[warning] indexability soft 404)."
+        },
+        "soft-404-client-route": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); /spa/does-not-exist is absent; the SPA shell is not rendered."
+        },
+        "hash-route": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); hash views are not rendered or captured."
+        },
+        "client-side-redirect": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); the meta-refresh JS redirect is not executed in a rendered tree."
+        },
+        "postback-links": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/postback.aspx crawled statusCode=200 but the two javascript:__doPostBack links are not reported as uncrawlable navigation (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.spelling[warning] content spelling; content.metrics[notice] content metrics)."
+        },
+        "cookieless-session": {
+          "result": "fail",
+          "evidence": "audit 23+24: cookieless-session URL stored unchanged (raw session-segment rows=1, e.g. http://127.0.0.1:47311/(S(abc123xyz))/pages/session.aspx); no session-segment normalization or finding."
+        },
+        "large-viewstate": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/viewstate-large.aspx crawled statusCode=200 (~152 KB __VIEWSTATE hidden input) but no ViewState size measurement or >100 KB finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.thin-text[notice] content thin text; content.metrics[notice] content metrics)."
+        },
+        "crawler-trap-filter": {
+          "result": "fail",
+          "evidence": "audit 23+24: 144 faceted-filter combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 220, \"maxDepth\": 6, \"maxDurationSeconds\": 180, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "crawler-trap-calendar": {
+          "result": "fail",
+          "evidence": "audit 23+24: 11 calendar combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 220, \"maxDepth\": 6, \"maxDurationSeconds\": 180, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "cookie-gate": {
+          "result": "fail",
+          "evidence": "audit 23+24: /cookie-gate/ stored statusCode=0 with no successful cookie-gated navigation and no loop finding (findings: none)."
+        },
+        "consent-banner": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); fixture tagHits=0; the banner script never runs."
+        },
+        "service-worker": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); service-worker registration requires a rendered page."
+        },
+        "structured-data-errors": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/structured-data.html crawled statusCode=200 (Article missing required properties + malformed JSON-LD block) but no structured-data validation finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 23+24: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        },
+        "mixed-content": {
+          "result": "not_testable",
+          "evidence": "trap flags requires_tls; the fixture is served over plain HTTP (no --tls-cert/--tls-key), so mixed content cannot exist."
+        },
+        "hreflang-no-return": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/hreflang-en.html crawled but no missing-return-tag finding; i18n.hreflang-valid pass findings=1 (emitting a pass while reciprocity is missing)."
+        },
+        "duplicate-titles": {
+          "result": "partial",
+          "evidence": "audit 23+24: both pages crawled with identical title 'Duplicate title'; content.keyword-cannibalization emitted (1) but no duplicate-title finding."
+        },
+        "thin-page": {
+          "result": "fail",
+          "evidence": "audit 23+24: /pages/thin.html has totalWordCount=6 but no content.thin-text finding on this URL (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing); thin-content detection missed the named fixture page."
+        },
+        "live-websocket": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); the websocket feed requires a rendered page and network-quiet detection."
+        },
+        "click-only-navigation": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); click discovery is inert; SPA views were not discovered."
+        },
+        "never-place-bet": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); click discovery is inert, so the safety assertion is vacuous rather than an exercised click-safety pass. nonGet=[], tagHits=0 (global safety assertion still checked separately)."
+        }
+      },
+      "counts": {
+        "pass": 4,
+        "partial": 5,
+        "fail": 10,
+        "not_testable": 12
+      },
+      "evidence_pool": [
+        "23",
+        "24"
+      ],
+      "pooling_note": "probe-2 convention: bulk runs pooled for the acceptance matrix; per-run verdicts in runs[]"
+    }
+  },
+  "runs": [
+    {
+      "run_id": "http-ui",
+      "mode": "http",
+      "entry_point": "UI Start audit button (CDP) + REST limit-bounding + REST poll",
+      "project_id": "13",
+      "project_name": "Fixture harness http 20261118T000959Z",
+      "configuration_id": "18",
+      "audit_id": "23",
+      "limit_overrides": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      },
+      "state": "completed",
+      "transitions": [
+        {
+          "t": 0.0,
+          "state": "running",
+          "phase": "crawling",
+          "counters": {
+            "queued": 0,
+            "fetched": 3,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 112.7,
+          "state": "running",
+          "phase": "analyzing",
+          "counters": {
+            "queued": 0,
+            "fetched": 183,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 130.8,
+          "state": "completed",
+          "phase": "finalizing",
+          "counters": {
+            "queued": 0,
+            "fetched": 183,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        }
+      ],
+      "duration_s": 130.8,
+      "timed_out": false,
+      "configuration_setup": "Project + default config created through UI dialog; rendering.enabled=false (default); limits bounded via REST PUT.",
+      "start_attempts": [],
+      "safety": {
+        "ok": true,
+        "evidence": "nonGet == [] after audit",
+        "tag_hits": {
+          "total": 0,
+          "beforeConsent": 0,
+          "granted": 0,
+          "hits": []
+        }
+      },
+      "url_count": 186,
+      "finding_count": 1522,
+      "link_count": 1641,
+      "rendering_inert": {
+        "inert": false,
+        "evidence": "rendering.enabled=False; 'no rendered tree is available' findings=0; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2",
+        "no_tree_findings": 0,
+        "js_target_present": false,
+        "js_content_words": 2
+      },
+      "click_activity": {
+        "active": false,
+        "click_link_rows": 0,
+        "spa_view_urls": 0,
+        "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+      },
+      "traps": {
+        "redirect-chain": {
+          "result": "partial",
+          "evidence": "audit 23: /redirect/chain-1 stored as statusCode=200 (title='Redirect chain target'), redirectChain length=1 statuses=[200]; the required hop-by-hop 301>302>301 record and a redirect-chain finding are absent (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics). Final target reached=True."
+        },
+        "redirect-loop": {
+          "result": "partial",
+          "evidence": "audit 23: /redirect/loop-a stored as statusCode=0 (statusClass=5xx); the crawl did not hang (audit completed), but no loop finding or loop classification was emitted (findings on URL: none)."
+        },
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 23: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "robots-blocked": {
+          "result": "partial",
+          "evidence": "audit 23: /private/blocked.html was not fetched (statusCode=0) but blockReason=None and no robots finding was emitted (findings on URL: none); the URL is not affirmatively reported as blocked by robots.txt."
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 23: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "broken-links": {
+          "result": "partial",
+          "evidence": "audit 23: internal 404 recorded for /pages/does-not-exist.html (statusCode=404), but no broken-internal/broken-external finding (rule probe: none); broken.example.invalid checked=False (rows=0)."
+        },
+        "orphan": {
+          "result": "fail",
+          "evidence": "audit 23: /pages/orphan.html is absent from the URL inventory although it is listed in /sitemap.xml; sitemap-only discovery does not exist, so the orphan can never be reported."
+        },
+        "js-only-link": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "script-injected-content": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "late-meta-change": {
+          "result": "not_testable",
+          "evidence": "trap requires dual capture; --mode http cannot exercise it (expected-results.json capture='dual')."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 23: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404; indexability.soft-404[warning] indexability soft 404)."
+        },
+        "soft-404-client-route": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "hash-route": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "client-side-redirect": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "postback-links": {
+          "result": "fail",
+          "evidence": "audit 23: /pages/postback.aspx crawled statusCode=200 but the two javascript:__doPostBack links are not reported as uncrawlable navigation (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.spelling[warning] content spelling; content.metrics[notice] content metrics)."
+        },
+        "cookieless-session": {
+          "result": "fail",
+          "evidence": "audit 23: cookieless-session URL stored unchanged (raw session-segment rows=1, e.g. http://127.0.0.1:47311/(S(abc123xyz))/pages/session.aspx); no session-segment normalization or finding."
+        },
+        "large-viewstate": {
+          "result": "fail",
+          "evidence": "audit 23: /pages/viewstate-large.aspx crawled statusCode=200 (~152 KB __VIEWSTATE hidden input) but no ViewState size measurement or >100 KB finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.thin-text[notice] content thin text; content.metrics[notice] content metrics)."
+        },
+        "crawler-trap-filter": {
+          "result": "fail",
+          "evidence": "audit 23: 144 faceted-filter combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 220, \"maxDepth\": 6, \"maxDurationSeconds\": 180, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "crawler-trap-calendar": {
+          "result": "fail",
+          "evidence": "audit 23: 11 calendar combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 220, \"maxDepth\": 6, \"maxDurationSeconds\": 180, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "cookie-gate": {
+          "result": "fail",
+          "evidence": "audit 23: /cookie-gate/ stored statusCode=0 with no successful cookie-gated navigation and no loop finding (findings: none)."
+        },
+        "consent-banner": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "service-worker": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "structured-data-errors": {
+          "result": "fail",
+          "evidence": "audit 23: /pages/structured-data.html crawled statusCode=200 (Article missing required properties + malformed JSON-LD block) but no structured-data validation finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 23: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        },
+        "mixed-content": {
+          "result": "not_testable",
+          "evidence": "trap flags requires_tls; the fixture is served over plain HTTP (no --tls-cert/--tls-key), so mixed content cannot exist."
+        },
+        "hreflang-no-return": {
+          "result": "fail",
+          "evidence": "audit 23: /pages/hreflang-en.html crawled but no missing-return-tag finding; i18n.hreflang-valid pass findings=1 (emitting a pass while reciprocity is missing)."
+        },
+        "duplicate-titles": {
+          "result": "partial",
+          "evidence": "audit 23: both pages crawled with identical title 'Duplicate title'; content.keyword-cannibalization emitted (1) but no duplicate-title finding."
+        },
+        "thin-page": {
+          "result": "fail",
+          "evidence": "audit 23: /pages/thin.html has totalWordCount=6 but no content.thin-text finding on this URL (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing); thin-content detection missed the named fixture page."
+        },
+        "live-websocket": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "click-only-navigation": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "never-place-bet": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        }
+      },
+      "counts": {
+        "pass": 4,
+        "partial": 5,
+        "fail": 10,
+        "not_testable": 12
+      }
+    },
+    {
+      "run_id": "js-rest",
+      "mode": "js",
+      "entry_point": "REST POST /api/audits",
+      "project_id": "14",
+      "project_name": "Fixture harness js 20261118T000959Z",
+      "configuration_id": "19",
+      "audit_id": "24",
+      "limit_overrides": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      },
+      "state": "completed",
+      "transitions": [
+        {
+          "t": 0.0,
+          "state": "running",
+          "phase": "crawling",
+          "counters": {
+            "queued": 0,
+            "fetched": 0,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 48.3,
+          "state": "running",
+          "phase": "analyzing",
+          "counters": {
+            "queued": 0,
+            "fetched": 183,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 64.4,
+          "state": "completed",
+          "phase": "finalizing",
+          "counters": {
+            "queued": 0,
+            "fetched": 183,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        }
+      ],
+      "duration_s": 64.4,
+      "timed_out": false,
+      "configuration_setup": "REST-only configuration; rendering={\"enabled\": true, \"deviceProfile\": \"desktop\", \"infiniteScroll\": false, \"captureConsole\": true}",
+      "start_attempts": [],
+      "safety": {
+        "ok": true,
+        "evidence": "nonGet == [] after audit",
+        "tag_hits": {
+          "total": 0,
+          "beforeConsent": 0,
+          "granted": 0,
+          "hits": []
+        }
+      },
+      "url_count": 186,
+      "finding_count": 1522,
+      "link_count": 1641,
+      "rendering_inert": {
+        "inert": true,
+        "evidence": "rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2",
+        "no_tree_findings": 182,
+        "js_target_present": false,
+        "js_content_words": 2
+      },
+      "click_activity": {
+        "active": false,
+        "click_link_rows": 0,
+        "spa_view_urls": 0,
+        "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+      },
+      "traps": {
+        "redirect-chain": {
+          "result": "partial",
+          "evidence": "audit 24: /redirect/chain-1 stored as statusCode=200 (title='Redirect chain target'), redirectChain length=1 statuses=[200]; the required hop-by-hop 301>302>301 record and a redirect-chain finding are absent (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: no rend; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics). Final target reached=True."
+        },
+        "redirect-loop": {
+          "result": "partial",
+          "evidence": "audit 24: /redirect/loop-a stored as statusCode=0 (statusClass=5xx); the crawl did not hang (audit completed), but no loop finding or loop classification was emitted (findings on URL: none)."
+        },
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 24: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "robots-blocked": {
+          "result": "partial",
+          "evidence": "audit 24: /private/blocked.html was not fetched (statusCode=0) but blockReason=None and no robots finding was emitted (findings on URL: none); the URL is not affirmatively reported as blocked by robots.txt."
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 24: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "broken-links": {
+          "result": "partial",
+          "evidence": "audit 24: internal 404 recorded for /pages/does-not-exist.html (statusCode=404), but no broken-internal/broken-external finding (rule probe: none); broken.example.invalid checked=False (rows=0)."
+        },
+        "orphan": {
+          "result": "fail",
+          "evidence": "audit 24: /pages/orphan.html is absent from the URL inventory although it is listed in /sitemap.xml; sitemap-only discovery does not exist, so the orphan can never be reported."
+        },
+        "js-only-link": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); /pages/js-only-target.html is absent although rendering.enabled=true."
+        },
+        "script-injected-content": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); /pages/js-content.html totalWordCount=2 (raw markup only)."
+        },
+        "late-meta-change": {
+          "result": "not_testable",
+          "evidence": "trap requires dual capture; --mode js cannot exercise it (expected-results.json capture='dual')."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 24: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404; indexability.soft-404[warning] indexability soft 404)."
+        },
+        "soft-404-client-route": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); /spa/does-not-exist is absent; the SPA shell is not rendered."
+        },
+        "hash-route": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); hash views are not rendered or captured."
+        },
+        "client-side-redirect": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); the meta-refresh JS redirect is not executed in a rendered tree."
+        },
+        "postback-links": {
+          "result": "fail",
+          "evidence": "audit 24: /pages/postback.aspx crawled statusCode=200 but the two javascript:__doPostBack links are not reported as uncrawlable navigation (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: no rend; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.spelling[warning] content spelling; content.metrics[notice] content metrics)."
+        },
+        "cookieless-session": {
+          "result": "fail",
+          "evidence": "audit 24: cookieless-session URL stored unchanged (raw session-segment rows=1, e.g. http://127.0.0.1:47311/(S(abc123xyz))/pages/session.aspx); no session-segment normalization or finding."
+        },
+        "large-viewstate": {
+          "result": "fail",
+          "evidence": "audit 24: /pages/viewstate-large.aspx crawled statusCode=200 (~152 KB __VIEWSTATE hidden input) but no ViewState size measurement or >100 KB finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: no rend; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.thin-text[notice] content thin text; content.metrics[notice] content metrics)."
+        },
+        "crawler-trap-filter": {
+          "result": "fail",
+          "evidence": "audit 24: 144 faceted-filter combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 220, \"maxDepth\": 6, \"maxDurationSeconds\": 180, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "crawler-trap-calendar": {
+          "result": "fail",
+          "evidence": "audit 24: 11 calendar combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 220, \"maxDepth\": 6, \"maxDurationSeconds\": 180, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "cookie-gate": {
+          "result": "fail",
+          "evidence": "audit 24: /cookie-gate/ stored statusCode=0 with no successful cookie-gated navigation and no loop finding (findings: none)."
+        },
+        "consent-banner": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); fixture tagHits=0; the banner script never runs."
+        },
+        "service-worker": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); service-worker registration requires a rendered page."
+        },
+        "structured-data-errors": {
+          "result": "fail",
+          "evidence": "audit 24: /pages/structured-data.html crawled statusCode=200 (Article missing required properties + malformed JSON-LD block) but no structured-data validation finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: no rend; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 24: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        },
+        "mixed-content": {
+          "result": "not_testable",
+          "evidence": "trap flags requires_tls; the fixture is served over plain HTTP (no --tls-cert/--tls-key), so mixed content cannot exist."
+        },
+        "hreflang-no-return": {
+          "result": "fail",
+          "evidence": "audit 24: /pages/hreflang-en.html crawled but no missing-return-tag finding; i18n.hreflang-valid pass findings=1 (emitting a pass while reciprocity is missing)."
+        },
+        "duplicate-titles": {
+          "result": "partial",
+          "evidence": "audit 24: both pages crawled with identical title 'Duplicate title'; content.keyword-cannibalization emitted (1) but no duplicate-title finding."
+        },
+        "thin-page": {
+          "result": "fail",
+          "evidence": "audit 24: /pages/thin.html has totalWordCount=6 but no content.thin-text finding on this URL (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: no rend; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing); thin-content detection missed the named fixture page."
+        },
+        "live-websocket": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); the websocket feed requires a rendered page and network-quiet detection."
+        },
+        "click-only-navigation": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); click discovery is inert; SPA views were not discovered."
+        },
+        "never-place-bet": {
+          "result": "not_testable",
+          "evidence": "rendering is DETECTED inert in this js run (rendering.enabled=True; 'no rendered tree is available' findings=182; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2); click discovery is inert, so the safety assertion is vacuous rather than an exercised click-safety pass. nonGet=[], tagHits=0 (global safety assertion still checked separately)."
+        }
+      },
+      "counts": {
+        "pass": 4,
+        "partial": 5,
+        "fail": 10,
+        "not_testable": 12
+      }
+    },
+    {
+      "run_id": "mcp",
+      "mode": "http",
+      "entry_point": "MCP stdio adapter start-audit (REST-bounded config)",
+      "project_id": "15",
+      "project_name": "Fixture harness MCP 20261118T000959Z",
+      "configuration_id": "20",
+      "audit_id": "25",
+      "limit_overrides": {
+        "maxUrls": 40,
+        "maxDepth": 3,
+        "maxDurationSeconds": 90,
+        "maxResponseBytes": null
+      },
+      "state": "completed",
+      "mcp_bounded_note": "Configuration bounded via REST POST (maxUrls=40, maxDepth=3, maxDurationSeconds=90) per probe-2 §6. Note: the start-audit tool schema advertises optional limitOverrides (see mcp-list.json); the harness does not rely on it — REST-bounded configuration is safe under either behaviour.",
+      "mcp_gaps": {
+        "management_tools": "none — no project or configuration management tools (see mcp-list.json)",
+        "resource_templates": "MCP error -32601: Method not found",
+        "reaudit": [
+          {
+            "name": "re-audit",
+            "v": {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "{\"auditId\":26,\"sourceAuditId\":25}"
+                }
+              ],
+              "isError": false
+            }
+          }
+        ]
+      },
+      "start_attempts": [],
+      "transitions": [
+        {
+          "t": 20.562,
+          "state": "completed",
+          "phase": "finalizing",
+          "counters": {
+            "queued": 0,
+            "fetched": 40,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        }
+      ],
+      "duration_s": 20.562,
+      "safety": {
+        "ok": true,
+        "evidence": "nonGet == [] after audit",
+        "tag_hits": {
+          "total": 0,
+          "beforeConsent": 0,
+          "granted": 0,
+          "hits": []
+        }
+      },
+      "url_count": 43,
+      "finding_count": 307,
+      "rendering_inert": {
+        "inert": false,
+        "evidence": "rendering.enabled=False; 'no rendered tree is available' findings=0; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2",
+        "no_tree_findings": 0,
+        "js_target_present": false,
+        "js_content_words": 2
+      },
+      "click_activity": {
+        "active": false,
+        "click_link_rows": 0,
+        "spa_view_urls": 0,
+        "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+      },
+      "traps": {
+        "redirect-chain": {
+          "result": "partial",
+          "evidence": "audit 25: /redirect/chain-1 stored as statusCode=200 (title='Redirect chain target'), redirectChain length=1 statuses=[200]; the required hop-by-hop 301>302>301 record and a redirect-chain finding are absent (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics). Final target reached=True."
+        },
+        "redirect-loop": {
+          "result": "partial",
+          "evidence": "audit 25: /redirect/loop-a stored as statusCode=0 (statusClass=5xx); the crawl did not hang (audit completed), but no loop finding or loop classification was emitted (findings on URL: none)."
+        },
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 25: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "robots-blocked": {
+          "result": "partial",
+          "evidence": "audit 25: /private/blocked.html was not fetched (statusCode=0) but blockReason=None and no robots finding was emitted (findings on URL: none); the URL is not affirmatively reported as blocked by robots.txt."
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 25: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "broken-links": {
+          "result": "partial",
+          "evidence": "audit 25: internal 404 recorded for /pages/does-not-exist.html (statusCode=404), but no broken-internal/broken-external finding (rule probe: none); broken.example.invalid checked=False (rows=0)."
+        },
+        "orphan": {
+          "result": "fail",
+          "evidence": "audit 25: /pages/orphan.html is absent from the URL inventory although it is listed in /sitemap.xml; sitemap-only discovery does not exist, so the orphan can never be reported."
+        },
+        "js-only-link": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "script-injected-content": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "late-meta-change": {
+          "result": "not_testable",
+          "evidence": "trap requires dual capture; --mode http cannot exercise it (expected-results.json capture='dual')."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 25: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404; indexability.soft-404[warning] indexability soft 404)."
+        },
+        "soft-404-client-route": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "hash-route": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "client-side-redirect": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "postback-links": {
+          "result": "fail",
+          "evidence": "audit 25: /pages/postback.aspx crawled statusCode=200 but the two javascript:__doPostBack links are not reported as uncrawlable navigation (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.spelling[warning] content spelling; content.metrics[notice] content metrics)."
+        },
+        "cookieless-session": {
+          "result": "fail",
+          "evidence": "audit 25: cookieless-session URL stored unchanged (raw session-segment rows=1, e.g. http://127.0.0.1:47311/(S(abc123xyz))/pages/session.aspx); no session-segment normalization or finding."
+        },
+        "large-viewstate": {
+          "result": "fail",
+          "evidence": "audit 25: /pages/viewstate-large.aspx crawled statusCode=200 (~152 KB __VIEWSTATE hidden input) but no ViewState size measurement or >100 KB finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.thin-text[notice] content thin text; content.metrics[notice] content metrics)."
+        },
+        "crawler-trap-filter": {
+          "result": "fail",
+          "evidence": "audit 25: 11 faceted-filter combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 40, \"maxDepth\": 3, \"maxDurationSeconds\": 90, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "crawler-trap-calendar": {
+          "result": "fail",
+          "evidence": "audit 25: 3 calendar combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 40, \"maxDepth\": 3, \"maxDurationSeconds\": 90, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "cookie-gate": {
+          "result": "fail",
+          "evidence": "audit 25: /cookie-gate/ stored statusCode=0 with no successful cookie-gated navigation and no loop finding (findings: none)."
+        },
+        "consent-banner": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "service-worker": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "structured-data-errors": {
+          "result": "fail",
+          "evidence": "audit 25: /pages/structured-data.html crawled statusCode=200 (Article missing required properties + malformed JSON-LD block) but no structured-data validation finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 25: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        },
+        "mixed-content": {
+          "result": "not_testable",
+          "evidence": "trap flags requires_tls; the fixture is served over plain HTTP (no --tls-cert/--tls-key), so mixed content cannot exist."
+        },
+        "hreflang-no-return": {
+          "result": "fail",
+          "evidence": "audit 25: /pages/hreflang-en.html crawled but no missing-return-tag finding; i18n.hreflang-valid pass findings=1 (emitting a pass while reciprocity is missing)."
+        },
+        "duplicate-titles": {
+          "result": "partial",
+          "evidence": "audit 25: both pages crawled with identical title 'Duplicate title'; content.keyword-cannibalization emitted (1) but no duplicate-title finding."
+        },
+        "thin-page": {
+          "result": "fail",
+          "evidence": "audit 25: /pages/thin.html has totalWordCount=6 but no content.thin-text finding on this URL (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing); thin-content detection missed the named fixture page."
+        },
+        "live-websocket": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "click-only-navigation": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "never-place-bet": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        }
+      },
+      "counts": {
+        "pass": 4,
+        "partial": 5,
+        "fail": 10,
+        "not_testable": 12
+      }
+    },
+    {
+      "run_id": "scheduled",
+      "mode": "http",
+      "entry_point": "REST POST /api/projects/{id}/schedules + /api/schedules/{id}/run-now",
+      "project_id": "16",
+      "project_name": "Fixture harness scheduled 20261118T000959Z",
+      "configuration_id": "21",
+      "audit_id": "27",
+      "schedule_id": "2",
+      "limit_overrides": {
+        "maxUrls": 40,
+        "maxDepth": 3,
+        "maxDurationSeconds": 90,
+        "maxResponseBytes": null
+      },
+      "start_attempts": [],
+      "state": "completed",
+      "transitions": [
+        {
+          "t": 0.0,
+          "state": "running",
+          "phase": "crawling",
+          "counters": {
+            "queued": 0,
+            "fetched": 0,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 20.1,
+          "state": "running",
+          "phase": "analyzing",
+          "counters": {
+            "queued": 0,
+            "fetched": 40,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 22.2,
+          "state": "completed",
+          "phase": "finalizing",
+          "counters": {
+            "queued": 0,
+            "fetched": 40,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        }
+      ],
+      "duration_s": 22.2,
+      "ui09_note": "UI-09 Schedules surface absent; schedule created and triggered through REST (recorded by walker).",
+      "safety": {
+        "ok": true,
+        "evidence": "nonGet == [] after audit",
+        "tag_hits": {
+          "total": 0,
+          "beforeConsent": 0,
+          "granted": 0,
+          "hits": []
+        }
+      },
+      "url_count": 43,
+      "finding_count": 307,
+      "schedule_run_history": [
+        {
+          "id": "2",
+          "scheduleId": "2",
+          "auditId": "27",
+          "triggerType": "manual",
+          "startedAt": "2026-11-18T00:14:04.08726+00:00",
+          "completedAt": "2026-11-18T00:14:24.6731208+00:00",
+          "outcome": "completed",
+          "completionActionResults": []
+        }
+      ],
+      "rendering_inert": {
+        "inert": false,
+        "evidence": "rendering.enabled=False; 'no rendered tree is available' findings=0; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2",
+        "no_tree_findings": 0,
+        "js_target_present": false,
+        "js_content_words": 2
+      },
+      "click_activity": {
+        "active": false,
+        "click_link_rows": 0,
+        "spa_view_urls": 0,
+        "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+      },
+      "traps": {
+        "redirect-chain": {
+          "result": "partial",
+          "evidence": "audit 27: /redirect/chain-1 stored as statusCode=200 (title='Redirect chain target'), redirectChain length=1 statuses=[200]; the required hop-by-hop 301>302>301 record and a redirect-chain finding are absent (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics). Final target reached=True."
+        },
+        "redirect-loop": {
+          "result": "partial",
+          "evidence": "audit 27: /redirect/loop-a stored as statusCode=0 (statusClass=5xx); the crawl did not hang (audit completed), but no loop finding or loop classification was emitted (findings on URL: none)."
+        },
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 27: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "robots-blocked": {
+          "result": "partial",
+          "evidence": "audit 27: /private/blocked.html was not fetched (statusCode=0) but blockReason=None and no robots finding was emitted (findings on URL: none); the URL is not affirmatively reported as blocked by robots.txt."
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 27: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "broken-links": {
+          "result": "partial",
+          "evidence": "audit 27: internal 404 recorded for /pages/does-not-exist.html (statusCode=404), but no broken-internal/broken-external finding (rule probe: none); broken.example.invalid checked=False (rows=0)."
+        },
+        "orphan": {
+          "result": "fail",
+          "evidence": "audit 27: /pages/orphan.html is absent from the URL inventory although it is listed in /sitemap.xml; sitemap-only discovery does not exist, so the orphan can never be reported."
+        },
+        "js-only-link": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "script-injected-content": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "late-meta-change": {
+          "result": "not_testable",
+          "evidence": "trap requires dual capture; --mode http cannot exercise it (expected-results.json capture='dual')."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 27: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404; indexability.soft-404[warning] indexability soft 404)."
+        },
+        "soft-404-client-route": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "hash-route": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "client-side-redirect": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "postback-links": {
+          "result": "fail",
+          "evidence": "audit 27: /pages/postback.aspx crawled statusCode=200 but the two javascript:__doPostBack links are not reported as uncrawlable navigation (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.spelling[warning] content spelling; content.metrics[notice] content metrics)."
+        },
+        "cookieless-session": {
+          "result": "fail",
+          "evidence": "audit 27: cookieless-session URL stored unchanged (raw session-segment rows=1, e.g. http://127.0.0.1:47311/(S(abc123xyz))/pages/session.aspx); no session-segment normalization or finding."
+        },
+        "large-viewstate": {
+          "result": "fail",
+          "evidence": "audit 27: /pages/viewstate-large.aspx crawled statusCode=200 (~152 KB __VIEWSTATE hidden input) but no ViewState size measurement or >100 KB finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.thin-text[notice] content thin text; content.metrics[notice] content metrics)."
+        },
+        "crawler-trap-filter": {
+          "result": "fail",
+          "evidence": "audit 27: 11 faceted-filter combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 40, \"maxDepth\": 3, \"maxDurationSeconds\": 90, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "crawler-trap-calendar": {
+          "result": "fail",
+          "evidence": "audit 27: 3 calendar combination URLs crawled with no trap detection or throttling (trap findings=0); the run was bounded only by the explicit limit overrides {\"maxUrls\": 40, \"maxDepth\": 3, \"maxDurationSeconds\": 90, \"maxResponseBytes\": null} — the cap, not the product, ended the run."
+        },
+        "cookie-gate": {
+          "result": "fail",
+          "evidence": "audit 27: /cookie-gate/ stored statusCode=0 with no successful cookie-gated navigation and no loop finding (findings: none)."
+        },
+        "consent-banner": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "service-worker": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "structured-data-errors": {
+          "result": "fail",
+          "evidence": "audit 27: /pages/structured-data.html crawled statusCode=200 (Article missing required properties + malformed JSON-LD block) but no structured-data validation finding (findings: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 27: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        },
+        "mixed-content": {
+          "result": "not_testable",
+          "evidence": "trap flags requires_tls; the fixture is served over plain HTTP (no --tls-cert/--tls-key), so mixed content cannot exist."
+        },
+        "hreflang-no-return": {
+          "result": "fail",
+          "evidence": "audit 27: /pages/hreflang-en.html crawled but no missing-return-tag finding; i18n.hreflang-valid pass findings=1 (emitting a pass while reciprocity is missing)."
+        },
+        "duplicate-titles": {
+          "result": "partial",
+          "evidence": "audit 27: both pages crawled with identical title 'Duplicate title'; content.keyword-cannibalization emitted (1) but no duplicate-title finding."
+        },
+        "thin-page": {
+          "result": "fail",
+          "evidence": "audit 27: /pages/thin.html has totalWordCount=6 but no content.thin-text finding on this URL (findings on URL: accessibility.color-contrast[notice] Check 'accessibility.color-contrast' requires rendering (layout/computed style) and was not evaluated: renderi; accessibility.landmark-main[warning] The page has no main landmark (main element or role=\"main\").; content.metrics[notice] content metrics; mobile.responsive-signals-missing[notice] mobile responsive signals missing); thin-content detection missed the named fixture page."
+        },
+        "live-websocket": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "click-only-navigation": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        },
+        "never-place-bet": {
+          "result": "not_testable",
+          "evidence": "trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised."
+        }
+      },
+      "counts": {
+        "pass": 4,
+        "partial": 5,
+        "fail": 10,
+        "not_testable": 12
+      },
+      "schedule_cleanup": "deleted (harness-owned artifact)"
+    }
+  ],
+  "ui_entry": {
+    "flow": "UI New project dialog -> REST PUT limits -> UI Start audit -> CDP UI-10 inspection",
+    "note_no_ui_limit_controls": "UI-04 configuration editor absent; limits bounded via REST PUT /api/configurations/{id} (subset update), read back to verify.",
+    "create_api_calls": [
+      "POST http://127.0.0.1:64307/api/projects {\"name\":\"Fixture harness http 20261118T000959Z\",\"description\":\"WP-08-04 fixture acceptance — UI entry (CR-023)\"}",
+      "POST http://127.0.0.1:64307/api/projects/13/configurations {\"name\":\"Default configuration\",\"startUrls\":[\"http://127.0.0.1:47311/\"],\"respectRobotsTxt\":true}",
+      "GET http://127.0.0.1:64307/api/projects "
+    ],
+    "project_id": "13",
+    "configuration_id": "18",
+    "rest_limit_bounding": {
+      "put_payload": {
+        "limits": {
+          "maxUrls": 220,
+          "maxDepth": 6,
+          "maxDurationSeconds": 180,
+          "maxResponseBytes": null
+        }
+      },
+      "read_back_limits": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      }
+    },
+    "project_row_visible_in_hub": true,
+    "start_api_calls": [
+      "GET http://127.0.0.1:64307/api/projects/13/configurations ",
+      "POST http://127.0.0.1:64307/api/audits {\"configurationId\":\"18\"}",
+      "GET http://127.0.0.1:64307/api/audits "
+    ],
+    "start_attempts": [],
+    "ui10_running_dump": {
+      "title": "CrawlForge",
+      "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+      "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\nAudit 23\nCOMPLETED\n\nPhase · started 18 Nov 02:10:14\n\nCRAWL PROGRESS\n\n183 fetched · — queued · — · ETA —\n\nERRORS\n—\nBLOCKED\n—\nWAF BLOCKED\n0\nELAPSED\n—\n\nHOST THROTTLE (AIMD)\n\nHost\tRate\tConcurrency\tTTFB EWMA\tState\n\n\n127.0.0.1\n\n\t3.9/s\t1\t0 ms\t\nNOMINAL\n\nREPORT SURFACES\n\nURL / finding / link grids, charts, and the link graph mount into this workspace from the report workpieces; all render locally from aggregate endpoints. Live telemetry above is already streaming for this audit.\n\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n167/1000\n\nAUDIT-COMPLETED\n02:12:28\nSTAGE-CHANGED\n02:12:28\nCRAWL-PROGRESS\n02:12:27\nCRAWL-PROGRESS\n02:12:26\nCRAWL-PROGRESS\n02:12:25\nCRAWL-PROGRESS\n02:12:24\nCRAWL-PROGRESS\n02:12:23\nCRAWL-PROGRESS\n02:12:22\nCRAWL-PROGRESS\n02:12:21\nCRAWL-PROGRESS\n02:12:20\nCRAWL-PROGRESS\n02:12:19\nCRAWL-PROGRESS\n02:12:18\nCRAWL-PROGRESS\n02:12:17\nCRAWL-PROGRESS\n02:12:16\nCRAWL-PROGRESS\n02:12:15\nCRAWL-PROGRESS\n02:12:14\nCRAWL-PROGRESS\n02:12:13\nCRAWL-PROGRESS\n02:12:12\nCRAWL-PROGRESS\n02:12:11\nSTAGE-CHANGED\n02:12:10\nHOST-THROTTLE\n02:12:10\nCRAWL-PROGRESS\n02:12:10\nCRAWL-PROGRESS\n02:12:09\nHOST-THROTTLE\n02:12:08\nCRAWL-PROGRESS\n02:12:07\nHOST-THROTTLE\n02:12:07\nCRAWL-PROGRESS\n02:12:06\nCRAWL-PROGRESS\n02:12:05\nHOST-THROTTLE\n02:12:04\nCRAWL-PROGRESS\n02:12:04\nCRAWL-PROGRESS\n02:12:03\nCRAWL-PROGRESS\n02:12:02\nCRAWL-PROGRESS\n02:12:01\nCRAWL-PROGRESS\n02:12:00\nCRAWL-PROGRESS\n02:11:59\nCRAWL-PROGRESS\n02:11:58\nCRAWL-PROGRESS\n02:11:57\nCRAWL-PROGRESS\n02:11:56\nCRAWL-PROGRESS\n02:11:55\nHOST-THROTTLE\n02:11:55\nCRAWL-PROGRESS\n02:11:54\nHOST-THROTTLE\n02:11:53\nCRAWL-PROGRESS\n02:11:53\nHOST-THROTTLE\n02:11:52\nCRAWL-PROGRESS\n02:11:52\nHOST-THROTTLE\n02:11:51\nCRAWL-PROGRESS\n02:11:51\nCRAWL-PROGRESS\n02:11:50\nHOST-THROTTLE\n02:11:49\nCRAWL-PROGRESS\n02:11:49\nCRAWL-PROGRESS\n02:11:48\nHOST-THROTTLE\n02:11:47\nCRAWL-PROGRESS\n02:11:47\nHOST-THROTTLE\n02:11:46\nCRAWL-PROGRESS\n02:11:45\nHOST-THROTTLE\n02:11:45\nCRAWL-PROGRESS\n02:11:44\nCRAWL-PROGRESS\n02:11:43\nHOST-THROTTLE\n02:11:43\nCRAWL-PROGRESS\n02:11:42\nHOST-THROTTLE\n02:11:42\nCRAWL-PROGRESS\n02:11:41\nCRAWL-PROGRESS\n02:11:40\nCRAWL-PROGRESS\n02:11:39\nHOST-THROTTLE\n02:11:39\nCRAWL-PROGRESS\n02:11:38\nCRAWL-PROGRESS\n02:11:37\nHOST-THROTTLE\n02:11:37\nCRAWL-PROGRESS\n02:11:36\nCRAWL-PROGRESS\n02:11:34\nHOST-THROTTLE\n02:11:34\nCRAWL-PROGRESS\n02:11:33\nCRAWL-PROGRESS\n02:11:32\nCRAWL-PROGRESS\n02:11:30\nCRAWL-PROGRESS\n02:11:29\nCRAWL-PROGRESS\n02:11:28\nCRAWL-PROGRESS\n02:11:27\nCRAWL-PROGRESS\n02:11:26\nCRAWL-PROGRESS\n02:11:25\nHOST-THROTTLE\n02:11:24\nCRAWL-PROGRESS\n02:11:24\nHOST-THROTTLE\n02:11:23\nCRAWL-PROGRESS\n02:11:23\nCRAWL-PROGRESS\n02:11:22\nHOST-THROTTLE\n02:11:21\nCRAWL-PROGRESS\n02:11:21\nCRAWL-PROGRESS\n02:11:20\nHOST-THROTTLE\n02:11:19\nCRAWL-PROGRESS\n02:11:19\nHOST-THROTTLE\n02:11:18\nCRAWL-PROGRESS\n02:11:17\nCRAWL-PROGRESS\n02:11:16\nHOST-THROTTLE\n02:11:16\nCRAWL-PROGRESS\n02:11:15\nCRAWL-PROGRESS\n02:11:14\nHOST-THROTTLE\n02:11:14\nCRAWL-PROGRESS\n02:11:13\nCRAWL-PROGRESS\n02:11:12\nCRAWL-PROGRESS\n02:11:11\nHOST-THROTTLE\n02:11:11\nCRAWL-PROGRESS\n02:11:10\nCRAWL-PROGRESS\n02:11:08\nHOST-THROTTLE\n02:11:08\nCRAWL-PROGRESS\n02:11:06\nCRAWL-PROGRESS\n02:11:04\nHOST-THROTTLE\n02:11:04\nCRAWL-PROGRESS\n02:11:02\nCRAWL-PROGRESS\n02:11:00\nCRAWL-PROGRESS\n02:10:58\nCRAWL-PROGRESS\n02:10:56\nCRAWL-PROGRESS\n02:10:55\nCRAWL-PROGRESS\n02:10:54\nHOST-THROTTLE\n02:10:53\nCRAWL-PROGRESS\n02:10:52\nHOST-THROTTLE\n02:10:52\nCRAWL-PROGRESS\n02:10:51\nCRAWL-PROGRESS\n02:10:50\nHOST-THROTTLE\n02:10:50\nCRAWL-PROGRESS\n02:10:49\nHOST-THROTTLE\n02:10:49\nCRAWL-PROGRESS\n02:10:48\nCRAWL-PROGRESS\n02:10:47\nHOST-THROTTLE\n02:10:47\nCRAWL-PROGRESS\n02:10:46\nCRAWL-PROGRESS\n02:10:45\nCRAWL-PROGRESS\n02:10:44\nCRAWL-PROGRESS\n02:10:43\nCRAWL-PROGRESS\n02:10:42\nCRAWL-PROGRESS\n02:10:41\nCRAWL-PROGRESS\n02:10:40\nCRAWL-PROGRESS\n02:10:39\nCRAWL-PROGRESS\n02:10:38\nHOST-THROTTLE\n02:10:37\nCRAWL-PROGRESS\n02:10:36\nCRAWL-PROGRESS\n02:10:35\nHOST-THROTTLE\n02:10:35\nCRAWL-PROGRESS\n02:10:34\nCRAWL-PROGRESS\n02:10:33\nHOST-THROTTLE\n02:10:33\nCRAWL-PROGRESS\n02:10:32\nHOST-THROTTLE\n02:10:32\nCRAWL-PROGRESS\n02:10:31\nHOST-THROTTLE\n02:10:30\nCRAWL-PROGRESS\n02:10:30\nCRAWL-PROGRESS\n02:10:29\nHOST-THROTTLE\n02:10:29\nCRAWL-PROGRESS\n02:10:28\nHOST-THROTTLE\n02:10:27\nCRAWL-PROGRESS\n02:10:27\nHOST-THROTTLE\n02:10:26\nCRAWL-PROGRESS\n02:10:26\nHOST-THROTTLE\n02:10:25\nCRAWL-PROGRESS\n02:10:25\nCRAWL-PROGRESS\n02:10:24\nHOST-THROTTLE\n02:10:24\nCRAWL-PROGRESS\n02:10:23\nHOST-THROTTLE\n02:10:23\nCRAWL-PROGRESS\n02:10:22\nHOST-THROTTLE\n02:10:21\nCRAWL-PROGRESS\n02:10:21\nCRAWL-PROGRESS\n02:10:20\nHOST-THROTTLE\n02:10:20\nCRAWL-PROGRESS\n02:10:19\nCRAWL-PROGRESS\n02:10:18\nCRAWL-PROGRESS\n02:10:16\nHOST-THROTTLE\n02:10:16\nCRAWL-PROGRESS\n02:10:15\nWS\n181 MiB\nHeap\n27.8 MiB\nGC\n112/8/5\nWAL\n4.37 MiB\nJS\n9.54 MiB\nbeat\n02:12:28\nCompact",
+      "buttons": [
+        "Open command palette (Ctrl+K)",
+        "Main hub",
+        "Audits",
+        "Report",
+        "Tools",
+        "Settings",
+        "Toggle activity pane",
+        "Resize Main workspace and Live activity (Enter toggles collapse)",
+        "Compact and trim working set"
+      ],
+      "inputs": [],
+      "testids": [
+        "cf-appshell",
+        "palette-trigger",
+        "connection-pill",
+        "cf-nav-rail",
+        "nav-hub",
+        "nav-audits",
+        "nav-report",
+        "nav-tools",
+        "nav-settings",
+        "cf-split",
+        "cf-split-first",
+        "primary-pane",
+        "toggle-secondary-pane",
+        "view-content",
+        "report-view",
+        "report-state",
+        "report-progress",
+        "hosts-table",
+        "cf-split-divider",
+        "cf-split-second",
+        "secondary-pane",
+        "activity-feed",
+        "activity-count",
+        "cf-statusbar",
+        "status-ws",
+        "status-heap",
+        "status-gc",
+        "status-wal",
+        "status-js",
+        "status-heartbeat",
+        "compact-button"
+      ]
+    },
+    "ui10_completed_dump": {
+      "title": "CrawlForge",
+      "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+      "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\nAudit 1\nFAILED\n\nPhase finalizing · started 17 Nov 19:05:19\n\nCRAWL PROGRESS\n\n0 fetched · 0 queued\n\nERRORS\n0\nBLOCKED\n0\nWAF BLOCKED\n0\nELAPSED\n—\n\nHOST THROTTLE (AIMD)\n\nHost\tRate\tConcurrency\tTTFB EWMA\tState\n\n\n127.0.0.1\n\n\t3.9/s\t1\t0 ms\t\nNOMINAL\n\nREPORT SURFACES\n\nURL / finding / link grids, charts, and the link graph mount into this workspace from the report workpieces; all render locally from aggregate endpoints. Live telemetry above is already streaming for this audit.\n\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n167/1000\n\nAUDIT-COMPLETED\n02:12:28\nSTAGE-CHANGED\n02:12:28\nCRAWL-PROGRESS\n02:12:27\nCRAWL-PROGRESS\n02:12:26\nCRAWL-PROGRESS\n02:12:25\nCRAWL-PROGRESS\n02:12:24\nCRAWL-PROGRESS\n02:12:23\nCRAWL-PROGRESS\n02:12:22\nCRAWL-PROGRESS\n02:12:21\nCRAWL-PROGRESS\n02:12:20\nCRAWL-PROGRESS\n02:12:19\nCRAWL-PROGRESS\n02:12:18\nCRAWL-PROGRESS\n02:12:17\nCRAWL-PROGRESS\n02:12:16\nCRAWL-PROGRESS\n02:12:15\nCRAWL-PROGRESS\n02:12:14\nCRAWL-PROGRESS\n02:12:13\nCRAWL-PROGRESS\n02:12:12\nCRAWL-PROGRESS\n02:12:11\nSTAGE-CHANGED\n02:12:10\nHOST-THROTTLE\n02:12:10\nCRAWL-PROGRESS\n02:12:10\nCRAWL-PROGRESS\n02:12:09\nHOST-THROTTLE\n02:12:08\nCRAWL-PROGRESS\n02:12:07\nHOST-THROTTLE\n02:12:07\nCRAWL-PROGRESS\n02:12:06\nCRAWL-PROGRESS\n02:12:05\nHOST-THROTTLE\n02:12:04\nCRAWL-PROGRESS\n02:12:04\nCRAWL-PROGRESS\n02:12:03\nCRAWL-PROGRESS\n02:12:02\nCRAWL-PROGRESS\n02:12:01\nCRAWL-PROGRESS\n02:12:00\nCRAWL-PROGRESS\n02:11:59\nCRAWL-PROGRESS\n02:11:58\nCRAWL-PROGRESS\n02:11:57\nCRAWL-PROGRESS\n02:11:56\nCRAWL-PROGRESS\n02:11:55\nHOST-THROTTLE\n02:11:55\nCRAWL-PROGRESS\n02:11:54\nHOST-THROTTLE\n02:11:53\nCRAWL-PROGRESS\n02:11:53\nHOST-THROTTLE\n02:11:52\nCRAWL-PROGRESS\n02:11:52\nHOST-THROTTLE\n02:11:51\nCRAWL-PROGRESS\n02:11:51\nCRAWL-PROGRESS\n02:11:50\nHOST-THROTTLE\n02:11:49\nCRAWL-PROGRESS\n02:11:49\nCRAWL-PROGRESS\n02:11:48\nHOST-THROTTLE\n02:11:47\nCRAWL-PROGRESS\n02:11:47\nHOST-THROTTLE\n02:11:46\nCRAWL-PROGRESS\n02:11:45\nHOST-THROTTLE\n02:11:45\nCRAWL-PROGRESS\n02:11:44\nCRAWL-PROGRESS\n02:11:43\nHOST-THROTTLE\n02:11:43\nCRAWL-PROGRESS\n02:11:42\nHOST-THROTTLE\n02:11:42\nCRAWL-PROGRESS\n02:11:41\nCRAWL-PROGRESS\n02:11:40\nCRAWL-PROGRESS\n02:11:39\nHOST-THROTTLE\n02:11:39\nCRAWL-PROGRESS\n02:11:38\nCRAWL-PROGRESS\n02:11:37\nHOST-THROTTLE\n02:11:37\nCRAWL-PROGRESS\n02:11:36\nCRAWL-PROGRESS\n02:11:34\nHOST-THROTTLE\n02:11:34\nCRAWL-PROGRESS\n02:11:33\nCRAWL-PROGRESS\n02:11:32\nCRAWL-PROGRESS\n02:11:30\nCRAWL-PROGRESS\n02:11:29\nCRAWL-PROGRESS\n02:11:28\nCRAWL-PROGRESS\n02:11:27\nCRAWL-PROGRESS\n02:11:26\nCRAWL-PROGRESS\n02:11:25\nHOST-THROTTLE\n02:11:24\nCRAWL-PROGRESS\n02:11:24\nHOST-THROTTLE\n02:11:23\nCRAWL-PROGRESS\n02:11:23\nCRAWL-PROGRESS\n02:11:22\nHOST-THROTTLE\n02:11:21\nCRAWL-PROGRESS\n02:11:21\nCRAWL-PROGRESS\n02:11:20\nHOST-THROTTLE\n02:11:19\nCRAWL-PROGRESS\n02:11:19\nHOST-THROTTLE\n02:11:18\nCRAWL-PROGRESS\n02:11:17\nCRAWL-PROGRESS\n02:11:16\nHOST-THROTTLE\n02:11:16\nCRAWL-PROGRESS\n02:11:15\nCRAWL-PROGRESS\n02:11:14\nHOST-THROTTLE\n02:11:14\nCRAWL-PROGRESS\n02:11:13\nCRAWL-PROGRESS\n02:11:12\nCRAWL-PROGRESS\n02:11:11\nHOST-THROTTLE\n02:11:11\nCRAWL-PROGRESS\n02:11:10\nCRAWL-PROGRESS\n02:11:08\nHOST-THROTTLE\n02:11:08\nCRAWL-PROGRESS\n02:11:06\nCRAWL-PROGRESS\n02:11:04\nHOST-THROTTLE\n02:11:04\nCRAWL-PROGRESS\n02:11:02\nCRAWL-PROGRESS\n02:11:00\nCRAWL-PROGRESS\n02:10:58\nCRAWL-PROGRESS\n02:10:56\nCRAWL-PROGRESS\n02:10:55\nCRAWL-PROGRESS\n02:10:54\nHOST-THROTTLE\n02:10:53\nCRAWL-PROGRESS\n02:10:52\nHOST-THROTTLE\n02:10:52\nCRAWL-PROGRESS\n02:10:51\nCRAWL-PROGRESS\n02:10:50\nHOST-THROTTLE\n02:10:50\nCRAWL-PROGRESS\n02:10:49\nHOST-THROTTLE\n02:10:49\nCRAWL-PROGRESS\n02:10:48\nCRAWL-PROGRESS\n02:10:47\nHOST-THROTTLE\n02:10:47\nCRAWL-PROGRESS\n02:10:46\nCRAWL-PROGRESS\n02:10:45\nCRAWL-PROGRESS\n02:10:44\nCRAWL-PROGRESS\n02:10:43\nCRAWL-PROGRESS\n02:10:42\nCRAWL-PROGRESS\n02:10:41\nCRAWL-PROGRESS\n02:10:40\nCRAWL-PROGRESS\n02:10:39\nCRAWL-PROGRESS\n02:10:38\nHOST-THROTTLE\n02:10:37\nCRAWL-PROGRESS\n02:10:36\nCRAWL-PROGRESS\n02:10:35\nHOST-THROTTLE\n02:10:35\nCRAWL-PROGRESS\n02:10:34\nCRAWL-PROGRESS\n02:10:33\nHOST-THROTTLE\n02:10:33\nCRAWL-PROGRESS\n02:10:32\nHOST-THROTTLE\n02:10:32\nCRAWL-PROGRESS\n02:10:31\nHOST-THROTTLE\n02:10:30\nCRAWL-PROGRESS\n02:10:30\nCRAWL-PROGRESS\n02:10:29\nHOST-THROTTLE\n02:10:29\nCRAWL-PROGRESS\n02:10:28\nHOST-THROTTLE\n02:10:27\nCRAWL-PROGRESS\n02:10:27\nHOST-THROTTLE\n02:10:26\nCRAWL-PROGRESS\n02:10:26\nHOST-THROTTLE\n02:10:25\nCRAWL-PROGRESS\n02:10:25\nCRAWL-PROGRESS\n02:10:24\nHOST-THROTTLE\n02:10:24\nCRAWL-PROGRESS\n02:10:23\nHOST-THROTTLE\n02:10:23\nCRAWL-PROGRESS\n02:10:22\nHOST-THROTTLE\n02:10:21\nCRAWL-PROGRESS\n02:10:21\nCRAWL-PROGRESS\n02:10:20\nHOST-THROTTLE\n02:10:20\nCRAWL-PROGRESS\n02:10:19\nCRAWL-PROGRESS\n02:10:18\nCRAWL-PROGRESS\n02:10:16\nHOST-THROTTLE\n02:10:16\nCRAWL-PROGRESS\n02:10:15\nWS\n199 MiB\nHeap\n26.6 MiB\nGC\n120/9/5\nWAL\n4.37 MiB\nJS\n9.54 MiB\nbeat\n02:12:32\nCompact",
+      "buttons": [
+        "Open command palette (Ctrl+K)",
+        "Main hub",
+        "Audits",
+        "Report",
+        "Tools",
+        "Settings",
+        "Toggle activity pane",
+        "Resize Main workspace and Live activity (Enter toggles collapse)",
+        "Compact and trim working set"
+      ],
+      "inputs": [],
+      "testids": [
+        "cf-appshell",
+        "palette-trigger",
+        "connection-pill",
+        "cf-nav-rail",
+        "nav-hub",
+        "nav-audits",
+        "nav-report",
+        "nav-tools",
+        "nav-settings",
+        "cf-split",
+        "cf-split-first",
+        "primary-pane",
+        "toggle-secondary-pane",
+        "view-content",
+        "report-view",
+        "report-state",
+        "report-progress",
+        "hosts-table",
+        "cf-split-divider",
+        "cf-split-second",
+        "secondary-pane",
+        "activity-feed",
+        "activity-count",
+        "cf-statusbar",
+        "status-ws",
+        "status-heap",
+        "status-gc",
+        "status-wal",
+        "status-js",
+        "status-heartbeat",
+        "compact-button"
+      ]
+    },
+    "proven": true
+  },
+  "exit_code": 1,
+  "exit_reason": "40 selected trap verdict(s) FAIL: http:orphan, http:postback-links, http:cookieless-session, http:large-viewstate, http:crawler-trap-filter, http:crawler-trap-calendar, http:cookie-gate, http:structured-data-errors, http:hreflang-no-return, http:thin-page, js:orphan, js:postback-links…",
+  "verdict_enum": [
+    "pass",
+    "partial",
+    "fail",
+    "not_testable"
+  ]
+}

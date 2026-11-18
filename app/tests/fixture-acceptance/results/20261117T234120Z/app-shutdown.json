@@ -1,0 +1,12 @@
+{
+  "method": " + taskkill fallback",
+  "electron_pids": [
+    4584,
+    15764
+  ],
+  "backend_pids": [
+    29100
+  ],
+  "residual": [],
+  "ports_free": true
+}

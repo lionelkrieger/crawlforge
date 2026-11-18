@@ -1,0 +1,408 @@
+{
+  "UI-01": {
+    "id": "UI-01",
+    "surface": "Main hub › Projects",
+    "spec_path": "Shell start screen (first run proceeds to New project)",
+    "status": "reachable_and_functional",
+    "evidence": "Hub renders real local aggregates: 8 project rows, 17 audit rows, New project button present=True. Project creation through the New project dialog is exercised by the UI-entry audit.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-01-hub.png",
+    "attempts": [],
+    "project_rows": 8,
+    "audit_rows": 17
+  },
+  "UI-02": {
+    "id": "UI-02",
+    "surface": "Main hub › Project overview",
+    "spec_path": "Main hub › Projects › select project",
+    "status": "not_reachable",
+    "evidence": "Project row click, dblclick and command-palette project pick produced no project overview: no overview controls/text appeared; API calls during attempts=[]; final url=file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-02-attempt.png",
+    "attempts": [
+      {
+        "action": "click project-row-8",
+        "result": {
+          "clicked": true,
+          "rect": {
+            "x": 541.953125,
+            "y": 395.6015625,
+            "w": 559.90625,
+            "h": 73.390625,
+            "tag": "TR",
+            "text": "Fixture harness http 20261117T235434ZWP-08-04 fixture acceptance — UI entry (CR-023)18 Nov 01:54:45Start audit"
+          }
+        },
+        "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub"
+      },
+      {
+        "action": "dblclick project row",
+        "result": {
+          "clicked": true,
+          "rect": {
+            "x": 541.953125,
+            "y": 395.6015625,
+            "w": 559.90625,
+            "h": 73.390625,
+            "tag": "TR",
+            "text": "Fixture harness http 20261117T235434ZWP-08-04 fixture acceptance — UI entry (CR-023)18 Nov 01:54:45Start audit"
+          }
+        },
+        "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub"
+      },
+      {
+        "action": "command palette project pick",
+        "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub"
+      }
+    ],
+    "api_calls": []
+  },
+  "UI-03": {
+    "id": "UI-03",
+    "surface": "Project › Configurations",
+    "spec_path": "Project overview › Configurations",
+    "status": "not_reachable",
+    "evidence": "Spec path Project overview › Configurations (overview itself unreachable, UI-02): none of the markers ['Configurations'] appear in the running shell (rail buttons=[\"Open command palette (Ctrl+K)\", \"Main hub\", \"Audits\", \"Report\", \"Tools\", \"Settings\", \"Toggle activity pane\", \"New project\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\"). No Configurations entry in rail, project row or command palette.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-03-attempt.png",
+    "attempts": []
+  },
+  "UI-04": {
+    "id": "UI-04",
+    "surface": "Configuration editor",
+    "spec_path": "Project › Configurations › open/new configuration",
+    "status": "not_reachable",
+    "evidence": "No configuration editor: 0 of 13 documented tabs. The only configuration inputs are the New project dialog fields [\"project-name-input\", \"project-url-input\", \"project-description-input\"]; no limit, AIMD, rendering, directive, analysis or extraction inputs exist. Audit limits must be bounded via REST PUT (recorded in ui-entry evidence).",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-04-new-project-dialog.png",
+    "attempts": [],
+    "tabs_present": [],
+    "dialog_inputs": [
+      {
+        "tag": "input",
+        "type": "text",
+        "testid": "project-name-input",
+        "placeholder": "Example Corp — production site",
+        "ariaLabel": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "testid": "project-url-input",
+        "placeholder": "https://example.com",
+        "ariaLabel": ""
+      },
+      {
+        "tag": "input",
+        "type": "text",
+        "testid": "project-description-input",
+        "placeholder": "What this project covers",
+        "ariaLabel": ""
+      }
+    ]
+  },
+  "UI-05": {
+    "id": "UI-05",
+    "surface": "Project › Integrations",
+    "spec_path": "Project overview › Integrations",
+    "status": "not_reachable",
+    "evidence": "Spec path Project overview › Integrations: none of the markers ['Integrations'] appear in the running shell (rail buttons=[\"Open command palette (Ctrl+K)\", \"Main hub\", \"Audits\", \"Report\", \"Tools\", \"Settings\", \"Toggle activity pane\", \"New project\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\"). ",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-05-attempt.png",
+    "attempts": []
+  },
+  "UI-06": {
+    "id": "UI-06",
+    "surface": "Project › Segments",
+    "spec_path": "Project overview › Segments (also segment picker in every report surface)",
+    "status": "not_reachable",
+    "evidence": "Spec path Project overview › Segments / report segment picker: none of the markers ['Segments'] appear in the running shell (rail buttons=[\"Open command palette (Ctrl+K)\", \"Main hub\", \"Audits\", \"Report\", \"Tools\", \"Settings\", \"Toggle activity pane\", \"New project\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\"). ",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-06-attempt.png",
+    "attempts": []
+  },
+  "UI-07": {
+    "id": "UI-07",
+    "surface": "Project › Audit history and retention",
+    "spec_path": "Project overview › Audits",
+    "status": "not_reachable",
+    "evidence": "Project overview › Audits and retention policy do not exist. The global Audits rail (nav-audits present=True) is a different surface and does not satisfy the project-scoped path.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-07-attempt.png",
+    "attempts": []
+  },
+  "UI-08": {
+    "id": "UI-08",
+    "surface": "Main hub › Clients",
+    "spec_path": "Main hub › Clients",
+    "status": "not_reachable",
+    "evidence": "Spec path Main hub › Clients: none of the markers ['Clients'] appear in the running shell (rail buttons=[\"Open command palette (Ctrl+K)\", \"Main hub\", \"Audits\", \"Report\", \"Tools\", \"Settings\", \"Toggle activity pane\", \"New project\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\"). ",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-08-attempt.png",
+    "attempts": []
+  },
+  "UI-09": {
+    "id": "UI-09",
+    "surface": "Main hub › Schedules",
+    "spec_path": "Main hub › Schedules",
+    "status": "not_reachable",
+    "evidence": "Spec path Main hub › Schedules: none of the markers ['Schedules'] appear in the running shell (rail buttons=[\"Open command palette (Ctrl+K)\", \"Main hub\", \"Audits\", \"Report\", \"Tools\", \"Settings\", \"Toggle activity pane\", \"New project\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\"). Schedule entry point exercised via REST run-now instead (recorded in scheduled-flow evidence).",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-09-attempt.png",
+    "attempts": []
+  },
+  "UI-10": {
+    "id": "UI-10",
+    "surface": "Audit run view",
+    "spec_path": "Project overview › Start audit, or Audits › running audit",
+    "status": "reachable_and_functional",
+    "evidence": "Audit run view renders real run data for audit 17: state badge, progress/counters and host-throttle telemetry present; lifecycle controls mounted for active runs.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-10-run-view.png",
+    "attempts": [
+      {
+        "action": "nav-audits",
+        "audits_view": true
+      },
+      {
+        "action": "open audit 17",
+        "opened": true
+      }
+    ]
+  },
+  "UI-11": {
+    "id": "UI-11",
+    "surface": "Report › Dashboard",
+    "spec_path": "Audits › open audit (report window opens on Dashboard)",
+    "status": "reachable_but_placeholder",
+    "evidence": "Report workspace shows the static placeholder text 'mount into this workspace from the report workpieces' and no dashboard data grid/chart. Live telemetry above it is real, but the Dashboard surface itself is an empty frame (CR-018: never functional).",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-11-report-dashboard.png",
+    "attempts": []
+  },
+  "UI-12": {
+    "id": "UI-12",
+    "surface": "Report › Issue explorer",
+    "spec_path": "Report window navigation",
+    "status": "not_reachable",
+    "evidence": "Report window navigation has no entry for any of ['Issue explorer', 'Issues'] (buttons/testids only; telemetry labels do not count); the report frame exposes only live telemetry and the placeholder pane (see UI-11).",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-12-attempt.png",
+    "attempts": []
+  },
+  "UI-13": {
+    "id": "UI-13",
+    "surface": "Report › URL explorer and URL detail",
+    "spec_path": "Report window navigation; drill-down from any surface",
+    "status": "not_reachable",
+    "evidence": "Report window navigation has no entry for any of ['URL explorer', 'URLs'] (buttons/testids only; telemetry labels do not count); the report frame exposes only live telemetry and the placeholder pane (see UI-11).",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-13-attempt.png",
+    "attempts": []
+  },
+  "UI-14": {
+    "id": "UI-14",
+    "surface": "Visualization window",
+    "spec_path": "Report window › Visualizations",
+    "status": "not_reachable",
+    "evidence": "Report window navigation has no entry for any of ['Visualizations', 'Link graph'] (buttons/testids only; telemetry labels do not count); the report frame exposes only live telemetry and the placeholder pane (see UI-11).",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-14-attempt.png",
+    "attempts": []
+  },
+  "UI-15": {
+    "id": "UI-15",
+    "surface": "Report › Comparison (audit and content)",
+    "spec_path": "Report window › Compare, or Project › Audits › select two",
+    "status": "not_reachable",
+    "evidence": "Report window navigation has no entry for any of ['Compare', 'Comparison'] (buttons/testids only; telemetry labels do not count); the report frame exposes only live telemetry and the placeholder pane (see UI-11).",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-15-attempt.png",
+    "attempts": []
+  },
+  "UI-16": {
+    "id": "UI-16",
+    "surface": "Report › Specialist surfaces",
+    "spec_path": "Report window navigation (19 specialist surfaces)",
+    "status": "not_reachable",
+    "evidence": "None of the 19 specialist surfaces has a navigation entry in the report window.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-16-attempt.png",
+    "attempts": []
+  },
+  "UI-17": {
+    "id": "UI-17",
+    "surface": "Log file analyzer",
+    "spec_path": "Project overview › Logs",
+    "status": "not_reachable",
+    "evidence": "Spec path Project overview › Logs: none of the markers ['Logs', 'Log file analyzer'] appear in the running shell (rail buttons=[\"Open command palette (Ctrl+K)\", \"Main hub\", \"Audits\", \"Report\", \"Tools\", \"Settings\", \"Toggle activity pane\", \"New project\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Start audit\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\", \"Open\"). ",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-17-attempt.png",
+    "attempts": []
+  },
+  "UI-18": {
+    "id": "UI-18",
+    "surface": "Single-page analyzer",
+    "spec_path": "Main hub toolbar › Analyze a page",
+    "status": "reachable_and_functional",
+    "evidence": "Single-Page Analyzer ran against http://127.0.0.1:47311/pages/noindex.html without a crawl project: finding count='7', findings list rendered=True; API calls=[\"POST /api/analysis/single-page {\\\"url\\\":\\\"http://127.0.0.1:47311/pages/noindex.html\\\",\\\"render\\\":false}\"].",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-18-single-page-analyzer.png",
+    "attempts": [],
+    "api_calls": [
+      "POST /api/analysis/single-page {\"url\":\"http://127.0.0.1:47311/pages/noindex.html\",\"render\":false}"
+    ],
+    "finding_count": "7"
+  },
+  "UI-19": {
+    "id": "UI-19",
+    "surface": "Standalone tools",
+    "spec_path": "Main hub toolbar › Tools",
+    "status": "reachable_and_functional",
+    "evidence": "Standalone tools workspace: 12/12 tool panels mount with real controls without a crawl project.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tools.png",
+    "attempts": [],
+    "tools": {
+      "single-page": {
+        "panel": true,
+        "controls": {
+          "inputs": 2,
+          "buttons": 7
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-single-page.png"
+      },
+      "serp": {
+        "panel": true,
+        "controls": {
+          "inputs": 9,
+          "buttons": 7
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-serp.png"
+      },
+      "render": {
+        "panel": true,
+        "controls": {
+          "inputs": 4,
+          "buttons": 1
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-render.png"
+      },
+      "robots": {
+        "panel": true,
+        "controls": {
+          "inputs": 5,
+          "buttons": 1
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-robots.png"
+      },
+      "sitemap": {
+        "panel": true,
+        "controls": {
+          "inputs": 11,
+          "buttons": 5
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-sitemap.png"
+      },
+      "scope": {
+        "panel": true,
+        "controls": {
+          "inputs": 7,
+          "buttons": 8
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-scope.png"
+      },
+      "rewrite": {
+        "panel": true,
+        "controls": {
+          "inputs": 9,
+          "buttons": 6
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-rewrite.png"
+      },
+      "llms": {
+        "panel": true,
+        "controls": {
+          "inputs": 6,
+          "buttons": 6
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-llms.png"
+      },
+      "urlcheck": {
+        "panel": true,
+        "controls": {
+          "inputs": 1,
+          "buttons": 1
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-urlcheck.png"
+      },
+      "structured": {
+        "panel": true,
+        "controls": {
+          "inputs": 3,
+          "buttons": 1
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-structured.png"
+      },
+      "query": {
+        "panel": true,
+        "controls": {
+          "inputs": 13,
+          "buttons": 7
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-query.png"
+      },
+      "destinations": {
+        "panel": true,
+        "controls": {
+          "inputs": 0,
+          "buttons": 2
+        },
+        "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-19-tool-destinations.png"
+      }
+    }
+  },
+  "UI-20": {
+    "id": "UI-20",
+    "surface": "Export dialog",
+    "spec_path": "Report window › Export (every surface)",
+    "status": "not_reachable",
+    "evidence": "No Export control in the report window (buttons/testids). REST export jobs work (probe-2 §7) but no UI export dialog is mounted.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-20-attempt.png",
+    "attempts": []
+  },
+  "UI-21": {
+    "id": "UI-21",
+    "surface": "Settings",
+    "spec_path": "Main hub toolbar › Settings",
+    "status": "reachable_and_functional",
+    "evidence": "Settings surface renders sections ['Appearance', 'Status-bar advisories', 'Database', 'Automation interface', 'Embeddings', 'Proxy', 'Diagnostics']; documented sections missing: ['Export destinations', 'Browser', 'User dictionary', 'Integrations credentials', 'Configuration templates', 'Release check'].",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-21-settings.png",
+    "attempts": [],
+    "sections_present": [
+      "Appearance",
+      "Status-bar advisories",
+      "Database",
+      "Automation interface",
+      "Embeddings",
+      "Proxy",
+      "Diagnostics"
+    ],
+    "sections_missing": [
+      "Export destinations",
+      "Browser",
+      "User dictionary",
+      "Integrations credentials",
+      "Configuration templates",
+      "Release check"
+    ]
+  },
+  "UI-22": {
+    "id": "UI-22",
+    "surface": "Plugin manager",
+    "spec_path": "Settings › Plugins",
+    "status": "not_reachable",
+    "evidence": "Spec path Settings › Plugins: none of the markers ['Plugins', 'Plugin manager'] appear in the running shell (rail buttons=[\"Open command palette (Ctrl+K)\", \"Main hub\", \"Audits\", \"Report\", \"Tools\", \"Settings\", \"Toggle activity pane\", \"\", \"\", \"\", \"\", \"Save advisories (1.50 GiB / 256 MiB)\", \"Test connection\", \"Test provider\", \"Refresh\", \"Purge artifacts\", \"Resize Main workspace and Live activity (Enter toggles collapse)\",). ",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-22-attempt.png",
+    "attempts": []
+  },
+  "UI-23": {
+    "id": "UI-23",
+    "surface": "Status bar",
+    "spec_path": "Always visible in every window",
+    "status": "reachable_and_functional",
+    "evidence": "Status bar visible with live telemetry (WS='WS207 MiB', Heap='Heap29.3 MiB') and the Compact action.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261117T235434Z\\screenshots\\UI-23-status-bar.png",
+    "attempts": []
+  },
+  "UI-24": {
+    "id": "UI-24",
+    "surface": "Recovery screen",
+    "spec_path": "Shown automatically after repeated backend failures",
+    "status": "not_applicable_yet",
+    "evidence": "Recovery screen is shown automatically after repeated backend failures; the backend is healthy and acceptance must NOT induce a backend failure to reach it. Not exercised.",
+    "screenshot": null,
+    "attempts": []
+  }
+}

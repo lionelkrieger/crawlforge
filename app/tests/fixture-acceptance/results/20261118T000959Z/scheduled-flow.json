@@ -1,0 +1,105 @@
+{
+  "run_id": "scheduled",
+  "mode": "http",
+  "entry_point": "REST POST /api/projects/{id}/schedules + /api/schedules/{id}/run-now",
+  "project_id": "16",
+  "project_name": "Fixture harness scheduled 20261118T000959Z",
+  "configuration_id": "21",
+  "audit_id": "27",
+  "schedule_id": "2",
+  "limit_overrides": {
+    "maxUrls": 40,
+    "maxDepth": 3,
+    "maxDurationSeconds": 90,
+    "maxResponseBytes": null
+  },
+  "start_attempts": [],
+  "state": "completed",
+  "transitions": [
+    {
+      "t": 0.0,
+      "state": "running",
+      "phase": "crawling",
+      "counters": {
+        "queued": 0,
+        "fetched": 0,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": null
+      }
+    },
+    {
+      "t": 20.1,
+      "state": "running",
+      "phase": "analyzing",
+      "counters": {
+        "queued": 0,
+        "fetched": 40,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": null
+      }
+    },
+    {
+      "t": 22.2,
+      "state": "completed",
+      "phase": "finalizing",
+      "counters": {
+        "queued": 0,
+        "fetched": 40,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": null
+      }
+    }
+  ],
+  "duration_s": 22.2,
+  "ui09_note": "UI-09 Schedules surface absent; schedule created and triggered through REST (recorded by walker).",
+  "safety": {
+    "ok": true,
+    "evidence": "nonGet == [] after audit",
+    "tag_hits": {
+      "total": 0,
+      "beforeConsent": 0,
+      "granted": 0,
+      "hits": []
+    }
+  },
+  "fixture_requests": {
+    "nonGet": [],
+    "tagHits": []
+  },
+  "url_count": 43,
+  "finding_count": 307,
+  "schedule_run_history": [
+    {
+      "id": "2",
+      "scheduleId": "2",
+      "auditId": "27",
+      "triggerType": "manual",
+      "startedAt": "2026-11-18T00:14:04.08726+00:00",
+      "completedAt": "2026-11-18T00:14:24.6731208+00:00",
+      "outcome": "completed",
+      "completionActionResults": []
+    }
+  ],
+  "rendering_inert": {
+    "inert": false,
+    "evidence": "rendering.enabled=False; 'no rendered tree is available' findings=0; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=2",
+    "no_tree_findings": 0,
+    "js_target_present": false,
+    "js_content_words": 2
+  },
+  "click_activity": {
+    "active": false,
+    "click_link_rows": 0,
+    "spa_view_urls": 0,
+    "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+  },
+  "counts": {
+    "pass": 4,
+    "partial": 5,
+    "fail": 10,
+    "not_testable": 12
+  }
+}

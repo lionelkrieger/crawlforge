@@ -1,0 +1,18 @@
+{
+  "cmd": "reaudit",
+  "endpoint": "http://127.0.0.1:64310/mcp",
+  "steps": [
+    {
+      "name": "re-audit",
+      "v": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"auditId\":26,\"sourceAuditId\":25}"
+          }
+        ],
+        "isError": false
+      }
+    }
+  ]
+}

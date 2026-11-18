@@ -1,0 +1,24 @@
+{
+  "projects": [
+    {
+      "id": "12",
+      "name": "Fixture harness http 20261118T000559Z",
+      "run": "http-ui"
+    }
+  ],
+  "configurations": [
+    {
+      "id": "17",
+      "run": "http-ui"
+    }
+  ],
+  "audits": [
+    {
+      "id": "22",
+      "run": "http-ui",
+      "entry": "UI Start audit button (CDP) + REST limit-bounding + REST poll",
+      "state": "completed"
+    }
+  ],
+  "schedules": []
+}
