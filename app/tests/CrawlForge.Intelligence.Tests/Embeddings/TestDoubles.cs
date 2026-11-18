@@ -25,7 +25,14 @@ internal sealed class FakeEmbeddingProvider : ILocalEmbeddingProvider
 
     public int Dimensions => 4;
 
-    public int EmbedCallCount { get; private set; }
+    // WP-08-A2: the pipeline embeds with bounded concurrency
+    // (SemanticPipelineOptions.MaxConcurrency, default 2), so the double must
+    // count atomically and guard its text log; a plain ++ lost increments
+    // under full-solution gate load (3 instead of 4).
+    private int _embedCallCount;
+    private readonly object _sync = new();
+
+    public int EmbedCallCount => Volatile.Read(ref _embedCallCount);
 
     public List<string> Texts { get; } = [];
 
@@ -34,8 +41,11 @@ internal sealed class FakeEmbeddingProvider : ILocalEmbeddingProvider
     public Task<EmbeddingVector> EmbedAsync(string text, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        EmbedCallCount++;
-        Texts.Add(text);
+        Interlocked.Increment(ref _embedCallCount);
+        lock (_sync)
+        {
+            Texts.Add(text);
+        }
         foreach (var (marker, vector) in _rules)
         {
             if (text.Contains(marker, StringComparison.Ordinal))

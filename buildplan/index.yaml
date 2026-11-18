@@ -17,7 +17,7 @@ metadata:
   generated: "2026-11-17"
   supersedes: "v1.1 (frozen under buildplan/v1.1/, commit 281a9ae)"
   total_phases: 9              # phase-08 .. phase-16 (continues v1.1 numbering)
-  total_workpieces: 55
+  total_workpieces: 56
   total_acceptance_criteria: 58
   capability_baseline: "capability-baseline.yaml"
   in_scope_capabilities: 251
@@ -47,7 +47,7 @@ status_summary:
     unscheduled: 1
   workpieces:
     pending: 49
-    in_progress: 2
+    in_progress: 3
     verifying: 0
     completed: 4
     blocked: 0
@@ -62,7 +62,7 @@ phases:
     status: "in_progress"
     depends_on_phases: []      # v1.1 phases are history, not verified dependencies
     max_parallel_agents: 2
-    workpiece_ids: ["WP-08-01", "WP-08-02", "WP-08-03", "WP-08-04", "WP-08-05", "WP-08-A1"]
+    workpiece_ids: ["WP-08-01", "WP-08-02", "WP-08-03", "WP-08-04", "WP-08-05", "WP-08-A1", "WP-08-A2"]
     gated_acceptance_criteria: []   # enables verification of all criteria; proves none alone
 
   - phase_id: "phase-09"

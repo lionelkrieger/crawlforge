@@ -13,7 +13,7 @@ parallel_waves:
   - wave_id: "wave-8B"
     workpiece_ids: ["WP-08-03", "WP-08-04"]
   - wave_id: "wave-8C"      # serial shared wiring
-    workpiece_ids: ["WP-08-05", "WP-08-A1"]
+    workpiece_ids: ["WP-08-05", "WP-08-A1", "WP-08-A2"]
 gated_acceptance_criteria: []
 
 orchestrator_gates:
@@ -298,3 +298,50 @@ workpieces:
       - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests"
     done_when: "Both repaired suites pass on the canonical surface (CF_AGENT_ID unset; MySQL facts skip without a configured server), and the full phase-08 gate list passes including the noindex fixture run."
     acceptance_criteria_refs: [18]
+
+  # Orchestrator amendment (§11): gate run 2 (phase-08-20261118-221924, post-A1)
+  # exposed 2 load-sensitive test-infrastructure defects under full-solution
+  # parallel gate load (Scale 500k seed + Acceptance live UI checks + conformance
+  # live audit overlapping E2E/Intelligence): (1) FakeEmbeddingProvider counts
+  # calls with a non-atomic EmbedCallCount++ and a thread-unsafe List.Add while
+  # the pipeline embeds with MaxConcurrency=2 (SemanticJobProgress.cs:21) — a
+  # lost increment yielded 3 instead of 4 (run 1 passed; order/interleaving
+  # dependent); (2) the WAF challenge E2E's 90s completion-wait budget was
+  # exceeded by CPU starvation — the audit was still RUNNING (WaitForAuditAsync
+  # fails fast on Failed with a different exception; TimeoutException proves no
+  # failure), and the same test passed in run 1 and the isolated A1 verification.
+  # Neither is a product defect; no product code changed.
+  - workpiece_id: "WP-08-A2"
+    title: "Amendment A2 — Thread-safe embedding test double + load-robust E2E wait (orchestrator, §11)"
+    phase_id: "phase-08"
+    status: "in_progress"
+    assigned_agent: "lead"
+    started_at: "2026-11-18T20:40:00Z"
+    parallel_group: "wave-8C"
+    depends_on_workpieces: []
+    context_files:
+      - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\07-quality-and-verification\\01-master-acceptance-criteria.md"
+        sections: ["14"]
+    capabilities:
+      - { id: "CAP-L-X01", baseline_state: "partial" }   # diagnostics/verification infrastructure
+    ui_surfaces: []
+    fixture_traps: ["noindex"]   # gate unblock: the phase-08 after_waves noindex fixture run is part of done_when
+    contract_tests:
+      - payload: "embedding provider call-count evidence (test double)"
+        test: "SemanticPipelineTests.NonIndexableUrlsAreExcluded + cache-reuse call-count assertions read an Interlocked counter"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests\\Embeddings\\TestDoubles.cs"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests\\WafDetectionE2ETests.cs"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests\\Fixtures\\E2EBackend.cs"
+    deliverables:
+      - "FakeEmbeddingProvider: Interlocked call counter + locked Texts list (the pipeline embeds with bounded concurrency 2; the double must be thread-safe to count accurately); every assertion unchanged"
+      - "WafDetectionReportingE2ETests.ChallengeAudit completion-wait budget 90s -> 300s (harness patience under full-solution gate load, not a product requirement); all functional assertions and the fail-fast-on-Failed behavior unchanged"
+      - "E2EBackend.WaitForAuditAsync timeout message includes the last observed audit status (diagnostic only; no assertion semantics change)"
+      - "No product code changes; no assertion weakened; no verification command skipped"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Intelligence.Tests"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.E2E.Tests"
+    done_when: "Both repaired suites pass on the canonical surface (CF_AGENT_ID unset), and the full phase-08 gate list passes including the noindex fixture run."
+    acceptance_criteria_refs: [35, 45]

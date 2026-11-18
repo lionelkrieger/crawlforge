@@ -211,7 +211,12 @@ public sealed class WafDetectionReportingE2ETests
         var (projectId, configurationId) = await backend.SeedProjectAsync(origin.BaseUrl);
 
         var auditId = await backend.StartAuditAsync(projectId, configurationId);
-        await backend.WaitForStatusAsync(auditId, AuditStatus.Completed, TimeSpan.FromSeconds(90));
+        // WP-08-A2: 300s harness patience under full-solution gate load (Scale
+        // 500k seed + Acceptance live UI checks + conformance audit can starve
+        // this 20-URL crawl past the old 90s budget; the audit was still
+        // RUNNING at timeout, not failed). Not a product requirement; the
+        // fail-fast-on-Failed behavior in WaitForAuditAsync is unchanged.
+        await backend.WaitForStatusAsync(auditId, AuditStatus.Completed, TimeSpan.FromSeconds(300));
 
         // Per-URL detection findings + site-wide WAF-Block alert.
         var findings = await backend.ListByAuditAsync<FindingDto>(auditId, limit: 200);

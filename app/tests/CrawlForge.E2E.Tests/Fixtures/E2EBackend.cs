@@ -104,9 +104,11 @@ public sealed class E2EBackend : IAsyncDisposable
     {
         var reads = Service<IReadRepository<AuditDto>>();
         var deadline = DateTimeOffset.UtcNow + (timeout ?? TimeSpan.FromSeconds(60));
+        var lastStatus = "missing"; // WP-08-A2: diagnostic for timeout triage
         while (DateTimeOffset.UtcNow < deadline)
         {
             var audit = await reads.GetByIdAsync(auditId);
+            lastStatus = audit?.Status.ToString() ?? "missing";
             if (audit is not null && condition(audit))
             {
                 return audit;
@@ -120,7 +122,7 @@ public sealed class E2EBackend : IAsyncDisposable
             await Task.Delay(100);
         }
 
-        throw new TimeoutException($"Audit {auditId} did not reach the expected state in time.");
+        throw new TimeoutException($"Audit {auditId} did not reach the expected state in time (last status: {lastStatus}).");
     }
 
     public Task<AuditDto> WaitForStatusAsync(long auditId, AuditStatus status, TimeSpan? timeout = null) =>
