@@ -131,10 +131,10 @@ public sealed class AuditCountersWireConformanceTests
     /// <summary>
     /// G-HUB-COUNTERS (WP-09-06 family): hub crawl-progress counters must match
     /// the REST wire counters key-for-key so the shell's live view and the REST
-    /// snapshot agree. Today the hub carries engine keys and REST carries
-    /// consumer keys — the same root cause as the REST KnownGap test.
+    /// snapshot agree. UNSKIPPED by lead (WP-09-11): WP-09-06's HubPayloadNormalizer
+    /// reconciles hub counters to the REST wire keys at the Api hub boundary.
     /// </summary>
-    [Fact(Skip = "G-HUB-COUNTERS: WP-09-06 family — hub engine keys vs REST consumer keys; see GAPS.md")]
+    [Fact]
     public async Task HubCounters_MatchRestWireKeys()
     {
         var data = await Rest.GetDataAsync(_fixture.Http, $"/api/audits/{_fixture.AuditId}");
