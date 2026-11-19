@@ -145,10 +145,11 @@ public sealed class HubEventWireConformanceTests
 
     /// <summary>
     /// G-COMPLETED-COUNTERS (WP-09-06 family): audit-completed.finalCounters
-    /// carries engine keys (discovered/fetched/analyzed/failed) while the
-    /// frontend AuditCompletedPayload (events.ts) nests consumer AuditCounters.
+    /// must carry the consumer AuditCounters keys. UNSKIPPED by lead (WP-09-11):
+    /// WP-09-06's HubPayloadNormalizer maps finalCounters through the same
+    /// AuditWireMapper.ParseCounters as REST (REST==hub by construction).
     /// </summary>
-    [Fact(Skip = "G-COMPLETED-COUNTERS: WP-09-06 family — finalCounters engine keys vs frontend AuditCounters; see GAPS.md")]
+    [Fact]
     public void AuditCompleted_FrontendCountersKeys()
     {
         var payload = _fixture.Hub.EventsNamed("audit-completed").First().Payload;
@@ -361,11 +362,12 @@ public sealed class HubEventWireConformanceTests
     }
 
     /// <summary>
-    /// G-F: export-delivery emits exportJobId + numeric destinationId + attempt/
-    /// timestamp while the frontend ExportDeliveryPayload (events.ts:133,
-    /// guards.ts:241) requires exportId + destinationId as strings.
+    /// G-F: export-delivery must match the frozen frontend ExportDeliveryPayload
+    /// (events.ts, guards.ts isExportDeliveryPayload): exportId + destinationId
+    /// as strings. UNSKIPPED by lead (WP-09-11): WP-09-10 fixed the producer to
+    /// the exact frozen shape; the hub normalizer guarantees string ids.
     /// </summary>
-    [Fact(Skip = "G-F: exportJobId vs exportId + numeric ids (events.ts:133/guards.ts:241); suggested owner phase-09 WP-09-09 — see GAPS.md")]
+    [Fact]
     public void ExportDelivery_FrontendContractShape()
     {
         var payload = _fixture.Hub.EventsNamed("export-delivery").First().Payload;
@@ -403,18 +405,27 @@ public sealed class HubEventWireConformanceTests
         }
     }
 
-    /// <summary>G-I: export-progress is absent from HubEventCatalog and the
-    /// frontend contract while the engine emits it (open-string pass-through).</summary>
-    [Fact(Skip = "G-I: export-progress emitted but uncataloged (HubEventCatalog + events.ts); suggested owner phase-09 WP-09-09 — see GAPS.md")]
-    public void ExportProgress_Uncataloged()
+    /// <summary>G-I CLOSED (WP-09-10 producer + WP-09-11 catalog): export-progress
+    /// is cataloged backend-side (HubEventCatalog.ExportProgress) AND in the
+    /// frontend contract (events.ts additive entry), and the live payload matches
+    /// the frozen shape: string exportId/auditId, format wire key, state from the
+    /// frozen ExportJobState vocabulary. Replaces the former absence-lock.</summary>
+    [Fact]
+    public void ExportProgress_CatalogedContractShape()
     {
         var catalog = typeof(CrawlForge.Api.Hubs.HubEventCatalog)
             .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
             .Where(f => f.IsLiteral && f.FieldType == typeof(string))
             .Select(f => (string)f.GetRawConstantValue()!);
-        Assert.DoesNotContain("export-progress", catalog);
+        Assert.Contains("export-progress", catalog);
         var frontendTs = File.ReadAllText(RepoPaths.FrontendHubEventsTs);
-        Assert.DoesNotContain("'export-progress'", frontendTs, StringComparison.Ordinal);
+        Assert.Contains("'export-progress'", frontendTs, StringComparison.Ordinal);
+
+        var payload = _fixture.Hub.EventsNamed("export-progress").First().Payload;
+        Assert.Equal(JsonValueKind.String, payload.GetProperty("exportId").ValueKind);
+        Assert.Equal(JsonValueKind.String, payload.GetProperty("auditId").ValueKind);
+        Assert.Equal(JsonValueKind.String, payload.GetProperty("format").ValueKind);
+        Assert.Contains(payload.GetProperty("state").GetString(), new[] { "queued", "running", "completed", "failed" });
     }
 
     /// <summary>matrix-row-validated live payload: batched rows with the
@@ -450,10 +461,11 @@ public sealed class HubEventWireConformanceTests
         }
     }
 
-    /// <summary>G-MATRIX-VERDICT + G-G: the frozen frontend entry requires
-    /// string verdict + string EntityId urlId; the hub emits a numeric enum
-    /// verdict and numeric urlId.</summary>
-    [Fact(Skip = "G-MATRIX-VERDICT: numeric verdict enum + numeric urlId vs events.ts:180-184 (verdict:string, urlId:EntityId); suggested owner phase-09 WP-09-11 — see GAPS.md")]
+    /// <summary>G-MATRIX-VERDICT + G-G CLOSED: the frozen frontend entry requires
+    /// string verdict + string EntityId urlId/auditId. UNSKIPPED by lead (WP-09-11):
+    /// WP-09-03's MatrixVerdictNames vocabulary + WP-09-06's hub normalizer
+    /// (string ids) make the live payload conformant.</summary>
+    [Fact]
     public void MatrixRowValidated_FrontendContractShape()
     {
         var payload = _fixture.Hub.EventsNamed("matrix-row-validated").First().Payload;
@@ -595,13 +607,16 @@ public sealed class HubEventWireConformanceTests
         Assert.Equal("local notification shape lock", document.RootElement.GetProperty("message").GetString());
     }
 
-    /// <summary>G-N: local-notification is cataloged + produced backend-side
-    /// but absent from spec §10.3 and the frontend contract.</summary>
-    [Fact(Skip = "G-N: local-notification backend catalog + producer only; absent from spec §10.3 / events.ts; orchestrator routing — see GAPS.md")]
-    public void LocalNotification_NotInFrontendContract()
+    /// <summary>G-N CLOSED (CR-027, WP-09-11): local-notification is cataloged
+    /// backend-side, produced by HubLocalNotificationSink, AND present in the
+    /// frontend contract (events.ts additive entry {title,message}). Replaces
+    /// the former absence-lock.</summary>
+    [Fact]
+    public void LocalNotification_InFrontendContract()
     {
         var frontendTs = File.ReadAllText(RepoPaths.FrontendHubEventsTs);
-        Assert.DoesNotContain("'local-notification'", frontendTs, StringComparison.Ordinal);
+        Assert.Contains("'local-notification'", frontendTs, StringComparison.Ordinal);
+        Assert.Equal("local-notification", CrawlForge.Api.Hubs.HubEventCatalog.LocalNotification);
     }
 
     /// <summary>
@@ -656,9 +671,11 @@ public sealed class HubEventWireConformanceTests
         await _fixture.SaveCaptureAsync("hub-numeric-auditid-drift.json", JsonSerializer.SerializeToElement(evidence));
     }
 
-    /// <summary>G-G: audit-scoped hub events must carry string EntityId
-    /// auditIds per the frozen guards; today every producer emits numbers.</summary>
-    [Fact(Skip = "G-G: numeric auditId on all audit-scoped events vs string EntityId (guards.ts isString); suggested owner phase-09 WP-09-11 — see GAPS.md")]
+    /// <summary>G-G CLOSED: audit-scoped hub events carry string EntityId
+    /// auditIds per the frozen guards. UNSKIPPED by lead (WP-09-11): WP-09-06's
+    /// HubPayloadNormalizer stringifies entity ids recursively at the hub
+    /// boundary (idempotent, routing tolerant of both kinds).</summary>
+    [Fact]
     public void AuditScopedEvents_CarryStringAuditId_FrontendContract()
     {
         foreach (var name in new[] { "crawl-progress", "stage-changed", "audit-completed", "host-throttle", "matrix-row-validated" })

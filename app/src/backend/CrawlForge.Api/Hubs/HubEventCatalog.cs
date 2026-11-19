@@ -74,6 +74,13 @@ public static class HubEventCatalog
     /// </summary>
     public const string LocalNotification = "local-notification";
 
+    /// <summary>
+    /// Export job progress (G-I additive; WP-09-10 producer): string export/
+    /// audit ids, format wire key, frozen job-state vocabulary, local file
+    /// path when completed. At most once per second per job.
+    /// </summary>
+    public const string ExportProgress = "export-progress";
+
     /// <summary>Shell → server: join per-audit channels.</summary>
     public const string Subscribe = "subscribe";
 
@@ -98,6 +105,7 @@ public static class HubEventCatalog
         MatrixRowValidated => TimeSpan.FromSeconds(1),
         LogImportProgress => TimeSpan.FromSeconds(1),
         EmbeddingProgress => TimeSpan.FromSeconds(1),
+        ExportProgress => TimeSpan.FromSeconds(1),
         _ => null,
     };
 }
