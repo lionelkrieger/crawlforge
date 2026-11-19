@@ -135,11 +135,13 @@ public class MatrixPersistenceTests
 
         var payload = JsonSerializer.Deserialize<MatrixRowValidatedPayload>(hubEvent.PayloadJson,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-        Assert.Equal(auditId, payload!.AuditId);
+        // G-MATRIX-VERDICT: ids and verdicts are strings (frontend EntityId contract).
+        Assert.Equal(auditId.ToString(System.Globalization.CultureInfo.InvariantCulture), payload!.AuditId);
         var item = Assert.Single(payload.Rows);
         Assert.Equal(Source, item.SourceUrl);
-        Assert.Equal(RedirectMatrixVerdict.Pass, item.Verdict);
-        Assert.True(item.UrlId > 0, "The seeded source URL must resolve to its url_records identifier.");
+        Assert.Equal(MatrixVerdictNames.Of(RedirectMatrixVerdict.Pass), item.Verdict);
+        Assert.True(long.TryParse(item.UrlId, out var urlId) && urlId > 0,
+            "The seeded source URL must resolve to its url_records identifier.");
     }
 
     /// <summary>Large matrices emit in bounded batches, each throttled.</summary>

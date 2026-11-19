@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CrawlForge.Contracts.Api;
@@ -273,10 +274,20 @@ public sealed class RedirectMatrixValidator : IRedirectMatrixValidator
             {
                 var canonicalSource = _canonicalizer.Canonicalize(result.Mapping.SourceUrl);
                 var urlId = await RedirectMatrixResults.FindUrlIdAsync(connection, auditId, canonicalSource, cancellationToken).ConfigureAwait(false);
-                items.Add(new MatrixRowValidatedItem(urlId, result.Mapping.SourceUrl, result.Verdict));
+
+                // G-MATRIX-VERDICT component-side fix: the frozen frontend entry
+                // (events.ts MatrixRowValidatedEntry) requires string EntityId
+                // urlId and a string verdict; the verdict vocabulary is the
+                // §10.3/§10.6 dimension name, shared with the metric aggregates
+                // and the REST results surface. Absent URL records map to the
+                // empty string, matching the REST mapper.
+                items.Add(new MatrixRowValidatedItem(
+                    urlId > 0 ? urlId.ToString(CultureInfo.InvariantCulture) : string.Empty,
+                    result.Mapping.SourceUrl,
+                    MatrixVerdictNames.Of(result.Verdict)));
             }
 
-            var payload = new MatrixRowValidatedPayload(auditId, items);
+            var payload = new MatrixRowValidatedPayload(auditId.ToString(CultureInfo.InvariantCulture), items);
             await _hub.PublishAsync(
                 new HubEvent(
                     MatrixHubContract.EventName,

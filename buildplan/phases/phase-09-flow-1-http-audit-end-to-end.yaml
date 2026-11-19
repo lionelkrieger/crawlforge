@@ -173,9 +173,10 @@ workpieces:
   - workpiece_id: "WP-09-03"
     title: "Crawler-Trap Detection, Pagination & Crawl Input Modes (List, Sample, Signed, Proxy, Pre-Crawl)"
     phase_id: "phase-09"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "cf-wp-09-03"
     started_at: "2026-11-19T02:42:16Z"
+    completed_at: "2026-11-19T04:04:00Z"
     parallel_group: "wave-9A"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:

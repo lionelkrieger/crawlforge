@@ -204,21 +204,32 @@ public sealed record RewriteRuleCounter(int RuleIndex, string Pattern, int Rewri
 public sealed record MatrixVerdictCount(RedirectMatrixVerdict Verdict, int Count);
 
 /// <summary>
-/// One row of the <c>matrix-row-validated</c> hub batch (FS-CRAWL-002 §10.8):
-/// URL identifier, source URL, verdict. No identity dimensions (privacy invariant).
+/// One row of the <c>matrix-row-validated</c> hub batch (FS-CRAWL-002 §10.8),
+/// in the frozen frontend wire shape (<c>contracts/hub/events.ts</c>
+/// MatrixRowValidatedEntry: <c>urlId: EntityId</c>, <c>sourceUrl: string</c>,
+/// <c>verdict: string</c>). G-MATRIX-VERDICT component-side fix: identifiers
+/// serialize as strings and the verdict as its §10.3/§10.6 dimension name
+/// (<see cref="MatrixVerdictNames"/>), never as a numeric enum. The REST
+/// results surface carries the same verdict values. No identity dimensions
+/// (privacy invariant).
 /// </summary>
-/// <param name="UrlId">url_records identifier of the source URL (0 when absent).</param>
+/// <param name="UrlId">
+/// url_records identifier of the source URL as a string EntityId; the empty
+/// string when absent (matching the REST results mapper).
+/// </param>
 /// <param name="SourceUrl">Source URL of the validated matrix row.</param>
-/// <param name="Verdict">Row verdict.</param>
-public sealed record MatrixRowValidatedItem(long UrlId, string SourceUrl, RedirectMatrixVerdict Verdict);
+/// <param name="Verdict">Verdict dimension name: pass | target-mismatch | chain-exceeded | final-non-200 | canonical-mismatch.</param>
+public sealed record MatrixRowValidatedItem(string UrlId, string SourceUrl, string Verdict);
 
 /// <summary>
 /// Payload of the <c>matrix-row-validated</c> hub event (FS-CRAWL-002 §10.8):
-/// audit identifier plus a batch of validated rows.
+/// audit identifier plus a batch of validated rows. The audit identifier is a
+/// string EntityId per the frozen frontend payload contract (G-MATRIX-VERDICT
+/// / G-G component-side fix).
 /// </summary>
-/// <param name="AuditId">Audit identifier.</param>
+/// <param name="AuditId">Audit identifier as a string EntityId.</param>
 /// <param name="Rows">Batch of validated rows.</param>
-public sealed record MatrixRowValidatedPayload(long AuditId, IReadOnlyList<MatrixRowValidatedItem> Rows);
+public sealed record MatrixRowValidatedPayload(string AuditId, IReadOnlyList<MatrixRowValidatedItem> Rows);
 
 /// <summary>
 /// Hub emission contract constants for the migration matrix (FS-CRAWL-002 §10.8).

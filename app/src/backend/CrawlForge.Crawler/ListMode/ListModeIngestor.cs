@@ -15,7 +15,10 @@ namespace CrawlForge.Crawler.ListMode;
 /// link discovery and sitemap expansion disabled); with <c>true</c> it is
 /// list-bounded (only on-list discoveries enqueue — see <see cref="ListDiscoveryGate"/>).
 /// Persistence uses provider-neutral SQL through the locked <see cref="IDbProvider"/>;
-/// no endpoint other than the configured database is ever contacted.
+/// no endpoint other than the configured database is ever contacted. Seeding is
+/// idempotent and race-safe (G-MATRIX-SEED-RACE seeder-side fix): a concurrent
+/// inserter of the same canonical URL is counted as a duplicate, never fails
+/// the audit.
 /// </summary>
 public sealed class ListModeIngestor : IListModeIngestor
 {
@@ -96,11 +99,13 @@ public sealed class ListModeIngestor : IListModeIngestor
             accepted.Add((canonical, uri));
         }
 
+        var persisted = accepted;
+        var raceDuplicates = 0;
         if (accepted.Count > 0)
         {
-            await PersistSeedsAsync(auditId, accepted, cancellationToken).ConfigureAwait(false);
+            (persisted, raceDuplicates) = await PersistSeedsAsync(auditId, accepted, cancellationToken).ConfigureAwait(false);
 
-            foreach (var (canonical, uri) in accepted)
+            foreach (var (canonical, uri) in persisted)
             {
                 await _frontier.EnqueueAsync(
                     new FrontierEntry(canonical, uri.Host, Depth: 0, Priority: 1.0, DiscoverySource.List),
@@ -108,7 +113,7 @@ public sealed class ListModeIngestor : IListModeIngestor
             }
         }
 
-        return new ListIngestionResult(accepted.Count, duplicateCount, invalidCount);
+        return new ListIngestionResult(persisted.Count, duplicateCount + raceDuplicates, invalidCount);
     }
 
     /// <summary>
@@ -170,35 +175,121 @@ public sealed class ListModeIngestor : IListModeIngestor
         return urls;
     }
 
-    private async Task PersistSeedsAsync(
+    /// <summary>
+    /// Persists list seeds idempotently (G-MATRIX-SEED-RACE seeder-side fix):
+    /// each row is re-checked inside the write transaction before insert, and
+    /// a unique-constraint failure (a concurrent inserter won the race, e.g.
+    /// the matrix auto-seed racing the crawl's own seed insert) is re-checked
+    /// and counted as a duplicate instead of failing the audit. Write
+    /// contention that invalidates the transaction snapshot (WAL busy) retries
+    /// the whole batch on a fresh transaction with a bounded attempt count;
+    /// the re-check then sees the concurrent inserter's committed rows. Only
+    /// actually persisted rows are returned for frontier enqueue.
+    /// Provider-neutral: no dialect-specific upsert syntax is used.
+    /// </summary>
+    private async Task<(List<(string CanonicalUrl, Uri Uri)> Persisted, int RaceDuplicates)> PersistSeedsAsync(
         long auditId,
         List<(string CanonicalUrl, Uri Uri)> accepted,
         CancellationToken cancellationToken)
     {
-        await using var connection = await _provider.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var transaction = connection.BeginTransaction();
+        const int maxAttempts = 3;
+        DbException? lastContention = null;
 
-        foreach (var (canonical, uri) in accepted)
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
         {
-            await using var command = connection.CreateCommand();
-            command.Transaction = transaction;
-            command.CommandText =
-                "INSERT INTO `url_records` " +
-                "(`audit_id`, `canonical_url`, `host`, `path`, `depth`, `discovery_source`, `status_class`, `robots_state`, `indexability_flags`, `is_indexable`) " +
-                "VALUES (@auditId, @canonicalUrl, @host, @path, 0, @discoverySource, @statusClass, @robotsState, @indexabilityFlags, @isIndexable)";
-            AddParameter(command, "@auditId", auditId);
-            AddParameter(command, "@canonicalUrl", canonical);
-            AddParameter(command, "@host", uri.Host);
-            AddParameter(command, "@path", uri.AbsolutePath);
-            AddParameter(command, "@discoverySource", (int)DiscoverySource.List);
-            AddParameter(command, "@statusClass", (int)CrawlStatusClass.NotCrawled);
-            AddParameter(command, "@robotsState", (int)RobotsState.Unknown);
-            AddParameter(command, "@indexabilityFlags", (int)IndexabilityFlags.None);
-            AddParameter(command, "@isIndexable", true);
-            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await using var connection = await _provider.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+            await using var transaction = connection.BeginTransaction();
+
+            var persisted = new List<(string CanonicalUrl, Uri Uri)>(accepted.Count);
+            var raceDuplicates = 0;
+            var contended = false;
+
+            foreach (var (canonical, uri) in accepted)
+            {
+                if (await SeedExistsAsync(connection, transaction, auditId, canonical, cancellationToken).ConfigureAwait(false))
+                {
+                    raceDuplicates++;
+                    continue;
+                }
+
+                try
+                {
+                    await using var command = connection.CreateCommand();
+                    command.Transaction = transaction;
+                    command.CommandText =
+                        "INSERT INTO `url_records` " +
+                        "(`audit_id`, `canonical_url`, `host`, `path`, `depth`, `discovery_source`, `status_class`, `robots_state`, `indexability_flags`, `is_indexable`) " +
+                        "VALUES (@auditId, @canonicalUrl, @host, @path, 0, @discoverySource, @statusClass, @robotsState, @indexabilityFlags, @isIndexable)";
+                    AddParameter(command, "@auditId", auditId);
+                    AddParameter(command, "@canonicalUrl", canonical);
+                    AddParameter(command, "@host", uri.Host);
+                    AddParameter(command, "@path", uri.AbsolutePath);
+                    AddParameter(command, "@discoverySource", (int)DiscoverySource.List);
+                    AddParameter(command, "@statusClass", (int)CrawlStatusClass.NotCrawled);
+                    AddParameter(command, "@robotsState", (int)RobotsState.Unknown);
+                    AddParameter(command, "@indexabilityFlags", (int)IndexabilityFlags.None);
+                    AddParameter(command, "@isIndexable", true);
+                    await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    persisted.Add((canonical, uri));
+                }
+                catch (DbException ex)
+                {
+                    // A concurrent inserter committed the same canonical URL
+                    // between the re-check and the insert: count as duplicate.
+                    bool exists;
+                    try
+                    {
+                        exists = await SeedExistsAsync(connection, transaction, auditId, canonical, cancellationToken).ConfigureAwait(false);
+                    }
+                    catch (DbException)
+                    {
+                        exists = false;
+                    }
+
+                    if (exists)
+                    {
+                        raceDuplicates++;
+                        continue;
+                    }
+
+                    // Snapshot/write contention: retry the batch on a fresh
+                    // transaction (disposal rolls this one back).
+                    lastContention = ex;
+                    contended = true;
+                    break;
+                }
+            }
+
+            if (contended)
+            {
+                continue;
+            }
+
+            transaction.Commit();
+            return (persisted, raceDuplicates);
         }
 
-        transaction.Commit();
+        throw new InvalidOperationException(
+            $"List seeding for audit {auditId} remained contended after {maxAttempts} attempts.", lastContention);
+    }
+
+    private static async Task<bool> SeedExistsAsync(
+        DbConnection connection,
+        DbTransaction transaction,
+        long auditId,
+        string canonicalUrl,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
+            "SELECT COUNT(*) FROM `url_records` WHERE `audit_id` = @auditId AND `canonical_url` = @canonicalUrl";
+        AddParameter(command, "@auditId", auditId);
+        AddParameter(command, "@canonicalUrl", canonicalUrl);
+        var result = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        return Convert.ToInt64(result, System.Globalization.CultureInfo.InvariantCulture) > 0;
     }
 
     private static void AddParameter(DbCommand command, string name, object value)
