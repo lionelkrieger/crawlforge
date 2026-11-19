@@ -334,7 +334,7 @@ These four rules exist because v1.1 checked workpieces in isolation with unit te
 ### 12.2 Contract-conformance rule
 
 - Every cross-layer payload — REST request/response, hub event, Electron IPC message, MCP tool/resource/prompt shape, storage-to-engine row — has a **conformance test** in `app\tests\CrawlForge.ContractConformance.Tests` asserting the exact wire shape against the locked contracts (both directions where applicable).
-- A workpiece that adds or changes a payload lists it in `contract_tests` and delivers the test in the same workpiece. The known REST counter-key mismatch (engine `counters_json` keys vs `AuditWireMapper.ParseCounters`) is tracked as a `KnownGap` test owned by WP-09-06; phase-08 gates exclude exactly that gap, every later gate runs the full suite.
+- A workpiece that adds or changes a payload lists it in `contract_tests` and delivers the test in the same workpiece. The known REST counter-key mismatch (engine `counters_json` keys vs `AuditWireMapper.ParseCounters`) is tracked as a `KnownGap` test owned by WP-09-06; phase-08 gates and the phase-09 wave 9A and 9B gates exclude exactly that gap (it cannot pass before WP-09-06 lands); the wave 9C gate and every later gate run the full suite.
 - Unit tests that construct their own inputs prove logic, not integration. They never substitute for a conformance test or a harness run.
 
 ### 12.3 UI reachability rule
