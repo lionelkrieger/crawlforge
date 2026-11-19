@@ -17,7 +17,7 @@ import {
 } from '../common/guards';
 import type { AuditCounters, AuditState, HttpStatusClass } from '../api/audits';
 import type { CompletionActionResult, ScheduleRunOutcome, ScheduleTriggerType } from '../api/schedules';
-import type { ExportDeliveryState } from '../api/exports';
+import type { ExportDeliveryState, ExportJobState } from '../api/exports';
 import type { LogCorrelationSummary, LogImportCounters } from '../api/logs';
 import type { EmbeddingProvider } from '../api/semantics';
 import type { SystemHealthSnapshot } from '../api/system';
@@ -29,12 +29,14 @@ import type {
   EmbeddingCompletedPayload,
   EmbeddingProgressPayload,
   ExportDeliveryPayload,
+  ExportProgressPayload,
   FindingsUpdatedPayload,
   HostThrottlePayload,
   HubClientMessage,
   HubEvent,
   HubServerEvent,
   HubServerEventName,
+  LocalNotificationPayload,
   LogImportCompletedPayload,
   LogImportProgressPayload,
   MatrixRowValidatedEntry,
@@ -71,6 +73,8 @@ const TRIGGER_TYPES: readonly ScheduleTriggerType[] = ['scheduled', 'catch-up', 
 const RUN_OUTCOMES: readonly ScheduleRunOutcome[] = ['completed', 'failed', 'cancelled'];
 
 const DELIVERY_STATES: readonly ExportDeliveryState[] = ['delivered', 'retrying', 'failed'];
+
+const EXPORT_JOB_STATES: readonly ExportJobState[] = ['queued', 'running', 'completed', 'failed'];
 
 const EMBEDDING_PROVIDERS: readonly EmbeddingProvider[] = ['onnx', 'loopback-daemon'];
 
@@ -347,6 +351,24 @@ export function isAuditChannelPayload(value: unknown): value is AuditChannelPayl
   return isRecord(value) && isArrayOf(value.auditIds, isString);
 }
 
+/** local-notification payload guard (CR-027 additive event). */
+export function isLocalNotificationPayload(value: unknown): value is LocalNotificationPayload {
+  return isRecord(value) && isString(value.title) && isString(value.message);
+}
+
+/** export-progress payload guard (G-I additive event; nulls tolerated per wire). */
+export function isExportProgressPayload(value: unknown): value is ExportProgressPayload {
+  return (
+    isRecord(value) &&
+    isString(value.exportId) &&
+    isString(value.auditId) &&
+    isString(value.format) &&
+    isOneOf(value.state, EXPORT_JOB_STATES) &&
+    (value.filePath === null || value.filePath === undefined || isString(value.filePath)) &&
+    (value.message === null || value.message === undefined || isString(value.message))
+  );
+}
+
 /** Payload validator dispatch keyed by server event name. */
 const SERVER_PAYLOAD_GUARDS: {
   readonly [E in HubServerEventName]: (value: unknown) => boolean;
@@ -368,7 +390,9 @@ const SERVER_PAYLOAD_GUARDS: {
   'log-import-progress': isLogImportProgressPayload,
   'log-import-completed': isLogImportCompletedPayload,
   'embedding-progress': isEmbeddingProgressPayload,
-  'embedding-completed': isEmbeddingCompletedPayload
+  'embedding-completed': isEmbeddingCompletedPayload,
+  'local-notification': isLocalNotificationPayload,
+  'export-progress': isExportProgressPayload
 };
 
 /** True when the value is a known server event wire name. */

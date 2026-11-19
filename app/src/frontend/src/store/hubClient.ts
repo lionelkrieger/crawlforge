@@ -2,7 +2,7 @@
  * SignalR hub client implementation (contracts/hub/client).
  *
  * One WebSocket connection to the loopback hub feeds the demultiplexer
- * (FS-CRAWL-001 §10.3, FS-CRAWL-002 §8.1). All 18 server events are wired;
+ * (FS-CRAWL-001 §10.3, FS-CRAWL-002 §8.1). All 20 server events are wired;
  * subscribe/unsubscribe join/leave per-audit channels (server methods take
  * a string[] — the facade bridges the locked AuditChannelPayload shape).
  * system-health flows independently of per-audit subscriptions (§7.2).

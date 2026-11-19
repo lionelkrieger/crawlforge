@@ -1,6 +1,7 @@
 /**
- * Hub event contract tests: all 19 event contracts (11 baseline rows incl.
- * the subscribe/unsubscribe channel + 8 additive), discriminated-union
+ * Hub event contract tests: all 21 event contracts (11 baseline rows incl.
+ * the subscribe/unsubscribe channel + 10 additive: Appendix C's 8 plus
+ * CR-027 local-notification and G-I export-progress), discriminated-union
  * exhaustiveness, payload guards, and additive payload fields
  * (FS-CRAWL-001 §10.3; FS-CRAWL-002 §7.2, Appendix C).
  */
@@ -64,20 +65,22 @@ function classify(event: HubServerEvent): 'baseline' | 'additive' {
     case 'log-import-completed':
     case 'embedding-progress':
     case 'embedding-completed':
+    case 'local-notification':
+    case 'export-progress':
       return 'additive';
     default:
       return assertNeverHubEvent(event);
   }
 }
 
-describe('hub event catalog (19 contracts / 20 wire names)', () => {
-  it('lists exactly 18 server events and 2 client channel messages', () => {
-    expect(HUB_SERVER_EVENT_NAMES).toHaveLength(18);
+describe('hub event catalog (21 contracts / 22 wire names)', () => {
+  it('lists exactly 20 server events and 2 client channel messages', () => {
+    expect(HUB_SERVER_EVENT_NAMES).toHaveLength(20);
     expect(HUB_CLIENT_MESSAGE_NAMES).toHaveLength(2);
-    expect(catalogNames).toHaveLength(20);
+    expect(catalogNames).toHaveLength(22);
   });
 
-  it('counts 11 baseline contracts (10 events + 1 channel) and 8 additive', () => {
+  it('counts 11 baseline contracts (10 events + 1 channel) and 10 additive', () => {
     const baselineServer = catalogNames.filter(
       (name) => HUB_EVENT_CATALOG[name].direction === 'server' && !HUB_EVENT_CATALOG[name].additive
     );
@@ -88,13 +91,13 @@ describe('hub event catalog (19 contracts / 20 wire names)', () => {
       (name) => HUB_EVENT_CATALOG[name].direction === 'client'
     );
     expect(baselineServer).toHaveLength(10);
-    expect(additiveServer).toHaveLength(8);
+    expect(additiveServer).toHaveLength(10);
     // subscribe/unsubscribe are two messages of ONE channel contract.
     expect(clientChannel).toHaveLength(2);
-    expect(baselineServer.length + 1 + additiveServer.length).toBe(19);
+    expect(baselineServer.length + 1 + additiveServer.length).toBe(21);
   });
 
-  it('names the 8 additive events exactly as Appendix C', () => {
+  it('names the 10 additive events exactly (Appendix C 8 + CR-027 + G-I)', () => {
     const additive = catalogNames
       .filter((name) => HUB_EVENT_CATALOG[name].additive)
       .sort();
@@ -102,7 +105,9 @@ describe('hub event catalog (19 contracts / 20 wire names)', () => {
       [
         'embedding-completed',
         'embedding-progress',
+        'export-progress',
         'host-throttle',
+        'local-notification',
         'log-import-completed',
         'log-import-progress',
         'matrix-row-validated',
@@ -169,6 +174,27 @@ describe('hub payload guards', () => {
         payload: { ...hubPayloadFixtures['export-delivery'], state: 'pending' }
       })
     ).toBe(false);
+    // CR-027 local-notification: both members required strings.
+    expect(
+      isHubServerEvent({
+        event: 'local-notification',
+        payload: { title: 'Audit completed' }
+      })
+    ).toBe(false);
+    // G-I export-progress: frozen job-state vocabulary; 'delivering' is
+    // ledger-only (WP-09-10 G-F) and must be rejected on the hub.
+    expect(
+      isHubServerEvent({
+        event: 'export-progress',
+        payload: { ...hubPayloadFixtures['export-progress'], state: 'delivering' }
+      })
+    ).toBe(false);
+    expect(
+      isHubServerEvent({
+        event: 'export-progress',
+        payload: { ...hubPayloadFixtures['export-progress'], exportId: 90 }
+      })
+    ).toBe(false);
   });
 
   it('accepts the subscribe/unsubscribe channel and rejects it as server events', () => {
@@ -181,7 +207,7 @@ describe('hub payload guards', () => {
     expect(isHubClientMessage({ event: 'subscribe', payload: {} })).toBe(false);
   });
 
-  it('classifies all 18 events through the exhaustive switch', () => {
+  it('classifies all 20 events through the exhaustive switch', () => {
     const events: HubServerEvent[] = HUB_SERVER_EVENT_NAMES.map((name) => ({
       event: name,
       payload: hubPayloadFixtures[name]
@@ -189,7 +215,7 @@ describe('hub payload guards', () => {
     const baseline = events.filter((event) => classify(event) === 'baseline');
     const additive = events.filter((event) => classify(event) === 'additive');
     expect(baseline).toHaveLength(10);
-    expect(additive).toHaveLength(8);
+    expect(additive).toHaveLength(10);
   });
 });
 

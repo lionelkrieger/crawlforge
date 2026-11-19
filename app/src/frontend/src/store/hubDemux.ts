@@ -34,7 +34,9 @@ import type {
   LogImportProgressPayload,
   LogImportCompletedPayload,
   EmbeddingProgressPayload,
-  EmbeddingCompletedPayload
+  EmbeddingCompletedPayload,
+  LocalNotificationPayload,
+  ExportProgressPayload
 } from '../contracts/hub/events';
 import { HUB_SERVER_EVENT_NAMES } from '../contracts/hub/events';
 import type { HubActivityEntry } from '../contracts/store/state';
@@ -314,6 +316,29 @@ export function createHubDemux(options: HubDemuxOptions) {
       ingestEmbeddingCompleted(live, payload.auditId, payload.finalCounts, payload.passes);
       recordActivity('embedding-completed', payload);
       relay({ event: 'embedding-completed', payload });
+    },
+
+    'local-notification': (payload: LocalNotificationPayload) => {
+      // CR-027 (05/02 §76): OS-level notification through the platform API
+      // (Electron renderer). Guarded — unavailable/denied contexts degrade to
+      // the activity feed + plugin relay only; never throws into the demux.
+      try {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+          new Notification(payload.title, { body: payload.message });
+        }
+      } catch {
+        // Notification construction can throw in restricted contexts — advisory.
+      }
+      recordActivity('local-notification', payload);
+      relay({ event: 'local-notification', payload });
+    },
+
+    'export-progress': (payload: ExportProgressPayload) => {
+      // G-I additive export telemetry: activity feed + plugin relay. Export
+      // job state is polled over REST by the export dialog (no live slice —
+      // retention discipline: no raw export history in the telemetry store).
+      recordActivity('export-progress', payload);
+      relay({ event: 'export-progress', payload });
     }
   };
 

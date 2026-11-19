@@ -4,8 +4,10 @@
  *
  * Spec surface: FS-CRAWL-001 §10.3 (11 baseline rows: 10 server events plus
  * the subscribe/unsubscribe channel) + FS-CRAWL-002 §7.2 and Appendix C
- * (8 additive server events). 19 event contracts total; 20 distinct wire
- * names (subscribe and unsubscribe are two messages of one channel).
+ * (8 additive server events) + CR-027 local-notification (05/02 §76) +
+ * G-I export-progress (WP-09-10 producer, §7.2 additive export telemetry).
+ * 21 event contracts total; 22 distinct wire names (subscribe and unsubscribe
+ * are two messages of one channel).
  *
  * Additive payload fields (Appendix C): crawl-progress gains wafBlocked,
  * throttled-host count, mean effective rate, and optional matrix counters;
@@ -22,7 +24,7 @@
 import type { EntityId } from '../common/primitives';
 import type { AuditCounters, AuditState, HttpStatusClass } from '../api/audits';
 import type { CompletionActionResult, ScheduleRunOutcome, ScheduleTriggerType } from '../api/schedules';
-import type { ExportDeliveryState } from '../api/exports';
+import type { ExportDeliveryState, ExportJobState } from '../api/exports';
 import type { LogCorrelationSummary, LogImportCounters } from '../api/logs';
 import type { EmbeddingProvider } from '../api/semantics';
 import type { SystemHealthSnapshot } from '../api/system';
@@ -233,6 +235,31 @@ export interface EmbeddingCompletedPayload {
   readonly passes: EmbeddingPassSummary;
 }
 
+/**
+ * local-notification — CR-027 (05/02 §76): OS-level notification request.
+ * The shell renders it through the platform Notification API; title and
+ * message are the only payload members (no identity/machine dimensions).
+ */
+export interface LocalNotificationPayload {
+  readonly title: string;
+  readonly message: string;
+}
+
+/**
+ * export-progress — G-I additive export telemetry (WP-09-10 producer).
+ * At most once per second per export job while it runs; string EntityIds,
+ * state from the frozen ExportJobState vocabulary. filePath is set when
+ * completed; message carries failure/progress detail (omitted when null).
+ */
+export interface ExportProgressPayload {
+  readonly exportId: EntityId;
+  readonly auditId: EntityId;
+  readonly format: string;
+  readonly state: ExportJobState;
+  readonly filePath: string | null;
+  readonly message: string | null;
+}
+
 // ── Client channel (FS-CRAWL-001 §10.3: subscribe / unsubscribe) ───────────
 
 /**
@@ -246,7 +273,7 @@ export interface AuditChannelPayload {
 
 // ── Discriminated unions ───────────────────────────────────────────────────
 
-/** All 18 server -> shell events (10 baseline + 8 additive). */
+/** All 20 server -> shell events (10 baseline + 10 additive). */
 export type HubServerEvent =
   | HubEventEnvelope<'crawl-progress', CrawlProgressPayload>
   | HubEventEnvelope<'url-batch', UrlBatchPayload>
@@ -265,7 +292,9 @@ export type HubServerEvent =
   | HubEventEnvelope<'log-import-progress', LogImportProgressPayload>
   | HubEventEnvelope<'log-import-completed', LogImportCompletedPayload>
   | HubEventEnvelope<'embedding-progress', EmbeddingProgressPayload>
-  | HubEventEnvelope<'embedding-completed', EmbeddingCompletedPayload>;
+  | HubEventEnvelope<'embedding-completed', EmbeddingCompletedPayload>
+  | HubEventEnvelope<'local-notification', LocalNotificationPayload>
+  | HubEventEnvelope<'export-progress', ExportProgressPayload>;
 
 /** Shell -> server channel messages (one channel, two messages). */
 export type HubClientMessage =
@@ -275,13 +304,13 @@ export type HubClientMessage =
 /** Any hub message in either direction. */
 export type HubEvent = HubServerEvent | HubClientMessage;
 
-/** Wire names of the 18 server events. */
+/** Wire names of the 20 server events. */
 export type HubServerEventName = HubServerEvent['event'];
 
 /** Wire names of the 2 client channel messages. */
 export type HubClientMessageName = HubClientMessage['event'];
 
-/** All 20 wire names. */
+/** All 22 wire names. */
 export type HubEventName = HubEvent['event'];
 
 /** Payload lookup by server event name. */
@@ -309,7 +338,7 @@ export interface HubEventDefinition {
 }
 
 /**
- * Frozen catalog of all 20 wire names / 19 event contracts. The
+ * Frozen catalog of all 22 wire names / 21 event contracts. The
  * subscribe/unsubscribe pair is one channel contract (baseline row 11).
  */
 export const HUB_EVENT_CATALOG = {
@@ -331,11 +360,13 @@ export const HUB_EVENT_CATALOG = {
   'log-import-completed': { direction: 'server', additive: true },
   'embedding-progress': { direction: 'server', additive: true },
   'embedding-completed': { direction: 'server', additive: true },
+  'local-notification': { direction: 'server', additive: true },
+  'export-progress': { direction: 'server', additive: true },
   subscribe: { direction: 'client', additive: false },
   unsubscribe: { direction: 'client', additive: false }
 } as const satisfies Record<HubEventName, HubEventDefinition>;
 
-/** Ordered wire names of the 18 server events (exhaustiveness-locked below). */
+/** Ordered wire names of the 20 server events (exhaustiveness-locked below). */
 export const HUB_SERVER_EVENT_NAMES = [
   'crawl-progress',
   'url-batch',
@@ -354,7 +385,9 @@ export const HUB_SERVER_EVENT_NAMES = [
   'log-import-progress',
   'log-import-completed',
   'embedding-progress',
-  'embedding-completed'
+  'embedding-completed',
+  'local-notification',
+  'export-progress'
 ] as const satisfies readonly HubServerEventName[];
 
 /** Wire names of the client channel messages. */

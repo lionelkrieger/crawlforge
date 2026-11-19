@@ -63,7 +63,7 @@ export const healthSnapshot: SystemHealthSnapshot = {
 };
 
 /**
- * One valid payload per server event (18 entries). The mapped type forces
+ * One valid payload per server event (20 entries). The mapped type forces
  * exhaustiveness: a new union member without a fixture fails typecheck.
  */
 export const hubPayloadFixtures: { readonly [E in HubServerEventName]: HubServerPayloadOf<E> } = {
@@ -173,6 +173,18 @@ export const hubPayloadFixtures: { readonly [E in HubServerEventName]: HubServer
     auditId: 'audit-1',
     finalCounts: { embedded: 400, totalEligible: 400, skipped: 0 },
     passes: { clusters: 6, linkOpportunities: 18, lowRelevanceLinks: 4 }
+  },
+  'local-notification': {
+    title: 'Audit completed',
+    message: 'Fixture audit finished: 400 URLs fetched.'
+  },
+  'export-progress': {
+    exportId: 'export-1',
+    auditId: 'audit-1',
+    format: 'json',
+    state: 'completed',
+    filePath: 'C:\\exports\\fixture-audit.json',
+    message: null
   }
 };
 

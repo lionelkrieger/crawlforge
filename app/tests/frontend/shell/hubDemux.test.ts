@@ -1,5 +1,5 @@
 /**
- * Hub demultiplexer tests: all 18 server events route to the right slices,
+ * Hub demultiplexer tests: all 20 server events route to the right slices,
  * counters aggregate (never raw history), the activity ring stays bounded,
  * system-health bypasses the feed, host-throttle reconciles, and the facade
  * manages subscriptions + reconnect re-subscribe + cleanup.
@@ -34,13 +34,13 @@ const health = {
 };
 
 describe('event coverage', () => {
-  it('registers a handler for every one of the 18 server events', async () => {
+  it('registers a handler for every one of the 20 server events', async () => {
     const graph = demuxGraph();
     await graph.facade.start();
     for (const name of HUB_SERVER_EVENT_NAMES) {
       expect(graph.connection.handlerCount(name)).toBe(1);
     }
-    expect(HUB_SERVER_EVENT_NAMES).toHaveLength(18);
+    expect(HUB_SERVER_EVENT_NAMES).toHaveLength(20);
   });
 });
 
@@ -286,5 +286,40 @@ describe('facade subscription lifecycle', () => {
     await facade.start();
     await facade.start();
     expect(connection.startCalls).toBe(1);
+  });
+});
+
+describe('additive events (CR-027 local-notification, G-I export-progress)', () => {
+  it('local-notification records activity without throwing when Notification is unavailable', () => {
+    const { store, demux } = demuxGraph();
+    // jsdom has no platform Notification API — the handler must degrade to
+    // the activity feed + relay only (guarded, never throws into the demux).
+    expect(typeof Notification).toBe('undefined');
+    demux.ingest({
+      event: 'local-notification',
+      payload: { title: 'Audit completed', message: 'Fixture audit finished.' }
+    });
+    const entries = store.getState().hub.recentActivity.entries;
+    expect(entries.at(-1)?.event).toBe('local-notification');
+  });
+
+  it('export-progress records activity and retains no raw export history', () => {
+    const { store, live, demux } = demuxGraph();
+    demux.ingest({
+      event: 'export-progress',
+      payload: {
+        exportId: '90',
+        auditId: '7',
+        format: 'json',
+        state: 'completed',
+        filePath: 'C:\\exports\\fixture.json',
+        message: null
+      }
+    });
+    const entries = store.getState().hub.recentActivity.entries;
+    expect(entries.at(-1)?.event).toBe('export-progress');
+    expect(entries.at(-1)?.auditId).toBe('7');
+    // Retention discipline: no export rows in the live telemetry store.
+    expect(JSON.stringify(live.getState())).not.toContain('fixture.json');
   });
 });
