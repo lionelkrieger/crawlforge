@@ -1,0 +1,21 @@
+[07:17:50] phase-09 wave-9A gate (after_each_wave, 8 commands; KnownGap filter per YAML)
+[07:17:51] dotnet --version (cwd app): 10.0.404
+[07:17:51] GATE 01-host-build: dotnet build E:\Crawlforge\app\src\backend\CrawlForge.Host -c Debug
+[07:18:06] PASS 01-host-build (exit 0):     0 Error(s) |  | Time Elapsed 00:00:14.53 | 
+[07:18:06] GATE 02-frontend-build: cmd /c npm run build
+[07:18:08] PASS 02-frontend-build (exit 0): - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting | - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit. | ✓ built in 711ms | 
+[07:18:08] GATE 03-electron-tsc: cmd /c npx tsc -p tsconfig.build.json
+[07:18:11] PASS 03-electron-tsc (exit 0): npm notice run crawlforge@0.0.1 npx | npm notice run tsc -p tsconfig.build.json | 
+[07:18:11] GATE 04-sln-test: dotnet test E:\Crawlforge\app\CrawlForge.sln --filter KnownGap!=WP-09-06
+[08:36:49] PASS 04-sln-test (exit 0):   Skipped CrawlForge.ContractConformance.Tests.AuditCountersWireConformanceTests.HubCounters_MatchRestWireKeys [1 ms] |  | Passed!  - Failed:     0, Passed:    92, Skipped:    23, Total:   115, Duration: 17 m 38 s - CrawlForge.ContractConformance.Tests.dll (net10.0) | 
+[08:36:49] GATE 05-conformance: dotnet test E:\Crawlforge\app\tests\CrawlForge.ContractConformance.Tests --filter KnownGap!=WP-09-06
+[08:55:13] PASS 05-conformance (exit 0):   Skipped CrawlForge.ContractConformance.Tests.AuditCountersWireConformanceTests.HubCounters_MatchRestWireKeys [1 ms] |  | Passed!  - Failed:     0, Passed:    92, Skipped:    23, Total:   115, Duration: 18 m 14 s - CrawlForge.ContractConformance.Tests.dll (net10.0) | 
+[08:55:13] GATE 06-governance: dotnet run --project E:\Crawlforge\app\tools\governance-analyzer -- --root E:\Crawlforge\app\src --fail-on-violation
+[08:55:20] PASS 06-governance (exit 0):   "violationsByRule": {}, |   "passed": true | } | 
+[08:55:20] GATE 07-traceability: python E:\Crawlforge\audit-work\register\check_traceability.py
+[08:55:20] PASS 07-traceability (exit 0): PASS: 250 tagged, 25 untagged and accounted for, 275 total; UI: 245 bound, 5 exempt, 24 surfaces. Wrote architecture/TRACEABILITY.md | 
+[08:55:21] restored TRACEABILITY.md (CRLF-only side effect)
+[08:55:21] GATE 08-buildplan: python E:\Crawlforge\audit-work\register\check_buildplan.py
+[08:55:22] PASS 08-buildplan (exit 0): PASS: 56 workpieces in 9 phases (8 scheduled); 250 in-scope capabilities, 246 non-works all covered; 24 surfaces cited; 32 traps known; 58 criteria; no ownership overlaps. Baseline states: defect=2, missing_engine=62, missing_ui=87, partial=36, unwired=59, works=4 | 
+[08:55:22] restored conformance captured/*.json evidence side effects
+[08:55:22] WAVE-9A GATE: PASS (8/8)

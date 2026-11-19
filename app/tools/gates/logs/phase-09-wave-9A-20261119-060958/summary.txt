@@ -1,0 +1,12 @@
+[06:09:58] phase-09 wave-9A gate (after_each_wave, 8 commands; KnownGap filter per YAML)
+[06:09:58] dotnet --version (cwd app): 10.0.404
+[06:09:58] GATE 01-host-build: dotnet build E:\Crawlforge\app\src\backend\CrawlForge.Host -c Debug
+[06:10:13] PASS 01-host-build (exit 0):     0 Error(s) |  | Time Elapsed 00:00:14.46 | 
+[06:10:13] GATE 02-frontend-build: cmd /c npm run build
+[06:10:17] PASS 02-frontend-build (exit 0): - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting | - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit. | ✓ built in 1.08s | 
+[06:10:17] GATE 03-electron-tsc: cmd /c npx tsc -p tsconfig.build.json
+[06:10:30] PASS 03-electron-tsc (exit 0): npm notice run crawlforge@0.0.1 npx | npm notice run tsc -p tsconfig.build.json | 
+[06:10:30] GATE 04-sln-test: dotnet test E:\Crawlforge\app\CrawlForge.sln --filter KnownGap!=WP-09-06
+[07:11:24] FAIL 04-sln-test (exit 1): Passed!  - Failed:     0, Passed:    38, Skipped:     0, Total:    38, Duration: 2 m 5 s - CrawlForge.Host.Tests.dll (net10.0) |  | Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 54 m 42 s - CrawlForge.Scale.Benchmarks.dll (net10.0) | 
+[07:11:25] restored conformance captured/*.json evidence side effects
+[07:11:25] WAVE-9A GATE: FAIL

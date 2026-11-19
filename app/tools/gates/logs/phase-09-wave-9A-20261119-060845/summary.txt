@@ -1,0 +1,5 @@
+[06:08:46] phase-09 wave-9A gate (after_each_wave, 8 commands; KnownGap filter per YAML)
+[06:08:46] dotnet --version (cwd app): 10.0.404
+[06:08:46] GATE 01-host-build: dotnet build E:\Crawlforge\app\src\backend\CrawlForge.Host -c Debug
+[06:08:46] FAIL 01-host-build (exit 1): Switch: -c Debug |  | For switch syntax, type "MSBuild -help" | 
+[06:08:46] WAVE-9A GATE: FAIL
