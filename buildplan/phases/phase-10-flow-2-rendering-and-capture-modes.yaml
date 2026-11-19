@@ -11,8 +11,10 @@ status: "pending"
 depends_on_phases: ["phase-08", "phase-09"]
 max_parallel_agents: 3
 parallel_waves:
+  - wave_id: "wave-10A0"
+    workpiece_ids: ["WP-10-A1"]   # contract amendment, runs alone (AGENT-INSTRUCTIONS §11)
   - wave_id: "wave-10A"
-    workpiece_ids: ["WP-10-01", "WP-10-02"]
+    workpiece_ids: ["WP-10-01", "WP-10-02", "WP-10-05"]
   - wave_id: "wave-10B"
     workpiece_ids: ["WP-10-03"]
   - wave_id: "wave-10C"
@@ -75,6 +77,7 @@ workpieces:
       - "E:\\Crawlforge\\app\\assets\\browser\\"
       - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Rendering\\"
     deliverables:
+      - "Loopback proxy records transferred bytes per subresource so the oversized-image rule can measure images in rendered and full capture modes (CR-031)"
       - "Direct CDP control layer (D-002): WebSocket CDP client, Target/Page/Network/Runtime domains, navigation + wait rule, screenshot, console capture, infinite-scroll handling; PuppeteerSharp removed from the rendering path"
       - "Pinned Chrome for Testing bundle (D-003): local-only resolution from packaged assets, version pin recorded, no remote driver/browser download at runtime; browser settings section in UI-21 shows the pinned version"
       - "Stealth rendering profile applied; bounded concurrency pool; render timeout/failure isolation"
@@ -187,7 +190,7 @@ workpieces:
     phase_id: "phase-10"
     status: "pending"
     parallel_group: "wave-10C"
-    depends_on_workpieces: ["WP-10-01", "WP-10-02", "WP-10-03"]
+    depends_on_workpieces: ["WP-10-01", "WP-10-02", "WP-10-03", "WP-10-05"]
     context_files:
       - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
       - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
@@ -222,3 +225,107 @@ workpieces:
       - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode dual --traps late-meta-change,script-injected-content,js-only-link"
     done_when: "Criteria #50/#51/#52 pass through UI-started audits in js/dual/adaptive modes; soft-404-client-route renders 'Page not found' and is reported from the rendered document (site-type verdict finalized in phase-11); /__fixture/requests nonGet == []."
     acceptance_criteria_refs: [50, 51, 52]
+
+  - workpiece_id: "WP-10-05"
+    title: "Phase-09 Notation-Gap Carryovers (D-021) — Categories, WAF Classes, Redirect Cases, Deprecated Structured Data"
+    phase_id: "phase-10"
+    status: "pending"
+    parallel_group: "wave-10A"
+    depends_on_workpieces: ["WP-10-A1"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+      - "E:\\Crawlforge\\audit-work\\reports\\phase-09\\WIRING-NOTES.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+        sections: ["7.4"]
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\02-core-seo-and-indexability-rules.md"
+        sections: ["7.13"]
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+        sections: ["2.2"]
+    capabilities:
+      - { id: "CAP-B-051", baseline_state: "unwired" }      # CR-029 four redirect cases
+      - { id: "CAP-B-067", baseline_state: "unwired" }      # CR-030 deprecated terms
+      - { id: "CAP-B2-070", baseline_state: "unwired" }     # CR-030 Microdata term resolution
+      - { id: "CAP-B-056", baseline_state: "missing_engine" } # CR-031 not-measured reporting
+      - { id: "CAP-D2-X01", baseline_state: "partial" }     # five WAF challenge classes
+      - { id: "CAP-K-X02", baseline_state: "missing_ui" }   # category set and redirect toggles
+    ui_surfaces: ["UI-04", "UI-11", "UI-12"]
+    fixture_traps: ["structured-data-errors", "missing-alt", "redirect-chain", "hreflang-no-return"]
+    contract_tests:
+      - payload: "category, WAF class and canonical-bit values on finding, score and URL wire payloads (uses the WP-10-A1 members)"
+        test: "AuditScoreWireConformanceTests"
+    reopens:
+      - workpiece_id: "WP-09-05"
+        evidence: "WIRING-NOTES notation gaps 1-4, 6-10: spec categories, canonical bit and redirect/structured-data checks absent or provisional"
+      - workpiece_id: "WP-09-02"
+        evidence: "WIRING-NOTES notation gap 5: WafChallengeClass has 4 of the 5 spec classes"
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Waf\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Fetching\\RedirectAppropriatenessEvaluator.cs"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Fetching\\RedirectFindingAnalyzer.cs"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Fetching\\RedirectRuleKeys.cs"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\StructuredData\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\ContentQuality\\ImageRuleAnalyzer.cs"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Indexability\\IndexabilityStateEvaluator.cs"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Audit\\Scoring\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\project\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Waf\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Fetching\\RedirectFindingAnalyzerTests.cs"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\StructuredData\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Scoring\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests\\Indexability\\IndexabilityStateEvaluatorTests.cs"
+      - "E:\\Crawlforge\\app\\tests\\frontend\\project\\"
+    deliverables:
+      - "Images, Security & protocol and Internationalization are real audit categories with scores; image rules and hreflang findings move to them (D-021 item 1)"
+      - "Five WAF challenge classes per architecture 03/02 (adds managed-challenge and rate-limit-soft-block); soft blocks throttle via AIMD, hard blocks stop the host (D-021 item 2)"
+      - "IndexabilityFlags canonical bit set when the canonical points elsewhere (CR-024)"
+      - "Inappropriate redirects: cross-host, temporary, non-indexable target, HTTPS-to-HTTP downgrade, each a toggle on the UI-04 analysis tab, all on by default (CR-029)"
+      - "Deprecated structured-data terms from the bundled vocabulary plus a bundled, versioned retired rich-result list embedded in Audit/StructuredData; Microdata itemprop URL and prefixed terms resolve like RDFa (CR-030)"
+      - "Oversized-image rule reports non-inline images as not measured when no transferred size is available (CR-031)"
+      - "Builder-local rule keys from phase 09 replaced by the FindingRuleKeys constants added in WP-10-A1"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Waf|FullyQualifiedName~RedirectFinding"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Audit.Tests --filter FullyQualifiedName~StructuredData|FullyQualifiedName~Scoring|FullyQualifiedName~IndexabilityStateEvaluator"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Phase-gate HTTP fixture run keeps 17/17 phase-09 traps passing; UI-11 dashboard shows Images, Security & protocol and Internationalization scores; missing-alt appears under Images and hreflang-no-return under Internationalization; the four redirect toggles in UI-04 each switch their finding on and off in a re-run audit."
+    acceptance_criteria_refs: [27, 49]
+
+  - workpiece_id: "WP-10-A1"
+    title: "Contract Amendment — Additive Category, WAF-Class, Indexability-Flag Members and Rule Keys (D-021)"
+    phase_id: "phase-10"
+    status: "pending"
+    parallel_group: "wave-10A0"
+    depends_on_workpieces: ["WP-09-11"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+      - "E:\\Crawlforge\\audit-work\\reports\\phase-09\\WIRING-NOTES.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\04-audit-and-analysis-engine\\01-pipeline-and-content-scoping.md"
+        sections: ["7.4"]
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\02-frontier-fetching-and-waf.md"
+        sections: ["2.2"]
+    capabilities:
+      - { id: "CAP-D2-X01", baseline_state: "partial" }
+      - { id: "CAP-K-X02", baseline_state: "missing_ui" }
+    ui_surfaces: ["UI-11"]
+    fixture_traps: ["missing-alt", "hreflang-no-return"]
+    contract_tests:
+      - payload: "AuditCategory += Images, SecurityAndProtocol, Internationalization; WafChallengeClass += ManagedChallenge, RateLimitSoftBlock; IndexabilityFlags += CanonicalElsewhere; FindingRuleKeys += the phase-09 builder-local keys (notation gap 6); frontend mirrors match"
+        test: "EnumVocabularyTests; AdditivePolicyTests"
+    reopens: []
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Contracts\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Contracts.Tests\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\contracts\\"
+    deliverables:
+      - "Additive enum members and rule-key constants listed in contract_tests, with wire names per architecture 04/01 §7.4 and 03/02 §2; no existing member renamed or renumbered"
+      - "Frontend contract mirrors and guards accept the new values"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Contracts.Tests"
+      - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Contracts tests green including the additive policy; full solution builds; coordinator re-locks contracts before wave 10A is dispatched."
+    acceptance_criteria_refs: [49]

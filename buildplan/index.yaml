@@ -17,10 +17,10 @@ metadata:
   generated: "2026-11-17"
   supersedes: "v1.1 (frozen under buildplan/v1.1/, commit 281a9ae)"
   total_phases: 9              # phase-08 .. phase-16 (continues v1.1 numbering)
-  total_workpieces: 56
+  total_workpieces: 58
   total_acceptance_criteria: 58
   capability_baseline: "capability-baseline.yaml"
-  in_scope_capabilities: 251
+  in_scope_capabilities: 250
   strategy: "End-to-end flows crossing engine/wiring/API/UI; contract-first parallel waves; contracts locked at end of phase-00 (v1.1) and amended only via serialized WP-<phase>-A<n> workpieces"
   operating_manual: "AGENT-INSTRUCTIONS.md"
   evidence_basis:
@@ -46,7 +46,7 @@ status_summary:
     blocked: 0
     unscheduled: 1
   workpieces:
-    pending: 38
+    pending: 40
     in_progress: 0
     verifying: 0
     completed: 18
@@ -80,7 +80,7 @@ phases:
     status: "pending"
     depends_on_phases: ["phase-08", "phase-09"]
     max_parallel_agents: 3
-    workpiece_ids: ["WP-10-01", "WP-10-02", "WP-10-03", "WP-10-04"]
+    workpiece_ids: ["WP-10-01", "WP-10-02", "WP-10-03", "WP-10-04", "WP-10-05", "WP-10-A1"]
     gated_acceptance_criteria: [50, 51, 52]
 
   - phase_id: "phase-11"

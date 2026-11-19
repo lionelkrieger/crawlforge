@@ -33,5 +33,5 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 | CR-027 | Add local-notification to the hub contract | addition | applied | D-020 | CAP-H-188, CAP-L-X05 | 05/02 Appendix C | 2026-11-18 |
 | CR-028 | Defer the external MySQL-class database provider | amendment | applied | D-020 | CAP-L-X03 (deferred) | 02/01 §2.4; 07/01 #18; 06/01 §12; 07/02 §15.1; UI map; register | 2026-11-18 |
 | CR-029 | Define inappropriate redirects | clarification | applied | D-021 | CAP-B-051 | 04/01 §7.4 | 2026-11-19 |
-| CR-030 | Deprecated structured-data terms and Microdata term resolution | clarification | applied | D-021 | CAP-B2-069, CAP-B2-070 | 04/02 §7.13 | 2026-11-19 |
-| CR-031 | Image payload size in HTTP mode | clarification | applied | D-021 | CAP-B-X04, CAP-C-087 | 04/01 §7.4 | 2026-11-19 |
+| CR-030 | Deprecated structured-data terms and Microdata term resolution | clarification | applied | D-021 | CAP-B-067, CAP-B2-070 | 04/02 §7.13 | 2026-11-19 |
+| CR-031 | Image payload size in HTTP mode | clarification | applied | D-021 | CAP-B-056, CAP-C-087 | 04/01 §7.4 | 2026-11-19 |
