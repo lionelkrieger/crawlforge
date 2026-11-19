@@ -253,13 +253,19 @@ public sealed class IndexabilityAnalyzerTests
     }
 
     /// <summary>
-    /// WP-09-05 single-emission contract, OPT-IN mode: standalone compositions
-    /// that run the analyzer WITHOUT the pipeline's dedicated detector step
-    /// enable EmitSoft404Findings and get exactly one distinct soft-404
-    /// Warning (criterion #28), separate from hard HTTP errors.
+    /// Criterion #28 proof pointer (AcceptanceCatalog): a soft-404 page yields
+    /// a DISTINCT soft-404 Warning when the detector is injected, separate
+    /// from hard HTTP errors. WP-09-05 single-emission contract: this test
+    /// exercises the STANDALONE opt-in composition (EmitSoft404Findings: true)
+    /// for analyzers run WITHOUT the pipeline's dedicated detector step; in
+    /// production the pipeline's dedicated ISoft404Detector step is the SOLE
+    /// emitter (proven by
+    /// Soft404DedupTests.ProductionComposition_RealSoft404Fixture_EmitsExactlyOneFinding),
+    /// and the default analyzer composition delegates emission to it (see
+    /// Soft404Page_DefaultComposition_DelegatesEmissionToPipelineStep).
     /// </summary>
     [Fact]
-    public async Task Soft404Page_OptInEmission_EmitsDistinctWarning()
+    public async Task Soft404Page_EmitsDistinctWarning_WhenDetectorInjected()
     {
         DomDocument document = DomBuilder.Document(
             IndexabilityContextFactory.PageUrl,
