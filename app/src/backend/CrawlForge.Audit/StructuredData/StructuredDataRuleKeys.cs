@@ -18,6 +18,13 @@ public static class StructuredDataRuleKeys
     /// <summary>A structured-data block is valid but not rich-result eligible.</summary>
     public const string StructuredDataRichResultIneligible = "structured-data.rich-result-ineligible";
 
+    /// <summary>
+    /// A typed block is missing recommended (advisory) vocabulary properties
+    /// (CAP-B2-076). Notice severity: recommended gaps never invalidate a block
+    /// and never block rich-result eligibility; the finding names the fields.
+    /// </summary>
+    public const string StructuredDataMissingRecommended = "structured-data.missing-recommended";
+
     /// <summary>Notice annotation: a structured-data block validated cleanly.</summary>
     public const string StructuredDataValid = "structured-data.valid";
 

@@ -228,9 +228,10 @@ workpieces:
   - workpiece_id: "WP-09-04"
     title: "Structured-Data Pipeline Wiring, RDFa & hreflang Reciprocity"
     phase_id: "phase-09"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "cf-wp-09-04"
     started_at: "2026-11-19T02:42:16Z"
+    completed_at: "2026-11-19T03:43:16Z"
     parallel_group: "wave-9A"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:

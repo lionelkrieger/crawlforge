@@ -5,14 +5,32 @@ using CrawlForge.Contracts.Audit;
 namespace CrawlForge.Audit.StructuredData;
 
 /// <summary>
-/// Structured-data validator (FS-CRAWL-001 §7.13, criterion #27): parses JSON-LD
-/// and Microdata into a normalized graph, validates syntax (well-formedness,
-/// context and type presence) and semantics (required properties per the bundled
+/// Structured-data validator (FS-CRAWL-001 §7.13 as amended by CR-017/D-017,
+/// criterion #27): parses JSON-LD, Microdata and RDFa into a normalized graph,
+/// validates syntax (well-formedness, context and type presence) and semantics
+/// (required and expected properties per the bundled
 /// <see cref="StructuredDataVocabulary"/>), and reports rich-result eligibility
 /// with a structured error taxonomy (<see cref="StructuredDataErrorCodes"/>).
 /// Markup is parsed through the injected tolerant DOM parser; validation never
 /// throws on malformed input and performs zero network access.
 /// </summary>
+/// <remarks>
+/// <para>
+/// One engine, two entry points: the locked <see cref="IStructuredDataValidator"/>
+/// markup surface (consumed by the UI-19 structured-data checker tool) and the
+/// additive <see cref="ValidateDetailed(DomDocument)"/> surface (consumed by the
+/// audit pipeline rule adapter over the already-parsed page document). Both
+/// project from the same extraction + validation core, so the tool and full
+/// audits always share identical judgments.
+/// </para>
+/// <para>
+/// The detailed result adds per-block facts the locked
+/// <see cref="StructuredDataBlock"/> contract cannot carry: block ordinal,
+/// named missing required/recommended properties (CAP-B2-075/076), and direct
+/// nested entity types (CAP-B2-073 relationships). Recommended gaps are
+/// advisory: they never invalidate a block and never block eligibility.
+/// </para>
+/// </remarks>
 public sealed class StructuredDataValidator : IStructuredDataValidator
 {
     private static readonly string[] DateProperties =
@@ -30,31 +48,78 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
     }
 
     /// <inheritdoc />
-    public StructuredDataValidationResult Validate(string markup, string? sourceUrl)
+    public StructuredDataValidationResult Validate(string markup, string? sourceUrl) =>
+        new(ValidateDetailed(markup, sourceUrl).Blocks.Select(detail => detail.Block).ToList());
+
+    /// <summary>
+    /// Validates markup with the additive per-block detail (tool and adapter
+    /// share this core). The markup is parsed through the injected tolerant
+    /// parser exactly as the locked <see cref="Validate"/> surface does.
+    /// </summary>
+    /// <param name="markup">HTML or markup fragment containing structured data.</param>
+    /// <param name="sourceUrl">Optional source URL for context.</param>
+    /// <returns>Per-block details in document order.</returns>
+    public StructuredDataDetailedResult ValidateDetailed(string markup, string? sourceUrl)
     {
-        var blocks = new List<StructuredDataBlock>();
         if (string.IsNullOrWhiteSpace(markup))
         {
-            return new StructuredDataValidationResult(blocks);
+            return new StructuredDataDetailedResult([]);
         }
 
-        var document = _parser.Parse(markup, sourceUrl ?? string.Empty);
+        return ValidateDetailed(_parser.Parse(markup, sourceUrl ?? string.Empty));
+    }
+
+    /// <summary>
+    /// Validates an already-parsed document (pipeline path: no re-parse). This
+    /// is the same extraction + validation core the markup surface uses.
+    /// </summary>
+    /// <param name="document">Parsed page document.</param>
+    /// <returns>Per-block details in document order.</returns>
+    public StructuredDataDetailedResult ValidateDetailed(DomDocument document)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+
+        var items = new List<ParsedItem>();
         foreach (var node in Walk(document.Root))
         {
             if (node.TagName == "script" && IsJsonLd(node))
             {
-                blocks.AddRange(ParseJsonLdScript(node.TextContent));
+                items.AddRange(ParseJsonLdScript(node.TextContent));
             }
             else if (HasAttribute(node, "itemscope") && !HasAttribute(node, "itemprop"))
             {
-                blocks.Add(ParseMicrodataItem(node));
+                items.Add(ParseMicrodataItem(node));
+            }
+            else if (HasAttribute(node, "typeof") && !HasAttribute(node, "property"))
+            {
+                var rdfa = RdfaExtractor.ExtractItem(node);
+                items.Add(new ParsedItem("rdfa", rdfa.Type, rdfa.Properties, [], rdfa.NestedEntityTypes));
             }
         }
 
-        return new StructuredDataValidationResult(blocks);
+        // Untyped RDFa: vocabulary-scoped properties without any typeof describe
+        // the document subject; the missing-type taxonomy applies. Plain Open
+        // Graph meta tags without a vocab/prefix context are not RDFa items.
+        if (RdfaExtractor.ExtractUntypedItem(document.Root) is { } untyped)
+        {
+            items.Add(new ParsedItem(
+                "rdfa",
+                null,
+                untyped.Properties,
+                [StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MissingType, "RDFa block has no typeof")],
+                untyped.NestedEntityTypes));
+        }
+
+        var blocks = new List<StructuredDataBlockDetail>(items.Count);
+        for (var i = 0; i < items.Count; i++)
+        {
+            blocks.Add(Finalize(items[i], i));
+        }
+
+        return new StructuredDataDetailedResult(blocks);
     }
 
-    private static IEnumerable<StructuredDataBlock> ParseJsonLdScript(string text)
+    private static IEnumerable<ParsedItem> ParseJsonLdScript(string text)
     {
         JsonDocument? document = null;
         string? parseError = null;
@@ -69,10 +134,7 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
 
         if (parseError is not null)
         {
-            yield return new StructuredDataBlock(
-                "json-ld", null, false,
-                [StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MalformedBlock, parseError)],
-                false);
+            yield return MalformedItem("json-ld", parseError);
             yield break;
         }
 
@@ -84,7 +146,7 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
             {
                 foreach (var item in root.EnumerateArray())
                 {
-                    yield return ValidateJsonLdItem(item, inheritedContext: null);
+                    yield return ParseJsonLdItem(item, inheritedContext: null);
                 }
             }
             else if (root.ValueKind == JsonValueKind.Object &&
@@ -94,63 +156,82 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
                 var hasContext = root.TryGetProperty("@context", out _);
                 foreach (var item in graph.EnumerateArray())
                 {
-                    yield return ValidateJsonLdItem(item, inheritedContext: hasContext ? true : null);
+                    yield return ParseJsonLdItem(item, inheritedContext: hasContext ? true : null);
                 }
             }
             else
             {
-                yield return ValidateJsonLdItem(root, inheritedContext: null);
+                yield return ParseJsonLdItem(root, inheritedContext: null);
             }
         }
     }
 
-    private static StructuredDataBlock ValidateJsonLdItem(JsonElement item, bool? inheritedContext)
+    private static ParsedItem ParseJsonLdItem(JsonElement item, bool? inheritedContext)
     {
         if (item.ValueKind != JsonValueKind.Object)
         {
-            return new StructuredDataBlock(
-                "json-ld", null, false,
-                [StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MalformedBlock, "block item is not a JSON object")],
-                false);
+            return MalformedItem("json-ld", "block item is not a JSON object");
         }
 
-        var errors = new List<string>();
+        var syntaxErrors = new List<string>();
         if (!item.TryGetProperty("@context", out _) && inheritedContext != true)
         {
-            errors.Add(StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MissingContext, "JSON-LD block has no @context"));
+            syntaxErrors.Add(StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MissingContext, "JSON-LD block has no @context"));
         }
 
         var type = ReadType(item);
         if (type is null)
         {
-            errors.Add(StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MissingType, "JSON-LD block has no @type"));
+            syntaxErrors.Add(StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MissingType, "JSON-LD block has no @type"));
         }
 
         var properties = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         foreach (var property in item.EnumerateObject())
         {
-            properties[property.Name] = property.Value;
+            // Clone so the value survives the JsonDocument disposal: semantic
+            // validation runs in Finalize, after the parse using-block exits.
+            properties[property.Name] = property.Value.Clone();
         }
 
-        ValidateSemantics(type, properties, errors);
-        return BuildBlock("json-ld", type, errors);
+        return new ParsedItem("json-ld", type, properties, syntaxErrors, CollectJsonLdNestedTypes(properties));
     }
 
-    private static StructuredDataBlock ParseMicrodataItem(DomNode item)
+    private static ParsedItem ParseMicrodataItem(DomNode item)
     {
-        var errors = new List<string>();
+        var syntaxErrors = new List<string>();
         var type = item.Attributes.TryGetValue("itemtype", out var itemType)
             ? itemType.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).FirstOrDefault()
             : null;
         if (string.IsNullOrWhiteSpace(type))
         {
-            errors.Add(StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MissingType, "Microdata item has no itemtype"));
+            syntaxErrors.Add(StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MissingType, "Microdata item has no itemtype"));
             type = null;
         }
 
         var properties = CollectMicrodataProperties(item);
-        ValidateSemantics(type, properties, errors);
-        return BuildBlock("microdata", type, errors);
+        return new ParsedItem("microdata", type, properties, syntaxErrors, CollectMicrodataNestedTypes(item));
+    }
+
+    private static ParsedItem MalformedItem(string format, string detail) =>
+        new(format, null, new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase),
+            [StructuredDataErrorCodes.Format(StructuredDataErrorCodes.MalformedBlock, detail)], []);
+
+    private static StructuredDataBlockDetail Finalize(ParsedItem item, int ordinal)
+    {
+        var errors = new List<string>(item.SyntaxErrors);
+        var missingRequired = new List<string>();
+        var malformed = item.SyntaxErrors.Exists(e =>
+            e.StartsWith(StructuredDataErrorCodes.MalformedBlock + ":", StringComparison.Ordinal));
+
+        if (!malformed)
+        {
+            ValidateSemantics(item.Type, item.Properties, errors, missingRequired);
+        }
+
+        var missingRecommended = malformed ? [] : FindMissingRecommended(item.Type, item.Properties);
+        var eligible = errors.Count == 0 && StructuredDataVocabulary.IsRichResultFeature(item.Type);
+        var block = new StructuredDataBlock(item.Format, item.Type, errors.Count == 0, errors, eligible);
+        return new StructuredDataBlockDetail(block, ordinal, missingRequired, missingRecommended, item.NestedEntityTypes);
     }
 
     private static Dictionary<string, object?> CollectMicrodataProperties(DomNode item)
@@ -169,22 +250,75 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
                 : ReadMicrodataValue(child);
             foreach (var name in names.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             {
-                if (properties.TryGetValue(name, out var existing) && existing is List<object?> list)
-                {
-                    list.Add(value);
-                }
-                else if (properties.ContainsKey(name))
-                {
-                    properties[name] = new List<object?> { properties[name], value };
-                }
-                else
-                {
-                    properties[name] = value;
-                }
+                AddProperty(properties, name, value);
             }
         }
 
         return properties;
+    }
+
+    private static List<string> CollectMicrodataNestedTypes(DomNode item)
+    {
+        var types = new List<string>();
+        foreach (var child in WalkPropertyScope(item))
+        {
+            if (HasAttribute(child, "itemprop") && HasAttribute(child, "itemscope") &&
+                child.Attributes.TryGetValue("itemtype", out var itemType) &&
+                itemType.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).FirstOrDefault() is { } token)
+            {
+                types.Add(token);
+            }
+        }
+
+        return types;
+    }
+
+    private static List<string> CollectJsonLdNestedTypes(Dictionary<string, object?> properties)
+    {
+        var types = new List<string>();
+        foreach (var value in properties.Values)
+        {
+            if (value is not JsonElement element)
+            {
+                continue;
+            }
+
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                if (ReadType(element) is { } type)
+                {
+                    types.Add(type);
+                }
+            }
+            else if (element.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var member in element.EnumerateArray())
+                {
+                    if (member.ValueKind == JsonValueKind.Object && ReadType(member) is { } memberType)
+                    {
+                        types.Add(memberType);
+                    }
+                }
+            }
+        }
+
+        return types;
+    }
+
+    private static void AddProperty(Dictionary<string, object?> properties, string name, object? value)
+    {
+        if (properties.TryGetValue(name, out var existing) && existing is List<object?> list)
+        {
+            list.Add(value);
+        }
+        else if (properties.ContainsKey(name))
+        {
+            properties[name] = new List<object?> { properties[name], value };
+        }
+        else
+        {
+            properties[name] = value;
+        }
     }
 
     private static object? ReadMicrodataValue(DomNode node) => node.TagName switch
@@ -197,7 +331,11 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
         _ => AggregateText(node),
     };
 
-    private static void ValidateSemantics(string? type, IReadOnlyDictionary<string, object?> properties, List<string> errors)
+    private static void ValidateSemantics(
+        string? type,
+        IReadOnlyDictionary<string, object?> properties,
+        List<string> errors,
+        List<string> missingRequired)
     {
         var rule = StructuredDataVocabulary.Resolve(type);
         if (rule is null)
@@ -205,12 +343,11 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
             return;
         }
 
-        var missing = new List<string>();
         foreach (var required in rule.Required)
         {
             if (!properties.TryGetValue(required, out var value) || IsEmptyValue(value))
             {
-                missing.Add(required);
+                missingRequired.Add(required);
                 errors.Add(StructuredDataErrorCodes.Format(
                     StructuredDataErrorCodes.MissingRequiredField, $"{type} requires '{required}'"));
             }
@@ -227,12 +364,32 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
             ValidateOffers(offers, errors);
         }
 
-        if (rule.RichResultFeature && missing.Count > 0)
+        if (rule.RichResultFeature && missingRequired.Count > 0)
         {
             errors.Add(StructuredDataErrorCodes.Format(
                 StructuredDataErrorCodes.RichResultMissingRequired,
-                $"{type} rich result needs: {string.Join(", ", missing)}"));
+                $"{type} rich result needs: {string.Join(", ", missingRequired)}"));
         }
+    }
+
+    private static List<string> FindMissingRecommended(string? type, IReadOnlyDictionary<string, object?> properties)
+    {
+        var rule = StructuredDataVocabulary.Resolve(type);
+        if (rule is null)
+        {
+            return [];
+        }
+
+        var missing = new List<string>();
+        foreach (var recommended in rule.Recommended)
+        {
+            if (!properties.TryGetValue(recommended, out var value) || IsEmptyValue(value))
+            {
+                missing.Add(recommended);
+            }
+        }
+
+        return missing;
     }
 
     private static void ValidateOffers(object? offers, List<string> errors)
@@ -288,12 +445,6 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
                     StructuredDataErrorCodes.InvalidValue, $"{type}.{name} must be an ISO 8601 date ('{text}')"));
             }
         }
-    }
-
-    private static StructuredDataBlock BuildBlock(string format, string? type, List<string> errors)
-    {
-        var eligible = errors.Count == 0 && StructuredDataVocabulary.IsRichResultFeature(type);
-        return new StructuredDataBlock(format, type, errors.Count == 0, errors, eligible);
     }
 
     private static string? ReadType(JsonElement item)
@@ -390,4 +541,17 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
             }
         }
     }
+
+    /// <summary>
+    /// One parsed block before semantic validation: format, raw type, normalized
+    /// property graph, syntax-level taxonomy errors, and direct nested entity
+    /// types. All three markup formats project onto this shape so validation,
+    /// eligibility, and the error taxonomy are format-independent.
+    /// </summary>
+    private sealed record ParsedItem(
+        string Format,
+        string? Type,
+        IReadOnlyDictionary<string, object?> Properties,
+        List<string> SyntaxErrors,
+        IReadOnlyList<string> NestedEntityTypes);
 }

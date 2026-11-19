@@ -7,21 +7,29 @@ namespace CrawlForge.Audit.StructuredData;
 /// <summary>One page's hreflang set for site-wide validation.</summary>
 /// <param name="Url">The page's canonical URL.</param>
 /// <param name="Annotations">All hreflang annotations observed on the page (HTML + headers).</param>
-public sealed record PageHreflangSet(string Url, IReadOnlyList<HreflangAnnotation> Annotations);
+/// <param name="UrlId">
+/// Additive: the page's persisted url_records identifier when known (audit
+/// pipeline collection). Findings are stamped with the SOURCE page's UrlId so
+/// the missing-return judgment is reachable from that page's URL findings;
+/// null keeps the historical site-wide (url_id null) shape for URL-keyed callers.
+/// </param>
+public sealed record PageHreflangSet(string Url, IReadOnlyList<HreflangAnnotation> Annotations, long? UrlId = null);
 
 /// <summary>
-/// Site-wide hreflang reciprocity validation (FS-CRAWL-001 §7.13): when page A
-/// declares page B as a language alternate, page B must declare page A back.
-/// Runs fully offline over collected per-page sets (re-runnable from stored
-/// bodies/DOM on re-audit); targets outside the collected set are skipped —
-/// no remote fetch is ever performed (exclusions E2/E4).
+/// Site-wide hreflang reciprocity validation (FS-CRAWL-001 §7.13, CAP-B-060):
+/// when page A declares page B as a language alternate, page B must declare
+/// page A back. Runs fully offline over collected per-page sets (re-runnable
+/// from stored bodies/DOM on re-audit); targets outside the collected set are
+/// skipped — no remote fetch is ever performed (exclusions E2/E4).
 /// </summary>
 public sealed class HreflangReciprocityValidator
 {
     /// <summary>
-    /// Validates reciprocity across the collected page sets. Findings are
-    /// site-wide (url_id null) with page/target URLs in evidence, because the
-    /// validator operates over URL-keyed sets rather than persisted URL rows.
+    /// Validates reciprocity across the collected page sets. Each missing-return
+    /// finding carries BOTH-page evidence: the source page URL/id and the target
+    /// page URL/id plus the target's observed annotation set (empty when the
+    /// target declares nothing). When the source set carries a UrlId the finding
+    /// is stamped with it; otherwise the finding stays site-wide (url_id null).
     /// </summary>
     /// <param name="pages">Per-page hreflang sets collected during the audit.</param>
     /// <param name="auditId">Owning audit reference (evidence only).</param>
@@ -66,13 +74,18 @@ public sealed class HreflangReciprocityValidator
                         StructuredDataRuleKeys.HreflangMissingReciprocity,
                         AuditCategory.StructuredData,
                         FindingSeverity.Warning,
-                        null,
+                        page.UrlId,
                         JsonSerializer.Serialize(new
                         {
                             auditId,
                             pageUrl = sourceNormalized,
+                            pageUrlId = page.UrlId,
                             targetUrl = target,
+                            targetUrlId = targetPage.UrlId,
                             hreflang = annotation.Hreflang,
+                            targetAnnotations = targetPage.Annotations
+                                .Select(a => new { hreflang = a.Hreflang, href = a.Href, source = a.Source })
+                                .ToList(),
                             reason = "the alternate page does not declare a return hreflang annotation to this page",
                         }),
                         null));
