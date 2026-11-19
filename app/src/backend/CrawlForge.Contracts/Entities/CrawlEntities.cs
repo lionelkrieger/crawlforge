@@ -53,6 +53,12 @@ public sealed record UrlRecordDto(
     /// <summary>Additive: challenge class (FS-CRAWL-002 §2.6).</summary>
     [AdditiveMember]
     public WafChallengeClass? ChallengeClass { get; init; }
+
+    /// <summary>Additive (WP-10-A1, D-021): which capture produced the analysed
+    /// document (FS-CRAWL-001 §5.6.1: raw, rendered, or both). Null means the
+    /// baseline raw (non-JS) capture. Wire field: captureSource.</summary>
+    [AdditiveMember]
+    public CaptureSource? CaptureSource { get; init; }
 }
 
 /// <summary>

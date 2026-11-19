@@ -34,6 +34,11 @@ public enum WafProvider
 /// <summary>
 /// Challenge page class (FS-CRAWL-002 §1.5: a WAF-served CAPTCHA, interstitial,
 /// or bot-block document). Detection and reporting only (exclusion E3).
+/// Amendment WP-10-A1 (D-021) appends the two remaining FS-CRAWL-002 §2.3.1
+/// catalogue classes — managed challenge and rate-limit soft block. Existing
+/// members keep their locked numbers and wire values; the new members use the
+/// hyphenated spec wire tokens "managed-challenge" and "rate-limit-soft-block"
+/// (see <see cref="EnumWireNames"/>; same convention as CatchUp ↔ "catch-up").
 /// </summary>
 public enum WafChallengeClass
 {
@@ -48,4 +53,14 @@ public enum WafChallengeClass
 
     /// <summary>Bot-block document.</summary>
     BotBlock = 3,
+
+    /// <summary>Additive (WP-10-A1, D-021): provider-managed challenge document
+    /// (FS-CRAWL-002 §2.3.1 challenge class "managed-challenge"; for example a
+    /// managed turnstile-style checkpoint). Wire value: "managed-challenge".</summary>
+    ManagedChallenge = 4,
+
+    /// <summary>Additive (WP-10-A1, D-021): rate-limit soft-block document served
+    /// with 200 OK (FS-CRAWL-002 §2.3.1 challenge class "rate-limit-soft-block").
+    /// Wire value: "rate-limit-soft-block".</summary>
+    RateLimitSoftBlock = 5,
 }

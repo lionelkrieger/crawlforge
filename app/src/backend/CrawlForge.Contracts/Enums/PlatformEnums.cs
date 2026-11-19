@@ -16,6 +16,7 @@ public enum DatabaseProviderKind
 
 /// <summary>
 /// Content-store artifact kinds (schema catalog: content_artifacts.artifact kind).
+/// Additive kinds may be appended; existing values are frozen.
 /// </summary>
 public enum ContentArtifactKind
 {
@@ -27,6 +28,11 @@ public enum ContentArtifactKind
 
     /// <summary>Rendered DOM snapshot.</summary>
     RenderedDom = 2,
+
+    /// <summary>Additive (WP-10-A1, D-021): rendered-capture network waterfall
+    /// (FS-CRAWL-001 §5.6.2; WP-10-01 render result). One JSON payload per
+    /// rendered URL listing every observed request/response entry.</summary>
+    NetworkWaterfall = 3,
 }
 
 /// <summary>

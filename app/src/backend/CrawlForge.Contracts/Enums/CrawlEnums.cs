@@ -99,6 +99,11 @@ public enum DiscoverySource
 
     /// <summary>Additive: ingested from a user-supplied URL list (list mode).</summary>
     List = 4,
+
+    /// <summary>Additive (WP-10-A1, D-021): discovered from the rendered DOM of a
+    /// JS-rendered capture (FS-CRAWL-001 §5.6.1; phase-10 JS-only links are
+    /// recorded as discovered-by-render). Wire value: "render".</summary>
+    Render = 5,
 }
 
 /// <summary>
@@ -119,6 +124,8 @@ public enum RobotsState
 /// <summary>
 /// Indexability flags carried by a URL record (schema catalog:
 /// url_records.indexability flags). Composable; additive flags may be appended.
+/// Indexable means search-indexable (CR-024, D-020): any restriction flag
+/// (including <see cref="CanonicalElsewhere"/>) makes the URL non-indexable.
 /// </summary>
 [Flags]
 public enum IndexabilityFlags
@@ -137,6 +144,12 @@ public enum IndexabilityFlags
 
     /// <summary>The final status class is not indexable (non-2xx).</summary>
     NonIndexableStatus = 8,
+
+    /// <summary>Additive (WP-10-A1, D-021; CR-024): the page's canonical directive
+    /// points to a different URL, so search engines consolidate indexing away
+    /// from this page ("canonical elsewhere"). The URL stays crawlable but is
+    /// not search-indexable. Existing flag values are unchanged.</summary>
+    CanonicalElsewhere = 16,
 }
 
 /// <summary>
@@ -153,6 +166,75 @@ public enum RenderMode
 
     /// <summary>Render every page through the headless pool.</summary>
     Always = 2,
+}
+
+/// <summary>
+/// Capture mode of a crawl configuration (FS-CRAWL-001 §5.6.1, added by CR-005;
+/// amendment WP-10-A1, D-021). A configuration selects exactly one mode; new
+/// configurations default to non-JS. The additive nullable
+/// <c>CrawlConfigurationDto.CaptureMode</c> member carries this vocabulary —
+/// null keeps the baseline non-JS behaviour. Wire values follow the lowercase
+/// convention with the hyphenated exception NonJs ↔ "non-js" (same convention
+/// as CatchUp ↔ "catch-up"; see <see cref="EnumWireNames"/>).
+/// </summary>
+public enum CaptureMode
+{
+    /// <summary>Every in-scope URL is fetched over plain HTTP and parsed without
+    /// executing scripts. Default for new configurations. Wire value: "non-js".</summary>
+    NonJs = 0,
+
+    /// <summary>Every in-scope URL is rendered in the headless browser; the
+    /// post-render document is the analysed document. Wire value: "js".</summary>
+    Js = 1,
+
+    /// <summary>Every in-scope URL is captured both ways; both documents are
+    /// stored and the response-vs-rendered comparison (§7.18) is computed for
+    /// every URL. Wire value: "dual".</summary>
+    Dual = 2,
+
+    /// <summary>Every in-scope URL is fetched over plain HTTP; a sample per
+    /// URL-path-pattern group is also rendered and compared, and groups whose
+    /// sample materially changes switch to rendered capture for the rest of the
+    /// audit. Wire value: "adaptive".</summary>
+    Adaptive = 3,
+}
+
+/// <summary>
+/// Which capture produced a URL record's analysed document (FS-CRAWL-001
+/// §5.6.1: "Every URL record states which capture produced it (raw, rendered,
+/// or both)"; amendment WP-10-A1, D-021). The additive nullable
+/// <c>UrlRecordDto.CaptureSource</c> member carries this vocabulary — null means
+/// the baseline raw (non-JS) capture. Wire values: "raw", "rendered", "both".
+/// </summary>
+public enum CaptureSource
+{
+    /// <summary>The raw HTTP response document (non-JS capture).</summary>
+    Raw = 0,
+
+    /// <summary>The post-render document (JS capture).</summary>
+    Rendered = 1,
+
+    /// <summary>Both captures exist for the URL (dual capture, or an adaptive
+    /// sample that was fetched and rendered).</summary>
+    Both = 2,
+}
+
+/// <summary>
+/// Explicit per-URL-pattern capture override (FS-CRAWL-001 §5.6.1 manual
+/// override: "rendered or non-rendered"; amendment WP-10-A1, D-021). Explicit
+/// settings take precedence over adaptive switching and apply on top of every
+/// capture mode. Wire values follow the lowercase convention with the
+/// hyphenated exception NonRendered ↔ "non-rendered" (see <see cref="EnumWireNames"/>).
+/// </summary>
+public enum PatternCaptureMode
+{
+    /// <summary>URLs matching the pattern are captured without rendering.
+    /// Wire value: "non-rendered".</summary>
+    NonRendered = 0,
+
+    /// <summary>URLs matching the pattern are captured through the headless
+    /// browser. Wire value: "rendered".</summary>
+    Rendered = 1,
 }
 
 /// <summary>

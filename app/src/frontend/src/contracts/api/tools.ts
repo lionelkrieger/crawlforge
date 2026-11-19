@@ -92,6 +92,30 @@ export interface ConsoleMessage {
   readonly timestamp: string | null;
 }
 
+/**
+ * One request/response entry of a rendered-capture network waterfall
+ * (FS-CRAWL-001 §5.6.2; WP-10-A1). Mirrors
+ * CrawlForge.Contracts.Crawl.RenderedNetworkEntry; transferredBytes feeds the
+ * CR-031 rendered image-size measurement.
+ */
+export interface RenderedNetworkEntry {
+  readonly url: string;
+  /** Resource type label (document, script, image, ...). */
+  readonly resourceType: string;
+  readonly method: string;
+  /** HTTP response status; 0 when no HTTP response exists (cache/data URI). */
+  readonly statusCode: number;
+  readonly mimeType?: string | null;
+  /** Bytes transferred over the network (0 when unknown). */
+  readonly transferredBytes?: number;
+  /** Encoded (compressed) body length in bytes (0 when unknown). */
+  readonly encodedDataLength?: number;
+  /** Resource-timing payload (request start, TTFB, end), when observed. */
+  readonly timingJson?: string | null;
+  readonly fromCache?: boolean;
+  readonly fromServiceWorker?: boolean;
+}
+
 /** POST /api/tools/render-test — target URL; device profile; additive picker support. */
 export interface RenderTestRequest {
   readonly url: string;
@@ -113,6 +137,9 @@ export interface RenderTestResponse {
   readonly wafVerdict?: WafDetection | null;
   /** Additive: whether the selector picker is active for this render. */
   readonly pickerActive?: boolean;
+  /** Additive (WP-10-A1): network waterfall captured during this render
+   * (§5.6.2); null/absent = no waterfall captured (baseline renders). */
+  readonly networkWaterfall?: readonly RenderedNetworkEntry[] | null;
 }
 
 /** Sitemap change-frequency values (sitemap protocol). */

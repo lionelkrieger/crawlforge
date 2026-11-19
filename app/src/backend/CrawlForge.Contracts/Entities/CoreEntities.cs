@@ -197,6 +197,27 @@ public sealed record CrawlConfigurationDto(
     /// <summary>Additive: SERP budgets (FS-CRAWL-002 §15.5).</summary>
     [AdditiveMember]
     public SerpBudgetSettings? SerpBudgets { get; init; }
+
+    /// <summary>Additive (WP-10-A1, D-021): capture mode (FS-CRAWL-001 §5.6.1,
+    /// CR-005). Null keeps the baseline non-JS behaviour; new configurations
+    /// default to non-JS. Wire field: captureMode ("non-js"/"js"/"dual"/"adaptive").</summary>
+    [AdditiveMember]
+    public CaptureMode? CaptureMode { get; init; }
+
+    /// <summary>Additive (WP-10-A1, D-021): capture-mode settings document
+    /// (FS-CRAWL-001 §5.6.1/§5.6.2 knobs: adaptive sample size, material-change
+    /// threshold, dual storage warning threshold, per-pattern overrides, render
+    /// wait rule, rendering pool size). Null applies the engine defaults
+    /// (<see cref="Crawl.CaptureSettings.Default"/>). Wire field: captureSettings.</summary>
+    [AdditiveMember]
+    public CaptureSettings? CaptureSettings { get; init; }
+
+    /// <summary>Additive (WP-10-A1, D-021): inappropriate-redirect check toggles
+    /// (CR-029: cross-host, temporary 302/303/307, non-indexable final target per
+    /// CR-024, HTTPS-to-HTTP downgrade). Null means all four checks enabled
+    /// (the default when absent). Wire field: redirectChecks.</summary>
+    [AdditiveMember]
+    public RedirectCheckSettings? RedirectChecks { get; init; }
 }
 
 /// <summary>

@@ -21,6 +21,7 @@ import type { CrawlLimits } from './projects';
 import type { WafDetection } from './waf';
 import type { NgramRow } from './ngrams';
 import type { SemanticRelation } from './semantics';
+import type { CaptureSourceWire, DiscoverySourceWire } from './vocabulary';
 
 /** Audit lifecycle states (start/pause/resume/cancel + terminal outcomes). */
 export type AuditState = 'queued' | 'running' | 'paused' | 'completed' | 'failed' | 'cancelled';
@@ -119,6 +120,12 @@ export interface UrlRecordSummary {
   readonly blockReason?: string | null;
   /** Additive: detected WAF provider for blocked entries. */
   readonly wafProvider?: string | null;
+  /** Additive (WP-10-A1): which capture produced the analysed document (§5.6.1);
+   * null/absent = baseline raw (non-JS) capture. */
+  readonly captureSource?: CaptureSourceWire | null;
+  /** Additive (WP-10-A1): how the URL entered the crawl; "render" marks
+   * JS-only links discovered from the rendered DOM (§5.6.1). */
+  readonly discoverySource?: DiscoverySourceWire | null;
 }
 
 /**

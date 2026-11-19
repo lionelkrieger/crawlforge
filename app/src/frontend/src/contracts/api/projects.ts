@@ -15,6 +15,7 @@
 
 import type { EntityId, IsoTimestamp } from '../common/primitives';
 import type { ListQuery } from '../common/pagination';
+import type { CaptureModeWire, PatternCaptureWire } from './vocabulary';
 
 /**
  * Crawl limit overrides. `null`/absent means unlimited — the Unlimited
@@ -108,6 +109,59 @@ export interface ZoneWeightSettings {
 }
 
 /**
+ * Explicit per-URL-pattern capture override (FS-CRAWL-001 §5.6.1; WP-10-A1).
+ * Explicit settings take precedence over adaptive switching and apply on top
+ * of every capture mode.
+ */
+export interface CapturePatternOverride {
+  /** URL path pattern the override applies to (for example "/blog/*"). */
+  readonly pattern: string;
+  /** Rendered or non-rendered capture for matching URLs. */
+  readonly capture: PatternCaptureWire;
+}
+
+/**
+ * Capture-mode settings document (FS-CRAWL-001 §5.6.1/§5.6.2; WP-10-A1).
+ * Absent/null applies the engine defaults documented per field. Mirrors
+ * CrawlForge.Contracts.Crawl.CaptureSettings; every knob is configurable and
+ * none is license-driven (exclusion #8). The dual storage threshold warns
+ * only — there is no hard cap.
+ */
+export interface CaptureSettings {
+  /** Adaptive sample size per URL-pattern group; spec range 3–5, default 4. */
+  readonly adaptiveSampleSizePerGroup?: number;
+  /** Material-change visible word-count fraction; default 0.20 (20%). */
+  readonly materialChangeWordCountThreshold?: number;
+  /** Dual-mode stored-capture warning threshold in bytes; default 1 GiB, no hard cap. */
+  readonly dualStorageWarningThresholdBytes?: number;
+  /** Render wait-rule quiet period in ms; default 500. */
+  readonly renderWaitQuietMs?: number;
+  /** Render wait-rule hard cap in ms; default 20000. */
+  readonly renderWaitHardCapMs?: number;
+  /** Concurrent Chromium contexts; null/absent = half logical processors, minimum 2. */
+  readonly renderingPoolSize?: number | null;
+  /** Explicit per-pattern overrides; absent/empty = none. */
+  readonly patternOverrides?: readonly CapturePatternOverride[] | null;
+}
+
+/**
+ * Inappropriate-redirect check toggles (CR-029; WP-10-A1). Four independent
+ * cases, all ON by default — absent/null means every check enabled. Mirrors
+ * CrawlForge.Contracts.Crawl.RedirectCheckSettings; each finding names the
+ * case, the triggering hop and the final target.
+ */
+export interface RedirectCheckSettings {
+  /** Case 1: a hop redirects to a different host. Default true. */
+  readonly crossHost?: boolean;
+  /** Case 2: a hop uses a temporary status 302/303/307. Default true. */
+  readonly temporaryStatus?: boolean;
+  /** Case 3: the final target is non-indexable per CR-024. Default true. */
+  readonly nonIndexableTarget?: boolean;
+  /** Case 4: an HTTPS URL redirects to HTTP. Default true. */
+  readonly httpsDowngrade?: boolean;
+}
+
+/**
  * Additive extension settings shared by PUT /api/projects/{id} and the
  * configuration routes (FS-CRAWL-002 Appendix B).
  */
@@ -164,11 +218,27 @@ export interface ConfigurationSummary {
 }
 
 /**
+ * Additive capture-mode configuration fields (WP-10-A1, D-021) shared by the
+ * configuration read/create/update wire shapes. Absent/null keeps the baseline
+ * non-JS behaviour with engine-default settings and all CR-029 redirect checks
+ * enabled. Mirrors the additive CrawlConfigurationDto members CaptureMode,
+ * CaptureSettings and RedirectChecks.
+ */
+export interface CaptureConfigurationFields {
+  /** Capture mode (§5.6.1); null/absent = baseline non-JS. New configurations default to non-js. */
+  readonly captureMode?: CaptureModeWire | null;
+  /** Capture-mode settings document (§5.6.1/§5.6.2 knobs); null/absent = engine defaults. */
+  readonly captureSettings?: CaptureSettings | null;
+  /** CR-029 inappropriate-redirect toggles; null/absent = all four checks on. */
+  readonly redirectChecks?: RedirectCheckSettings | null;
+}
+
+/**
  * Full audit configuration. Fields compile the §5.1 configuration surface
  * referenced by the REST contract: seed URLs, limits, AIMD politeness,
  * rendering, robots handling — plus the additive extension settings.
  */
-export interface AuditConfiguration extends ConfigurationSummary, ExtensionSettings {
+export interface AuditConfiguration extends ConfigurationSummary, ExtensionSettings, CaptureConfigurationFields {
   /** Seed URLs for the crawl. */
   readonly startUrls: readonly string[];
   readonly limits: CrawlLimits;
@@ -181,7 +251,7 @@ export interface AuditConfiguration extends ConfigurationSummary, ExtensionSetti
 }
 
 /** POST /api/projects/{id}/configurations — configuration fields (project from path). */
-export interface ConfigurationCreateRequest extends ExtensionSettings {
+export interface ConfigurationCreateRequest extends ExtensionSettings, CaptureConfigurationFields {
   readonly name: string;
   readonly description?: string;
   readonly startUrls: readonly string[];
@@ -193,7 +263,7 @@ export interface ConfigurationCreateRequest extends ExtensionSettings {
 }
 
 /** PUT /api/configurations/{id} — any subset of configuration fields. */
-export interface ConfigurationUpdateRequest extends ExtensionSettings {
+export interface ConfigurationUpdateRequest extends ExtensionSettings, CaptureConfigurationFields {
   readonly name?: string;
   readonly description?: string | null;
   readonly startUrls?: readonly string[];

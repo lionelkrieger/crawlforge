@@ -7,6 +7,7 @@
 export * from './routes';
 export * from './contracts-map';
 export * from './client';
+export * from './vocabulary';
 export * from './system';
 export * from './projects';
 export * from './audits';

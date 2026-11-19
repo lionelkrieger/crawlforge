@@ -23,6 +23,11 @@ public enum FindingSeverity
 /// Finding taxonomy categories (schema catalog: findings.category). The three
 /// additive categories Log Intelligence, AI Search (GEO), and Analytics &amp; Tagging
 /// are defined by FS-CRAWL-002 Appendix A; additive categories may be appended.
+/// Amendment WP-10-A1 (D-021) appends the three remaining FS-CRAWL-001 §7.4
+/// taxonomy categories — Images, Security &amp; protocol, Internationalization —
+/// so every spec category has a member. Existing members keep their locked
+/// numbers; findings are re-categorized by the phase-10 audit workpieces, not
+/// by this contract amendment.
 /// </summary>
 public enum AuditCategory
 {
@@ -58,6 +63,24 @@ public enum AuditCategory
 
     /// <summary>Additive: MarTech, analytics, and tag integrity (FS-CRAWL-002 §14).</summary>
     AnalyticsTagging = 10,
+
+    /// <summary>Additive (WP-10-A1, D-021): image checks — missing or empty
+    /// alternative text, broken sources, oversized payloads, missing dimensions
+    /// (FS-CRAWL-001 §7.4 Images row). Wire value: "images".</summary>
+    Images = 11,
+
+    /// <summary>Additive (WP-10-A1, D-021): security &amp; protocol checks — mixed
+    /// content, non-HTTPS pages, insecure form actions, missing security headers,
+    /// absent HTTP-to-HTTPS redirection, cookie security attributes, information
+    /// disclosure (FS-CRAWL-001 §7.4, amended by CR-017). Wire value:
+    /// "securityandprotocol".</summary>
+    SecurityAndProtocol = 12,
+
+    /// <summary>Additive (WP-10-A1, D-021): internationalization checks — invalid
+    /// language/region codes, missing return tags, missing self-reference,
+    /// default-language handling (FS-CRAWL-001 §7.4). Wire value:
+    /// "internationalization".</summary>
+    Internationalization = 13,
 }
 
 /// <summary>
