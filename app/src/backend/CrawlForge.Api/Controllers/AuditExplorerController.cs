@@ -5,6 +5,7 @@ using CrawlForge.Contracts.Constants;
 using CrawlForge.Contracts.Entities;
 using CrawlForge.Contracts.Enums;
 using CrawlForge.Contracts.Persistence;
+using CrawlForge.Crawler.Fetching;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrawlForge.Api.Controllers;
@@ -212,9 +213,18 @@ public sealed class AuditExplorerController : ApiControllerBase
             .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
         var title = ExtractTitle(elements.Items);
         var headers = ExtractResponseHeaders(elements.Items);
-        var redirectChain = url.RedirectTargetUrl is null
-            ? Array.Empty<RedirectHopWire>()
-            : new[] { new RedirectHopWire(url.CanonicalUrl, url.FinalStatusCode ?? 0, url.RedirectTargetUrl) };
+        // WP-09-06 D4 (WP-09-01 handoff recipe): the persisted redirect-chain
+        // element is the source of truth — lossless multi-hop mapping
+        // (hop.url→Url, hop.statusCode→StatusCode, hop.toUrl→Location). The
+        // legacy single-hop synthesis from RedirectTargetUrl stays as the
+        // fallback for rows written before chain persistence was wired.
+        var chainRow = elements.Items.FirstOrDefault(e => e.ElementGroup == RedirectChainElementGroup.GroupName);
+        var chainPayload = RedirectChainJson.DeserializePayload(chainRow?.PayloadJson);
+        var redirectChain = chainPayload is not null
+            ? chainPayload.Hops.OrderBy(h => h.Ordinal).Select(h => new RedirectHopWire(h.Url, h.StatusCode, h.ToUrl)).ToArray()
+            : url.RedirectTargetUrl is null
+                ? Array.Empty<RedirectHopWire>()
+                : new[] { new RedirectHopWire(url.CanonicalUrl, url.FinalStatusCode ?? 0, url.RedirectTargetUrl) };
 
         var waf = await _wafDetections.ListAsync(new ListQuery(0, 1, new Dictionary<string, string> { ["auditId"] = id.ToString(), ["urlId"] = urlId.ToString() }), cancellationToken);
         var ngrams = await _ngrams.ListAsync(new ListQuery(0, 10_000, new Dictionary<string, string> { ["auditId"] = id.ToString(), ["urlId"] = urlId.ToString() }), cancellationToken);

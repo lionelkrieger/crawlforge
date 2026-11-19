@@ -79,7 +79,7 @@ public sealed class RedirectMatrixSemanticsRouteTests
         var items = await response.ReadDataAsync<List<RedirectMatrixResultWire>>();
         var row = Assert.Single(items);
         Assert.Equal(url.Id.ToString(), row.UrlId);
-        Assert.Equal("targetmismatch", row.Verdict);
+        Assert.Equal("target-mismatch", row.Verdict); // frozen vocabulary == metric dimensions (WP-09-06 D4)
         Assert.Equal(2, row.HopChain.Count);
         Assert.Equal(301, row.HopChain[0].StatusCode);
         Assert.Equal("https://new.example.com/canonical", row.CanonicalUrl);

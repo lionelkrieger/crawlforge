@@ -58,7 +58,7 @@ internal sealed class ControllerTestHost : IAsyncDisposable
 
     public FakeServices Fakes { get; }
 
-    public static async Task<ControllerTestHost> CreateAsync()
+    public static async Task<ControllerTestHost> CreateAsync(bool registerEnginePorts = true)
     {
         var rootDirectory = Path.Combine(Path.GetTempPath(), "crawlforge-api-controller-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(rootDirectory);
@@ -78,7 +78,7 @@ internal sealed class ControllerTestHost : IAsyncDisposable
         builder.Logging.ClearProviders();
 
         var fakes = new FakeServices();
-        ConfigureServices(builder.Services, provider, migrator, fakes);
+        ConfigureServices(builder.Services, provider, migrator, fakes, registerEnginePorts);
 
         builder.Services
             .AddControllers()
@@ -102,6 +102,10 @@ internal sealed class ControllerTestHost : IAsyncDisposable
         app.Services.GetRequiredService<IAuditExecutionService>();
         app.Services.GetRequiredService<IWafSignatureCatalogue>();
         app.Services.GetRequiredService<ILogImportService>();
+        if (registerEnginePorts)
+        {
+            app.Services.GetRequiredService<CrawlForge.Api.Controllers.IAuditLifecycleExecutionPort>();
+        }
 
         return new ControllerTestHost(app, rootDirectory, provider, fakes);
     }
@@ -109,7 +113,7 @@ internal sealed class ControllerTestHost : IAsyncDisposable
     /// <summary>Resolves a registered service of the given type.</summary>
     public T Get<T>() where T : notnull => Services.GetRequiredService<T>();
 
-    private static void ConfigureServices(IServiceCollection services, SqliteDbProvider provider, SchemaMigrator migrator, FakeServices fakes)
+    private static void ConfigureServices(IServiceCollection services, SqliteDbProvider provider, SchemaMigrator migrator, FakeServices fakes, bool registerEnginePorts)
     {
         services.AddSingleton<IDbProvider>(provider);
         services.AddSingleton<ISchemaMigrator>(migrator);
@@ -181,6 +185,23 @@ internal sealed class ControllerTestHost : IAsyncDisposable
             sp.GetRequiredService<IAuditExecutionService>() is FakeAuditExecutionService fake
                 ? fake
                 : throw new InvalidOperationException("The reaudit port must share the audit-execution double."));
+        // WP-09-06 D2/G10: engine lifecycle + list-start ports. Registered by
+        // default (mirrors the Host wiring the lead lands in WP-09-11); pass
+        // registerEnginePorts:false to exercise the pre-wiring fallback paths.
+        if (registerEnginePorts)
+        {
+            services.AddSingleton<CrawlForge.Api.Controllers.IListAuditStartPort>(sp =>
+                (FakeAuditExecutionService)sp.GetRequiredService<IAuditExecutionService>());
+            services.AddSingleton<CrawlForge.Api.Controllers.IAuditLifecycleExecutionPort>(sp =>
+            {
+                fakes.Lifecycle = new FakeAuditLifecyclePort(
+                    sp.GetRequiredService<IReadRepository<AuditDto>>(),
+                    sp.GetRequiredService<IWriteRepository<AuditDto>>(),
+                    sp.GetRequiredService<IReadRepository<CrawlCheckpointDto>>(),
+                    sp.GetRequiredService<IWriteRepository<CrawlCheckpointDto>>());
+                return fakes.Lifecycle;
+            });
+        }
         services.AddSingleton<IScheduledAuditService>(fakes.Scheduler);
         services.AddSingleton<IExportEngine>(fakes.Exports);
         services.AddSingleton<IExportDestinationDelivery>(fakes.Delivery);
@@ -248,6 +269,9 @@ internal sealed class ControllerTestHost : IAsyncDisposable
 internal sealed class FakeServices
 {
     public FakeAuditExecutionService AuditExecution { get; set; } = null!;
+
+    /// <summary>WP-09-06 D2: engine lifecycle port double (null when ports are not registered).</summary>
+    public FakeAuditLifecyclePort Lifecycle { get; set; } = null!;
 
     public FakeScheduledAuditService Scheduler { get; } = new();
 

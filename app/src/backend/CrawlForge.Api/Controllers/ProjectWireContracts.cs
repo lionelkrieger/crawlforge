@@ -155,6 +155,11 @@ public sealed record ConfigurationSummaryWire(string Id, string ProjectId, strin
 /// <param name="Rewrite">Rewrite settings, when configured.</param>
 /// <param name="Consent">Consent settings, when configured.</param>
 /// <param name="ZoneWeights">Zone weights, when configured.</param>
+/// <param name="ScopeRules">Additive (WP-09-06, WP-09-07 G18): the persisted crawl-scope document
+/// (camelCase; canonicalization/scope/directives/resources/cookieJar/userAgent/userAgentComparison/headers/cookies
+/// plus the behavior keys), projected from <c>ScopeRulesJson</c>. Null when nothing is persisted.</param>
+/// <param name="EnabledCategories">Additive (WP-09-06, WP-09-07): per-configuration analysis categories
+/// (PascalCase <c>AuditCategory</c> names, case-insensitive on input); null = all enabled.</param>
 public sealed record AuditConfigurationWire(
     string Id,
     string ProjectId,
@@ -171,7 +176,9 @@ public sealed record AuditConfigurationWire(
     ContentScopeSettingsWire? ContentScope,
     RewriteSettingsWire? Rewrite,
     ConsentSettingsWire? Consent,
-    ZoneWeightSettingsWire? ZoneWeights);
+    ZoneWeightSettingsWire? ZoneWeights,
+    System.Text.Json.JsonElement? ScopeRules = null,
+    IReadOnlyList<string>? EnabledCategories = null);
 
 /// <summary>POST /api/projects/{id}/configurations — creation payload.</summary>
 /// <param name="Name">Configuration name (required).</param>
@@ -186,6 +193,9 @@ public sealed record AuditConfigurationWire(
 /// <param name="Rewrite">Optional rewrite settings.</param>
 /// <param name="Consent">Optional consent settings.</param>
 /// <param name="ZoneWeights">Optional zone weights.</param>
+/// <param name="ScopeRules">Additive crawl-scope document (WP-09-07 §3 shape); merged into
+/// <c>ScopeRulesJson</c> preserving the behavior keys. Invalid regexes are validation errors.</param>
+/// <param name="EnabledCategories">Additive per-configuration analysis categories; null = all enabled.</param>
 public sealed record ConfigurationCreateRequest(
     string Name,
     string? Description,
@@ -198,7 +208,9 @@ public sealed record ConfigurationCreateRequest(
     ContentScopeSettingsWire? ContentScope,
     RewriteSettingsWire? Rewrite,
     ConsentSettingsWire? Consent,
-    ZoneWeightSettingsWire? ZoneWeights);
+    ZoneWeightSettingsWire? ZoneWeights,
+    System.Text.Json.JsonElement? ScopeRules = null,
+    IReadOnlyList<string>? EnabledCategories = null);
 
 /// <summary>PUT /api/configurations/{id} — subset payload.</summary>
 /// <param name="Name">Optional name.</param>
@@ -213,6 +225,10 @@ public sealed record ConfigurationCreateRequest(
 /// <param name="Rewrite">Optional rewrite settings.</param>
 /// <param name="Consent">Optional consent settings.</param>
 /// <param name="ZoneWeights">Optional zone weights.</param>
+/// <param name="ScopeRules">Additive crawl-scope document; shallow top-level merge into the
+/// persisted <c>ScopeRulesJson</c> (explicit request fields win over behavior keys). Omitted = unchanged.</param>
+/// <param name="EnabledCategories">Additive per-configuration analysis categories. Non-null replaces the
+/// persisted set (empty array = all enabled); null/omitted = unchanged.</param>
 public sealed record ConfigurationUpdateRequest(
     string? Name,
     string? Description,
@@ -225,7 +241,9 @@ public sealed record ConfigurationUpdateRequest(
     ContentScopeSettingsWire? ContentScope,
     RewriteSettingsWire? Rewrite,
     ConsentSettingsWire? Consent,
-    ZoneWeightSettingsWire? ZoneWeights);
+    ZoneWeightSettingsWire? ZoneWeights,
+    System.Text.Json.JsonElement? ScopeRules = null,
+    IReadOnlyList<string>? EnabledCategories = null);
 
 /// <summary>Wire suppression scope.</summary>
 /// <param name="UrlId">Optional URL scope.</param>

@@ -152,6 +152,24 @@ public sealed class RealtimeHubServiceTests
         Assert.Equal("audit-100", send.Target);
     }
 
+    [Fact]
+    public async Task StringEntityIdPayloads_RouteToSamePerAuditGroup()
+    {
+        // WP-09-06 (G-G): producers may already emit string EntityIds; routing
+        // and throttling must treat them identically to numeric ids.
+        await using var service = CreateService();
+        await service.PublishAsync(Event(HubEventCatalog.CrawlProgress,
+            """{"auditId":"100","counters":{"discovered":5,"fetched":1,"analyzed":1,"failed":0}}"""));
+        var send = Assert.Single(_channel.Snapshot());
+        Assert.Equal("audit-100", send.Target);
+        Assert.Contains("\"auditId\":\"100\"", send.PayloadJson);
+        Assert.Contains("\"queued\":5", send.PayloadJson);
+
+        // Same throttle window as the numeric-id stream: coalesced, not duplicated.
+        await service.PublishAsync(Event(HubEventCatalog.CrawlProgress, Progress(100, 2)));
+        Assert.Single(_channel.Snapshot());
+    }
+
     [Theory]
     [InlineData(HubEventCatalog.BackendLifecycle)]
     [InlineData(HubEventCatalog.ScheduleFired)]
@@ -229,7 +247,8 @@ public sealed class RealtimeHubServiceTests
         await using var service = CreateService();
         await service.ConnectAsync("conn-1");
         _time.Advance(TimeSpan.FromSeconds(2));
-        Assert.Contains("\"auditId\":77", Assert.Single(_channel.Snapshot()).PayloadJson);
+        // WP-09-06 (G-G): the running-audit id is a string EntityId on the wire.
+        Assert.Contains("\"auditId\":\"77\"", Assert.Single(_channel.Snapshot()).PayloadJson);
     }
 
     [Fact]

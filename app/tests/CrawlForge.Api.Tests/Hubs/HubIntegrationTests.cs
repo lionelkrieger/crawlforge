@@ -164,8 +164,14 @@ public sealed class HubIntegrationTests
         using var frame = await client.ReceiveEventAsync(HubEventCatalog.CrawlProgress, Timeout());
         var payload = frame.RootElement.GetProperty("arguments")[0];
         Assert.Equal(JsonValueKind.Object, payload.ValueKind); // Structured, not double-encoded.
-        Assert.Equal(100, payload.GetProperty("auditId").GetInt64());
-        Assert.Equal(5, payload.GetProperty("counters").GetProperty("fetched").GetInt32());
+        // WP-09-06 (G-G): entity ids are string EntityIds on the wire.
+        Assert.Equal("100", payload.GetProperty("auditId").GetString());
+        // WP-09-06 (G-HUB-COUNTERS): counters carry the REST wire keys.
+        var counters = payload.GetProperty("counters");
+        Assert.Equal(5, counters.GetProperty("fetched").GetInt32());
+        Assert.Equal(0, counters.GetProperty("queued").GetInt32());
+        Assert.Equal(0, counters.GetProperty("error").GetInt32());
+        Assert.Equal(0, counters.GetProperty("blocked").GetInt32());
     }
 
     [Fact]

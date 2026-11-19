@@ -81,7 +81,9 @@ public sealed class AuditRouteTests
         Assert.True(audit!.IsListMode);
         Assert.Contains("https://example.com/a", audit.UrlListJson);
 
-        var call = Assert.Single(host.Fakes.AuditExecution.Starts);
+        // WP-09-06 G10: list-mode starts go through the persist-before-start
+        // port (the locked IAuditExecutionService start is the fallback path).
+        var call = Assert.Single(host.Fakes.AuditExecution.ListStarts);
         Assert.Equal(10, call.Overrides?.MaxUrls);
     }
 
@@ -137,13 +139,17 @@ public sealed class AuditRouteTests
         await using var host = await ControllerTestHost.CreateAsync();
         var (project, configuration) = await host.SeedProjectAsync();
         var audit = await host.SeedAuditAsync(project.Id, configuration.Id, AuditStatus.Running, AuditPhase.Crawling,
-            "{\"queued\":100,\"fetched\":50,\"error\":2,\"blocked\":3,\"wafBlocked\":1}");
+            "{\"discovered\":100,\"fetched\":50,\"analyzed\":48,\"failed\":2,\"blocked\":3,\"wafBlocked\":1}");
 
         var response = await host.Client.GetAsync($"/api/audits/{audit.Id}");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var detail = await response.ReadDataAsync<AuditDetailWire>();
+        // WP-09-06: producer keys map to the wire (discovered→queued, failed→error).
+        Assert.Equal(100, detail.Counters.Queued);
         Assert.Equal(50, detail.Counters.Fetched);
+        Assert.Equal(2, detail.Counters.Error);
+        Assert.Equal(3, detail.Counters.Blocked);
         Assert.Equal(1, detail.Counters.WafBlocked);
         Assert.True(detail.ElapsedSeconds > 0);
         Assert.True(detail.ThroughputPerSecond > 0);

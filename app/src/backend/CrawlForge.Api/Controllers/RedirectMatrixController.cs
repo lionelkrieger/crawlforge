@@ -3,6 +3,7 @@ using CrawlForge.Contracts.Crawl;
 using CrawlForge.Contracts.Entities;
 using CrawlForge.Contracts.Enums;
 using CrawlForge.Contracts.Persistence;
+using CrawlForge.Crawler.ListMode;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrawlForge.Api.Controllers;
@@ -119,9 +120,21 @@ public sealed class RedirectMatrixController : ApiControllerBase
             return NotFoundError($"Audit '{id}' was not found.");
         }
 
-        if (verdict is not null && !ApiEnumConverter<RedirectMatrixVerdict>.TryParse(verdict, out _))
+        // WP-09-06 D4 (G-MATRIX-VERDICT): the frozen verdict vocabulary is the
+        // metric-dimension vocabulary (MatrixVerdictNames) — REST == hub ==
+        // metric dimensions: pass/target-mismatch/chain-exceeded/final-non-200/
+        // canonical-mismatch. Case-insensitive input, canonical output.
+        RedirectMatrixVerdict? verdictFilter = null;
+        if (verdict is not null)
         {
-            return ValidationError($"Unknown verdict '{verdict}'.", [new ApiFieldError("verdict", "Use a known matrix verdict key.")]);
+            try
+            {
+                verdictFilter = MatrixVerdictNames.Parse(verdict.ToLowerInvariant());
+            }
+            catch (ArgumentException)
+            {
+                return ValidationError($"Unknown verdict '{verdict}'.", [new ApiFieldError("verdict", "Use pass, target-mismatch, chain-exceeded, final-non-200, or canonical-mismatch.")]);
+            }
         }
 
         var mappings = await _mappings.ListAsync(new ListQuery(0, 10_000, new Dictionary<string, string> { ["auditId"] = id.ToString() }, "Ordinal", false), cancellationToken);
@@ -130,7 +143,7 @@ public sealed class RedirectMatrixController : ApiControllerBase
 
         var projected = results
             .Select(r => ToResult(r, urlMap))
-            .Where(r => verdict is null || string.Equals(r.Verdict, verdict, StringComparison.OrdinalIgnoreCase))
+            .Where(r => verdictFilter is null || string.Equals(r.Verdict, MatrixVerdictNames.Of(verdictFilter.Value), StringComparison.OrdinalIgnoreCase))
             .ToList();
         var page = projected.Skip(Math.Max(0, offset)).Take(Math.Clamp(limit, 1, MaxPageSize)).ToList();
         return OkEnvelope(page, new PaginationMetadata(Math.Max(0, offset), Math.Clamp(limit, 1, MaxPageSize), projected.Count));
@@ -158,7 +171,7 @@ public sealed class RedirectMatrixController : ApiControllerBase
             urlMap.TryGetValue(result.Mapping.SourceUrl, out var urlId) ? urlId.ToString() : string.Empty,
             result.Mapping.SourceUrl,
             result.Mapping.ExpectedTargetUrl,
-            ApiEnumConverter<RedirectMatrixVerdict>.ToWireValue(result.Verdict),
+            MatrixVerdictNames.Of(result.Verdict),
             chain,
             result.CanonicalUrl,
             result.ActualFinalUrl);

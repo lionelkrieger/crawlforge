@@ -15,7 +15,7 @@ using CrawlForge.Intelligence.LogAnalyzer;
 namespace CrawlForge.Api.Tests.Controllers;
 
 /// <summary>Audit-start double: creates real audit rows; records calls; configurable failure.</summary>
-internal sealed class FakeAuditExecutionService : IAuditExecutionService, CrawlForge.Api.Controllers.IReAuditExecutionPort
+internal sealed class FakeAuditExecutionService : IAuditExecutionService, CrawlForge.Api.Controllers.IReAuditExecutionPort, CrawlForge.Api.Controllers.IListAuditStartPort
 {
     private readonly IWriteRepository<AuditDto> _audits;
     private readonly IReadRepository<AuditDto> _auditReads;
@@ -30,6 +30,19 @@ internal sealed class FakeAuditExecutionService : IAuditExecutionService, CrawlF
 
     public ConcurrentQueue<(long AuditId, bool Refresh)> ReAudits { get; } = new();
 
+    /// <summary>WP-09-06 G10: list-mode starts through the persist-before-start port.</summary>
+    public ConcurrentQueue<(long ProjectId, long ConfigurationId, string? UrlListJson, bool IsListMode, CrawlLimitOverrides? Overrides)> ListStarts { get; } = new();
+
+    /// <summary>
+    /// Simulated engine first observation (ListSeedResolver.ResolveForAuditAsync
+    /// reads the persisted row): captured INSIDE the start call, before the
+    /// controller's post-start snapshot update — the G10 ordering proof.
+    /// </summary>
+    public ConcurrentQueue<(long AuditId, string? ObservedUrlListJson, bool? ObservedIsListMode)> EngineObservations { get; } = new();
+
+    /// <summary>When true, the list start fails AFTER the row was created (audit-failed path).</summary>
+    public bool FailListStartAfterCreate { get; set; }
+
     public Exception? StartException { get; set; }
 
     public async Task<long> StartAuditAsync(long projectId, long configurationId, ScheduleTriggerType trigger, CrawlLimitOverrides? limitOverrides, CancellationToken cancellationToken = default)
@@ -42,6 +55,38 @@ internal sealed class FakeAuditExecutionService : IAuditExecutionService, CrawlF
 
         var audit = await _audits.CreateAsync(new AuditDto(
             0, projectId, configurationId, "{}", AuditStatus.Queued, AuditPhase.NotStarted, null, null, "{}", "test-engine", false), cancellationToken);
+        return audit.Id;
+    }
+
+    /// <inheritdoc />
+    public async Task<long> StartListAuditAsync(
+        long projectId,
+        long configurationId,
+        ScheduleTriggerType trigger,
+        CrawlLimitOverrides? limitOverrides,
+        string? urlListJson,
+        bool isListMode,
+        CancellationToken cancellationToken = default)
+    {
+        ListStarts.Enqueue((projectId, configurationId, urlListJson, isListMode, limitOverrides));
+
+        // G10 port contract: the list payload is persisted ATOMICALLY with the
+        // row creation — before any engine observation of the row.
+        var audit = await _audits.CreateAsync(new AuditDto(
+            0, projectId, configurationId, "{}", AuditStatus.Queued, AuditPhase.NotStarted, null, null, "{}", "test-engine", false)
+        {
+            IsListMode = isListMode,
+            UrlListJson = urlListJson,
+        }, cancellationToken);
+
+        var observed = await _auditReads.GetByIdAsync(audit.Id, cancellationToken);
+        EngineObservations.Enqueue((audit.Id, observed!.UrlListJson, observed.IsListMode));
+
+        if (FailListStartAfterCreate)
+        {
+            throw new CrawlForge.Api.Controllers.AuditStartFailedException(audit.Id, "Simulated start pipeline failure after row creation.");
+        }
+
         return audit.Id;
     }
 
@@ -62,6 +107,114 @@ internal sealed class FakeAuditExecutionService : IAuditExecutionService, CrawlF
             AuditStatus.Queued, AuditPhase.Analyzing, null, null, "{}", "test-engine", false), cancellationToken);
         return audit.Id;
     }
+}
+
+/// <summary>
+/// WP-09-06 D2: engine lifecycle port double over the real SQLite stack.
+/// Mirrors the engine contract: pause persists Paused and checkpoints the run
+/// (FrontierSnapshot + CountersJson + AimdStateJson); resume releases the gate
+/// for an in-memory run, or REHYDRATES from the latest checkpoint when the run
+/// is not in memory (crash recovery — SimulateProcessRestart clears the run
+/// set exactly like a process death); cancel persists Cancelled + FinishedAt.
+/// Invalid transitions throw InvalidOperationException (REST maps to 409).
+/// </summary>
+internal sealed class FakeAuditLifecyclePort : CrawlForge.Api.Controllers.IAuditLifecycleExecutionPort
+{
+    private readonly IReadRepository<AuditDto> _auditReads;
+    private readonly IWriteRepository<AuditDto> _auditWrites;
+    private readonly IReadRepository<CrawlCheckpointDto> _checkpointReads;
+    private readonly IWriteRepository<CrawlCheckpointDto> _checkpointWrites;
+    private readonly HashSet<long> _runsInMemory = [];
+
+    public FakeAuditLifecyclePort(
+        IReadRepository<AuditDto> auditReads,
+        IWriteRepository<AuditDto> auditWrites,
+        IReadRepository<CrawlCheckpointDto> checkpointReads,
+        IWriteRepository<CrawlCheckpointDto> checkpointWrites)
+    {
+        _auditReads = auditReads;
+        _auditWrites = auditWrites;
+        _checkpointReads = checkpointReads;
+        _checkpointWrites = checkpointWrites;
+    }
+
+    public ConcurrentQueue<(long AuditId, string Action)> Calls { get; } = new();
+
+    /// <summary>Checkpoint rehydrations performed by resume-after-restart.</summary>
+    public ConcurrentQueue<(long AuditId, long? CheckpointId, string? Frontier, string? Counters, string? Aimd)> Rehydrations { get; } = new();
+
+    /// <summary>Marks a run as live in memory (the engine loop exists).</summary>
+    public void TrackRun(long auditId) => _runsInMemory.Add(auditId);
+
+    /// <summary>Simulates a process crash/restart: no run survives in memory.</summary>
+    public void SimulateProcessRestart() => _runsInMemory.Clear();
+
+    public async Task<CrawlForge.Api.Controllers.AuditLifecycleTransition> PauseAsync(long auditId, CancellationToken cancellationToken = default)
+    {
+        var audit = await RequireAsync(auditId, cancellationToken);
+        if (audit.Status != AuditStatus.Running)
+        {
+            throw new InvalidOperationException($"Audit {auditId} is not running (status {audit.Status}).");
+        }
+
+        Calls.Enqueue((auditId, "pause"));
+        var updated = await _auditWrites.UpdateAsync(audit with { Status = AuditStatus.Paused }, cancellationToken);
+        if (_runsInMemory.Contains(auditId))
+        {
+            // The engine checkpoints on pause observation: frontier + counters + AIMD.
+            await _checkpointWrites.CreateAsync(new CrawlCheckpointDto(
+                0, auditId, "{\"entries\":[]}", null, audit.CountersJson, DateTimeOffset.UtcNow)
+            {
+                AimdStateJson = "{\"hosts\":[]}",
+            }, cancellationToken);
+        }
+
+        return new CrawlForge.Api.Controllers.AuditLifecycleTransition(updated.Id, updated.Status, updated.Phase);
+    }
+
+    public async Task<CrawlForge.Api.Controllers.AuditLifecycleTransition> ResumeAsync(long auditId, CancellationToken cancellationToken = default)
+    {
+        var audit = await RequireAsync(auditId, cancellationToken);
+        if (audit.Status != AuditStatus.Paused)
+        {
+            throw new InvalidOperationException($"Audit {auditId} is not paused (status {audit.Status}).");
+        }
+
+        Calls.Enqueue((auditId, "resume"));
+        var updated = await _auditWrites.UpdateAsync(audit with { Status = AuditStatus.Running }, cancellationToken);
+        if (!_runsInMemory.Contains(auditId))
+        {
+            // Crash recovery: rehydrate from the LATEST checkpoint (§2.4).
+            var page = await _checkpointReads.ListAsync(new ListQuery(
+                0, 1,
+                new Dictionary<string, string> { ["auditId"] = auditId.ToString(System.Globalization.CultureInfo.InvariantCulture) },
+                "SavedAt", true), cancellationToken);
+            var checkpoint = page.Items.Count > 0 ? page.Items[0] : null;
+            Rehydrations.Enqueue((auditId, checkpoint?.Id, checkpoint?.SerializedFrontier, checkpoint?.CountersJson, checkpoint?.AimdStateJson));
+            _runsInMemory.Add(auditId);
+        }
+
+        return new CrawlForge.Api.Controllers.AuditLifecycleTransition(updated.Id, updated.Status, updated.Phase);
+    }
+
+    public async Task<CrawlForge.Api.Controllers.AuditLifecycleTransition> CancelAsync(long auditId, CancellationToken cancellationToken = default)
+    {
+        var audit = await RequireAsync(auditId, cancellationToken);
+        if (audit.Status is AuditStatus.Completed or AuditStatus.Cancelled or AuditStatus.Failed)
+        {
+            throw new InvalidOperationException($"Audit {auditId} already reached a terminal state.");
+        }
+
+        Calls.Enqueue((auditId, "cancel"));
+        var updated = await _auditWrites.UpdateAsync(
+            audit with { Status = AuditStatus.Cancelled, FinishedAt = DateTimeOffset.UtcNow }, cancellationToken);
+        _runsInMemory.Remove(auditId);
+        return new CrawlForge.Api.Controllers.AuditLifecycleTransition(updated.Id, updated.Status, updated.Phase);
+    }
+
+    private async Task<AuditDto> RequireAsync(long auditId, CancellationToken cancellationToken) =>
+        await _auditReads.GetByIdAsync(auditId, cancellationToken)
+            ?? throw new InvalidOperationException($"Audit {auditId} does not exist.");
 }
 
 /// <summary>Scheduler double for run-now delegation tests.</summary>

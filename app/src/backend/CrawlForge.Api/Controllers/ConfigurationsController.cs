@@ -5,6 +5,7 @@ using CrawlForge.Contracts.Crawl;
 using CrawlForge.Contracts.Entities;
 using CrawlForge.Contracts.Enums;
 using CrawlForge.Contracts.Persistence;
+using CrawlForge.Crawler.Canonicalization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CrawlForge.Api.Controllers;
@@ -104,6 +105,23 @@ public sealed class ConfigurationsController : ApiControllerBase
             request.VirtualRobotsTxt,
             request.Limits?.MaxResponseBytes,
             request.Rendering);
+
+        // WP-09-06 (WP-09-07 §3): additive editor document merged into ScopeRulesJson.
+        MergeScopeRules(behavior, request.ScopeRules, request.RespectRobotsTxt);
+        if (!TryNormalizeCategories(request.EnabledCategories, out var categories, out var categoryError))
+        {
+            return ValidationError(categoryError!, [new ApiFieldError("enabledCategories", categoryError!)]);
+        }
+
+        if (request.EnabledCategories is not null)
+        {
+            ApplyEnabledCategories(behavior, categories);
+        }
+
+        if (ValidateScopeDocument(behavior) is { } scopeError)
+        {
+            return scopeError;
+        }
         var limits = request.Limits is null
             ? null
             : new CrawlLimitOverrides(request.Limits.MaxUrls, request.Limits.MaxDepth, request.Limits.MaxDurationSeconds);
@@ -182,6 +200,15 @@ public sealed class ConfigurationsController : ApiControllerBase
         }
 
         var behavior = ProjectWireMapper.ParseObject(configuration.ScopeRulesJson);
+
+        // WP-09-06 (WP-09-07 §3): shallow top-level merge FIRST; the explicit
+        // request-field deltas below win over any behavior keys in the document.
+        MergeScopeRules(behavior, request.ScopeRules, request.RespectRobotsTxt);
+        if (!TryNormalizeCategories(request.EnabledCategories, out var categories, out var categoryError))
+        {
+            return ValidationError(categoryError!, [new ApiFieldError("enabledCategories", categoryError!)]);
+        }
+
         if (request.Description is not null)
         {
             if (request.Description.Length == 0)
@@ -254,6 +281,17 @@ public sealed class ConfigurationsController : ApiControllerBase
                 ["infiniteScroll"] = request.Rendering.InfiniteScroll,
                 ["captureConsole"] = request.Rendering.CaptureConsole,
             };
+        }
+
+        if (request.EnabledCategories is not null)
+        {
+            // Non-null replaces the persisted set; empty array = all enabled.
+            ApplyEnabledCategories(behavior, categories);
+        }
+
+        if (ValidateScopeDocument(behavior) is { } scopeError)
+        {
+            return scopeError;
         }
 
         configuration = configuration with { ScopeRulesJson = behavior.ToJsonString(), UpdatedAt = DateTimeOffset.UtcNow };
@@ -428,6 +466,98 @@ public sealed class ConfigurationsController : ApiControllerBase
         }
 
         return behavior;
+    }
+
+    /// <summary>Behavior keys owned by the explicit request fields (WP-09-07 §3 preservation rule).</summary>
+    private static readonly string[] BehaviorKeys = ["description", "respectRobotsTxt", "virtualRobotsTxt", "maxResponseBytes", "rendering"];
+
+    /// <summary>
+    /// Shallow top-level merge of the additive editor document into the behavior
+    /// object. Editor sections (canonicalization/scope/directives/resources/cookieJar/
+    /// userAgent/userAgentComparison/headers/cookies) are copied verbatim; behavior
+    /// keys stay owned by the explicit request fields — except respectRobotsTxt,
+    /// which falls back to the document when the request omitted the flag.
+    /// </summary>
+    private static void MergeScopeRules(JsonObject behavior, JsonElement? scopeRules, bool? respectRobotsTxtExplicit)
+    {
+        if (scopeRules is not { ValueKind: JsonValueKind.Object } document)
+        {
+            return;
+        }
+
+        foreach (var property in document.EnumerateObject())
+        {
+            if (BehaviorKeys.Contains(property.Name))
+            {
+                if (property.Name == "respectRobotsTxt" && respectRobotsTxtExplicit is null)
+                {
+                    behavior[property.Name] = JsonNode.Parse(property.Value.GetRawText());
+                }
+
+                continue;
+            }
+
+            behavior[property.Name] = JsonNode.Parse(property.Value.GetRawText());
+        }
+    }
+
+    /// <summary>
+    /// Normalizes additive enabledCategories to canonical PascalCase AuditCategory
+    /// names (case-insensitive parse, deduplicated). Null/empty = all enabled (null).
+    /// Unknown names are validation errors at configuration time.
+    /// </summary>
+    private static bool TryNormalizeCategories(IReadOnlyList<string>? names, out IReadOnlyList<string>? normalized, out string? error)
+    {
+        normalized = null;
+        error = null;
+        if (names is null || names.Count == 0)
+        {
+            return true;
+        }
+
+        var list = new List<string>(names.Count);
+        foreach (var name in names)
+        {
+            if (!Enum.TryParse<AuditCategory>(name, ignoreCase: true, out var category))
+            {
+                error = $"Unknown analysis category '{name}'.";
+                return false;
+            }
+
+            var canonical = category.ToString();
+            if (!list.Contains(canonical))
+            {
+                list.Add(canonical);
+            }
+        }
+
+        normalized = list;
+        return true;
+    }
+
+    /// <summary>Writes (or clears, for null = all) the enabledCategories document member.</summary>
+    private static void ApplyEnabledCategories(JsonObject behavior, IReadOnlyList<string>? normalized)
+    {
+        if (normalized is null)
+        {
+            behavior.Remove("enabledCategories");
+            return;
+        }
+
+        behavior["enabledCategories"] = new JsonArray(normalized.Select(name => (JsonNode)name).ToArray());
+    }
+
+    /// <summary>
+    /// Validates the merged crawl-scope document with the total/tolerant parser;
+    /// hard errors (invalid regexes, out-of-range sample sizes) become a
+    /// validation envelope under <c>scopeRules</c> (WP-09-07 §3).
+    /// </summary>
+    private ObjectResult? ValidateScopeDocument(JsonObject behavior)
+    {
+        var errors = CrawlScopeConfigParser.Parse(behavior.ToJsonString()).Errors;
+        return errors.Count == 0
+            ? null
+            : ValidationError("Invalid crawl scope configuration.", [new ApiFieldError("scopeRules", string.Join(" ", errors))]);
     }
 
     private async Task<IReadOnlyList<ContentScopeProfileWire>?> LoadProfilesAsync(long projectId, CancellationToken cancellationToken)

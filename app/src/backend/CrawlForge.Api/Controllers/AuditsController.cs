@@ -1,6 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using CrawlForge.Api.Hubs;
 using CrawlForge.Audit.Scoring;
+using CrawlForge.Contracts.Api;
 using CrawlForge.Contracts.Common;
 using CrawlForge.Contracts.Crawl;
 using CrawlForge.Contracts.Entities;
@@ -29,6 +31,107 @@ public interface IReAuditExecutionPort
 }
 
 /// <summary>
+/// REST-local lifecycle execution port (WP-09-06 D2): mirrors the MCP
+/// <c>IAuditLifecyclePort</c> so REST pause/resume/cancel reach the engine's
+/// in-memory run state, not just the persisted status row. The Host execution
+/// engine implements the equivalent lifecycle surface; additive composition
+/// only — locked contracts untouched. Contract for implementers:
+/// <list type="bullet">
+/// <item>Pause: persist Paused, signal the run's pause gate; the run loop
+/// checkpoints (FrontierSnapshot + AimdStateJson + CountersJson) on observation.</item>
+/// <item>Resume: persist Running and release the gate; when the run is NOT in
+/// memory (crash recovery — the previous process died and startup marked the
+/// orphan Paused), rehydrate a new run from the latest checkpoint. This is the
+/// path REST status writes alone cannot perform.</item>
+/// <item>Cancel: persist Cancelled, release the gate so the loop exits and
+/// finalizes.</item>
+/// <item>Throw <see cref="InvalidOperationException"/> when the current state
+/// forbids the transition (REST maps it to 409 invalid-state).</item>
+/// </list>
+/// Until Host registers an implementation, the controller falls back to
+/// validated status writes (the engine loop polls persisted status, so
+/// in-process pause/cancel still work; post-restart resume needs this port).
+/// </summary>
+public interface IAuditLifecycleExecutionPort
+{
+    /// <summary>Pauses a running audit (checkpoint on observation).</summary>
+    /// <param name="auditId">Audit identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The persisted transition.</returns>
+    Task<AuditLifecycleTransition> PauseAsync(long auditId, CancellationToken cancellationToken = default);
+
+    /// <summary>Resumes a paused audit, rehydrating from checkpoint after a restart.</summary>
+    /// <param name="auditId">Audit identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The persisted transition.</returns>
+    Task<AuditLifecycleTransition> ResumeAsync(long auditId, CancellationToken cancellationToken = default);
+
+    /// <summary>Cancels a running or paused audit.</summary>
+    /// <param name="auditId">Audit identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The persisted transition.</returns>
+    Task<AuditLifecycleTransition> CancelAsync(long auditId, CancellationToken cancellationToken = default);
+}
+
+/// <summary>Result of one engine-executed lifecycle transition.</summary>
+/// <param name="AuditId">Audit identifier.</param>
+/// <param name="Status">Persisted lifecycle status.</param>
+/// <param name="Phase">Pipeline phase at transition time.</param>
+public sealed record AuditLifecycleTransition(long AuditId, AuditStatus Status, AuditPhase Phase);
+
+/// <summary>
+/// REST-local list-mode start port (WP-09-06 G10): the locked
+/// <see cref="IAuditExecutionService"/> creates the audit row and starts the
+/// engine loop in one call, so a post-start <c>UrlListJson</c> update races the
+/// engine's seed resolution (<c>ListSeedResolver.ResolveForAuditAsync</c>).
+/// Contract for implementers: persist <c>urlListJson</c>/<c>isListMode</c>
+/// ATOMICALLY with the audit-row creation — BEFORE the engine loop can observe
+/// the row (persist-before-start). On a failure AFTER the row was created,
+/// throw <see cref="AuditStartFailedException"/> carrying the new audit id so
+/// the REST surface can publish audit-failed with error detail.
+/// </summary>
+public interface IListAuditStartPort
+{
+    /// <summary>Starts a list-mode audit with the URL list persisted before engine observation.</summary>
+    /// <param name="projectId">Owning project identifier.</param>
+    /// <param name="configurationId">Configuration to snapshot.</param>
+    /// <param name="trigger">What fired this run.</param>
+    /// <param name="limitOverrides">Optional per-audit limit overrides.</param>
+    /// <param name="urlListJson">JSON array of list URLs; null when only the flag is set.</param>
+    /// <param name="isListMode">Persisted list-mode flag.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The identifier of the newly created audit.</returns>
+    Task<long> StartListAuditAsync(
+        long projectId,
+        long configurationId,
+        ScheduleTriggerType trigger,
+        CrawlLimitOverrides? limitOverrides,
+        string? urlListJson,
+        bool isListMode,
+        CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// Signals an audit-start failure AFTER the audit row was created (G10 port
+/// contract): the REST surface publishes audit-failed with the carried id and
+/// error detail, then returns the uniform 500 envelope.
+/// </summary>
+public sealed class AuditStartFailedException : Exception
+{
+    /// <summary>Creates the failure signal.</summary>
+    /// <param name="auditId">Identifier of the created audit row.</param>
+    /// <param name="message">Failure detail for the audit-failed event.</param>
+    public AuditStartFailedException(long auditId, string message)
+        : base(message)
+    {
+        AuditId = auditId;
+    }
+
+    /// <summary>Identifier of the created audit row.</summary>
+    public long AuditId { get; }
+}
+
+/// <summary>
 /// Audit lifecycle and comparison (FS-CRAWL-001 §10.2): start, list, detail,
 /// pause/resume/cancel transitions, reaudit, and audit comparison with the
 /// additive host-mapped alignment (FS-CRAWL-002 §10.7).
@@ -51,6 +154,9 @@ public sealed class AuditsController : ApiControllerBase
     private readonly IAuditExecutionService _execution;
     private readonly IReAuditExecutionPort _reaudit;
     private readonly AuditComparisonReader _comparison;
+    private readonly IAuditLifecycleExecutionPort? _lifecyclePort;
+    private readonly IListAuditStartPort? _listStartPort;
+    private readonly IRealtimeHub _hub;
 
     /// <summary>Creates the controller.</summary>
     /// <param name="auditReads">Audit read repository.</param>
@@ -63,6 +169,9 @@ public sealed class AuditsController : ApiControllerBase
     /// <param name="execution">Locked audit execution contract.</param>
     /// <param name="reaudit">Reaudit port honoring the offline/refresh routing.</param>
     /// <param name="comparison">Accepted comparison read model.</param>
+    /// <param name="lifecyclePorts">Engine lifecycle port (WP-09-06 D2); empty until Host wires it — REST falls back to validated status writes.</param>
+    /// <param name="listStartPorts">List-mode start port (WP-09-06 G10); empty until Host wires it — REST falls back to start-then-persist.</param>
+    /// <param name="hub">Realtime hub for REST-side stage-changed / audit-failed publication.</param>
     public AuditsController(
         IReadRepository<AuditDto> auditReads,
         IWriteRepository<AuditDto> auditWrites,
@@ -73,7 +182,10 @@ public sealed class AuditsController : ApiControllerBase
         IReadRepository<UrlRecordDto> urls,
         IAuditExecutionService execution,
         IReAuditExecutionPort reaudit,
-        AuditComparisonReader comparison)
+        AuditComparisonReader comparison,
+        IEnumerable<IAuditLifecycleExecutionPort> lifecyclePorts,
+        IEnumerable<IListAuditStartPort> listStartPorts,
+        IRealtimeHub hub)
     {
         _auditReads = auditReads;
         _auditWrites = auditWrites;
@@ -85,6 +197,9 @@ public sealed class AuditsController : ApiControllerBase
         _execution = execution;
         _reaudit = reaudit;
         _comparison = comparison;
+        _lifecyclePort = lifecyclePorts.FirstOrDefault();
+        _listStartPort = listStartPorts.FirstOrDefault();
+        _hub = hub;
     }
 
     /// <summary>Starts an audit from a configuration; returns immediately.</summary>
@@ -137,25 +252,66 @@ public sealed class AuditsController : ApiControllerBase
             ? null
             : new CrawlLimitOverrides(request.LimitOverrides.MaxUrls, request.LimitOverrides.MaxDepth, request.LimitOverrides.MaxDurationSeconds);
 
-        var auditId = await _execution.StartAuditAsync(configuration.ProjectId, configurationId, ScheduleTriggerType.Manual, overrides, cancellationToken);
+        var urlListJson = request.UrlList is null ? null : JsonSerializer.Serialize(request.UrlList);
+        var isListMode = request.ListMode == true || request.UrlList is not null;
+
+        long auditId;
+        try
+        {
+            // G10 (WP-09-06): persist-before-start. When the list-start port is
+            // wired, UrlListJson/IsListMode are persisted ATOMICALLY with the
+            // audit-row creation, before the engine loop can resolve list seeds
+            // (ListSeedResolver.ResolveForAuditAsync). The locked start contract
+            // creates the row internally, so a post-start update races the engine;
+            // the fallback below keeps pre-wiring behavior (handoff documents the
+            // Host registration that closes the race).
+            if (isListMode && _listStartPort is not null)
+            {
+                auditId = await _listStartPort.StartListAuditAsync(
+                    configuration.ProjectId, configurationId, ScheduleTriggerType.Manual,
+                    overrides, urlListJson, isListMode, cancellationToken);
+            }
+            else
+            {
+                auditId = await _execution.StartAuditAsync(configuration.ProjectId, configurationId, ScheduleTriggerType.Manual, overrides, cancellationToken);
+            }
+        }
+        catch (AuditStartFailedException ex)
+        {
+            // The start pipeline failed AFTER the row was created: publish
+            // audit-failed with error detail (FS-CRAWL-001 §10.3) so the shell
+            // sees the failure even though no engine loop will finalize it.
+            await PublishAuditFailedAsync(ex.AuditId, "start-failed", ex.Message, cancellationToken);
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                ErrorEnvelope(ApiErrorCodes.Internal, ex.Message));
+        }
+
         var audit = await _auditReads.GetByIdAsync(auditId, cancellationToken)
             ?? throw new InvalidOperationException("The execution service did not persist the audit row.");
 
         // Freeze the configuration snapshot; write enabledCategories only when
         // category toggles are configured (absent = all enabled, Scoring README).
+        // WP-09-06 (WP-09-07 §3): the config-level enabledCategories document
+        // member wins over the app-settings AuditTogglesJson fallback.
         var snapshot = JsonSerializer.SerializeToNode(
             ProjectWireMapper.ToConfiguration(configuration, null), ApiJsonOptions.Default)!.AsObject();
-        var enabledCategories = await ResolveEnabledCategoriesAsync(cancellationToken);
+        var enabledCategories = await ResolveEnabledCategoriesAsync(configuration, cancellationToken);
         if (enabledCategories is not null)
         {
             snapshot["enabledCategories"] = JsonSerializer.SerializeToNode(enabledCategories);
+        }
+        else
+        {
+            // Keep the frozen convention: absent = all enabled (the wire
+            // projection carries null; the snapshot omits the member).
+            snapshot.Remove("enabledCategories");
         }
 
         audit = audit with
         {
             ConfigurationSnapshotJson = snapshot.ToJsonString(),
-            IsListMode = request.ListMode == true || request.UrlList is not null,
-            UrlListJson = request.UrlList is null ? null : JsonSerializer.Serialize(request.UrlList),
+            IsListMode = isListMode,
+            UrlListJson = urlListJson,
         };
         await _auditWrites.UpdateAsync(audit, cancellationToken);
 
@@ -268,8 +424,24 @@ public sealed class AuditsController : ApiControllerBase
             return InvalidStateError($"Audit {id} in state '{AuditWireMapper.StateWire(audit.Status)}' cannot be cancelled.");
         }
 
+        // WP-09-06 D2: delegate to the engine when wired so the in-memory run
+        // exits its loop and finalizes (stage-changed emitted engine-side).
+        if (_lifecyclePort is not null)
+        {
+            try
+            {
+                var transition = await _lifecyclePort.CancelAsync(id, cancellationToken);
+                return OkEnvelope(new AuditStateResponse(transition.AuditId.ToString(), AuditWireMapper.StateWire(transition.Status)));
+            }
+            catch (InvalidOperationException)
+            {
+                return InvalidStateError($"Audit {id} in state '{AuditWireMapper.StateWire(audit.Status)}' cannot be cancelled.");
+            }
+        }
+
         var updated = await _auditWrites.UpdateAsync(
             audit with { Status = AuditStatus.Cancelled, FinishedAt = DateTimeOffset.UtcNow }, cancellationToken);
+        await PublishStageChangedAsync(id, audit.Status, AuditStatus.Cancelled, cancellationToken);
         return OkEnvelope(new AuditStateResponse(updated.Id.ToString(), AuditWireMapper.StateWire(updated.Status)));
     }
 
@@ -364,12 +536,99 @@ public sealed class AuditsController : ApiControllerBase
             return InvalidStateError($"Audit {id} in state '{AuditWireMapper.StateWire(audit.Status)}' cannot {action}; expected '{AuditWireMapper.StateWire(required)}'.");
         }
 
+        // WP-09-06 D2: when the engine lifecycle port is wired, delegate so the
+        // transition reaches the in-memory run (pause gate / cancel) and resume
+        // rehydrates from the latest checkpoint after a crash. The engine owns
+        // stage-changed emission on this path (handoff recipe).
+        if (_lifecyclePort is not null)
+        {
+            try
+            {
+                var transition = next switch
+                {
+                    AuditStatus.Paused => await _lifecyclePort.PauseAsync(id, cancellationToken),
+                    AuditStatus.Running => await _lifecyclePort.ResumeAsync(id, cancellationToken),
+                    _ => await _lifecyclePort.CancelAsync(id, cancellationToken),
+                };
+                return OkEnvelope(new AuditStateResponse(transition.AuditId.ToString(), AuditWireMapper.StateWire(transition.Status)));
+            }
+            catch (InvalidOperationException)
+            {
+                // The engine re-validates under its own state; a concurrent
+                // transition wins and REST reports the conflict.
+                return InvalidStateError($"Audit {id} in state '{AuditWireMapper.StateWire(audit.Status)}' cannot {action}; expected '{AuditWireMapper.StateWire(required)}'.");
+            }
+        }
+
+        // Fallback (pre-wiring): validated status write. The engine loop polls
+        // persisted status (ObserveStatusAsync), so in-process pause/cancel are
+        // observed and checkpointed; REST publishes stage-changed itself here.
         var updated = await _auditWrites.UpdateAsync(audit with { Status = next }, cancellationToken);
+        await PublishStageChangedAsync(id, audit.Status, next, cancellationToken);
         return OkEnvelope(new AuditStateResponse(updated.Id.ToString(), AuditWireMapper.StateWire(updated.Status)));
     }
 
-    private async Task<IReadOnlyList<string>?> ResolveEnabledCategoriesAsync(CancellationToken cancellationToken)
+    /// <summary>
+    /// Publishes stage-changed for a REST-executed transition (FS-CRAWL-001
+    /// §10.3: on every lifecycle transition). Only the fallback path emits here;
+    /// when the lifecycle port is wired the engine owns emission (single
+    /// emission per transition — handoff recipe).
+    /// </summary>
+    private Task PublishStageChangedAsync(long auditId, AuditStatus previousState, AuditStatus newState, CancellationToken cancellationToken) =>
+        _hub.PublishAsync(new HubEvent(
+            HubEventCatalog.StageChanged,
+            JsonSerializer.Serialize(new
+            {
+                auditId,
+                previousState = AuditWireMapper.StateWire(previousState),
+                newState = AuditWireMapper.StateWire(newState),
+            })), cancellationToken);
+
+    /// <summary>
+    /// Publishes audit-failed with error detail (FS-CRAWL-001 §10.3; frozen
+    /// frontend AuditFailedPayload: auditId/errorCode/message). Used by Api-side
+    /// failure paths where no engine loop will finalize the run; engine-side
+    /// run failures publish at FinalizeAsync (already implemented).
+    /// </summary>
+    private Task PublishAuditFailedAsync(long auditId, string errorCode, string message, CancellationToken cancellationToken) =>
+        _hub.PublishAsync(new HubEvent(
+            HubEventCatalog.AuditFailed,
+            JsonSerializer.Serialize(new
+            {
+                auditId,
+                errorCode,
+                message,
+            })), cancellationToken);
+
+    private async Task<IReadOnlyList<string>?> ResolveEnabledCategoriesAsync(CrawlConfigurationDto configuration, CancellationToken cancellationToken)
     {
+        // Config-level preference (WP-09-07 §3): ScopeRulesJson["enabledCategories"],
+        // PascalCase enum names, case-insensitive. A full set is equivalent to null
+        // (all enabled); an absent/empty member falls through to app settings.
+        var behavior = ProjectWireMapper.ParseObject(configuration.ScopeRulesJson);
+        if (behavior["enabledCategories"] is JsonArray categoryNodes)
+        {
+            var names = new List<string>();
+            foreach (var node in categoryNodes)
+            {
+                if (node is JsonValue value
+                    && value.TryGetValue<string>(out var name)
+                    && Enum.TryParse<AuditCategory>(name, ignoreCase: true, out var category))
+                {
+                    var canonical = category.ToString();
+                    if (!names.Contains(canonical))
+                    {
+                        names.Add(canonical);
+                    }
+                }
+            }
+
+            if (names.Count > 0)
+            {
+                return names.Count == Enum.GetValues<AuditCategory>().Length ? null : names;
+            }
+        }
+
         var page = await _settings.ListAsync(new ListQuery(0, 1), cancellationToken);
         if (page.Items.Count == 0)
         {

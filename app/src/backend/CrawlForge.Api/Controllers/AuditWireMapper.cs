@@ -19,16 +19,51 @@ internal static class AuditWireMapper
 
     public static string PhaseWire(AuditPhase phase) => ApiEnumConverter<AuditPhase>.ToWireValue(phase);
 
+    /// <summary>
+    /// WP-09-06 (G06 counter-key reconciliation): the engine producer
+    /// (<c>AuditRunCounters.ToPayload()</c>, Host/Execution/AuditRunState.cs)
+    /// stores <c>discovered/fetched/analyzed/failed</c>; the frozen wire
+    /// (FS-CRAWL-001 §10.3 crawl-progress counters, frontend AuditCounters)
+    /// carries <c>queued/fetched/error/blocked</c> plus the additive
+    /// <c>wafBlocked</c> sub-count. Producer keys map first
+    /// (queued↔discovered, fetched↔fetched, error↔failed); legacy wire keys
+    /// remain accepted so pre-fix rows keep parsing. <c>analyzed</c> is an
+    /// engine-internal dimension with no wire field. <c>blocked</c>/<c>wafBlocked</c>
+    /// pass through when the producer supplies them, otherwise 0/null — the
+    /// engine-side emission recipe (handoff) adds them from url_records
+    /// classification. The hub normalizer shares this exact mapping so the
+    /// live crawl-progress payload and the REST snapshot agree key-for-key.
+    /// </summary>
+    /// <param name="countersJson">Stored counters payload (producer or legacy wire keys).</param>
+    /// <returns>The frozen wire counters.</returns>
     public static AuditCountersWire ParseCounters(string? countersJson)
     {
         var counters = ProjectWireMapper.ParseObject(countersJson);
         return new AuditCountersWire(
-            counters["queued"]?.GetValue<long>() ?? 0,
-            counters["fetched"]?.GetValue<long>() ?? 0,
-            counters["error"]?.GetValue<long>() ?? 0,
-            counters["blocked"]?.GetValue<long>() ?? 0,
-            counters["wafBlocked"]?.GetValue<long>());
+            ReadCounter(counters, "discovered", "queued"),
+            ReadCounter(counters, "fetched"),
+            ReadCounter(counters, "failed", "error"),
+            ReadCounter(counters, "blocked"),
+            ReadOptionalCounter(counters, "wafBlocked"));
     }
+
+    private static long ReadCounter(JsonObject counters, params string[] keys)
+    {
+        foreach (var key in keys)
+        {
+            if (counters[key] is { } node && node.GetValueKind() == JsonValueKind.Number)
+            {
+                return node.GetValue<long>();
+            }
+        }
+
+        return 0;
+    }
+
+    private static long? ReadOptionalCounter(JsonObject counters, string key) =>
+        counters[key] is { } node && node.GetValueKind() == JsonValueKind.Number
+            ? node.GetValue<long>()
+            : null;
 
     /// <summary>HOTFIX-01: reads the failure reason stored in the counters payload.</summary>
     private static string? ErrorMessage(string? countersJson) =>

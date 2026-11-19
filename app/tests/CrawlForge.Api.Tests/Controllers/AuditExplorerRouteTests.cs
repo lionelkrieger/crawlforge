@@ -231,7 +231,7 @@ public sealed class AuditExplorerRouteTests
         await using var host = await ControllerTestHost.CreateAsync();
         var (project, configuration) = await host.SeedProjectAsync();
         var audit = await host.SeedAuditAsync(project.Id, configuration.Id, AuditStatus.Completed, AuditPhase.Finished,
-            "{\"queued\":0,\"fetched\":10,\"error\":1,\"blocked\":2}");
+            "{\"discovered\":0,\"fetched\":10,\"analyzed\":9,\"failed\":1,\"blocked\":2}");
         var url = await host.SeedUrlAsync(audit.Id, "https://example.com/ok");
         await host.SeedUrlAsync(audit.Id, "https://example.com/missing", CrawlStatusClass.ClientError, 404);
         await host.Get<IWriteRepository<UrlRecordDto>>().UpdateAsync(url with { TimingJson = "{\"ttfbMs\":120}" });

@@ -119,6 +119,27 @@ internal static class ProjectWireMapper
             renderingOptions["infiniteScroll"]?.GetValue<bool>() ?? false,
             renderingOptions["captureConsole"]?.GetValue<bool>() ?? false);
 
+        // WP-09-06 (WP-09-07 §3): additive editor fields projected from ScopeRulesJson.
+        // scopeRules is the whole persisted document (behavior keys included);
+        // enabledCategories lives under the same document (null = all enabled).
+        System.Text.Json.JsonElement? scopeRules = behavior.Count > 0
+            ? JsonSerializer.SerializeToElement(behavior)
+            : null;
+        IReadOnlyList<string>? enabledCategories = null;
+        if (behavior["enabledCategories"] is JsonArray categoryNodes)
+        {
+            var names = new List<string>();
+            foreach (var node in categoryNodes)
+            {
+                if (node is JsonValue value && value.TryGetValue<string>(out var name) && !string.IsNullOrWhiteSpace(name))
+                {
+                    names.Add(name);
+                }
+            }
+
+            enabledCategories = names.Count > 0 ? names : null;
+        }
+
         return new AuditConfigurationWire(
             configuration.Id.ToString(),
             configuration.ProjectId.ToString(),
@@ -135,7 +156,9 @@ internal static class ProjectWireMapper
             ToContentScope(configuration.ContentScope, profiles),
             ToRewrite(configuration.RewriteRulesJson, configuration.HostMappingJson),
             ToConsent(configuration.ConsentModeEnabled, configuration.BeaconPatternsJson),
-            ToZoneWeights(configuration.ZoneWeightsJson, configuration.SerpBudgets));
+            ToZoneWeights(configuration.ZoneWeightsJson, configuration.SerpBudgets),
+            scopeRules,
+            enabledCategories);
     }
 
     public static ContentScopeSettingsWire? ToContentScope(ContentScopeDefinition? scope, IReadOnlyList<ContentScopeProfileWire>? profiles) =>

@@ -270,7 +270,10 @@ public sealed class RealtimeHubService : IRealtimeHub, IAsyncDisposable
         try
         {
             var payload = _healthSampler.CapturePayload();
-            var json = JsonSerializer.Serialize(payload, PayloadOptions);
+            // G-G: the heartbeat carries the optional running-audit id as a
+            // string EntityId too; it bypasses DispatchAsync, so normalize here.
+            var json = HubPayloadNormalizer.Normalize(
+                HubEventCatalog.SystemHealth, JsonSerializer.Serialize(payload, PayloadOptions));
             await _channel.SendAllAsync(HubEventCatalog.SystemHealth, json, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -281,14 +284,18 @@ public sealed class RealtimeHubService : IRealtimeHub, IAsyncDisposable
 
     private async Task DispatchAsync(HubEvent hubEvent, CancellationToken cancellationToken)
     {
-        var auditId = TryReadInt64(hubEvent.PayloadJson, "auditId");
+        // WP-09-06 (G06/G-G/G-HUB-COUNTERS): reconcile the engine's storage-shaped
+        // payload to the frozen wire (string EntityIds, REST counter keys) at the
+        // hub boundary; routing reads the normalized payload.
+        var payloadJson = HubPayloadNormalizer.Normalize(hubEvent.Name, hubEvent.PayloadJson);
+        var auditId = TryReadEntityId(payloadJson, "auditId");
         if (auditId is { } id && AuditScopedEvents.Contains(hubEvent.Name))
         {
-            await _channel.SendGroupAsync(GroupName(id), hubEvent.Name, hubEvent.PayloadJson, cancellationToken).ConfigureAwait(false);
+            await _channel.SendGroupAsync(GroupName(id), hubEvent.Name, payloadJson, cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            await _channel.SendAllAsync(hubEvent.Name, hubEvent.PayloadJson, cancellationToken).ConfigureAwait(false);
+            await _channel.SendAllAsync(hubEvent.Name, payloadJson, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -297,35 +304,47 @@ public sealed class RealtimeHubService : IRealtimeHub, IAsyncDisposable
         if (string.Equals(hubEvent.Name, HubEventCatalog.HostThrottle, StringComparison.Ordinal))
         {
             var host = TryReadString(hubEvent.PayloadJson, "host") ?? "unknown";
-            var auditId = TryReadInt64(hubEvent.PayloadJson, "auditId");
+            var auditId = TryReadEntityId(hubEvent.PayloadJson, "auditId");
             return string.Create(System.Globalization.CultureInfo.InvariantCulture,
                 $"{hubEvent.Name}:{auditId?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "global"}:{host}");
         }
 
         if (string.Equals(hubEvent.Name, HubEventCatalog.LogImportProgress, StringComparison.Ordinal))
         {
-            var importId = TryReadInt64(hubEvent.PayloadJson, "importId");
+            var importId = TryReadEntityId(hubEvent.PayloadJson, "importId");
             return string.Create(System.Globalization.CultureInfo.InvariantCulture,
                 $"{hubEvent.Name}:{importId?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "global"}");
         }
 
-        var scope = TryReadInt64(hubEvent.PayloadJson, "auditId");
+        var scope = TryReadEntityId(hubEvent.PayloadJson, "auditId");
         return scope is { } value
             ? string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{hubEvent.Name}:{value}")
             : hubEvent.Name;
     }
 
-    private static long? TryReadInt64(string payloadJson, string propertyName)
+    /// <summary>
+    /// Reads an entity identifier tolerantly (G-G): numeric producer ids and
+    /// normalized string <c>EntityId</c> values both route to the same group.
+    /// </summary>
+    private static long? TryReadEntityId(string payloadJson, string propertyName)
     {
         try
         {
             using var document = JsonDocument.Parse(payloadJson);
-            return document.RootElement.ValueKind == JsonValueKind.Object
-                && document.RootElement.TryGetProperty(propertyName, out var property)
-                && property.ValueKind == JsonValueKind.Number
-                && property.TryGetInt64(out var value)
-                ? value
-                : null;
+            if (document.RootElement.ValueKind != JsonValueKind.Object
+                || !document.RootElement.TryGetProperty(propertyName, out var property))
+            {
+                return null;
+            }
+
+            return property.ValueKind switch
+            {
+                JsonValueKind.Number => property.TryGetInt64(out var value) ? value : null,
+                JsonValueKind.String => long.TryParse(property.GetString(),
+                    System.Globalization.NumberStyles.Integer,
+                    System.Globalization.CultureInfo.InvariantCulture, out var parsed) ? parsed : null,
+                _ => null,
+            };
         }
         catch (JsonException)
         {
