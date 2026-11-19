@@ -347,7 +347,9 @@ workpieces:
   - workpiece_id: "WP-09-06"
     title: "Audit & Configuration REST Conformance — Counter Keys, Run Lifecycle, Hub Run Events"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-02"
+    started_at: "2026-11-19T06:58:00Z"
     parallel_group: "wave-9B"
     depends_on_workpieces: ["WP-08-03"]
     context_files:
@@ -402,7 +404,9 @@ workpieces:
   - workpiece_id: "WP-09-07"
     title: "Project Overview, Configurations & Configuration Editor UI (13 Tabs)"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-01"
+    started_at: "2026-11-19T06:58:00Z"
     parallel_group: "wave-9B"
     depends_on_workpieces: ["WP-08-04"]
     context_files:
@@ -454,7 +458,9 @@ workpieces:
   - workpiece_id: "WP-09-08"
     title: "Report Window — Dashboard & Issue Explorer (Real Data, Suppression, Scores)"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-04"
+    started_at: "2026-11-19T06:58:00Z"
     parallel_group: "wave-9B"
     depends_on_workpieces: ["WP-08-04"]
     context_files:
@@ -516,7 +522,9 @@ workpieces:
   - workpiece_id: "WP-09-09"
     title: "Report Window — URL Explorer & URL Detail (Inventory, Elements, Links, SERP Preview)"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-05"
+    started_at: "2026-11-19T06:58:00Z"
     parallel_group: "wave-9B"
     depends_on_workpieces: ["WP-08-04"]
     context_files:
@@ -569,7 +577,9 @@ workpieces:
   - workpiece_id: "WP-09-10"
     title: "Export Engine Completion & Export Dialog (CSV, XLSX, JSON, PDF, Text, Markdown, Sitemap, Destinations)"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-03"
+    started_at: "2026-11-19T06:58:00Z"
     parallel_group: "wave-9B"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:
