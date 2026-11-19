@@ -67,7 +67,7 @@ Execution modes: **incremental** (per-URL passes run during the crawl) and **ful
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.4 Rule taxonomy (generic, industry-standard) — verbatim and unabridged**
 
 ### 7.4 Rule taxonomy (generic, industry-standard)
-> Capabilities: CAP-A-007, CAP-B-036, CAP-B-037, CAP-B-038, CAP-B-039, CAP-B-040, CAP-B-041, CAP-B-042, CAP-B-043, CAP-B-044, CAP-B-045, CAP-B-046, CAP-B-047, CAP-B-048, CAP-B-049, CAP-B-050, CAP-B-051, CAP-B-052, CAP-B-053, CAP-B-054, CAP-B-055, CAP-B-056, CAP-B-057, CAP-B-058, CAP-B-059, CAP-B-060, CAP-B-061, CAP-B-062, CAP-B-063, CAP-C-087, CAP-C-090, CAP-C-091, CAP-C-092, CAP-C-095, CAP-C-096, CAP-C-097, CAP-D2-111, CAP-D2-113, CAP-D2-114, CAP-D2-116, CAP-E-122, CAP-E-125, CAP-F-139, CAP-F-148, CAP-D2-115, CAP-D2-117 · Decisions: D-017, D-020 · Change records: CR-017, CR-024
+> Capabilities: CAP-A-007, CAP-B-036, CAP-B-037, CAP-B-038, CAP-B-039, CAP-B-040, CAP-B-041, CAP-B-042, CAP-B-043, CAP-B-044, CAP-B-045, CAP-B-046, CAP-B-047, CAP-B-048, CAP-B-049, CAP-B-050, CAP-B-051, CAP-B-052, CAP-B-053, CAP-B-054, CAP-B-055, CAP-B-056, CAP-B-057, CAP-B-058, CAP-B-059, CAP-B-060, CAP-B-061, CAP-B-062, CAP-B-063, CAP-C-087, CAP-C-090, CAP-C-091, CAP-C-092, CAP-C-095, CAP-C-096, CAP-C-097, CAP-D2-111, CAP-D2-113, CAP-D2-114, CAP-D2-116, CAP-E-122, CAP-E-125, CAP-F-139, CAP-F-148, CAP-D2-115, CAP-D2-117 · Decisions: D-017, D-020, D-021 · Change records: CR-017, CR-024, CR-029, CR-031
 
 | Category | Example checks (abstract) |
 |---|---|
@@ -83,7 +83,11 @@ Execution modes: **incremental** (per-URL passes run during the crawl) and **ful
 | Accessibility | Automated accessibility-rule violations; ARIA attribute/role validity; form labels and landmarks; color-contrast signals (section 7.10) |
 | Technology detection | Detected platform/framework/analytics signatures and categories from a bundled fingerprint catalogue (section 7.15) |
 
-**Indexability (added by CR-024, D-020).** A URL is **indexable** only when search engines may index it: final status 200, not blocked by robots.txt, no `noindex` in meta robots or `X-Robots-Tag`, and canonical pointing to itself or absent. Every stored and reported indexability field (`url_records` indexability, REST `indexable`, exports, MCP) uses this meaning; fetchability is a separate state.
+**Indexability (added by CR-024, D-020).**
+
+**Inappropriate redirects (added by CR-029, D-021).** The redirect check flags four cases, each a separate toggle on the configuration's analysis tab, all on by default: a redirect to another host; a temporary redirect (302, 303, 307) where a permanent one is expected; a redirect whose final target is not indexable (4xx or 5xx, `noindex`, robots-blocked, or canonicalised elsewhere, per the indexability definition above); and a downgrade from HTTPS to HTTP anywhere in the chain. Each finding names the case, the hop that triggered it and the final target.
+
+**Image payload size (added by CR-031, D-021).** The oversized-payload check uses transferred bytes when the capture mode records them (rendered and full capture); in plain HTTP mode only inline (data-URI) images are measured, and the check reports other images as not measured rather than as passing. A URL is **indexable** only when search engines may index it: final status 200, not blocked by robots.txt, no `noindex` in meta robots or `X-Robots-Tag`, and canonical pointing to itself or absent. Every stored and reported indexability field (`url_records` indexability, REST `indexable`, exports, MCP) uses this meaning; fetchability is a separate state.
 
 ---
 

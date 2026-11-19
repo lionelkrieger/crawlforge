@@ -42,13 +42,15 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 7.13 Structured data validation — verbatim and unabridged**
 
 ### 7.13 Structured data validation
-> Capabilities: CAP-B-067, CAP-B-068, CAP-B2-069, CAP-B2-070, CAP-B2-072, CAP-B2-073, CAP-B2-074, CAP-B2-075, CAP-B2-076, CAP-B2-071 · Decisions: D-017 · Change records: CR-017
+> Capabilities: CAP-B-067, CAP-B-068, CAP-B2-069, CAP-B2-070, CAP-B2-072, CAP-B2-073, CAP-B2-074, CAP-B2-075, CAP-B2-076, CAP-B2-071 · Decisions: D-017, D-021 · Change records: CR-017, CR-030
 
 - Embedded structured data is parsed from JSON-LD, Microdata and RDFa into a normalized graph resolved against a bundled open vocabulary. **[Amended by CR-017, D-017]**
 - Validation covers syntax (well-formedness, context and type presence) and semantics (required and expected properties per type).
 - **Rich-result eligibility:** for each supported search-gallery feature type, the engine checks the property set required for eligibility and reports eligible / ineligible / missing-required-field, naming the specific fields involved.
 - Errors use a structured, human-readable taxonomy (e.g. missing type, invalid value, missing required field, malformed block) rather than free text only.
-- Findings are emitted per block; a structured-data explorer lists every block, its type, and its validation outcome.
+- Findings are emitted per block; a structured-data explorer lists every block
+- **Deprecated types and properties (added by CR-030, D-021).** A term is deprecated when the bundled vocabulary marks it superseded, or when it appears on a bundled list of search rich-result types that are retired or restricted (for example HowTo). The list ships with the vocabulary, is versioned with the app and is never fetched at run time. Findings name the term, the reason (superseded by, or rich result retired) and the replacement where one exists.
+- **Microdata term resolution (added by CR-030, D-021).** Microdata `itemprop` values that are absolute URLs or vocabulary-prefixed resolve to the same local term names as RDFa and JSON-LD, so all three syntaxes validate against one vocabulary., its type, and its validation outcome.
 
 ---
 
