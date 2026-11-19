@@ -1,0 +1,11 @@
+[11:37:40] wave-9B gate-4 failing-project re-run after coordinator alignment fixes
+[11:37:40] RUN intelligence: dotnet test E:\Crawlforge\app\tests\CrawlForge.Intelligence.Tests --nologo
+[11:40:44] PASS intelligence:  | Passed!  - Failed:     0, Passed:   341, Skipped:     0, Total:   341, Duration: 2 m 58 s - CrawlForge.Intelligence.Tests.dll (net10.0) | 
+[11:40:44] RUN e2e: dotnet test E:\Crawlforge\app\tests\CrawlForge.E2E.Tests --nologo
+[11:42:28] PASS e2e:  | Passed!  - Failed:     0, Passed:    82, Skipped:     4, Total:    86, Duration: 1 m 27 s - CrawlForge.E2E.Tests.dll (net10.0) | 
+[11:42:28] RUN host: dotnet test E:\Crawlforge\app\tests\CrawlForge.Host.Tests --nologo
+[11:44:41] PASS host:  | Passed!  - Failed:     0, Passed:    38, Skipped:     0, Total:    38, Duration: 2 m 2 s - CrawlForge.Host.Tests.dll (net10.0) | 
+[11:44:41] RUN conformance: dotnet test E:\Crawlforge\app\tests\CrawlForge.ContractConformance.Tests --nologo --filter KnownGap!=WP-09-06
+[12:01:40] PASS conformance:  | Passed!  - Failed:     0, Passed:    99, Skipped:    16, Total:   115, Duration: 16 m 47 s - CrawlForge.ContractConformance.Tests.dll (net10.0) | 
+[12:01:40] restored captured/*.json
+[12:01:40] RE-FAIL RUN: PASS (4/4)

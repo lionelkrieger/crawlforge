@@ -82,7 +82,11 @@ public sealed class AimdHostThrottleE2ETests
         using (var first = JsonDocument.Parse(hubEvents[0].PayloadJson))
         {
             var payload = first.RootElement;
-            Assert.Equal(auditId, payload.GetProperty("auditId").GetInt64());
+            // G-G (WP-09-06 hub normalizer): wire auditId is a STRING.
+            var payloadAuditId = payload.GetProperty("auditId");
+            Assert.Equal(auditId, payloadAuditId.ValueKind == JsonValueKind.String
+                ? long.Parse(payloadAuditId.GetString()!, System.Globalization.CultureInfo.InvariantCulture)
+                : payloadAuditId.GetInt64());
             Assert.Contains("127.0.0.1", payload.GetProperty("host").GetString());
             Assert.False(string.IsNullOrEmpty(payload.GetProperty("trigger").GetString()));
             // WP-08-A1: locked HOTFIX-01 wire shape (hub spec §10.3 "rate

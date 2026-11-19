@@ -67,7 +67,9 @@ public sealed class PayloadInventoryTests
         Assert.True(arrayMatch.Success, "HUB_SERVER_EVENT_NAMES not found in events.ts");
         var frontendNames = Regex.Matches(arrayMatch.Groups["body"].Value, "'([^']+)'")
             .Select(m => m.Groups[1].Value).ToHashSet(StringComparer.Ordinal);
-        Assert.Equal(18, frontendNames.Count);
+        // CR-027 + G-I (WP-09-11): local-notification and export-progress joined
+        // the frozen frontend contract (18 → 20 server events).
+        Assert.Equal(20, frontendNames.Count);
 
         // Backend catalog constants minus the two client→server channel methods.
         var catalogNames = typeof(HubEventCatalog)
@@ -76,19 +78,22 @@ public sealed class PayloadInventoryTests
             .Select(f => (string)f.GetRawConstantValue()!)
             .Where(name => name is not ("subscribe" or "unsubscribe"))
             .ToHashSet(StringComparer.Ordinal);
-        Assert.Equal(19, catalogNames.Count);
+        // G-I (WP-09-11 5ad460f): ExportProgress cataloged (19 → 20).
+        Assert.Equal(20, catalogNames.Count);
 
         Assert.Equal(Inventory.Hub.SpecEvents, frontendNames.Count);
         Assert.Equal(Inventory.Hub.CatalogEvents, catalogNames.Count);
 
         var inventoried = Inventory.Hub.Events.Select(e => e.Name).ToHashSet(StringComparer.Ordinal);
-        // Spec events ⊆ inventory; catalog events ⊆ inventory; the two recorded
-        // drift events (local-notification, export-progress) complete the set.
+        // Spec events ⊆ inventory; catalog events ⊆ inventory. The two formerly
+        // drifted events (local-notification, export-progress) are now cataloged
+        // AND in the frozen frontend contract (CR-027 + G-I, WP-09-11), so the
+        // inventory set equals the catalog set exactly.
         Assert.True(frontendNames.IsSubsetOf(inventoried), "spec/frontend events missing from inventory");
         Assert.True(catalogNames.IsSubsetOf(inventoried), "catalog events missing from inventory");
         Assert.Contains("local-notification", inventoried);
         Assert.Contains("export-progress", inventoried);
-        Assert.Equal(catalogNames.Count + 1, inventoried.Count); // + export-progress (emitted, uncataloged)
+        Assert.Equal(catalogNames.Count, inventoried.Count);
 
         foreach (var entry in Inventory.Hub.Events)
         {

@@ -324,7 +324,171 @@ LEAVE SKIPPED (other phases, record): :301/:332 G-D/G-E schedule (phase-14),
 KnownGap FAILING test AuditCountersWireConformanceTests.RestCounters_MatchEngineCounters
 → green from 09-06 mapper fix (no test edit needed).
 
+### Frontend wiring recon (done while 9B builds)
+- G20: Electron window-catalog routes = splash/hub/report/visualization/analyzer/
+  tools/settings/recovery (EL/windows/window-catalog.ts), ?route= appended at
+  EL/main.ts:241. App.tsx wiring: parse location.search; route WINS over persisted
+  localStorage view; map hub/report/tools/settings (+audits) to ShellView;
+  visualization/analyzer/recovery/splash surfaces are later-phase → fall back hub
+  (record in CODEMAP). Support ?route=report&auditId=X → openAudit.
+- ShellView (windowState.ts) extend: +'project' +'configurations'; ShellWindowState
+  +selectedProjectId (validated in sanitizeWindowState); ShellNavigation
+  +openProject/openConfigurations. ViewContent switch mounts ProjectOverview/
+  ConfigurationsList (09-07 components).
+- ReportView: replace placeholder Paper :312-322 with report workspace: nav
+  BUTTONS "Dashboard"/"Issue explorer"/"URL explorer"/"Export" (_has_nav counts
+  buttons/testids only), default Dashboard (dashboard-charts), mount 09-08/09/10
+  components; report-state badge must render UPPERCASE state (walker regex
+  \b(COMPLETED|RUNNING|...)\b case-sensitive).
+- HubDashboard: project-row onClick → openProject (walker clicks the TR);
+  hub "Configurations" button (UI-03 marker); CreateProjectModal embeds
+  ConfigurationEditor (UI-04: modal dump ≥1 tab name + >3 inputs; modal already
+  has 3 inputs, editor Scope tab adds >3 more); submit applies editor DTO.
+- events.ts CR-027: additive LocalNotificationPayload {title,message} + union +
+  catalog(additive:true) + names list + header counts; hubDemux handler → OS
+  Notification (guarded) + activity + relay. export-progress entry after 09-10
+  proposal. Engine crawl-progress payload must gain throughputPerSecond/
+  elapsedSeconds/estimatedRemainderSeconds/phase + WIRE counter keys + STRING
+  auditId (G-PROGRESS/G-G); PublishStageAsync numeric auditId → string too.
+- Store: locked CrawlForgeState untouched; new UI state shell-local; 9B components
+  props-driven; apiClient generic over API_ROUTES (new route entries only if the
+  REST spec defines them — case-by-case, recorded).
+
+## Wave-9B acceptances
+
+| WP | Builder | Commit | Verification (lead re-run) | Notes |
+|---|---|---|---|---|
+| WP-09-07 | cf-wp-09-01 | eadfbed (+ledger c29cc11) | frontend build 487ms; project tests 4 files/49 passed | 13 tabs verbatim; cookie-jar toggle → scopeRules.cookieJar.enabled; DTO extension relayed to 06 (D4); npm root flag-parsing quirk: use --workspaces --if-present -- form |
+| WP-09-08 | cf-wp-09-04 | 25c46af (+ledger 22eb635) | frontend build 499ms; report tests 3 files/62 passed | dashboard-charts/issues-grid testids; ≤50 DOM rows @10k fixture; suppression 72→80→72 reversible; builder regression 59 files/750 |
+| WP-09-10 | cf-wp-09-03 | 0ab0f06 (+ledger 22eb635) | Export build 0 err; Export.Tests 88/88; export UI tests 17/17 (lead-verify isolation) | G-F/G-I producer shapes exact-frozen; additive json/jsonl/text/markdown surface; csproj untouched |
+| WP-09-06 | cf-wp-09-02 | 43f30b2 (+ledger c50d5ec) | Api.Tests 275/275; Host build 0/0; AuditCounters 5/5 canonical (lead) | D1 mapper+normalizer LIVE (KnownGap green); D2 ports IEnumerable-safe; D3 publisher+config fields LIVE; D4 chain/matrix vocabulary LIVE; engine recipes archived |
+| WP-09-09 | cf-wp-09-05 | d4a9cbe (+ledger 3ed3fef) | frontend build 442ms; urls tests 4 files/68 passed | url-explorer testid; ≤50 DOM @10k; CR-024 verdict; 3-provenance noindex; dual canonical; 4 chain wire forms; SERP consumes existing measurer |
+
+Wave 9B: 5/5 accepted. Builder crashes this wave: 2 (cf-wp-09-03 early,
+cf-wp-09-02 mid-D1; both resumed via send_message, no work lost). Sibling
+compile churn: Export writers mid-flight blocked 06 verification once —
+resolved by landing writer classes together (lead-steered).
+
+Spec-silent observations (NOT defects, no routing — recorded for owner):
+- GET suppressions list: service exists backend-side but 05/01:84 defines only
+  POST/DELETE. 08's initialSuppressions session-seeding is spec-compliant.
+- Findings wire has no suppressed flag/filter (05/01 silent): 08's all|suppressed
+  server-scoped view with honest totals is compliant; 'active-only' needs a CR.
+- Contracts ExportFormat enum lacks Json/Text/Markdown (locked): additive engine
+  surface (AdditiveExportFormats wire keys) is the interim truth; amendment CR
+  for owner. Api TryParseFormat must accept the additive keys (wiring item).
+- Webhook destination kind kept for wire parity (CR-016 excludes notification
+  webhooks from the UI classes — owner may restrict the section to 3 classes).
+- GET /api/exports/{id} (job status) + POST /api/destinations/{id}/deliver exist
+  backend-side but are NOT in the 05/01 route table → routes.ts stays frozen
+  (no spec basis to add); ExportDialog's bounded exports.download polling is the
+  spec-faithful phase-09 path (10 designed for exactly this). Owner CR if wanted.
+
+### Lead wiring landed early (while 9B finished)
+- fe1ac88: events.ts += local-notification (CR-027) + export-progress (G-I);
+  guards + hubDemux handlers (guarded OS Notification; activity+relay);
+  contract tests LOCK new counts (20 server/22 names/21 contracts) + rejection
+  cases; ErrorBoundary override fix (shared typecheck clean). 167/167
+  contracts+shell tests; tsc clean except in-flight 09 urls tests.
+- HubEventCatalog.cs += ExportProgress constant + 1s default interval
+  (LocalNotification already existed backend-side from the scheduler work).
+- Conformance unskips/inversions (lead-owned): G-COMPLETED-COUNTERS, G-F,
+  G-MATRIX-VERDICT, G-G unskipped (normalizer + 03/10 fixes); G-I + G-N
+  absence-locks REPLACED with presence+shape locks (ExportProgress_Cataloged-
+  ContractShape, LocalNotification_InFrontendContract). Still skipped pending
+  engine wiring: G-PROGRESS (throughput/phase fields), G05 url-batch/findings-
+  updated absence-locks (invert when producers land), audit-failed (no
+  deterministic trigger), backend-lifecycle/waf-blocks/embedding-* absence-locks
+  (investigate producers at wiring), schedule/importId/McpWire (later phases).
+- G05 producer investigation (read-only, during 9B gate): url-batch/findings-
+  updated publisher EXISTS (06 AuditRunEventPublisher) — engine call sites =
+  wiring; backend-lifecycle NO producer — wire at CrawlForgeBackend startup/
+  shutdown (spec §10.3 defines it; LifecycleBanner consumes it); waf-blocks NO
+  producer — wire at engine WAF recording point (throttled batches ≤1/s);
+  embedding-progress/completed NO producer — phase-12 semantics scope, keep
+  absence-locks skipped; audit-failed producer EXISTS (FinalizeAsync:1270 +
+  06 Api start-failed) — skip stays (no deterministic fixture trigger).
+  Invert the url-batch/findings-updated/backend-lifecycle/waf-blocks absence-
+  locks ONLY after the producers land (defect-locks must not fail mid-wiring).
+
+### Wave-9B gate run 1 (2026-11-19 10:31–11:30 local): FAIL at gate 4
+
+15/19 test projects green incl. Acceptance 72/72 + Scale 10/10 (51m). Seven
+failures in 4 projects — ALL stale cross-phase assertions vs the newly locked
+contract (none in 9B builder owned_paths; coordinator alignment fixes per the
+9A ToolsRouteTests precedent, prompt gate rule "route to owner" inapplicable —
+no 9B owner for E2E/Host/Intelligence/inventory tests):
+
+1. PayloadInventoryTests ×2 (conformance, lead-owned): coverage refs pointed at
+   the renamed absence-locks (5ad460f) + hardcoded 18/19 event counts. Fixed:
+   refs → LocalNotification_InFrontendContract / ExportProgress_Cataloged-
+   ContractShape; counts 20/20; inventory JSON flags/counts/gap text updated;
+   GAPS.md G-I/G-N marked RESOLVED; drift-test doc comments updated.
+2. HubSequencingE2ETests.PayloadAuditId:205 — TryGetInt64 THROWS on string
+   tokens; G-G normalizer now emits string auditId. Fixed: ValueKind switch
+   (Number→TryGetInt64, String→long.TryParse).
+3. ReopenBatchWiringTests:67 + AimdHostThrottleE2ETests:85 — GetInt64 on string
+   host-throttle auditId. Fixed: string-tolerant parse (same G-G basis).
+4. ListModeE2ETests:392-398 — old unhyphenated verdict vocabulary. Spec §10.3
+   + criterion #43 name the verdicts target-mismatch/chain-exceeded/final-non-
+   200/canonical-mismatch (hyphenated); 03 MatrixVerdictNames + REST filter
+   validation already conform; frontend MatrixRowVerdict is open string.
+   Fixed E2E expectations to the spec vocabulary.
+5. SemanticPipelineTests.ProgressReportsFinalCompletion (Intelligence) —
+   passes in isolation (733ms): load-timing flake, no code change; recorded.
+
+McpDelegationE2ETests numeric auditId GetInt64 audited: MCP responses are NOT
+hub-normalized (phase-13 wire), passed in run 1 — left unchanged.
+
+Re-run: 4 projects targeted (job pwsh-b6e8a650f8514b44), then gates 5-8.
+Gate-4 PASS composition documented: run-1 15 green projects + targeted re-run.
+The full UNFILTERED phase gate (wave 9C) re-runs everything regardless.
+
+## Engine emission design (WP-09-11, decided during 9B gate)
+- AuditRunCounters += Blocked/WafBlocked (live increments at classification:
+  statusClass==Blocked / waf.IsChallenge); ToPayload += blocked/wafBlocked
+  (mapper passthrough; normalizer keeps Numbers; robots-Disallowed rows are
+  NotCrawled class, NOT blocked — consistent with REST row mapping).
+- AuditRunState += pending url-batch entries + waf-block entries +
+  LastRunEventFlushAt + LastFindingCounts snapshot. Flush cadence ≤1/s inside
+  PublishProgressAsync (progress already 1/s-throttled) + explicit flush at
+  crawl-phase end and before finalize. url-batch via 06 AuditRunEventPublisher
+  (lossless); waf-blocks via _hub direct (entry {urlId,canonicalUrl,provider,
+  challengeClass,confidence}, wire enum strings, ThrottleInterval 1s).
+- findings-updated deltas DERIVED at flush: COUNT findings GROUP BY severity/
+  category vs state snapshot (captures ALL producers: pipeline, recorders,
+  analyzers — no invasive per-emit hooks); emit only non-zero deltas.
+- url-batch entries only for rows with an OBSERVED HTTP status (fetched rows;
+  WAF challenges carry observed class + blockReason/wafProvider per Appendix C);
+  fetch-error/robots-not-crawled rows have no HTTP class → counters + REST list
+  surface them (interpretation recorded; publisher validates 1xx-5xx).
+- crawl-progress payload += phase (ApiEnumConverter<AuditPhase> wire),
+  elapsedSeconds/throughputPerSecond/estimatedRemainderSeconds per 06 handoff
+  §1 derivations (match ToDetail exactly; discovered-based remainder).
+- backend-lifecycle: emit {kind:'ready'} after app.StartAsync in
+  CrawlForgeBackend.CreateAsync (:164+) and {kind:'shutdown'} at StopAsync
+  start (:192, hub still up). POST /api/system/shutdown exists :131 (erratum).
+
+Lead conformance-harness fixes (WP-09-11 scope, done early to unblock 06):
+LiveBackendFixture export-delivery matcher → exportId string-tolerant (G-F producer
+fix exposed legacy exportJobId/GetInt64 drift); log-import-completed matcher →
+string-tolerant (G-G normalizer). All other GetInt64 in the project verified safe
+(numeric counters/pagination/MCP responses). NOT oracle weakening: matchers now
+follow the LOCKED events.ts shapes; assertions unchanged.
+
 ## Coordination log
+
+- 2026-11-19 ~06:58Z: wave-9A gate PASS 8/8 (run 3, 07:17-08:55 local; commit
+  5b9f337 incl. gate summaries + this record). Run-1 failures fixed: criterion #28
+  proof member (e3831c7) + url-check WAF spec alignment (8530f75). Gate-timing
+  observations: sln gate ~78 min this run (Scale 10k pipeline ~40 min + Acceptance
+  16 min + conformance-in-sln 17 min under parallel contention); gate-5 standalone
+  conformance had a ~15 min pre-build queue delay (MSBuild node contention after
+  the sln run) then ran 18 min — NOT a hang; backend scratch logs prove progress.
+- 2026-11-19 06:58Z: wave-9B claimed (1852bdf): 06→cf-wp-09-02, 07→cf-wp-09-01,
+  08→cf-wp-09-04, 09→cf-wp-09-05, 10→cf-wp-09-03; index pending 39/in_progress 5;
+  check_buildplan PASS. Team tasks task-9..13 with write scopes. All five builders
+  dispatched with full briefs (briefs committed in 5b9f337, env lines added after).
 
 - 2026-11-19 ~02:42Z wave-9A claims committed 334914a; five builders dispatched.
 - cf-wp-09-02 turn interrupted by runtime failure (~04:55 local) before any file writes;

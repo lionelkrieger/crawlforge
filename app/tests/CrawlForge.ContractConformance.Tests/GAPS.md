@@ -294,31 +294,34 @@ Spec paths are relative to `architecture/`; code paths relative to `app/`.
 - **Suggested owner:** orchestrator/lead — spec clarification via CR or a code
   rename; NOT a phase-12 defect.
 
-## G-I — export-progress emitted but uncataloged
+## G-I — export-progress emitted but uncataloged — RESOLVED (WP-09-11)
 
-- The export engine emits `export-progress` on the wire; the name is absent
-  from `HubEventCatalog` (`src/backend/CrawlForge.Api/Hubs/HubEventCatalog.cs`)
-  and from the frontend contract (`events.ts`). The hub passes unknown events
-  through unchanged (open-string evolution), so the shell receives an event it
-  has no contract for.
+- RESOLVED by the coordinator's wiring commits fe1ac88 (frontend events.ts /
+  guards.ts / hubDemux.ts registration: ExportProgressPayload {exportId,
+  auditId, format, state, filePath, message}) and 5ad460f
+  (HubEventCatalog.ExportProgress + 1s default interval). The event is now
+  cataloged AND in the frozen frontend contract; the inventory flags track it.
 - **Tests:** `HubEventWireConformanceTests.ExportProgress_DriftRecorded`
   (passes; live emission + payload dimensions, capture
-  `captured/hub-export-progress-drift.json`) and `ExportProgress_Uncataloged`
-  (skipped; the catalog/frontend absence — not locked as expected behavior).
-- **Suggested owner:** phase 09 WP-09-09 (export surface).
+  `captured/hub-export-progress-drift.json`) and
+  `ExportProgress_CatalogedContractShape` (passes; catalog + events.ts +
+  live string-id/state-vocabulary lock — replaced the former absence-lock
+  `ExportProgress_Uncataloged`).
+- **Owner:** WP-09-11 (done). Phase-08 numbering slip: export G-F/G-I belong
+  to WP-09-10's producer surface, catalog/contract registration to WP-09-11.
 
-## G-N — local-notification: backend-only additive event
+## G-N — local-notification: backend-only additive event — RESOLVED (CR-027)
 
-- `HubEventCatalog.LocalNotification` (`HubEventCatalog.cs:75`) +
-  `HubLocalNotificationSink` (`ScheduleHubEvents.cs:119-134`) emit
-  `{title, message}`; the event is absent from spec §10.3 and the frontend
-  contract. The accepted scheduler uses it for OS-notification requests.
+- RESOLVED by CR-027 (owner-approved additive contract change) landed in
+  fe1ac88: `LocalNotificationPayload {title, message}` registered in the
+  frontend events.ts union/catalog/guards/demux (guarded OS Notification
+  delivery). The backend catalog entry + HubLocalNotificationSink pre-existed.
 - **Tests:** `HubEventWireConformanceTests.LocalNotification_CatalogOnlyDrift`
   (passes; real producer → capturing hub shape lock on the sink's own
-  {title, message} contract) and `LocalNotification_NotInFrontendContract`
-  (skipped; the frontend/spec absence — not locked as expected behavior).
-- **Suggested owner:** orchestrator routing (additive event registration into
-  the spec/frontend contract).
+  {title, message} contract) and `LocalNotification_InFrontendContract`
+  (passes; both-sides registration lock — replaced the former absence-lock
+  `LocalNotification_NotInFrontendContract`).
+- **Owner:** WP-09-11 (done).
 
 ## G05 — six spec events with no producer
 

@@ -376,12 +376,11 @@ public sealed class HubEventWireConformanceTests
     }
 
     /// <summary>
-    /// G-I: export-progress IS emitted on the wire by the export engine.
-    /// Live coverage locks the emission + payload dimensions (exportJobId,
-    /// state) that any cataloged contract would keep. The catalog/frontend
-    /// ABSENCE is drift — recorded in GAPS.md and the inventory, and asserted
-    /// only by the skipped ExportProgress_Uncataloged test (a passing
-    /// absence-lock would fail once the event is properly cataloged).
+    /// G-I RESOLVED (WP-09-11 fe1ac88 + 5ad460f): export-progress is emitted by
+    /// the export engine AND now cataloged (HubEventCatalog.ExportProgress) and
+    /// registered in the frozen frontend contract. This test remains the
+    /// producer-side live emission + dimension lock; the catalog/contract
+    /// presence is locked by ExportProgress_CatalogedContractShape.
     /// </summary>
     [Fact]
     public async Task ExportProgress_DriftRecorded()
@@ -585,12 +584,11 @@ public sealed class HubEventWireConformanceTests
     }
 
     /// <summary>
-    /// G-N: local-notification has a real producer (HubLocalNotificationSink).
-    /// Producer-side shape lock over the REAL adapter feeding a capturing
-    /// IRealtimeHub: {title, message} is the sink's own contract and survives
-    /// catalog registration. The frontend/spec ABSENCE is drift — recorded in
-    /// GAPS.md and asserted only by the skipped LocalNotification_NotInFrontendContract
-    /// test (a passing absence-lock would fail once the event is registered).
+    /// G-N RESOLVED (CR-027, WP-09-11 fe1ac88): local-notification has a real
+    /// producer (HubLocalNotificationSink) AND is now registered in the frozen
+    /// frontend contract ({title, message}). This test remains the producer-side
+    /// shape lock over the REAL adapter feeding a capturing IRealtimeHub; the
+    /// contract registration is locked by LocalNotification_InFrontendContract.
     /// </summary>
     [Fact]
     public async Task LocalNotification_CatalogOnlyDrift()

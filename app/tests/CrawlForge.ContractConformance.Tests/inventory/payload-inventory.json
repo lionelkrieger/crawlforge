@@ -1228,8 +1228,8 @@
     ]
   },
   "hub": {
-    "specEvents": 18,
-    "catalogEvents": 19,
+    "specEvents": 20,
+    "catalogEvents": 20,
     "events": [
       {
         "name": "crawl-progress",
@@ -1461,29 +1461,29 @@
       },
       {
         "name": "local-notification",
-        "inSpec": false,
-        "inFrontend": false,
+        "inSpec": true,
+        "inFrontend": true,
         "inCatalog": true,
         "producer": "HubLocalNotificationSink (ScheduleHubEvents.cs:119)",
         "liveCapture": false,
         "coveredBy": [
           "HubEventWireConformanceTests.LocalNotification_CatalogOnlyDrift",
-          "HubEventWireConformanceTests.LocalNotification_NotInFrontendContract"
+          "HubEventWireConformanceTests.LocalNotification_InFrontendContract"
         ],
-        "gap": "G-N: in backend HubEventCatalog only; absent from spec §10.3 and frontend events.ts"
+        "gap": "G-N RESOLVED (CR-027, WP-09-11 fe1ac88): {title,message} registered in frontend events.ts/guards/demux; catalog entry pre-existed"
       },
       {
         "name": "export-progress",
-        "inSpec": false,
-        "inFrontend": false,
-        "inCatalog": false,
-        "producer": "ExportEngine (emitted; not in HubEventCatalog or frontend)",
+        "inSpec": true,
+        "inFrontend": true,
+        "inCatalog": true,
+        "producer": "ExportEngine (ExportEventPublisher) + HubEventCatalog.ExportProgress (WP-09-11 5ad460f)",
         "liveCapture": true,
         "coveredBy": [
           "HubEventWireConformanceTests.ExportProgress_DriftRecorded",
-          "HubEventWireConformanceTests.ExportProgress_Uncataloged"
+          "HubEventWireConformanceTests.ExportProgress_CatalogedContractShape"
         ],
-        "gap": "G-I: emitted on the wire but absent from the backend catalog and the frontend contract"
+        "gap": "G-I RESOLVED (WP-09-11 fe1ac88+5ad460f): catalog entry + frontend events.ts/guards/demux registration; live shape locked"
       }
     ],
     "clientChannels": {

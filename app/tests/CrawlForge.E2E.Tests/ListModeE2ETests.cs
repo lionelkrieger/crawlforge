@@ -389,13 +389,15 @@ public sealed class ListModeE2ETests
 
         var verdicts = envelope.GetProperty("data").EnumerateArray()
             .ToDictionary(r => r.GetProperty("sourceUrl").GetString()!, r => r.GetProperty("verdict").GetString()!);
-        // Wire enums are lowercase without hyphens (locked §10.1 convention);
-        // the hyphenated spec names live in the finding rule keys.
+        // Verdict vocabulary follows the spec's §10.3 names (criterion #43):
+        // pass / target-mismatch / chain-exceeded / final-non-200 /
+        // canonical-mismatch (WP-09-03 MatrixVerdictNames; the REST verdict
+        // filter validates the same hyphenated vocabulary).
         Assert.Equal("pass", verdicts[origin.BaseUrl + "ok-source"]);
-        Assert.Equal("targetmismatch", verdicts[origin.BaseUrl + "wrong-source"]);
-        Assert.Equal("chainexceeded", verdicts[origin.BaseUrl + "loop-a"]);
-        Assert.Equal("finalnon200", verdicts[origin.BaseUrl + "gone-source"]);
-        Assert.Equal("canonicalmismatch", verdicts[origin.BaseUrl + "canon-source"]);
+        Assert.Equal("target-mismatch", verdicts[origin.BaseUrl + "wrong-source"]);
+        Assert.Equal("chain-exceeded", verdicts[origin.BaseUrl + "loop-a"]);
+        Assert.Equal("final-non-200", verdicts[origin.BaseUrl + "gone-source"]);
+        Assert.Equal("canonical-mismatch", verdicts[origin.BaseUrl + "canon-source"]);
 
         // Verdict filter narrows the projection.
         var filtered = await backend.Http.GetAsync($"/api/audits/{auditId}/redirect-matrix/results?verdict=pass");

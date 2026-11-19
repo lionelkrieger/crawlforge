@@ -64,7 +64,11 @@ public sealed class ReopenBatchWiringTests
             var throttleEvents = channel.Events.Where(e => e.Name == HubEventNames.HostThrottle).ToList();
             Assert.NotEmpty(throttleEvents);
             using var payload = JsonDocument.Parse(throttleEvents[0].PayloadJson);
-            Assert.Equal(auditId, payload.RootElement.GetProperty("auditId").GetInt64());
+            // G-G (WP-09-06 hub normalizer): wire auditId is a STRING.
+            var payloadAuditId = payload.RootElement.GetProperty("auditId");
+            Assert.Equal(auditId, payloadAuditId.ValueKind == JsonValueKind.String
+                ? long.Parse(payloadAuditId.GetString()!, System.Globalization.CultureInfo.InvariantCulture)
+                : payloadAuditId.GetInt64());
             Assert.False(string.IsNullOrWhiteSpace(payload.RootElement.GetProperty("host").GetString()));
             // HOTFIX-01: wire names follow the frontend hub contract.
             Assert.True(payload.RootElement.TryGetProperty("rateAfter", out _));

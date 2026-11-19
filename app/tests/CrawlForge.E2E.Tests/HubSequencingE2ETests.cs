@@ -202,9 +202,19 @@ public sealed class HubSequencingE2ETests
     private static long? PayloadAuditId(string payloadJson)
     {
         using var document = JsonDocument.Parse(payloadJson);
-        return document.RootElement.TryGetProperty("auditId", out var value) && value.TryGetInt64(out var id)
-            ? id
-            : null;
+        if (!document.RootElement.TryGetProperty("auditId", out var value))
+        {
+            return null;
+        }
+
+        // G-G (WP-09-06 hub normalizer): wire auditId is a STRING; legacy
+        // numeric producers are tolerated during the transition.
+        return value.ValueKind switch
+        {
+            JsonValueKind.Number when value.TryGetInt64(out var id) => id,
+            JsonValueKind.String when long.TryParse(value.GetString(), out var id) => id,
+            _ => null
+        };
     }
 
     private static int PayloadInt(string payloadJson, string property)
