@@ -43,17 +43,46 @@ public sealed class FrontierTestDatabase : IAsyncDisposable
     /// <summary>Seeds a url_records row and returns its identifier.</summary>
     /// <param name="auditId">Owning audit.</param>
     /// <param name="canonicalUrl">Canonical URL key.</param>
+    /// <param name="discoverySource">Discovery source of the record (default Seed).</param>
+    /// <param name="statusClass">Crawl status class (default NotCrawled).</param>
+    /// <param name="finalStatusCode">Terminal HTTP status, when fetched.</param>
     /// <returns>The new url_records identifier.</returns>
-    public async Task<long> InsertUrlAsync(long auditId, string canonicalUrl)
+    public async Task<long> InsertUrlAsync(
+        long auditId,
+        string canonicalUrl,
+        DiscoverySource discoverySource = DiscoverySource.Seed,
+        CrawlStatusClass statusClass = CrawlStatusClass.NotCrawled,
+        int? finalStatusCode = null)
     {
         var uri = new Uri(canonicalUrl);
         var repository = new SqlRepository<UrlRecordDto>(Provider);
         var record = new UrlRecordDto(
             0, auditId, canonicalUrl, uri.Host, uri.AbsolutePath, 0,
-            DiscoverySource.Seed, CrawlStatusClass.NotCrawled,
-            null, null, null, null, null,
+            discoverySource, statusClass,
+            finalStatusCode, null, null, null, null,
             RobotsState.Unknown, IndexabilityFlags.None, false);
         return (await repository.CreateAsync(record)).Id;
+    }
+
+    /// <summary>Seeds a link_edges row and returns its identifier.</summary>
+    /// <param name="auditId">Owning audit.</param>
+    /// <param name="sourceUrlId">Declaring URL record.</param>
+    /// <param name="canonicalTargetUrl">Canonical target URL.</param>
+    /// <param name="targetUrlId">Target URL record; null for external targets.</param>
+    /// <param name="isInternal">Whether the edge is internal to the crawl scope.</param>
+    /// <returns>The new link_edges identifier.</returns>
+    public async Task<long> InsertLinkEdgeAsync(
+        long auditId,
+        long sourceUrlId,
+        string canonicalTargetUrl,
+        long? targetUrlId,
+        bool isInternal)
+    {
+        var repository = new SqlRepository<LinkEdgeDto>(Provider);
+        var edge = new LinkEdgeDto(
+            0, auditId, sourceUrlId, canonicalTargetUrl, targetUrlId,
+            AnchorText: null, RelationFlags: LinkRelationFlags.None, IsInternal: isInternal);
+        return (await repository.CreateAsync(edge)).Id;
     }
 
     /// <summary>

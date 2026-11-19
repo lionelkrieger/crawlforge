@@ -36,7 +36,16 @@ namespace CrawlForge.Crawler.Fetching;
 /// The injected <see cref="HttpClient"/> must be built with automatic
 /// redirects disabled; its timeout is set to infinite because per-hop
 /// cancellation controls timeouts. The fetcher disposes only clients it
-/// creates itself (the proxied client), never the injected one.
+/// creates itself (the proxied client and the optional factory client),
+/// never the injected one.
+/// </para>
+/// <para>
+/// WP-09-01 sibling integration surface: the optional <see cref="IFetchHook"/>
+/// intercepts every hop (cookie jar, fetch-time URL rewrite/host-mapping) and
+/// the optional <c>httpClientFactory</c> supplies a custom direct-connection
+/// client (upstream proxy routing). With both null, behavior is identical to
+/// the unhooked fetcher. Signed-request headers flow through the existing
+/// <see cref="ISignedRequestHandler"/> dependency.
 /// </para>
 /// </remarks>
 public sealed class HttpFetcher : IHttpFetcher, IDisposable
@@ -57,8 +66,11 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
     private readonly SignedRequestSecret? _signingSecret;
     private readonly ILoopbackInterceptingProxy? _interceptingProxy;
     private readonly ProxyOptions? _proxyOptions;
+    private readonly IFetchHook? _fetchHook;
+    private readonly Func<CancellationToken, Task<HttpClient>>? _httpClientFactory;
     private readonly SemaphoreSlim _proxyGate = new(1, 1);
     private HttpClient? _proxiedClient;
+    private HttpClient? _factoryClient;
     private bool _disposed;
 
     /// <summary>Creates a fetcher with optional cross-module collaborators.</summary>
@@ -77,6 +89,17 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
     /// loopback endpoint; stopping remains the composition root's concern.
     /// </param>
     /// <param name="proxyOptions">Proxy options passed to the contract's StartAsync.</param>
+    /// <param name="fetchHook">
+    /// Optional per-hop interception (WP-09-01 sibling integration surface:
+    /// per-audit cookie jar, fetch-time URL rewrite/host-mapping). Null keeps
+    /// behavior identical to the unhooked fetcher. See <see cref="IFetchHook"/>.
+    /// </param>
+    /// <param name="httpClientFactory">
+    /// Optional lazy factory for the direct-connection client (e.g. upstream
+    /// proxy routing through a custom handler). Used only when no intercepting
+    /// proxy is configured; the fetcher owns and disposes the created client.
+    /// Null keeps using the injected <paramref name="httpClient"/>.
+    /// </param>
     /// <exception cref="ArgumentNullException">Options or client is null.</exception>
     /// <exception cref="ArgumentException">A signing secret is supplied without a handler.</exception>
     public HttpFetcher(
@@ -87,7 +110,9 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
         ISignedRequestHandler? signedRequestHandler = null,
         SignedRequestSecret? signingSecret = null,
         ILoopbackInterceptingProxy? interceptingProxy = null,
-        ProxyOptions? proxyOptions = null)
+        ProxyOptions? proxyOptions = null,
+        IFetchHook? fetchHook = null,
+        Func<CancellationToken, Task<HttpClient>>? httpClientFactory = null)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -102,6 +127,8 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
         _signingSecret = signingSecret;
         _interceptingProxy = interceptingProxy;
         _proxyOptions = proxyOptions;
+        _fetchHook = fetchHook;
+        _httpClientFactory = httpClientFactory;
 
         // Per-hop linked cancellation controls timeouts, not the client clock.
         _httpClient.Timeout = Timeout.InfiniteTimeSpan;
@@ -161,6 +188,7 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
 
         _disposed = true;
         _proxiedClient?.Dispose();
+        _factoryClient?.Dispose();
         _proxyGate.Dispose();
     }
 
@@ -195,12 +223,21 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
         Stopwatch totalStopwatch = Stopwatch.StartNew();
         FetchContext? context = FetchContextScope.Current;
         int hop = 0;
+        FetchResponseSnapshot? previousResponse = null;
 
         while (true)
         {
             if (!visited.Add(currentUrl))
             {
-                throw new FetchFailedException(FetchFailureKind.RedirectLoop, $"Redirect loop detected at '{currentUrl}'.");
+                // WP-09-01 sibling hook: a cookie-gate-style self-redirect can
+                // be legitimate when the hook (e.g. a per-audit cookie jar)
+                // allows the revisit. Without a hook the strict loop guard is
+                // byte-for-byte unchanged.
+                var revisitContext = new FetchHookContext(context?.AuditId, context?.UrlId, request.Url, currentUrl, hop, previousResponse);
+                if (_fetchHook is null || !_fetchHook.AllowRevisit(revisitContext))
+                {
+                    throw new FetchFailedException(FetchFailureKind.RedirectLoop, $"Redirect loop detected at '{currentUrl}'.");
+                }
             }
 
             int timeoutSeconds = request.TimeoutSeconds ?? _options.DefaultTimeoutSeconds;
@@ -209,11 +246,27 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
 
             Stopwatch hopStopwatch = Stopwatch.StartNew();
             using HttpRequestMessage message = BuildRequestMessage(currentUrl, method, request);
+            if (_fetchHook is not null)
+            {
+                await _fetchHook
+                    .BeforeSendAsync(message, new FetchHookContext(context?.AuditId, context?.UrlId, request.Url, currentUrl, hop, previousResponse), timeoutCts.Token)
+                    .ConfigureAwait(false);
+            }
+
             using HttpResponseMessage response = await client
                 .SendAsync(message, HttpCompletionOption.ResponseHeadersRead, timeoutCts.Token)
                 .ConfigureAwait(false);
             TimeSpan ttfb = hopStopwatch.Elapsed;
             int statusCode = (int)response.StatusCode;
+
+            if (_fetchHook is not null)
+            {
+                // Before redirect following and the size guard, so Set-Cookie
+                // on 3xx hops is observable to the hook.
+                await _fetchHook
+                    .AfterReceiveAsync(response, new FetchHookContext(context?.AuditId, context?.UrlId, request.Url, currentUrl, hop, previousResponse), timeoutCts.Token)
+                    .ConfigureAwait(false);
+            }
 
             if (request.FollowRedirects
                 && FetchStatusClassifier.IsRedirect(statusCode)
@@ -244,6 +297,7 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
                     method = "GET";
                 }
 
+                previousResponse = new FetchResponseSnapshot(statusCode, FlattenHeaders(response));
                 hop++;
                 currentUrl = nextUrl;
                 continue;
@@ -379,7 +433,29 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
     {
         if (_interceptingProxy is null)
         {
-            return _httpClient;
+            if (_httpClientFactory is null)
+            {
+                return _httpClient;
+            }
+
+            // WP-09-01 sibling hook: a composition-supplied client factory
+            // (e.g. upstream proxy routing) replaces the injected direct
+            // client. The fetcher owns and disposes the created client.
+            await _proxyGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+            try
+            {
+                if (_factoryClient is null)
+                {
+                    _factoryClient = await _httpClientFactory(cancellationToken).ConfigureAwait(false);
+                    _factoryClient.Timeout = Timeout.InfiniteTimeSpan;
+                }
+
+                return _factoryClient;
+            }
+            finally
+            {
+                _proxyGate.Release();
+            }
         }
 
         await _proxyGate.WaitAsync(cancellationToken).ConfigureAwait(false);
