@@ -495,7 +495,7 @@ workpieces:
     acceptance_criteria_refs: [15, 32]
 
   - workpiece_id: "WP-12-10"
-    title: "Schedules, Clients, Retention, Provider Switching & Settings Surfaces"
+    title: "Schedules, Clients, Retention, Archive & Settings Surfaces"
     phase_id: "phase-12"
     status: "pending"
     parallel_group: "wave-12B"
@@ -516,7 +516,6 @@ workpieces:
       - { id: "CAP-K-X04", baseline_state: "missing_engine" }
       - { id: "CAP-K-X05", baseline_state: "missing_ui" }
       - { id: "CAP-L-X02", baseline_state: "missing_ui" }
-      - { id: "CAP-L-X03", baseline_state: "partial" }
       - { id: "CAP-H-X02", baseline_state: "missing_ui" }   # settings-side destination management
       - { id: "CAP-A-024", baseline_state: "unwired" }      # proxy settings UI
       - { id: "CAP-A-X06", baseline_state: "unwired" }      # rewrite rules settings UI
@@ -529,36 +528,31 @@ workpieces:
         test: "ScheduleConformanceTests"
       - payload: "client context CRUD + project association"
         test: "ClientContextConformanceTests"
-      - payload: "provider switch + archive export/import round-trip; MySQL schema authority parity"
-        test: "ProviderParityConformanceTests (G16)"
+      - payload: "archive export/import round-trip; schedule wire field `recurrence` (CR-026)"
+        test: "ArchiveRoundTripConformanceTests; ScheduleConformanceTests"
     reopens:
       - workpiece_id: "WP-02-07"
         evidence: "probe-2: schedules engine exists but UI-09 unreachable (H-188 missing_ui)"
-      - workpiece_id: "WP-01-02"
-        evidence: "G16: MySQL schema authority divergent from the migration catalog"
       - workpiece_id: "WP-06-02"
         evidence: "probe-2: UI-08 clients absent; K-X04 client context has no engine"
     owned_paths:
       - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Crawler\\Scheduling\\"
-      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.MySql\\"
       - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.Migrations\\"
       - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\settings\\"
       - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\clients\\"
       - "E:\\Crawlforge\\app\\src\\frontend\\src\\surfaces\\schedules\\"
       - "E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests\\Scheduling\\"
-      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Data.MySql.Tests\\"
       - "E:\\Crawlforge\\app\\tests\\frontend\\settings\\"
     deliverables:
       - "UI-09 schedules: CRUD, recurrence, enabled flag, limit overrides, run history, catch-up indicator, completion actions (local export / user-configured notification endpoints only); a scheduled fixture audit fires unattended"
       - "UI-08 clients + client context on projects (K-X04 engine + UI); UI-07 retention/storage reporting per project"
-      - "UI-21 settings sections: database (provider switch, connection test, archive export/import), proxy, browser (pinned bundle), user dictionary, export destinations, configuration templates, language, release check (local-only)"
-      - "MySQL schema authority aligned with the migration catalog; parity audit green"
+      - "UI-21 settings sections: database (local database location and size, archive export/import; provider selection deferred by CR-028), proxy, browser (pinned bundle), user dictionary, export destinations, configuration templates, language, release check (local-only)"
+      - "Schedule wire field renamed `cron` to `recurrence` on REST and MCP (CR-026), with conformance tests"
     verification_commands:
       - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Crawler.Tests --filter FullyQualifiedName~Scheduling"
-      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Data.MySql.Tests"
       - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
     done_when: "Phase-gate: a schedule created in UI-09 fires a fixture audit unattended with a schedule_runs entry; a missed schedule catches up exactly once after restart; archive export/import round-trips a project; UI walk reaches UI-08/UI-09/UI-21 sections with real data."
-    acceptance_criteria_refs: [11, 12, 14, 18]
+    acceptance_criteria_refs: [11, 12, 14]   # 18 deferred by CR-028
 
   - workpiece_id: "WP-12-11"
     title: "Log File Analyzer & GEO Surfaces — Import, Bot Verification, Correlation, llms.txt"

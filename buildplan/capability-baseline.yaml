@@ -18,17 +18,17 @@ metadata:
     code: verified by reading app/src code on 2026-11-17
     claim: audit document assertion only (none used; all claims upgraded)
   totals:
-    in_scope: 251
+    in_scope: 250
   counts_by_state:
     defect: 2
     missing_engine: 62
     missing_ui: 87
-    partial: 37
+    partial: 36
     unwired: 59
     works: 4
   counts_by_evidence_level:
     code: 163
-    runtime: 88
+    runtime: 87
 capabilities:
 - id: CAP-A-001
   title: HTTP and HTTPS crawling
@@ -1512,12 +1512,6 @@ capabilities:
   evidence_level: code
   evidence: archive export/import + provider switch wired (v1.1 D12); UI-07/UI-21 controls absent
   probe2_result: absent
-- id: CAP-L-X03
-  title: MySQL provider parity and schema authority
-  state: partial
-  evidence_level: runtime
-  evidence: probe-2 MySQL provider connects; schema parity drift (G16)
-  probe2_result: partial
 - id: CAP-L-X04
   title: Local plugin system
   state: unwired
