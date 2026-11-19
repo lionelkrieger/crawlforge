@@ -17,9 +17,11 @@
 > Capabilities: CAP-H-188
 
 ### 6.1 Schedule model
+> Decisions: D-020 · Change records: CR-026
 
 - A **schedule** binds a reusable audit configuration (section 5.1) to a recurrence rule: either a fixed interval or a calendar-style rule (time of day plus day-of-week/month selectors), evaluated in the user's local timezone.
 - Fields: name; project and configuration references; recurrence rule; enabled flag; optional limit overrides; optional completion actions (section 6.5); next-due timestamp; last-run reference.
+- On every wire contract (REST, MCP, frontend) the recurrence rule is carried in a field named **`recurrence`**, holding the rule in the documented `interval:<timespan>` or `calendar:...` form. A field named `cron` must not be used, since the value is not a cron expression. **[Added by CR-026, D-020]**
 - Schedules are created, edited, enabled, disabled, and deleted locally; no remote service participates in scheduling.
 
 ### 6.2 Execution rules
