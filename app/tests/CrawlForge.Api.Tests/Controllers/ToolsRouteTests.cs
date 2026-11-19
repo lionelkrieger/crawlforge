@@ -123,6 +123,38 @@ public sealed class ToolsRouteTests
     [Fact]
     public async Task UrlCheck_DetectsWafChallenge_FromCatalogue()
     {
+        // Spec FS-CRAWL-002 §2.4.5 (03/02 lines 228/241): only 2xx+HTML responses
+        // can transition to waf-challenge; the canonical WAF scenario is a challenge
+        // page served with HTTP 200 (03/02 line 172). Coordinator gate fix (phase-09
+        // wave-9A): the original 403 scenario asserted pre-spec behavior; the 403
+        // annotation-only case is covered by the companion test below.
+        await using var host = await ControllerTestHost.CreateAsync();
+        host.Fakes.WafCatalogue.Bundled.Add(new WafSignature(
+            "test-cf", WafProvider.Cloudflare, WafChallengeClass.Interstitial, ["cf-ray"], ["challenge-platform"], IsBundled: true));
+        host.Fakes.Fetcher.Result = new HttpFetchResult(
+            "https://example.com/", 200,
+            new Dictionary<string, string> { ["cf-ray"] = "abc123" },
+            Encoding.UTF8.GetBytes("<html>challenge-platform</html>"), TimeSpan.Zero, TimeSpan.Zero);
+
+        var verdict = await (await host.Client.PostAsJsonAsync("/api/tools/url-check", new { url = "https://example.com/" }))
+            .ReadDataAsync<UrlCheckResponse>();
+
+        Assert.Equal("2xx", verdict.StatusClass);
+        Assert.NotNull(verdict.WafVerdict);
+        Assert.Equal("cloudflare", verdict.WafVerdict!.Provider);
+        Assert.Equal("interstitial", verdict.WafVerdict.ChallengeClass);
+        Assert.Equal("test-cf", verdict.WafVerdict.SignatureKey);
+        Assert.True(verdict.WafVerdict.Confidence >= 0.8);
+    }
+
+    [Fact]
+    public async Task UrlCheck_Non2xxChallengeSignature_IsAnnotationOnly()
+    {
+        // Spec FS-CRAWL-002 §2.4.5 (03/02 line 241): "A challenge signature observed
+        // on a non-2xx response is recorded as an evidence annotation only; the
+        // status class is unchanged." The url-check wire exposes WafVerdict only for
+        // corroborated challenges (ToolsController:162), so a 403 challenge page
+        // keeps its 4xx class and carries no challenge verdict.
         await using var host = await ControllerTestHost.CreateAsync();
         host.Fakes.WafCatalogue.Bundled.Add(new WafSignature(
             "test-cf", WafProvider.Cloudflare, WafChallengeClass.Interstitial, ["cf-ray"], ["challenge-platform"], IsBundled: true));
@@ -136,11 +168,7 @@ public sealed class ToolsRouteTests
 
         Assert.Equal("4xx", verdict.StatusClass);
         Assert.False(verdict.Indexable);
-        Assert.NotNull(verdict.WafVerdict);
-        Assert.Equal("cloudflare", verdict.WafVerdict!.Provider);
-        Assert.Equal("interstitial", verdict.WafVerdict.ChallengeClass);
-        Assert.Equal("test-cf", verdict.WafVerdict.SignatureKey);
-        Assert.True(verdict.WafVerdict.Confidence >= 0.8);
+        Assert.Null(verdict.WafVerdict);
     }
 
     [Fact]
