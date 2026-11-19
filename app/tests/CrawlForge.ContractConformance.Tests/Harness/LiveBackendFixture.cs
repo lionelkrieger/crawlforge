@@ -633,7 +633,12 @@ public sealed class LiveBackendFixture : IAsyncLifetime
         });
         var delivery = await _hub!.WaitForEventsAsync(
             "export-delivery",
-            payload => payload.TryGetProperty("exportJobId", out var id) && id.GetInt64() == ExportId
+            // Locked wire shape (events.ts ExportDeliveryPayload): exportId is a
+            // string EntityId (WP-09-10 G-F producer fix). Tolerate the legacy
+            // exportJobId name and numeric tokens during the transition — the
+            // comparison is id-text based, never GetInt64 on a string token.
+            payload => (payload.TryGetProperty("exportId", out var id) || payload.TryGetProperty("exportJobId", out id))
+                && id.ToString() == ExportId.ToString(System.Globalization.CultureInfo.InvariantCulture)
                 && payload.TryGetProperty("state", out var state) && state.GetString() == "delivered",
             TimeSpan.FromSeconds(90));
         if (delivery.Count == 0)
@@ -659,7 +664,10 @@ public sealed class LiveBackendFixture : IAsyncLifetime
         LogImportId = long.Parse(import.GetProperty("importId").GetString()!, System.Globalization.CultureInfo.InvariantCulture);
         var importCompleted = await _hub.WaitForEventsAsync(
             "log-import-completed",
-            payload => payload.TryGetProperty("importId", out var id) && id.GetInt64() == LogImportId,
+            // G-G: the hub boundary normalizes ids to string EntityId (events.ts);
+            // compare id text, tolerating numeric tokens from older producers.
+            payload => payload.TryGetProperty("importId", out var id)
+                && id.ToString() == LogImportId.ToString(System.Globalization.CultureInfo.InvariantCulture),
             TimeSpan.FromSeconds(90));
         if (importCompleted.Count == 0)
         {
