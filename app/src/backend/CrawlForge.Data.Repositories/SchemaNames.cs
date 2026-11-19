@@ -79,6 +79,11 @@ public static class SchemaNames
             [(typeof(CrawlConfigurationDto), nameof(CrawlConfigurationDto.LimitOverrides))] = "limit_overrides_json",
             [(typeof(CrawlConfigurationDto), nameof(CrawlConfigurationDto.ContentScope))] = "content_scope_json",
             [(typeof(CrawlConfigurationDto), nameof(CrawlConfigurationDto.SerpBudgets))] = "serp_budgets_json",
+            // WP-10-A1 (D-021) capture-mode amendment: complex capture documents
+            // ride _json columns; CaptureMode/CaptureSource enums auto-map to
+            // capture_mode/capture_source INTEGER columns (migration v5).
+            [(typeof(CrawlConfigurationDto), nameof(CrawlConfigurationDto.CaptureSettings))] = "capture_settings_json",
+            [(typeof(CrawlConfigurationDto), nameof(CrawlConfigurationDto.RedirectChecks))] = "redirect_checks_json",
             [(typeof(ScheduleDefinitionDto), nameof(ScheduleDefinitionDto.LimitOverrides))] = "limit_overrides_json",
 
             // "value" is too generic for the catalog's metric column.

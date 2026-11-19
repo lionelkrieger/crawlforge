@@ -142,7 +142,8 @@ public sealed class ConfigurationsController : ApiControllerBase
             null,
             now,
             now);
-        configuration = ProjectWireMapper.ApplyExtensions(configuration, request.ContentScope, request.Rewrite, request.Consent, request.ZoneWeights);
+        configuration = ProjectWireMapper.ApplyExtensions(configuration, request.ContentScope, request.Rewrite, request.Consent, request.ZoneWeights,
+            request.CaptureMode, request.CaptureSettings, request.RedirectChecks);
 
         var created = await _writes.CreateAsync(configuration, cancellationToken);
         return CreatedEnvelope(ProjectWireMapper.ToConfiguration(created, await LoadProfilesAsync(id, cancellationToken)));
@@ -295,7 +296,15 @@ public sealed class ConfigurationsController : ApiControllerBase
         }
 
         configuration = configuration with { ScopeRulesJson = behavior.ToJsonString(), UpdatedAt = DateTimeOffset.UtcNow };
-        configuration = ProjectWireMapper.ApplyExtensions(configuration, request.ContentScope, request.Rewrite, request.Consent, request.ZoneWeights);
+
+        // WP-10-A1 (D-021): capture-mode subset fields (null = unchanged).
+        if (ValidateCaptureFields(request.CaptureMode, request.CaptureSettings) is { } captureError)
+        {
+            return captureError;
+        }
+
+        configuration = ProjectWireMapper.ApplyExtensions(configuration, request.ContentScope, request.Rewrite, request.Consent, request.ZoneWeights,
+            request.CaptureMode, request.CaptureSettings, request.RedirectChecks);
 
         var updated = await _writes.UpdateAsync(configuration, cancellationToken);
         return OkEnvelope(ProjectWireMapper.ToConfiguration(updated, await LoadProfilesAsync(updated.ProjectId, cancellationToken)));
@@ -349,7 +358,78 @@ public sealed class ConfigurationsController : ApiControllerBase
             }
         }
 
-        return null;
+        return ValidateCaptureFields(request.CaptureMode, request.CaptureSettings);
+    }
+
+    /// <summary>
+    /// WP-10-A1 (D-021): validates the additive capture fields. The mode token
+    /// must be a locked wire value; settings knobs must be sane positive values
+    /// (no hard caps beyond the spec's own — exclusion #8); pattern overrides
+    /// need a non-empty pattern and a locked pattern-capture token.
+    /// </summary>
+    private ObjectResult? ValidateCaptureFields(string? captureMode, CaptureSettingsWire? captureSettings)
+    {
+        if (!ProjectWireMapper.TryParseCaptureMode(captureMode, out _))
+        {
+            return ValidationError("Unknown capture mode.", [new ApiFieldError("captureMode", "Must be one of: non-js, js, dual, adaptive.")]);
+        }
+
+        if (captureSettings is null)
+        {
+            return null;
+        }
+
+        var fieldErrors = new List<ApiFieldError>();
+        if (captureSettings.AdaptiveSampleSizePerGroup is < 1)
+        {
+            fieldErrors.Add(new ApiFieldError("captureSettings.adaptiveSampleSizePerGroup", "Must be at least 1."));
+        }
+
+        if (captureSettings.MaterialChangeWordCountThreshold is < 0 or > 1)
+        {
+            fieldErrors.Add(new ApiFieldError("captureSettings.materialChangeWordCountThreshold", "Must be a fraction between 0 and 1."));
+        }
+
+        if (captureSettings.DualStorageWarningThresholdBytes is < 0)
+        {
+            fieldErrors.Add(new ApiFieldError("captureSettings.dualStorageWarningThresholdBytes", "Must not be negative."));
+        }
+
+        if (captureSettings.RenderWaitQuietMs is < 0)
+        {
+            fieldErrors.Add(new ApiFieldError("captureSettings.renderWaitQuietMs", "Must not be negative."));
+        }
+
+        if (captureSettings.RenderWaitHardCapMs is < 1)
+        {
+            fieldErrors.Add(new ApiFieldError("captureSettings.renderWaitHardCapMs", "Must be at least 1 ms."));
+        }
+
+        if (captureSettings.RenderingPoolSize is < 1)
+        {
+            fieldErrors.Add(new ApiFieldError("captureSettings.renderingPoolSize", "Must be at least 1."));
+        }
+
+        if (captureSettings.PatternOverrides is not null)
+        {
+            for (var index = 0; index < captureSettings.PatternOverrides.Count; index++)
+            {
+                var patternOverride = captureSettings.PatternOverrides[index];
+                if (string.IsNullOrWhiteSpace(patternOverride.Pattern))
+                {
+                    fieldErrors.Add(new ApiFieldError($"captureSettings.patternOverrides[{index}].pattern", "Must not be empty."));
+                }
+
+                if (!EnumWireNames.TryParse<PatternCaptureMode>(patternOverride.Capture, out _))
+                {
+                    fieldErrors.Add(new ApiFieldError($"captureSettings.patternOverrides[{index}].capture", "Must be one of: rendered, non-rendered."));
+                }
+            }
+        }
+
+        return fieldErrors.Count > 0
+            ? ValidationError("One or more capture settings are invalid.", fieldErrors)
+            : null;
     }
 
     private ObjectResult? ValidateStartUrls(IReadOnlyList<string>? startUrls)

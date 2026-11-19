@@ -120,12 +120,12 @@ public sealed class ApiEnumConverter<TEnum> : JsonConverter<TEnum>
 
     private static string WireName(TEnum value)
     {
-        if (typeof(TEnum) == typeof(ScheduleTriggerType) && value.Equals(ScheduleTriggerType.CatchUp))
-        {
-            return "catch-up";
-        }
-
-        return value.ToString().ToLowerInvariant();
+        // WP-10-A1: the locked wire vocabulary lives in Contracts
+        // (EnumWireNames) — the single source of truth shared with the
+        // frontend mirrors and the parity tests. Hyphenated spec tokens
+        // (catch-up, managed-challenge, rate-limit-soft-block, non-js,
+        // non-rendered) are special-cased there; everything else lowercases.
+        return EnumWireNames.ToWireValue(value);
     }
 }
 

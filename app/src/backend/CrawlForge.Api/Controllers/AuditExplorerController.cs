@@ -660,7 +660,12 @@ public sealed class AuditExplorerController : ApiControllerBase
             url.IsIndexable,
             title,
             url.BlockReason,
-            url.WafProvider is { } provider ? ApiEnumConverter<WafProvider>.ToWireValue(provider) : null);
+            url.WafProvider is { } provider ? ApiEnumConverter<WafProvider>.ToWireValue(provider) : null,
+            // WP-10-A1 (D-021): capture provenance on every URL row. Null
+            // capture source stays null (baseline raw capture); the discovery
+            // source is always present on the DTO.
+            url.CaptureSource is { } capture ? ApiEnumConverter<CaptureSource>.ToWireValue(capture) : null,
+            ApiEnumConverter<DiscoverySource>.ToWireValue(url.DiscoverySource));
 
     /// <summary>
     /// Derives the wire status class: from the final status code when present,

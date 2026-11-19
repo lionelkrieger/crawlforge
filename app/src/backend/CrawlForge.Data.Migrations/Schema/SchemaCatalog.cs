@@ -65,11 +65,30 @@ public static partial class SchemaCatalog
         AdditiveColumnsLazy.Value;
 
     /// <summary>
+    /// WP-10-A1 (D-021) capture-mode amendment columns (FS-CRAWL-001 §5.6.1,
+    /// CR-029), applied by migration version 5 and merged into the final catalog
+    /// shape. Separate from the version-3 additive set so existing databases
+    /// receive the columns through the new ledger version.
+    /// </summary>
+    public static IReadOnlyDictionary<string, IReadOnlyList<ColumnDefinition>> CaptureModeColumnsByTable =>
+        CaptureModeColumnsLazy.Value;
+
+    /// <summary>
     /// All 40 logical schema objects in their final shape: baseline tables with
     /// additive columns merged, followed by the additive tables and the
     /// materialized read model.
     /// </summary>
     public static IReadOnlyList<TableDefinition> AllTables => AllTablesLazy.Value;
+
+    /// <summary>
+    /// The catalog shape AS OF migration version 3 (baseline tables + the
+    /// version-3 additive columns and foreign keys, WITHOUT columns introduced
+    /// by later versions). The embedded dialect's foreign-key table rebuild
+    /// runs inside version 3 and must copy only columns that exist at that
+    /// point — referencing a later version's column in the rebuild SELECT
+    /// fails on a fresh database (WP-10-A1 integration lesson).
+    /// </summary>
+    public static IReadOnlyList<TableDefinition> AdditiveVersionTables => AdditiveVersionTablesLazy.Value;
 
     /// <summary>
     /// The ordered, versioned migrations that produce the complete catalog on
@@ -91,7 +110,9 @@ public static partial class SchemaCatalog
     private static readonly Lazy<IReadOnlyList<TableDefinition>> AdditiveTablesLazy = new(BuildAdditiveTables);
     private static readonly Lazy<IReadOnlyList<TableDefinition>> ReadModelTablesLazy = new(BuildReadModelTables);
     private static readonly Lazy<IReadOnlyDictionary<string, IReadOnlyList<ColumnDefinition>>> AdditiveColumnsLazy = new(BuildAdditiveColumns);
+    private static readonly Lazy<IReadOnlyDictionary<string, IReadOnlyList<ColumnDefinition>>> CaptureModeColumnsLazy = new(BuildCaptureModeColumns);
     private static readonly Lazy<IReadOnlyList<TableDefinition>> AllTablesLazy = new(BuildAllTables);
+    private static readonly Lazy<IReadOnlyList<TableDefinition>> AdditiveVersionTablesLazy = new(BuildAdditiveVersionTables);
     private static readonly Lazy<IReadOnlyList<MigrationDefinition>> MigrationsLazy = new(BuildMigrations);
     private static readonly Lazy<IReadOnlyList<IndexDefinition>> AllIndexesLazy = new(BuildAllIndexes);
 
@@ -147,6 +168,38 @@ public static partial class SchemaCatalog
 
     private static IReadOnlyList<TableDefinition> BuildAllTables()
     {
+        var result = new List<TableDefinition>(BaselineTables.Count + AdditiveTables.Count + ReadModelTables.Count);
+        foreach (var baseline in BaselineTables)
+        {
+            var merged = baseline;
+            if (AdditiveColumnsByTable.TryGetValue(baseline.Name, out var additive))
+            {
+                merged = merged with { Columns = [.. merged.Columns, .. additive] };
+            }
+
+            if (CaptureModeColumnsByTable.TryGetValue(baseline.Name, out var captureColumns))
+            {
+                merged = merged with { Columns = [.. merged.Columns, .. captureColumns] };
+            }
+
+            if (AdditiveForeignKeysByTable.TryGetValue(baseline.Name, out var additiveKeys))
+            {
+                merged = merged with { ForeignKeys = [.. merged.ForeignKeys, .. additiveKeys] };
+            }
+
+            result.Add(merged);
+        }
+
+        result.AddRange(AdditiveTables);
+        result.AddRange(ReadModelTables);
+        return result;
+    }
+
+    private static IReadOnlyList<TableDefinition> BuildAdditiveVersionTables()
+    {
+        // Version-3 shape only: baseline + additive columns + additive foreign
+        // keys. Later-version column sets (e.g. CaptureModeColumnsByTable,
+        // version 5) are deliberately excluded — see AdditiveVersionTables.
         var result = new List<TableDefinition>(BaselineTables.Count + AdditiveTables.Count + ReadModelTables.Count);
         foreach (var baseline in BaselineTables)
         {

@@ -70,12 +70,29 @@ public static partial class SchemaCatalog
             readModelOperations.Add(new CreateTableOperation(table));
         }
 
+        // Version 5 — WP-10-A1 (D-021) capture-mode amendment columns:
+        // crawl_configurations.capture_mode/capture_settings_json/
+        // redirect_checks_json + url_records.capture_source (FS-CRAWL-001
+        // §5.6.1, CR-029). A NEW version because version 3 is already recorded
+        // in existing ledgers; fresh databases apply it after version 3, and
+        // the version-3 set deliberately excludes these columns (no duplicate
+        // ALTER on any path). All nullable: null keeps baseline behaviour.
+        var captureModeOperations = new List<MigrationOperation>();
+        foreach (var (tableName, columns) in CaptureModeColumnsByTable)
+        {
+            foreach (var column in columns)
+            {
+                captureModeOperations.Add(new AddColumnOperation(tableName, column));
+            }
+        }
+
         return
         [
             new MigrationDefinition(1, "baseline-schema", baselineOperations),
             new MigrationDefinition(2, "additive-tables", additiveTableOperations),
             new MigrationDefinition(3, "additive-columns", additiveColumnOperations),
             new MigrationDefinition(4, "ngram-site-summaries-read-model", readModelOperations),
+            new MigrationDefinition(5, "capture-mode-columns", captureModeOperations),
         ];
     }
 }

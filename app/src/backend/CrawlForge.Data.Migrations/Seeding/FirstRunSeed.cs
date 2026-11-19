@@ -40,10 +40,12 @@ public static class FirstRunSeed
 
     /// <summary>
     /// Audit toggles: every category enabled, including the additive Log
-    /// Intelligence, AI Search (GEO), and Analytics &amp; Tagging categories.
+    /// Intelligence, AI Search (GEO), and Analytics &amp; Tagging categories and
+    /// the WP-10-A1 (D-021) Images, Security &amp; protocol, and
+    /// Internationalization categories (all scored by default).
     /// </summary>
     public const string AuditTogglesJson =
-        "{\"Indexability\":true,\"Content\":true,\"Linking\":true,\"StructuredData\":true,\"Accessibility\":true,\"Performance\":true,\"Crawl\":true,\"Custom\":true,\"LogIntelligence\":true,\"AiSearchGeo\":true,\"AnalyticsTagging\":true}";
+        "{\"Indexability\":true,\"Content\":true,\"Linking\":true,\"StructuredData\":true,\"Accessibility\":true,\"Performance\":true,\"Crawl\":true,\"Custom\":true,\"LogIntelligence\":true,\"AiSearchGeo\":true,\"AnalyticsTagging\":true,\"Images\":true,\"SecurityAndProtocol\":true,\"Internationalization\":true}";
 
     /// <summary>
     /// Storage options: the compressed content store lives beside the database

@@ -116,16 +116,19 @@ describe('configuration editor ↔ REST DTO conformance', () => {
     expect(json.limits).toEqual({ maxUrls: null, maxDepth: null, maxDurationSeconds: null, maxResponseBytes: null });
   });
 
-  it('exposes the 13 verbatim tabs and the 11 scoring categories', () => {
+  it('exposes the 13 verbatim tabs and the 14 scoring categories', () => {
     expect(CONFIGURATION_TABS).toEqual([
       'Scope', 'Crawl as and capture', 'Limits', 'Rules', 'Directives',
       'Resources and external scope', 'Authentication and cookies',
       'Click discovery and site types', 'Consent states', 'Analysis categories',
       'Thresholds', 'Extraction and search', 'Advanced'
     ]);
+    // WP-10-A1 (D-021): the three additive §7.4 categories append to the
+    // locked baseline list (extension, never weakening).
     expect(ANALYSIS_CATEGORIES.map((category) => category.key)).toEqual([
       'Indexability', 'Content', 'Linking', 'StructuredData', 'Accessibility',
-      'Performance', 'Crawl', 'Custom', 'LogIntelligence', 'AiSearchGeo', 'AnalyticsTagging'
+      'Performance', 'Crawl', 'Custom', 'LogIntelligence', 'AiSearchGeo', 'AnalyticsTagging',
+      'Images', 'SecurityAndProtocol', 'Internationalization'
     ]);
   });
 });

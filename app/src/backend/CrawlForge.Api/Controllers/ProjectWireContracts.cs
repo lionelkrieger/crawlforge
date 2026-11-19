@@ -61,6 +61,47 @@ public sealed record ConsentSettingsWire(bool ConsentModeV2Enabled, bool BeaconD
 /// <param name="SerpMetricsEnabled">Whether SERP metrics are enabled.</param>
 public sealed record ZoneWeightSettingsWire(IReadOnlyDictionary<string, double> ZoneWeights, bool SerpMetricsEnabled);
 
+/// <summary>Explicit per-URL-pattern capture override (FS-CRAWL-001 §5.6.1;
+/// WP-10-A1). Overrides win over adaptive switching and apply on top of every
+/// capture mode.</summary>
+/// <param name="Pattern">URL path pattern (for example "/blog/*").</param>
+/// <param name="Capture">Pattern capture wire token: "rendered" or "non-rendered".</param>
+public sealed record CapturePatternOverrideWire(string Pattern, string Capture);
+
+/// <summary>Capture-mode settings document (FS-CRAWL-001 §5.6.1/§5.6.2;
+/// WP-10-A1). Every knob optional: null applies the engine default documented
+/// per field. Mirrors Contracts.Crawl.CaptureSettings and the frontend
+/// CaptureSettings interface. The dual storage threshold warns only — never a
+/// hard cap (exclusion #8).</summary>
+/// <param name="AdaptiveSampleSizePerGroup">Adaptive samples per pattern group; default 4 (spec range 3–5).</param>
+/// <param name="MaterialChangeWordCountThreshold">Material-change word-count fraction; default 0.20.</param>
+/// <param name="DualStorageWarningThresholdBytes">Dual-mode storage warning threshold; default 1 GiB.</param>
+/// <param name="RenderWaitQuietMs">Render wait quiet period; default 500.</param>
+/// <param name="RenderWaitHardCapMs">Render wait hard cap; default 20000.</param>
+/// <param name="RenderingPoolSize">Concurrent contexts; null = half logical processors, minimum 2.</param>
+/// <param name="PatternOverrides">Explicit per-pattern overrides; null/empty = none.</param>
+public sealed record CaptureSettingsWire(
+    int? AdaptiveSampleSizePerGroup = null,
+    double? MaterialChangeWordCountThreshold = null,
+    long? DualStorageWarningThresholdBytes = null,
+    int? RenderWaitQuietMs = null,
+    int? RenderWaitHardCapMs = null,
+    int? RenderingPoolSize = null,
+    IReadOnlyList<CapturePatternOverrideWire>? PatternOverrides = null);
+
+/// <summary>Inappropriate-redirect check toggles (CR-029; WP-10-A1). Four
+/// independent cases, all ON by default; null/absent means every check
+/// enabled. Mirrors Contracts.Crawl.RedirectCheckSettings.</summary>
+/// <param name="CrossHost">Case 1: hop redirects to a different host. Default true.</param>
+/// <param name="TemporaryStatus">Case 2: hop uses 302/303/307. Default true.</param>
+/// <param name="NonIndexableTarget">Case 3: final target non-indexable per CR-024. Default true.</param>
+/// <param name="HttpsDowngrade">Case 4: HTTPS URL redirects to HTTP. Default true.</param>
+public sealed record RedirectCheckSettingsWire(
+    bool? CrossHost = null,
+    bool? TemporaryStatus = null,
+    bool? NonIndexableTarget = null,
+    bool? HttpsDowngrade = null);
+
 /// <summary>Wire project summary row.</summary>
 /// <param name="Id">Project identifier.</param>
 /// <param name="Name">Project name.</param>
@@ -160,6 +201,10 @@ public sealed record ConfigurationSummaryWire(string Id, string ProjectId, strin
 /// plus the behavior keys), projected from <c>ScopeRulesJson</c>. Null when nothing is persisted.</param>
 /// <param name="EnabledCategories">Additive (WP-09-06, WP-09-07): per-configuration analysis categories
 /// (PascalCase <c>AuditCategory</c> names, case-insensitive on input); null = all enabled.</param>
+/// <param name="CaptureMode">Additive (WP-10-A1, D-021): capture-mode wire token
+/// (non-js/js/dual/adaptive); null = baseline non-JS behaviour.</param>
+/// <param name="CaptureSettings">Additive (WP-10-A1): capture-mode settings document; null = engine defaults.</param>
+/// <param name="RedirectChecks">Additive (WP-10-A1, CR-029): inappropriate-redirect toggles; null = all four on.</param>
 public sealed record AuditConfigurationWire(
     string Id,
     string ProjectId,
@@ -178,7 +223,10 @@ public sealed record AuditConfigurationWire(
     ConsentSettingsWire? Consent,
     ZoneWeightSettingsWire? ZoneWeights,
     System.Text.Json.JsonElement? ScopeRules = null,
-    IReadOnlyList<string>? EnabledCategories = null);
+    IReadOnlyList<string>? EnabledCategories = null,
+    string? CaptureMode = null,
+    CaptureSettingsWire? CaptureSettings = null,
+    RedirectCheckSettingsWire? RedirectChecks = null);
 
 /// <summary>POST /api/projects/{id}/configurations — creation payload.</summary>
 /// <param name="Name">Configuration name (required).</param>
@@ -196,6 +244,9 @@ public sealed record AuditConfigurationWire(
 /// <param name="ScopeRules">Additive crawl-scope document (WP-09-07 §3 shape); merged into
 /// <c>ScopeRulesJson</c> preserving the behavior keys. Invalid regexes are validation errors.</param>
 /// <param name="EnabledCategories">Additive per-configuration analysis categories; null = all enabled.</param>
+/// <param name="CaptureMode">Additive (WP-10-A1): capture-mode wire token; absent/null = baseline non-JS.</param>
+/// <param name="CaptureSettings">Additive (WP-10-A1): capture settings; absent/null = engine defaults.</param>
+/// <param name="RedirectChecks">Additive (WP-10-A1, CR-029): redirect toggles; absent/null = all four on.</param>
 public sealed record ConfigurationCreateRequest(
     string Name,
     string? Description,
@@ -210,7 +261,10 @@ public sealed record ConfigurationCreateRequest(
     ConsentSettingsWire? Consent,
     ZoneWeightSettingsWire? ZoneWeights,
     System.Text.Json.JsonElement? ScopeRules = null,
-    IReadOnlyList<string>? EnabledCategories = null);
+    IReadOnlyList<string>? EnabledCategories = null,
+    string? CaptureMode = null,
+    CaptureSettingsWire? CaptureSettings = null,
+    RedirectCheckSettingsWire? RedirectChecks = null);
 
 /// <summary>PUT /api/configurations/{id} — subset payload.</summary>
 /// <param name="Name">Optional name.</param>
@@ -229,6 +283,12 @@ public sealed record ConfigurationCreateRequest(
 /// persisted <c>ScopeRulesJson</c> (explicit request fields win over behavior keys). Omitted = unchanged.</param>
 /// <param name="EnabledCategories">Additive per-configuration analysis categories. Non-null replaces the
 /// persisted set (empty array = all enabled); null/omitted = unchanged.</param>
+/// <param name="CaptureMode">Additive (WP-10-A1): capture-mode wire token; non-null replaces the persisted
+/// mode; null/omitted = unchanged.</param>
+/// <param name="CaptureSettings">Additive (WP-10-A1): capture settings document; non-null replaces the
+/// persisted document (absent knobs take engine defaults); null/omitted = unchanged.</param>
+/// <param name="RedirectChecks">Additive (WP-10-A1, CR-029): redirect toggles; non-null replaces the
+/// persisted document (absent toggles default ON); null/omitted = unchanged.</param>
 public sealed record ConfigurationUpdateRequest(
     string? Name,
     string? Description,
@@ -243,7 +303,10 @@ public sealed record ConfigurationUpdateRequest(
     ConsentSettingsWire? Consent,
     ZoneWeightSettingsWire? ZoneWeights,
     System.Text.Json.JsonElement? ScopeRules = null,
-    IReadOnlyList<string>? EnabledCategories = null);
+    IReadOnlyList<string>? EnabledCategories = null,
+    string? CaptureMode = null,
+    CaptureSettingsWire? CaptureSettings = null,
+    RedirectCheckSettingsWire? RedirectChecks = null);
 
 /// <summary>Wire suppression scope.</summary>
 /// <param name="UrlId">Optional URL scope.</param>

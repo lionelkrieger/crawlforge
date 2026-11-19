@@ -164,11 +164,24 @@ public sealed class RestEnvelopeConformanceE2ETests
     }
 
     [Fact]
-    public void EveryContractEnum_SerializesLowercaseNoHyphen_ExceptCatchUp()
+    public void EveryContractEnum_SerializesLowercaseNoHyphen_ExceptFrozenHyphenatedTokens()
     {
         var contractAssembly = typeof(CrawlForge.Contracts.Common.ApiEnvelope<>).Assembly;
         var enumTypes = contractAssembly.GetTypes().Where(t => t.IsEnum).ToList();
         Assert.NotEmpty(enumTypes);
+
+        // The frozen hyphenated spec tokens (EnumWireNames): the baseline
+        // catch-up exception plus the WP-10-A1 (D-021) amendment tokens. Every
+        // other member must stay lowercase-no-hyphen; the list is explicit so
+        // a NEW hyphenated token fails here until deliberately locked.
+        var frozenHyphenated = new Dictionary<(Type Enum, string Member), string>
+        {
+            [(typeof(ScheduleTriggerType), nameof(ScheduleTriggerType.CatchUp))] = "catch-up",
+            [(typeof(WafChallengeClass), nameof(WafChallengeClass.ManagedChallenge))] = "managed-challenge",
+            [(typeof(WafChallengeClass), nameof(WafChallengeClass.RateLimitSoftBlock))] = "rate-limit-soft-block",
+            [(typeof(CaptureMode), nameof(CaptureMode.NonJs))] = "non-js",
+            [(typeof(PatternCaptureMode), nameof(PatternCaptureMode.NonRendered))] = "non-rendered",
+        };
 
         foreach (var enumType in enumTypes)
         {
@@ -179,9 +192,9 @@ public sealed class RestEnvelopeConformanceE2ETests
             foreach (var value in Enum.GetValues(enumType))
             {
                 var wire = (string)toWire.Invoke(null, [value])!;
-                if (enumType == typeof(ScheduleTriggerType) && (ScheduleTriggerType)value == ScheduleTriggerType.CatchUp)
+                if (frozenHyphenated.TryGetValue((enumType, value.ToString()!), out var frozen))
                 {
-                    Assert.Equal("catch-up", wire);
+                    Assert.Equal(frozen, wire);
                 }
                 else
                 {

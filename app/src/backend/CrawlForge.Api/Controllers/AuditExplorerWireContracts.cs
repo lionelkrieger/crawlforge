@@ -11,6 +11,10 @@ namespace CrawlForge.Api.Controllers;
 /// <param name="Title">Document title, when extracted.</param>
 /// <param name="BlockReason">Additive: block reason for blocked entries.</param>
 /// <param name="WafProvider">Additive: detected WAF provider for blocked entries.</param>
+/// <param name="CaptureSource">Additive (WP-10-A1): which capture produced the analysed document
+/// (raw/rendered/both); null = baseline raw (non-JS) capture.</param>
+/// <param name="DiscoverySource">Additive (WP-10-A1): how the URL entered the crawl;
+/// "render" marks JS-only links discovered from the rendered DOM.</param>
 public sealed record UrlRecordSummaryWire(
     string Id,
     string CanonicalUrl,
@@ -21,7 +25,9 @@ public sealed record UrlRecordSummaryWire(
     bool Indexable,
     string? Title,
     string? BlockReason,
-    string? WafProvider);
+    string? WafProvider,
+    string? CaptureSource = null,
+    string? DiscoverySource = null);
 
 /// <summary>One hop in a redirect chain.</summary>
 /// <param name="Url">Hop URL.</param>

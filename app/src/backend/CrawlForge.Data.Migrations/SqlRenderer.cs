@@ -79,27 +79,31 @@ public sealed class SqlRenderer
     /// <summary>
     /// The embedded dialect cannot ALTER TABLE ADD CONSTRAINT, so an additive
     /// relationship is applied through the standard table-rebuild procedure:
-    /// create the table in its final catalog shape under a temporary name,
-    /// copy the rows, drop the original, rename, and recreate its indexes.
-    /// Migrations apply before data ingestion, and the whole rebuild runs
-    /// inside the migration transaction, so the swap is atomic.
+    /// create the table in its catalog shape AS OF THIS MIGRATION VERSION under
+    /// a temporary name, copy the rows, drop the original, rename, and recreate
+    /// its indexes. The only foreign-key rebuild rides version 3, so the
+    /// version-3 shape (AdditiveVersionTables) is used — the FINAL catalog shape
+    /// would reference columns that later versions add, which do not exist yet
+    /// when the rebuild SELECT runs on a fresh database. Migrations apply before
+    /// data ingestion, and the whole rebuild runs inside the migration
+    /// transaction, so the swap is atomic.
     /// </summary>
     private IReadOnlyList<string> RenderTableRebuildWithForeignKey(string tableName)
     {
-        var finalTable = SchemaCatalog.AllTables.Single(t => t.Name == tableName);
+        var rebuildTable = SchemaCatalog.AdditiveVersionTables.Single(t => t.Name == tableName);
         var tempName = "__cf_rebuild_" + tableName;
-        var tempTable = finalTable with { Name = tempName };
-        var columns = string.Join(", ", finalTable.Columns.Select(c => _dialect.Quote(c.Name)));
+        var tempTable = rebuildTable with { Name = tempName };
+        var columns = string.Join(", ", rebuildTable.Columns.Select(c => _dialect.Quote(c.Name)));
 
         var statements = new List<string>
         {
             // Constraint names keep the original owning-table prefix.
-            _dialect.RenderCreateTable(tempTable, finalTable.ForeignKeys, ifNotExists: false, constraintOwner: tableName),
+            _dialect.RenderCreateTable(tempTable, rebuildTable.ForeignKeys, ifNotExists: false, constraintOwner: tableName),
             $"INSERT INTO {_dialect.Quote(tempName)} ({columns}) SELECT {columns} FROM {_dialect.Quote(tableName)};",
             $"DROP TABLE {_dialect.Quote(tableName)};",
             $"ALTER TABLE {_dialect.Quote(tempName)} RENAME TO {_dialect.Quote(tableName)};",
         };
-        statements.AddRange(finalTable.Indexes.Select(_dialect.RenderCreateIndex));
+        statements.AddRange(rebuildTable.Indexes.Select(_dialect.RenderCreateIndex));
         return statements;
     }
 }

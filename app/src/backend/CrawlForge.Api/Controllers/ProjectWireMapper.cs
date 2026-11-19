@@ -158,8 +158,79 @@ internal static class ProjectWireMapper
             ToConsent(configuration.ConsentModeEnabled, configuration.BeaconPatternsJson),
             ToZoneWeights(configuration.ZoneWeightsJson, configuration.SerpBudgets),
             scopeRules,
-            enabledCategories);
+            enabledCategories,
+            // WP-10-A1 (D-021): additive capture-mode projection. Null DTO
+            // members stay null on the wire (baseline non-JS behaviour).
+            configuration.CaptureMode is { } mode ? EnumWireNames.ToWireValue(mode) : null,
+            ToCaptureSettings(configuration.CaptureSettings),
+            ToRedirectChecks(configuration.RedirectChecks));
     }
+
+    /// <summary>Projects the capture settings document onto the wire (null stays null).</summary>
+    public static CaptureSettingsWire? ToCaptureSettings(CaptureSettings? settings) =>
+        settings is null
+            ? null
+            : new CaptureSettingsWire(
+                settings.AdaptiveSampleSizePerGroup,
+                settings.MaterialChangeWordCountThreshold,
+                settings.DualStorageWarningThresholdBytes,
+                settings.RenderWaitQuietMs,
+                settings.RenderWaitHardCapMs,
+                settings.RenderingPoolSize,
+                settings.PatternOverrides?.Select(o => new CapturePatternOverrideWire(
+                    o.Pattern, EnumWireNames.ToWireValue(o.Capture))).ToList());
+
+    /// <summary>Projects the CR-029 redirect toggles onto the wire (null stays null).</summary>
+    public static RedirectCheckSettingsWire? ToRedirectChecks(RedirectCheckSettings? checks) =>
+        checks is null
+            ? null
+            : new RedirectCheckSettingsWire(checks.CrossHost, checks.TemporaryStatus, checks.NonIndexableTarget, checks.HttpsDowngrade);
+
+    /// <summary>
+    /// Parses a capture-mode wire token (case-insensitive; null/empty = baseline).
+    /// Returns false for an unknown token so the controller can emit a field error.
+    /// </summary>
+    public static bool TryParseCaptureMode(string? text, out CaptureMode? mode)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            mode = null;
+            return true;
+        }
+
+        if (EnumWireNames.TryParse<CaptureMode>(text, out var parsed))
+        {
+            mode = parsed;
+            return true;
+        }
+
+        mode = null;
+        return false;
+    }
+
+    /// <summary>Materializes the capture settings document; absent knobs take engine defaults.</summary>
+    public static CaptureSettings ToCaptureSettingsDocument(CaptureSettingsWire wire)
+    {
+        var defaults = CaptureSettings.Default;
+        return new CaptureSettings(
+            wire.AdaptiveSampleSizePerGroup ?? defaults.AdaptiveSampleSizePerGroup,
+            wire.MaterialChangeWordCountThreshold ?? defaults.MaterialChangeWordCountThreshold,
+            wire.DualStorageWarningThresholdBytes ?? defaults.DualStorageWarningThresholdBytes,
+            wire.RenderWaitQuietMs ?? defaults.RenderWaitQuietMs,
+            wire.RenderWaitHardCapMs ?? defaults.RenderWaitHardCapMs,
+            wire.RenderingPoolSize,
+            wire.PatternOverrides is null || wire.PatternOverrides.Count == 0
+                ? null
+                : wire.PatternOverrides.Select(o => new CapturePatternOverride(
+                    o.Pattern,
+                    EnumWireNames.TryParse<PatternCaptureMode>(o.Capture, out var capture)
+                        ? capture
+                        : throw new ArgumentException($"Unknown pattern capture token '{o.Capture}'.", nameof(wire)))).ToList());
+    }
+
+    /// <summary>Materializes the CR-029 toggle document; absent toggles default ON.</summary>
+    public static RedirectCheckSettings ToRedirectChecksDocument(RedirectCheckSettingsWire wire) =>
+        new(wire.CrossHost ?? true, wire.TemporaryStatus ?? true, wire.NonIndexableTarget ?? true, wire.HttpsDowngrade ?? true);
 
     public static ContentScopeSettingsWire? ToContentScope(ContentScopeDefinition? scope, IReadOnlyList<ContentScopeProfileWire>? profiles) =>
         scope is null && profiles is null
@@ -305,13 +376,18 @@ internal static class ProjectWireMapper
         return project;
     }
 
-    /// <summary>Applies additive extension settings onto a configuration row (null keeps stored values).</summary>
+    /// <summary>Applies additive extension settings onto a configuration row (null keeps stored values).
+    /// WP-10-A1: the trailing capture fields follow the same null-keeps-stored convention;
+    /// a non-null capture document REPLACES the stored document (absent knobs take defaults).</summary>
     public static CrawlConfigurationDto ApplyExtensions(
         CrawlConfigurationDto configuration,
         ContentScopeSettingsWire? contentScope,
         RewriteSettingsWire? rewrite,
         ConsentSettingsWire? consent,
-        ZoneWeightSettingsWire? zoneWeights)
+        ZoneWeightSettingsWire? zoneWeights,
+        string? captureMode = null,
+        CaptureSettingsWire? captureSettings = null,
+        RedirectCheckSettingsWire? redirectChecks = null)
     {
         if (contentScope is not null)
         {
@@ -345,6 +421,27 @@ internal static class ProjectWireMapper
                     ? configuration.SerpBudgets ?? new SerpBudgetSettings(600, 960, "default")
                     : null,
             };
+        }
+
+        // WP-10-A1 (D-021): capture-mode fields. The controller validates the
+        // mode token and pattern-capture tokens before calling; null keeps the
+        // stored value, non-null replaces it.
+        if (captureMode is not null)
+        {
+            configuration = configuration with
+            {
+                CaptureMode = EnumWireNames.TryParse<CaptureMode>(captureMode, out var mode) ? mode : configuration.CaptureMode,
+            };
+        }
+
+        if (captureSettings is not null)
+        {
+            configuration = configuration with { CaptureSettings = ToCaptureSettingsDocument(captureSettings) };
+        }
+
+        if (redirectChecks is not null)
+        {
+            configuration = configuration with { RedirectChecks = ToRedirectChecksDocument(redirectChecks) };
         }
 
         return configuration;

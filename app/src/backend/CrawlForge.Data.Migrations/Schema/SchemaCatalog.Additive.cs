@@ -352,4 +352,30 @@ public static partial class SchemaCatalog
                 Col("serp_budgets_json", LogicalType.Json, nullable: true),
             ],
         };
+
+    /// <summary>
+    /// WP-10-A1 (D-021) capture-mode amendment columns, applied by migration
+    /// version 5. Kept SEPARATE from <see cref="AdditiveColumnsByTable"/> (the
+    /// version-3 set): version 3 is already recorded in existing databases'
+    /// ledgers, so new columns must ride a NEW version to reach them, while a
+    /// fresh database applies version 5 after version 3 without duplication.
+    /// All columns nullable: null keeps the baseline non-JS behaviour.
+    /// </summary>
+    private static IReadOnlyDictionary<string, IReadOnlyList<ColumnDefinition>> BuildCaptureModeColumns() =>
+        new Dictionary<string, IReadOnlyList<ColumnDefinition>>(StringComparer.Ordinal)
+        {
+            // §5.6.1 capture mode + settings; CR-029 redirect-check toggles.
+            ["crawl_configurations"] =
+            [
+                Col("capture_mode", LogicalType.Int32, nullable: true),
+                Col("capture_settings_json", LogicalType.Json, nullable: true),
+                Col("redirect_checks_json", LogicalType.Json, nullable: true),
+            ],
+
+            // §5.6.1: every URL record states which capture produced it.
+            ["url_records"] =
+            [
+                Col("capture_source", LogicalType.Int32, nullable: true),
+            ],
+        };
 }

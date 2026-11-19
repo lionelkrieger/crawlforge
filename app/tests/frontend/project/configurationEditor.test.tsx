@@ -245,11 +245,16 @@ describe('scope + directives + categories bindings', () => {
     await clickTab(container, 'Analysis categories');
     expect(latest.current.enabledCategories).toBeNull();
     expect((byTestId(container, 'config-category-Content') as HTMLInputElement).checked).toBe(true);
+    // WP-10-A1 (D-021): the three additive §7.4 categories render checked by
+    // default under the same null = all-enabled convention.
+    for (const category of ['Images', 'SecurityAndProtocol', 'Internationalization']) {
+      expect((byTestId(container, `config-category-${category}`) as HTMLInputElement).checked).toBe(true);
+    }
     click(byTestId(container, 'config-category-Content')!);
     await flush();
     expect(latest.current.enabledCategories).not.toBeNull();
     expect(latest.current.enabledCategories).not.toContain('Content');
-    expect(latest.current.enabledCategories).toHaveLength(10);
+    expect(latest.current.enabledCategories).toHaveLength(13);
     click(byTestId(container, 'config-category-Content')!);
     await flush();
     expect(latest.current.enabledCategories).toBeNull();

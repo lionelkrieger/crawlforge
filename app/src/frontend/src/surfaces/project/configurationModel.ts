@@ -356,7 +356,9 @@ export const TAB_IDS: readonly string[] = [
   'click-discovery', 'consent', 'categories', 'thresholds', 'extraction', 'advanced'
 ];
 
-/** Analysis categories (AuditCategory enum names; scoring snapshot keys). */
+/** Analysis categories (AuditCategory enum names; scoring snapshot keys).
+ * WP-10-A1 (D-021): the three §7.4 taxonomy categories appended by the
+ * contract amendment — labels match AUDIT_CATEGORY_LABELS verbatim. */
 export const ANALYSIS_CATEGORIES: readonly { readonly key: string; readonly label: string }[] = [
   { key: 'Indexability', label: 'Indexability' },
   { key: 'Content', label: 'Content' },
@@ -368,7 +370,10 @@ export const ANALYSIS_CATEGORIES: readonly { readonly key: string; readonly labe
   { key: 'Custom', label: 'Custom extraction and search' },
   { key: 'LogIntelligence', label: 'Log intelligence' },
   { key: 'AiSearchGeo', label: 'AI search (GEO)' },
-  { key: 'AnalyticsTagging', label: 'Analytics and tagging' }
+  { key: 'AnalyticsTagging', label: 'Analytics and tagging' },
+  { key: 'Images', label: 'Images' },
+  { key: 'SecurityAndProtocol', label: 'Security & protocol' },
+  { key: 'Internationalization', label: 'Internationalization' }
 ];
 
 /** "Crawl as" presets (§8.8): bundle user agent + capture identity. */
