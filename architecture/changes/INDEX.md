@@ -30,3 +30,4 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 | CR-024 | Indexable means search-indexable | clarification | applied | D-020 | CAP-B-036, CAP-B-037, CAP-B-038 | 04/01 §7.4 | 2026-11-18 |
 | CR-025 | Status-bar GC count field names follow the code | clarification | applied | D-020 | CAP-L-X05 | 05/02 §7.2; 06/01 §7.2 | 2026-11-18 |
 | CR-026 | Schedule wire field is named recurrence | clarification | applied | D-020 | CAP-H-188 | 03/04 §6.1 | 2026-11-18 |
+| CR-027 | Add local-notification to the hub contract | addition | applied | D-020 | CAP-H-188, CAP-L-X05 | 05/02 Appendix C | 2026-11-18 |

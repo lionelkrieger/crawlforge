@@ -58,6 +58,7 @@
 > **Verbatim source — FS-CRAWL-002 v1.1: Appendix C — Additive Real-Time Hub Events (extends FS-CRAWL-001 §10.3) — complete section, verbatim and unabridged**
 
 ## Appendix C — Additive Real-Time Hub Events (extends FS-CRAWL-001 §10.3)
+> Decisions: D-020 · Change records: CR-027
 
 | Event | Direction | Payload fields | Emission rule |
 |---|---|---|---|
@@ -71,6 +72,8 @@
 | `embedding-completed` | Server → shell | Audit identifier; final counts; pass summaries (clusters, opportunities, low-relevance links) | Once per job finalization (FS-CRAWL-002 §12.9) |
 
 Additive payload fields on parent events: `crawl-progress` gains `wafBlocked`, throttled-host count, mean effective rate, and optional matrix counters (validated/total) while a migration matrix is attached; `url-batch` gains optional block reason/provider on blocked entries; `audit-completed` final counters gain the WAF sub-count. Analytics detections and GEO findings ride the existing `findings-updated` / `url-batch` events (no new events for FS-CRAWL-002 §§13–15). Parent emission rules and the subscribe/unsubscribe contract are unchanged.
+
+**`local-notification` (added by CR-027, D-020).** Payload `{ title, message }`. Emitted by the scheduler when a scheduled audit needs to tell the user something (for example completion or failure while no window is focused); the shell shows it as a local OS notification. Delivered only over the local hub; never sent anywhere else.
 
 ---
 
