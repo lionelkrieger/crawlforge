@@ -56,7 +56,7 @@
 | `timestamp` | Backend | UTC emission time |
 | `backendWorkingSetBytes` | Backend OS counters | Backend process working-set RAM |
 | `managedHeapBytes` | Backend runtime | Managed heap size under the mandated server-GC profile (§13) |
-| `gcGen0/1/2Counts` | Backend runtime | GC generation collection counts, aggregated across server-GC heaps |
+| `gcGen0Count`, `gcGen1Count`, `gcGen2Count` | Backend runtime | GC generation collection counts, aggregated across server-GC heaps | **[Amended by CR-025, D-020]**
 | `sqliteWalBytes` | Embedded provider | Write-ahead log file size (§2.4); null when the external provider is active |
 | `auditId` (optional) | Backend | Present while an audit is running |
 
@@ -193,3 +193,8 @@ Replaced text in §8.9:
 Replaced text in §7.5 performance budgets (scrolling row):
 
 > | Tabular scrolling at 500k+ rows | 60 FPS, p95 frame ≤ 16.7 ms; mounted DOM rows ≤ 50 |
+### CR-025 (2026-11-17; D-020)
+
+Replaced text in live status-bar telemetry table:
+
+> | `gcGen0/1/2Counts` | Backend runtime | GC generation collection counts, aggregated across server-GC heaps |

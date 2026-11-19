@@ -44,7 +44,7 @@
 | `timestamp` | Backend | UTC emission time |
 | `backendWorkingSetBytes` | Backend OS counters | Backend process working-set RAM |
 | `managedHeapBytes` | Backend runtime | Managed heap size under the mandated server-GC profile (§13) |
-| `gcGen0/1/2Counts` | Backend runtime | GC generation collection counts, aggregated across server-GC heaps |
+| `gcGen0Count`, `gcGen1Count`, `gcGen2Count` | Backend runtime | GC generation collection counts, aggregated across server-GC heaps | **[Amended by CR-025, D-020]**
 | `sqliteWalBytes` | Embedded provider | Write-ahead log file size (§2.4); null when the external provider is active |
 | `auditId` (optional) | Backend | Present while an audit is running |
 
@@ -71,3 +71,13 @@
 | `embedding-completed` | Server → shell | Audit identifier; final counts; pass summaries (clusters, opportunities, low-relevance links) | Once per job finalization (FS-CRAWL-002 §12.9) |
 
 Additive payload fields on parent events: `crawl-progress` gains `wafBlocked`, throttled-host count, mean effective rate, and optional matrix counters (validated/total) while a migration matrix is attached; `url-batch` gains optional block reason/provider on blocked entries; `audit-completed` final counters gain the WAF sub-count. Analytics detections and GEO findings ride the existing `findings-updated` / `url-batch` events (no new events for FS-CRAWL-002 §§13–15). Parent emission rules and the subscribe/unsubscribe contract are unchanged.
+
+---
+
+## Amendment history
+
+### CR-025 (2026-11-17; D-020)
+
+Replaced text in live status-bar telemetry table:
+
+> | `gcGen0/1/2Counts` | Backend runtime | GC generation collection counts, aggregated across server-GC heaps |
