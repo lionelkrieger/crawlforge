@@ -8,7 +8,7 @@
 # done_when fixture runs execute at the phase gate after wiring (AGENT-INSTRUCTIONS.md §5.6).
 phase_id: "phase-09"
 name: "Flow 1 — HTTP Audit End to End"
-status: "pending"
+status: "in_progress"
 depends_on_phases: ["phase-08"]
 max_parallel_agents: 5
 parallel_waves:
@@ -40,7 +40,9 @@ workpieces:
   - workpiece_id: "WP-09-01"
     title: "Sitemap Ingestion, Orphan Detection & Redirect-Hop Persistence"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-01"
+    started_at: "2026-11-19T02:42:16Z"
     parallel_group: "wave-9A"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:
@@ -101,7 +103,9 @@ workpieces:
   - workpiece_id: "WP-09-02"
     title: "Cookie Jar, robots Findings, URL Normalization, Crawl Scope & WAF-to-AIMD Trigger"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-02"
+    started_at: "2026-11-19T02:42:16Z"
     parallel_group: "wave-9A"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:
@@ -167,7 +171,9 @@ workpieces:
   - workpiece_id: "WP-09-03"
     title: "Crawler-Trap Detection, Pagination & Crawl Input Modes (List, Sample, Signed, Proxy, Pre-Crawl)"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-03"
+    started_at: "2026-11-19T02:42:16Z"
     parallel_group: "wave-9A"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:
@@ -222,7 +228,9 @@ workpieces:
   - workpiece_id: "WP-09-04"
     title: "Structured-Data Pipeline Wiring, RDFa & hreflang Reciprocity"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-04"
+    started_at: "2026-11-19T02:42:16Z"
     parallel_group: "wave-9A"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:
@@ -272,7 +280,9 @@ workpieces:
   - workpiece_id: "WP-09-05"
     title: "SEO Rule Corrections — Thin Content, Duplicates, URL Structure, Images, Soft-404, Header Equivalency"
     phase_id: "phase-09"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-09-05"
+    started_at: "2026-11-19T02:42:16Z"
     parallel_group: "wave-9A"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:
