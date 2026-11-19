@@ -1,769 +1,674 @@
 [
   {
-    "receivedAt": "2026-11-18T10:17:12.3327156\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:07.7372253\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 29,
+        "queued": 31,
         "fetched": 1,
-        "analyzed": 0,
-        "failed": 0
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 28
+      "queued": 30,
+      "phase": "crawling",
+      "elapsedSeconds": 0.414,
+      "throughputPerSecond": 2.418,
+      "estimatedRemainderSeconds": 12.821,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 2
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:13.4005741\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:08.7857543\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 29,
-        "fetched": 2,
-        "analyzed": 0,
-        "failed": 0
-      },
-      "queued": 27
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:14.4924189\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 29,
+        "queued": 31,
         "fetched": 3,
-        "analyzed": 0,
-        "failed": 0
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 26
+      "queued": 28,
+      "phase": "crawling",
+      "elapsedSeconds": 1.221,
+      "throughputPerSecond": 2.457,
+      "estimatedRemainderSeconds": 12.617,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 2.5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:16.0132569\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:09.7903743\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 29,
-        "fetched": 4,
-        "analyzed": 0,
-        "failed": 1
-      },
-      "queued": 23
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:17.1014561\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 30,
-        "fetched": 5,
-        "analyzed": 0,
-        "failed": 1
-      },
-      "queued": 23
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:18.1899109\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 30,
+        "queued": 31,
         "fetched": 6,
-        "analyzed": 0,
-        "failed": 1
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 22
+      "queued": 25,
+      "phase": "crawling",
+      "elapsedSeconds": 2.409,
+      "throughputPerSecond": 2.49,
+      "estimatedRemainderSeconds": 12.448,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 2.5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:19.1996031\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:10.7956754\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 30,
+        "queued": 32,
         "fetched": 8,
-        "analyzed": 0,
-        "failed": 1
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 20
+      "queued": 24,
+      "phase": "crawling",
+      "elapsedSeconds": 3.186,
+      "throughputPerSecond": 2.511,
+      "estimatedRemainderSeconds": 12.744,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 3
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:20.2013818\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:11.797443\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 30,
-        "fetched": 10,
-        "analyzed": 0,
-        "failed": 1
+        "queued": 32,
+        "fetched": 9,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 18
+      "queued": 21,
+      "phase": "crawling",
+      "elapsedSeconds": 4.208,
+      "throughputPerSecond": 2.139,
+      "estimatedRemainderSeconds": 14.96,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 3
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:21.2888519\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:12.8601849\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 30,
-        "fetched": 12,
-        "analyzed": 0,
-        "failed": 1
+        "queued": 33,
+        "fetched": 13,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 16
+      "queued": 18,
+      "phase": "crawling",
+      "elapsedSeconds": 5.545,
+      "throughputPerSecond": 2.344,
+      "estimatedRemainderSeconds": 14.076,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 3.5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:22.3026201\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:13.8962344\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 31,
-        "fetched": 14,
-        "analyzed": 0,
-        "failed": 1
-      },
-      "queued": 15
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:23.4028807\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 43,
+        "queued": 34,
         "fetched": 16,
-        "analyzed": 0,
-        "failed": 1
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 25
+      "queued": 16,
+      "phase": "crawling",
+      "elapsedSeconds": 6.396,
+      "throughputPerSecond": 2.501,
+      "estimatedRemainderSeconds": 13.592,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 3.5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:24.4897508\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:14.8986419\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 43,
-        "fetched": 19,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 46,
+        "fetched": 20,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 21
+      "queued": 24,
+      "phase": "crawling",
+      "elapsedSeconds": 7.457,
+      "throughputPerSecond": 2.682,
+      "estimatedRemainderSeconds": 17.151,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 4
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:25.4993598\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:16.3447166\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 44,
-        "fetched": 22,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 19
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:26.5999358\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 44,
+        "queued": 46,
         "fetched": 25,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 16
+      "queued": 19,
+      "phase": "crawling",
+      "elapsedSeconds": 8.676,
+      "throughputPerSecond": 2.881,
+      "estimatedRemainderSeconds": 15.964,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 4.5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:27.7020487\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:16.9985017\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 53,
+        "queued": 47,
         "fetched": 29,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 21
+      "queued": 16,
+      "phase": "crawling",
+      "elapsedSeconds": 9.513,
+      "throughputPerSecond": 3.048,
+      "estimatedRemainderSeconds": 15.418,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:28.8036175\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:18.0402193\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 76,
-        "fetched": 33,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 68,
+        "fetched": 35,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 40
+      "queued": 31,
+      "phase": "crawling",
+      "elapsedSeconds": 10.726,
+      "throughputPerSecond": 3.263,
+      "estimatedRemainderSeconds": 20.839,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:29.9035553\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:19.0989426\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 82,
-        "fetched": 38,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 84,
+        "fetched": 40,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 41
+      "queued": 42,
+      "phase": "crawling",
+      "elapsedSeconds": 11.667,
+      "throughputPerSecond": 3.429,
+      "estimatedRemainderSeconds": 24.5,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 5.5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:30.9889389\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:20.1691558\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 89,
-        "fetched": 43,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 96,
+        "fetched": 47,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 43
+      "queued": 47,
+      "phase": "crawling",
+      "elapsedSeconds": 12.855,
+      "throughputPerSecond": 3.656,
+      "estimatedRemainderSeconds": 26.257,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 6.5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:31.9971302\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:21.1972981\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 105,
-        "fetched": 48,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 54
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:33.002773\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 120,
+        "queued": 107,
         "fetched": 53,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 64
+      "queued": 52,
+      "phase": "crawling",
+      "elapsedSeconds": 13.778,
+      "throughputPerSecond": 3.847,
+      "estimatedRemainderSeconds": 27.817,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 7
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:34.0555332\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:22.2958284\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 129,
-        "fetched": 59,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 128,
+        "fetched": 61,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 67
+      "queued": 65,
+      "phase": "crawling",
+      "elapsedSeconds": 14.878,
+      "throughputPerSecond": 4.1,
+      "estimatedRemainderSeconds": 31.22,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 8
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:35.0567905\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:23.2989205\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 135,
-        "fetched": 64,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 68
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:36.0916505\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 141,
+        "queued": 128,
         "fetched": 69,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 69
+      "queued": 57,
+      "phase": "crawling",
+      "elapsedSeconds": 15.865,
+      "throughputPerSecond": 4.349,
+      "estimatedRemainderSeconds": 29.431,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 8.5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:37.1025666\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:24.3998481\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 144,
-        "fetched": 74,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 67
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:38.188659\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 144,
+        "queued": 128,
         "fetched": 79,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 62
+      "queued": 47,
+      "phase": "crawling",
+      "elapsedSeconds": 16.981,
+      "throughputPerSecond": 4.652,
+      "estimatedRemainderSeconds": 27.513,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 9.5
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:39.2014573\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:25.4260807\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 152,
-        "fetched": 84,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 65
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:40.2439475\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 158,
+        "queued": 130,
         "fetched": 90,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 65
+      "queued": 38,
+      "phase": "crawling",
+      "elapsedSeconds": 18.112,
+      "throughputPerSecond": 4.969,
+      "estimatedRemainderSeconds": 26.162,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:41.2439831\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:26.4896717\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 164,
-        "fetched": 95,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 66
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:42.267529\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 164,
+        "queued": 130,
         "fetched": 100,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 61
+      "queued": 28,
+      "phase": "crawling",
+      "elapsedSeconds": 19.105,
+      "throughputPerSecond": 5.234,
+      "estimatedRemainderSeconds": 24.836,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:43.3007721\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:27.4956075\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 170,
-        "fetched": 105,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 62
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:44.3897993\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 176,
+        "queued": 130,
         "fetched": 110,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 63
+      "queued": 18,
+      "phase": "crawling",
+      "elapsedSeconds": 20.11,
+      "throughputPerSecond": 5.47,
+      "estimatedRemainderSeconds": 23.766,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:45.3958012\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:28.5246414\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 182,
-        "fetched": 115,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 64
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:46.9834445\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 182,
+        "queued": 130,
         "fetched": 121,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 58
+      "queued": 7,
+      "phase": "crawling",
+      "elapsedSeconds": 21.21,
+      "throughputPerSecond": 5.705,
+      "estimatedRemainderSeconds": 22.788,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:47.4547591\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:29.5253219\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 182,
-        "fetched": 126,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 53
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:48.4565826\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 182,
+        "queued": 134,
         "fetched": 131,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 48
+      "queued": 1,
+      "phase": "crawling",
+      "elapsedSeconds": 22.211,
+      "throughputPerSecond": 5.898,
+      "estimatedRemainderSeconds": 22.72,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:49.4960615\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:30.6065792\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 182,
-        "fetched": 136,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 43
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 23.128,
+      "throughputPerSecond": 5.707,
+      "estimatedRemainderSeconds": 23.478,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:50.5903307\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:31.6948094\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 182,
-        "fetched": 141,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 38
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 24.236,
+      "throughputPerSecond": 5.446,
+      "estimatedRemainderSeconds": 24.603,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:51.6564262\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:32.6950972\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 184,
-        "fetched": 147,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 34
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 25.356,
+      "throughputPerSecond": 5.206,
+      "estimatedRemainderSeconds": 25.74,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:52.6897781\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:33.7588523\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 184,
-        "fetched": 152,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 29
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 26.445,
+      "throughputPerSecond": 4.992,
+      "estimatedRemainderSeconds": 26.845,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:53.7016357\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:34.7872898\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 184,
-        "fetched": 157,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 24
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 27.404,
+      "throughputPerSecond": 4.817,
+      "estimatedRemainderSeconds": 27.819,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:54.8009055\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:35.832916\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 184,
-        "fetched": 162,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 19
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 28.519,
+      "throughputPerSecond": 4.629,
+      "estimatedRemainderSeconds": 28.951,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:55.8031391\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:36.8734542\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 184,
-        "fetched": 167,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 14
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 29.559,
+      "throughputPerSecond": 4.466,
+      "estimatedRemainderSeconds": 30.007,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:56.8447708\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:37.8850765\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 184,
-        "fetched": 173,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 8
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 30.555,
+      "throughputPerSecond": 4.32,
+      "estimatedRemainderSeconds": 31.018,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:57.8492848\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:38.8860238\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 184,
-        "fetched": 178,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 3
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 31.568,
+      "throughputPerSecond": 4.181,
+      "estimatedRemainderSeconds": 32.047,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:58.9005502\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:39.8986892\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:59.9013652\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 21,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:00.9333691\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 33,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:01.9885599\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 44,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:02.993323\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 55,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:04.0010149\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 67,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:05.0084286\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 82,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:06.0891138\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 95,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:07.0931402\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 107,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:08.1034547\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 119,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:09.1088846\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 131,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:10.1372738\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 145,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:11.1423439\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 157,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:12.1587617\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 169,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:18:13.2014755\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 182,
-        "failed": 2
-      },
-      "queued": 0
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 31.601,
+      "throughputPerSecond": 4.177,
+      "estimatedRemainderSeconds": 32.08,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   }
 ]

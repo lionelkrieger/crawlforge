@@ -3,7 +3,7 @@
     {
       "uri": "crawlforge://schedules",
       "mimeType": "application/json",
-      "text": "{\u0022schedules\u0022:[{\u0022id\u0022:1,\u0022projectId\u0022:1,\u0022configurationId\u0022:2,\u0022recurrenceRule\u0022:\u0022interval:1.00:00:00\u0022,\u0022isEnabled\u0022:false}],\u0022recentRuns\u0022:[{\u0022id\u0022:1,\u0022scheduleDefinitionId\u0022:1,\u0022auditId\u0022:7,\u0022triggerType\u0022:\u0022Manual\u0022,\u0022outcome\u0022:\u0022Success\u0022,\u0022startedAt\u0022:\u00222026-11-18T10:18:25.8919611\u002B00:00\u0022,\u0022finishedAt\u0022:\u00222026-11-18T10:18:29.2835375\u002B00:00\u0022}]}"
+      "text": "{\u0022schedules\u0022:[{\u0022id\u0022:1,\u0022projectId\u0022:1,\u0022configurationId\u0022:2,\u0022recurrenceRule\u0022:\u0022interval:1.00:00:00\u0022,\u0022isEnabled\u0022:false}],\u0022recentRuns\u0022:[{\u0022id\u0022:1,\u0022scheduleDefinitionId\u0022:1,\u0022auditId\u0022:5,\u0022triggerType\u0022:\u0022Manual\u0022,\u0022outcome\u0022:\u0022Success\u0022,\u0022startedAt\u0022:\u00222026-11-19T15:45:53.638192\u002B00:00\u0022,\u0022finishedAt\u0022:\u00222026-11-19T15:46:25.3271977\u002B00:00\u0022}]}"
     }
   ]
 }

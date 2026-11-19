@@ -827,8 +827,14 @@ public sealed class AuditExplorerController : ApiControllerBase
             .Select(f =>
             {
                 var evidence = ProjectWireMapper.ParseObject(f.EvidenceJson);
+                // WP-09-11 (§15.6 fidelity): the header name follows the rule —
+                // robots directives ride X-Robots-Tag; canonical and hreflang
+                // equivalency compare the Link header against the HTML tags.
+                var headerName = f.RuleKey == FindingRuleKeys.IndexabilityHeaderHtmlConflict
+                    ? "x-robots-tag"
+                    : "link";
                 return new HeaderConflictDetailWire(
-                    "x-robots-tag",
+                    headerName,
                     evidence["headerValue"]?.GetValue<string>() ?? string.Empty,
                     evidence["htmlValue"]?.GetValue<string>(),
                     f.Severity != FindingSeverity.Pass);

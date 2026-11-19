@@ -1,1501 +1,2235 @@
 [
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:11.6057996\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:07.6012534\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:11.6002257\u002B00:00",
-      "backendWorkingSetBytes": 112168960,
-      "managedHeapBytes": 3409392,
-      "gcGen0Count": 3,
+      "timestamp": "2026-11-19T15:45:07.5971264\u002B00:00",
+      "backendWorkingSetBytes": 128516096,
+      "managedHeapBytes": 12373072,
+      "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
-      "sqliteWalBytes": 622152,
-      "auditId": 1
+      "sqliteWalBytes": 634512,
+      "auditId": "1"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:12.3327156\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:07.7372253\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 29,
+        "queued": 31,
         "fetched": 1,
-        "analyzed": 0,
-        "failed": 0
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 28
+      "queued": 30,
+      "phase": "crawling",
+      "elapsedSeconds": 0.414,
+      "throughputPerSecond": 2.418,
+      "estimatedRemainderSeconds": 12.821,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 2
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:07.7413399\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "1",
+          "canonicalUrl": "http://127.0.0.1:47312/",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:13.1182518\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:08.0143078\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 2,
       "rateAfter": 2.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.8819,
-      "rollingBaselineRate": 14.734920160000005,
-      "timestamp": "2026-11-18T10:17:13.1114027\u002B00:00"
+      "ttfbSampleMs": 0.7121,
+      "rollingBaselineRate": 14.260545440000003,
+      "timestamp": "2026-11-19T15:45:08.0077382\u002B00:00"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:13.4005741\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:08.7857543\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 29,
-        "fetched": 2,
-        "analyzed": 0,
-        "failed": 0
-      },
-      "queued": 27
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:13.6014974\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:13.6008335\u002B00:00",
-      "backendWorkingSetBytes": 134627328,
-      "managedHeapBytes": 15223720,
-      "gcGen0Count": 4,
-      "gcGen1Count": 1,
-      "gcGen2Count": 0,
-      "sqliteWalBytes": 1273112,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:14.4924189\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 29,
+        "queued": 31,
         "fetched": 3,
-        "analyzed": 0,
-        "failed": 0
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 26
+      "queued": 28,
+      "phase": "crawling",
+      "elapsedSeconds": 1.221,
+      "throughputPerSecond": 2.457,
+      "estimatedRemainderSeconds": 12.617,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 2.5
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:08.9042638\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "2",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/noindex.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "3",
+          "canonicalUrl": "http://127.0.0.1:47312/redirect/chain-1",
+          "statusClass": "3xx"
+        },
+        {
+          "urlId": "4",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/orphan.html",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:08.916782\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 2
+      },
+      "categoryDeltas": {
+        "indexability": 2
+      }
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:15.5910462\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:09.6006292\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:15.5904618\u002B00:00",
-      "backendWorkingSetBytes": 139456512,
-      "managedHeapBytes": 15223720,
+      "timestamp": "2026-11-19T15:45:09.599875\u002B00:00",
+      "backendWorkingSetBytes": 143302656,
+      "managedHeapBytes": 12373072,
       "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
-      "sqliteWalBytes": 1343152,
-      "auditId": 1
+      "sqliteWalBytes": 1466752,
+      "auditId": "1"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:16.0132569\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:09.7903743\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 29,
-        "fetched": 4,
-        "analyzed": 0,
-        "failed": 1
+        "queued": 31,
+        "fetched": 6,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 23
+      "queued": 25,
+      "phase": "crawling",
+      "elapsedSeconds": 2.409,
+      "throughputPerSecond": 2.49,
+      "estimatedRemainderSeconds": 12.448,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 2.5
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:16.8073982\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:10.0965299\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 2.5,
       "rateAfter": 3,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.7752,
-      "rollingBaselineRate": 5.232362702028802,
-      "timestamp": "2026-11-18T10:17:16.8068389\u002B00:00"
+      "ttfbSampleMs": 0.6015,
+      "rollingBaselineRate": 5.062270729779202,
+      "timestamp": "2026-11-19T15:45:10.0960225\u002B00:00"
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:10.1042698\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "5",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/redirect-target.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "6",
+          "canonicalUrl": "http://127.0.0.1:47312/spa/",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "7",
+          "canonicalUrl": "http://127.0.0.1:47312/hash-app/",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:17.1014561\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:10.7956754\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 30,
-        "fetched": 5,
-        "analyzed": 0,
-        "failed": 1
+        "queued": 32,
+        "fetched": 8,
+        "error": 0,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 23
+      "queued": 24,
+      "phase": "crawling",
+      "elapsedSeconds": 3.186,
+      "throughputPerSecond": 2.511,
+      "estimatedRemainderSeconds": 12.744,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 3
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:11.5226648\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "8",
+          "canonicalUrl": "http://127.0.0.1:47312/live/odds.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "11",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/canonical-conflict.html",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:11.522907\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "error": 1,
+        "warning": 1
+      },
+      "categoryDeltas": {
+        "indexability": 2
+      }
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:17.6020536\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:11.5927419\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:17.6015476\u002B00:00",
-      "backendWorkingSetBytes": 140406784,
-      "managedHeapBytes": 15223720,
+      "timestamp": "2026-11-19T15:45:11.5922005\u002B00:00",
+      "backendWorkingSetBytes": 151351296,
+      "managedHeapBytes": 12373072,
       "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
-      "sqliteWalBytes": 1495592,
-      "auditId": 1
+      "sqliteWalBytes": 1821072,
+      "auditId": "1"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:18.1899109\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:11.797443\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 30,
-        "fetched": 6,
-        "analyzed": 0,
-        "failed": 1
+        "queued": 32,
+        "fetched": 9,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 22
+      "queued": 21,
+      "phase": "crawling",
+      "elapsedSeconds": 4.208,
+      "throughputPerSecond": 2.139,
+      "estimatedRemainderSeconds": 14.96,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 3
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:18.205839\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:12.5249018\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 3,
       "rateAfter": 3.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.6557,
-      "rollingBaselineRate": 2.1875190742007975,
-      "timestamp": "2026-11-18T10:17:18.2055\u002B00:00"
+      "ttfbSampleMs": 0.5075,
+      "rollingBaselineRate": 2.0388359447340494,
+      "timestamp": "2026-11-19T15:45:12.5244932\u002B00:00"
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:12.5296817\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "12",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/broken-links.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "13",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/js-link.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "14",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/js-content.html",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:19.1996031\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:12.8601849\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 30,
-        "fetched": 8,
-        "analyzed": 0,
-        "failed": 1
+        "queued": 33,
+        "fetched": 13,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 20
+      "queued": 18,
+      "phase": "crawling",
+      "elapsedSeconds": 5.545,
+      "throughputPerSecond": 2.344,
+      "estimatedRemainderSeconds": 14.076,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 3.5
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:19.5965659\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:13.5969029\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:19.5960079\u002B00:00",
-      "backendWorkingSetBytes": 143134720,
-      "managedHeapBytes": 15223720,
+      "timestamp": "2026-11-19T15:45:13.5963248\u002B00:00",
+      "backendWorkingSetBytes": 158855168,
+      "managedHeapBytes": 12373072,
       "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
-      "sqliteWalBytes": 1606832,
-      "auditId": 1
+      "sqliteWalBytes": 2146552,
+      "auditId": "1"
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:13.7105752\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "15",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/late-meta.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "16",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/soft-404.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "17",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/js-redirect.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "18",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/postback.aspx",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "crawl-progress",
+    "receivedAt": "2026-11-19T15:45:13.8962344\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "counters": {
+        "queued": 34,
+        "fetched": 16,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
+      },
+      "queued": 16,
+      "phase": "crawling",
+      "elapsedSeconds": 6.396,
+      "throughputPerSecond": 2.501,
+      "estimatedRemainderSeconds": 13.592,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 3.5
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:19.974225\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:13.9779208\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 3.5,
       "rateAfter": 4,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.4863,
-      "rollingBaselineRate": 1.124848202234118,
-      "timestamp": "2026-11-18T10:17:19.9738899\u002B00:00"
+      "ttfbSampleMs": 0.6835,
+      "rollingBaselineRate": 1.0484871383704537,
+      "timestamp": "2026-11-19T15:45:13.9775482\u002B00:00"
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:14.7715214\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "19",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/viewstate-large.aspx",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "20",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "21",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/11",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "22",
+          "canonicalUrl": "http://127.0.0.1:47312/cookie-gate/",
+          "statusClass": "3xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:14.7718457\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 1
+      },
+      "categoryDeltas": {
+        "indexability": 1
+      }
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:20.2013818\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:14.8986419\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 30,
-        "fetched": 10,
-        "analyzed": 0,
-        "failed": 1
+        "queued": 46,
+        "fetched": 20,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 18
+      "queued": 24,
+      "phase": "crawling",
+      "elapsedSeconds": 7.457,
+      "throughputPerSecond": 2.682,
+      "estimatedRemainderSeconds": 17.151,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 4
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:21.0043485\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:15.264763\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 4,
       "rateAfter": 4.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.6493,
-      "rollingBaselineRate": 0.8158975549080759,
-      "timestamp": "2026-11-18T10:17:21.0039543\u002B00:00"
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:21.2888519\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 30,
-        "fetched": 12,
-        "analyzed": 0,
-        "failed": 1
-      },
-      "queued": 16
+      "ttfbSampleMs": 0.5713,
+      "rollingBaselineRate": 0.8020310175012305,
+      "timestamp": "2026-11-19T15:45:15.2644329\u002B00:00"
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:21.5938615\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:15.5980454\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:21.5933656\u002B00:00",
-      "backendWorkingSetBytes": 146137088,
-      "managedHeapBytes": 15223720,
-      "gcGen0Count": 4,
-      "gcGen1Count": 1,
-      "gcGen2Count": 0,
-      "sqliteWalBytes": 1821072,
-      "auditId": 1
+      "timestamp": "2026-11-19T15:45:15.5975825\u002B00:00",
+      "backendWorkingSetBytes": 175517696,
+      "managedHeapBytes": 20832544,
+      "gcGen0Count": 5,
+      "gcGen1Count": 2,
+      "gcGen2Count": 1,
+      "sqliteWalBytes": 2851072,
+      "auditId": "1"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:22.3026201\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:16.3447166\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 31,
-        "fetched": 14,
-        "analyzed": 0,
-        "failed": 1
+        "queued": 46,
+        "fetched": 25,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 15
+      "queued": 19,
+      "phase": "crawling",
+      "elapsedSeconds": 8.676,
+      "throughputPerSecond": 2.881,
+      "estimatedRemainderSeconds": 15.964,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 4.5
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:16.3448007\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "23",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/consent.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "24",
+          "canonicalUrl": "http://127.0.0.1:47312/sw-app/",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "25",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/structured-data.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "26",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/images.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "27",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/mixed-content.html",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:22.370963\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:16.410033\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 4.5,
       "rateAfter": 5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 1.166,
-      "rollingBaselineRate": 0.8623930547922785,
-      "timestamp": "2026-11-18T10:17:22.3706718\u002B00:00"
+      "ttfbSampleMs": 0.4861,
+      "rollingBaselineRate": 0.6206277958148034,
+      "timestamp": "2026-11-19T15:45:16.409664\u002B00:00"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:23.4028807\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:16.9985017\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 43,
-        "fetched": 16,
-        "analyzed": 0,
-        "failed": 1
+        "queued": 47,
+        "fetched": 29,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 25
+      "queued": 16,
+      "phase": "crawling",
+      "elapsedSeconds": 9.513,
+      "throughputPerSecond": 3.048,
+      "estimatedRemainderSeconds": 15.418,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 5
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:17.0350949\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "28",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/hreflang-en.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "29",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/dup-title-a.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "30",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/dup-title-b.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "31",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/thin.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "32",
+          "canonicalUrl": "http://127.0.0.1:47312/spa/markets",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:17.5891866\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:17.5886055\u002B00:00",
+      "backendWorkingSetBytes": 177651712,
+      "managedHeapBytes": 20832544,
+      "gcGen0Count": 5,
+      "gcGen1Count": 2,
+      "gcGen2Count": 1,
+      "sqliteWalBytes": 3370192,
+      "auditId": "1"
+    }
+  },
+  {
+    "name": "crawl-progress",
+    "receivedAt": "2026-11-19T15:45:18.0402193\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "counters": {
+        "queued": 68,
+        "fetched": 35,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
+      },
+      "queued": 31,
+      "phase": "crawling",
+      "elapsedSeconds": 10.726,
+      "throughputPerSecond": 3.263,
+      "estimatedRemainderSeconds": 20.839,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 5
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:18.040253\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "33",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/does-not-exist.html",
+          "statusClass": "4xx"
+        },
+        {
+          "urlId": "34",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/session.aspx",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "35",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "36",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "37",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=s",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:18.0404956\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "notice": 1
+      },
+      "categoryDeltas": {
+        "indexability": 1
+      }
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:23.5873418\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:18.226875\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 5,
       "rateAfter": 5.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.7217,
-      "rollingBaselineRate": 0.781712316194334,
-      "timestamp": "2026-11-18T10:17:23.5870263\u002B00:00"
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:23.6044935\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:23.6040321\u002B00:00",
-      "backendWorkingSetBytes": 150749184,
-      "managedHeapBytes": 15223720,
-      "gcGen0Count": 4,
-      "gcGen1Count": 1,
-      "gcGen2Count": 0,
-      "sqliteWalBytes": 2257792,
-      "auditId": 1
+      "ttfbSampleMs": 0.5082,
+      "rollingBaselineRate": 0.5619353800358887,
+      "timestamp": "2026-11-19T15:45:18.2265362\u002B00:00"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:24.4897508\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:19.0989426\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 43,
-        "fetched": 19,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 84,
+        "fetched": 40,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 21
+      "queued": 42,
+      "phase": "crawling",
+      "elapsedSeconds": 11.667,
+      "throughputPerSecond": 3.429,
+      "estimatedRemainderSeconds": 24.5,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 5.5
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:19.1544925\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "38",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "39",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "40",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "41",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "42",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "43",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:19.5920135\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:19.5916126\u002B00:00",
+      "backendWorkingSetBytes": 180150272,
+      "managedHeapBytes": 20832544,
+      "gcGen0Count": 5,
+      "gcGen1Count": 2,
+      "gcGen2Count": 1,
+      "sqliteWalBytes": 4128272,
+      "auditId": "1"
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:24.7071278\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:20.0030044\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
-      "rateBefore": 5.5,
-      "rateAfter": 6,
+      "rateBefore": 6,
+      "rateAfter": 6.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.8705,
-      "rollingBaselineRate": 0.7884336357705595,
-      "timestamp": "2026-11-18T10:17:24.7064924\u002B00:00"
+      "ttfbSampleMs": 0.4635,
+      "rollingBaselineRate": 0.5526702024864271,
+      "timestamp": "2026-11-19T15:45:20.0026679\u002B00:00"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:25.4993598\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:20.1691558\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 44,
-        "fetched": 22,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 96,
+        "fetched": 47,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 19
+      "queued": 47,
+      "phase": "crawling",
+      "elapsedSeconds": 12.855,
+      "throughputPerSecond": 3.656,
+      "estimatedRemainderSeconds": 26.257,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 6.5
     }
   },
   {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:25.5916549\u002B00:00",
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:20.1691693\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:25.5911636\u002B00:00",
-      "backendWorkingSetBytes": 152682496,
-      "managedHeapBytes": 15223720,
-      "gcGen0Count": 4,
-      "gcGen1Count": 1,
-      "gcGen2Count": 0,
-      "sqliteWalBytes": 2439072,
-      "auditId": 1
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "44",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "45",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/10",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "46",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/12",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "47",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/hreflang-fr.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "48",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "49",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=m",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "crawl-progress",
+    "receivedAt": "2026-11-19T15:45:21.1972981\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "counters": {
+        "queued": 107,
+        "fetched": 53,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
+      },
+      "queued": 52,
+      "phase": "crawling",
+      "elapsedSeconds": 13.778,
+      "throughputPerSecond": 3.847,
+      "estimatedRemainderSeconds": 27.817,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 7
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:21.2368574\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "50",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "51",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "52",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "53",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "54",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "55",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "56",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=s",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:26.3230713\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:21.5175447\u002B00:00",
     "payload": {
-      "auditId": 1,
-      "host": "127.0.0.1",
-      "trigger": "additive-increase",
-      "rateBefore": 6.5,
-      "rateAfter": 7,
-      "concurrencyBefore": 1,
-      "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.5676,
-      "rollingBaselineRate": 0.6890005186623234,
-      "timestamp": "2026-11-18T10:17:26.3225736\u002B00:00"
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:26.5999358\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 44,
-        "fetched": 25,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 16
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:27.5994968\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:27.5989522\u002B00:00",
-      "backendWorkingSetBytes": 158662656,
-      "managedHeapBytes": 15223720,
-      "gcGen0Count": 4,
-      "gcGen1Count": 1,
-      "gcGen2Count": 0,
-      "sqliteWalBytes": 3065312,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:27.7020487\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 53,
-        "fetched": 29,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 21
-    }
-  },
-  {
-    "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:27.7658277\u002B00:00",
-    "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 7,
       "rateAfter": 7.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.5254,
-      "rollingBaselineRate": 0.5703964605210985,
-      "timestamp": "2026-11-18T10:17:27.7655495\u002B00:00"
+      "ttfbSampleMs": 0.5004,
+      "rollingBaselineRate": 0.49021175593394267,
+      "timestamp": "2026-11-19T15:45:21.5172523\u002B00:00"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:21.5981226\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:21.5976883\u002B00:00",
+      "backendWorkingSetBytes": 182272000,
+      "managedHeapBytes": 20832544,
+      "gcGen0Count": 5,
+      "gcGen1Count": 2,
+      "gcGen2Count": 1,
+      "sqliteWalBytes": 4136512,
+      "auditId": "1"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:28.8036175\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:22.2958284\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 76,
-        "fetched": 33,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 128,
+        "fetched": 61,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 40
+      "queued": 65,
+      "phase": "crawling",
+      "elapsedSeconds": 14.878,
+      "throughputPerSecond": 4.1,
+      "estimatedRemainderSeconds": 31.22,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 8
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:22.3203629\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "57",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "58",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "59",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "60",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "61",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "62",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "63",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "64",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=s\u0026sort=price",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:29.0652196\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:22.823721\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 8,
       "rateAfter": 8.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.6026,
-      "rollingBaselineRate": 0.6731785727577468,
-      "timestamp": "2026-11-18T10:17:29.0648712\u002B00:00"
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:29.5939747\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:29.5935614\u002B00:00",
-      "backendWorkingSetBytes": 166129664,
-      "managedHeapBytes": 15223720,
-      "gcGen0Count": 4,
-      "gcGen1Count": 1,
-      "gcGen2Count": 0,
-      "sqliteWalBytes": 4120032,
-      "auditId": 1
+      "ttfbSampleMs": 0.6115,
+      "rollingBaselineRate": 0.5363515109468355,
+      "timestamp": "2026-11-19T15:45:22.8233863\u002B00:00"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:29.9035553\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:23.2989205\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 82,
-        "fetched": 38,
-        "analyzed": 0,
-        "failed": 2
+        "queued": 128,
+        "fetched": 69,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 41
+      "queued": 57,
+      "phase": "crawling",
+      "elapsedSeconds": 15.865,
+      "throughputPerSecond": 4.349,
+      "estimatedRemainderSeconds": 29.431,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 8.5
     }
   },
   {
-    "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:30.2153652\u002B00:00",
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:23.4204689\u002B00:00",
     "payload": {
-      "auditId": 1,
-      "host": "127.0.0.1",
-      "trigger": "additive-increase",
-      "rateBefore": 9,
-      "rateAfter": 9.5,
-      "concurrencyBefore": 1,
-      "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.5283,
-      "rollingBaselineRate": 0.6016752442376222,
-      "timestamp": "2026-11-18T10:17:30.2150458\u002B00:00"
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:30.9889389\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 89,
-        "fetched": 43,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 43
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "65",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=s\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "66",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "67",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "68",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "69",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=m\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "70",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=m\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "71",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "72",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "73",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026size=m",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:31.5914788\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:23.5888514\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:31.5910998\u002B00:00",
-      "backendWorkingSetBytes": 172601344,
-      "managedHeapBytes": 16947704,
+      "timestamp": "2026-11-19T15:45:23.5884601\u002B00:00",
+      "backendWorkingSetBytes": 198234112,
+      "managedHeapBytes": 20832544,
       "gcGen0Count": 5,
       "gcGen1Count": 2,
       "gcGen2Count": 1,
-      "sqliteWalBytes": 4120032,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:31.9971302\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 105,
-        "fetched": 48,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 54
+      "sqliteWalBytes": 4136512,
+      "auditId": "1"
     }
   },
   {
     "name": "host-throttle",
-    "receivedAt": "2026-11-18T10:17:32.2543009\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:23.8758433\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
+      "host": "127.0.0.1",
+      "trigger": "additive-increase",
+      "rateBefore": 8.5,
+      "rateAfter": 9,
+      "concurrencyBefore": 1,
+      "concurrencyAfter": 1,
+      "ttfbSampleMs": 0.4698,
+      "rollingBaselineRate": 0.46612228710705916,
+      "timestamp": "2026-11-19T15:45:23.4130239\u002B00:00"
+    }
+  },
+  {
+    "name": "crawl-progress",
+    "receivedAt": "2026-11-19T15:45:24.3998481\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "counters": {
+        "queued": 128,
+        "fetched": 79,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
+      },
+      "queued": 47,
+      "phase": "crawling",
+      "elapsedSeconds": 16.981,
+      "throughputPerSecond": 4.652,
+      "estimatedRemainderSeconds": 27.513,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 9.5
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:24.5187827\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "74",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=l\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "75",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=l\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "76",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "77",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "78",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "79",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "80",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "81",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "82",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "83",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026sort=name",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "crawl-progress",
+    "receivedAt": "2026-11-19T15:45:25.4260807\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "counters": {
+        "queued": 130,
+        "fetched": 90,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
+      },
+      "queued": 38,
+      "phase": "crawling",
+      "elapsedSeconds": 18.112,
+      "throughputPerSecond": 4.969,
+      "estimatedRemainderSeconds": 26.162,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:25.5230346\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "84",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "85",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/9",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "86",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/1",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "87",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=s\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "88",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=s\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "89",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "90",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "91",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "92",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=m\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "93",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=m\u0026sort=name",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:25.5972381\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:25.5967999\u002B00:00",
+      "backendWorkingSetBytes": 202227712,
+      "managedHeapBytes": 23004624,
+      "gcGen0Count": 6,
+      "gcGen1Count": 2,
+      "gcGen2Count": 1,
+      "sqliteWalBytes": 4136512,
+      "auditId": "1"
+    }
+  },
+  {
+    "name": "host-throttle",
+    "receivedAt": "2026-11-19T15:45:26.417528\u002B00:00",
+    "payload": {
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 9.5,
       "rateAfter": 10,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.4988,
-      "rollingBaselineRate": 0.5789792800317841,
-      "timestamp": "2026-11-18T10:17:30.6399787\u002B00:00"
+      "ttfbSampleMs": 0.4544,
+      "rollingBaselineRate": 0.48489645548805865,
+      "timestamp": "2026-11-19T15:45:24.5121141\u002B00:00"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:33.002773\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:26.4896717\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 120,
-        "fetched": 53,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 64
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:33.5981686\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:33.5977369\u002B00:00",
-      "backendWorkingSetBytes": 176082944,
-      "managedHeapBytes": 16947704,
-      "gcGen0Count": 5,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:34.0555332\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 129,
-        "fetched": 59,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 67
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:35.0567905\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 135,
-        "fetched": 64,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 68
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:35.5917383\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:35.5913265\u002B00:00",
-      "backendWorkingSetBytes": 183250944,
-      "managedHeapBytes": 16947704,
-      "gcGen0Count": 5,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:36.0916505\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 141,
-        "fetched": 69,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 69
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:37.1025666\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 144,
-        "fetched": 74,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 67
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:37.6024795\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:37.6020333\u002B00:00",
-      "backendWorkingSetBytes": 183271424,
-      "managedHeapBytes": 16947704,
-      "gcGen0Count": 5,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:38.188659\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 144,
-        "fetched": 79,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 62
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:39.2014573\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 152,
-        "fetched": 84,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 65
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:39.5933329\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:39.5926385\u002B00:00",
-      "backendWorkingSetBytes": 182489088,
-      "managedHeapBytes": 16947704,
-      "gcGen0Count": 5,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:40.2439475\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 158,
-        "fetched": 90,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 65
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:41.2439831\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 164,
-        "fetched": 95,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 66
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:41.6044316\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:41.6038079\u002B00:00",
-      "backendWorkingSetBytes": 180510720,
-      "managedHeapBytes": 16947704,
-      "gcGen0Count": 5,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:42.267529\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 164,
+        "queued": 130,
         "fetched": 100,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 61
+      "queued": 28,
+      "phase": "crawling",
+      "elapsedSeconds": 19.105,
+      "throughputPerSecond": 5.234,
+      "estimatedRemainderSeconds": 24.836,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:26.6248623\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "94",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "95",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "96",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "97",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=l\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "98",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=l\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "99",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "100",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "101",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "102",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "103",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "104",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026sort=price",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:43.3007721\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:27.4956075\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 170,
-        "fetched": 105,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 62
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:43.6012733\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:43.6008802\u002B00:00",
-      "backendWorkingSetBytes": 184471552,
-      "managedHeapBytes": 16947704,
-      "gcGen0Count": 5,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:44.3897993\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 176,
+        "queued": 130,
         "fetched": 110,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 63
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:45.3958012\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 182,
-        "fetched": 115,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 64
+      "queued": 18,
+      "phase": "crawling",
+      "elapsedSeconds": 20.11,
+      "throughputPerSecond": 5.47,
+      "estimatedRemainderSeconds": 23.766,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:45.5992661\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:27.5932726\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:45.5988411\u002B00:00",
-      "backendWorkingSetBytes": 190398464,
-      "managedHeapBytes": 17534328,
+      "timestamp": "2026-11-19T15:45:27.5927787\u002B00:00",
+      "backendWorkingSetBytes": 202305536,
+      "managedHeapBytes": 23004624,
       "gcGen0Count": 6,
       "gcGen1Count": 2,
       "gcGen2Count": 1,
       "sqliteWalBytes": 4136512,
-      "auditId": 1
+      "auditId": "1"
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:27.7382331\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "105",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "106",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "107",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "108",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=s\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "109",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=s\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "110",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "111",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "112",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "113",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "114",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "115",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026size=m",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:46.9834445\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:28.5246414\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 182,
+        "queued": 130,
         "fetched": 121,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 58
+      "queued": 7,
+      "phase": "crawling",
+      "elapsedSeconds": 21.21,
+      "throughputPerSecond": 5.705,
+      "estimatedRemainderSeconds": 22.788,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:28.8121831\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "116",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "117",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "118",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=l\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "119",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=l\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "120",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "121",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "122",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "123",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "124",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "125",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "126",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026sort=name",
+          "statusClass": "2xx"
+        }
+      ]
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:47.4547591\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:29.5253219\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 182,
-        "fetched": 126,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 53
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:47.5910532\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:47.5907329\u002B00:00",
-      "backendWorkingSetBytes": 190398464,
-      "managedHeapBytes": 17534328,
-      "gcGen0Count": 6,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:48.4565826\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 182,
+        "queued": 134,
         "fetched": 131,
-        "analyzed": 0,
-        "failed": 2
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 48
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:49.4960615\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 182,
-        "fetched": 136,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 43
+      "queued": 1,
+      "phase": "crawling",
+      "elapsedSeconds": 22.211,
+      "throughputPerSecond": 5.898,
+      "estimatedRemainderSeconds": 22.72,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:49.5912791\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:29.5863091\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:49.5909906\u002B00:00",
-      "backendWorkingSetBytes": 184930304,
-      "managedHeapBytes": 17534328,
-      "gcGen0Count": 6,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
+      "timestamp": "2026-11-19T15:45:29.5858385\u002B00:00",
+      "backendWorkingSetBytes": 207007744,
+      "managedHeapBytes": 21502432,
+      "gcGen0Count": 7,
+      "gcGen1Count": 3,
+      "gcGen2Count": 2,
       "sqliteWalBytes": 4136512,
-      "auditId": 1
+      "auditId": "1"
     }
   },
   {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:50.5903307\u002B00:00",
+    "name": "url-batch",
+    "receivedAt": "2026-11-19T15:45:29.6216575\u002B00:00",
     "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 182,
-        "fetched": 141,
-        "analyzed": 0,
-        "failed": 2
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "127",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "128",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "129",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/8",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "130",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/2",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "131",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/7",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "132",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/3",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "133",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/6",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "134",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/4",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:29.7309799\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "error": 1,
+        "warning": 3
       },
-      "queued": 38
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:51.5921704\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:51.591739\u002B00:00",
-      "backendWorkingSetBytes": 184885248,
-      "managedHeapBytes": 17534328,
-      "gcGen0Count": 6,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:51.6564262\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 184,
-        "fetched": 147,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 34
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:52.6897781\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 184,
-        "fetched": 152,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 29
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:53.5922732\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:53.5919231\u002B00:00",
-      "backendWorkingSetBytes": 184942592,
-      "managedHeapBytes": 17534328,
-      "gcGen0Count": 6,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:53.7016357\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 184,
-        "fetched": 157,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 24
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:54.8009055\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 184,
-        "fetched": 162,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 19
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:55.6051119\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:55.6046866\u002B00:00",
-      "backendWorkingSetBytes": 184942592,
-      "managedHeapBytes": 17534328,
-      "gcGen0Count": 6,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:55.8031391\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 184,
-        "fetched": 167,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 14
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:56.8447708\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 184,
-        "fetched": 173,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 8
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:57.5910927\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:17:57.5906544\u002B00:00",
-      "backendWorkingSetBytes": 185171968,
-      "managedHeapBytes": 17534328,
-      "gcGen0Count": 6,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:57.8492848\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 184,
-        "fetched": 178,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 3
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:58.9005502\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 0,
-        "failed": 2
-      },
-      "queued": 0
+      "categoryDeltas": {
+        "indexability": 2,
+        "linking": 1,
+        "crawl": 1
+      }
     }
   },
   {
     "name": "stage-changed",
-    "receivedAt": "2026-11-18T10:17:58.9222991\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:29.7331067\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "previousState": "running",
       "newState": "running",
       "phase": "analyzing"
     }
   },
   {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:17:59.6046257\u002B00:00",
+    "name": "crawl-progress",
+    "receivedAt": "2026-11-19T15:45:30.6065792\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:17:59.6042432\u002B00:00",
-      "backendWorkingSetBytes": 201621504,
-      "managedHeapBytes": 21332104,
+      "auditId": "1",
+      "counters": {
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
+      },
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 23.128,
+      "throughputPerSecond": 5.707,
+      "estimatedRemainderSeconds": 23.478,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:30.7510793\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "error": 4,
+        "warning": 52,
+        "notice": 129,
+        "pass": 26
+      },
+      "categoryDeltas": {
+        "indexability": 51,
+        "structureddata": 54,
+        "accessibility": 50,
+        "content": 54,
+        "performance": 2
+      }
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:31.6019274\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:31.601507\u002B00:00",
+      "backendWorkingSetBytes": 219602944,
+      "managedHeapBytes": 24767784,
       "gcGen0Count": 8,
-      "gcGen1Count": 2,
-      "gcGen2Count": 1,
+      "gcGen1Count": 3,
+      "gcGen2Count": 2,
       "sqliteWalBytes": 4136512,
-      "auditId": 1
+      "auditId": "1"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:17:59.9013652\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:31.6948094\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 21,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 0
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 24.236,
+      "throughputPerSecond": 5.446,
+      "estimatedRemainderSeconds": 24.603,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:31.868405\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 30,
+        "notice": 60,
+        "pass": 12
+      },
+      "categoryDeltas": {
+        "indexability": 24,
+        "structureddata": 24,
+        "accessibility": 23,
+        "content": 31
+      }
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:00.9333691\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:32.6950972\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 33,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 0
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 25.356,
+      "throughputPerSecond": 5.206,
+      "estimatedRemainderSeconds": 25.74,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:32.9329619\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 37,
+        "notice": 65,
+        "pass": 13
+      },
+      "categoryDeltas": {
+        "indexability": 26,
+        "structureddata": 26,
+        "accessibility": 26,
+        "content": 37
+      }
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:01.5920115\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:33.6009097\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:01.5917256\u002B00:00",
-      "backendWorkingSetBytes": 214839296,
-      "managedHeapBytes": 22589296,
+      "timestamp": "2026-11-19T15:45:33.6004195\u002B00:00",
+      "backendWorkingSetBytes": 236785664,
+      "managedHeapBytes": 25539128,
       "gcGen0Count": 9,
       "gcGen1Count": 3,
       "gcGen2Count": 2,
-      "sqliteWalBytes": 4136512,
-      "auditId": 1
+      "sqliteWalBytes": 4181832,
+      "auditId": "1"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:01.9885599\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:33.7588523\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 44,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 0
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 26.445,
+      "throughputPerSecond": 4.992,
+      "estimatedRemainderSeconds": 26.845,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:33.9336632\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 36,
+        "notice": 60,
+        "pass": 12
+      },
+      "categoryDeltas": {
+        "indexability": 24,
+        "structureddata": 24,
+        "accessibility": 24,
+        "content": 36
+      }
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:02.993323\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:34.7872898\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 55,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 0
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 27.404,
+      "throughputPerSecond": 4.817,
+      "estimatedRemainderSeconds": 27.819,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:34.9553922\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 39,
+        "notice": 65,
+        "pass": 13
+      },
+      "categoryDeltas": {
+        "indexability": 26,
+        "structureddata": 26,
+        "accessibility": 26,
+        "content": 39
+      }
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:03.5987058\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:35.5967911\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:03.5983653\u002B00:00",
-      "backendWorkingSetBytes": 234434560,
-      "managedHeapBytes": 22589296,
-      "gcGen0Count": 10,
-      "gcGen1Count": 3,
+      "timestamp": "2026-11-19T15:45:35.5964752\u002B00:00",
+      "backendWorkingSetBytes": 238419968,
+      "managedHeapBytes": 27245688,
+      "gcGen0Count": 11,
+      "gcGen1Count": 4,
       "gcGen2Count": 2,
-      "sqliteWalBytes": 4235392,
-      "auditId": 1
+      "sqliteWalBytes": 4181832,
+      "auditId": "1"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:04.0010149\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:35.832916\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 67,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 0
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 28.519,
+      "throughputPerSecond": 4.629,
+      "estimatedRemainderSeconds": 28.951,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:36.001864\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 43,
+        "notice": 75,
+        "pass": 15
+      },
+      "categoryDeltas": {
+        "indexability": 30,
+        "structureddata": 30,
+        "accessibility": 30,
+        "content": 43
+      }
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:05.0084286\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:36.8734542\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 82,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 0
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 29.559,
+      "throughputPerSecond": 4.466,
+      "estimatedRemainderSeconds": 30.007,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:37.0386076\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 39,
+        "notice": 65,
+        "pass": 13
+      },
+      "categoryDeltas": {
+        "indexability": 26,
+        "structureddata": 26,
+        "accessibility": 26,
+        "content": 39
+      }
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:05.5985442\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:37.6004498\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:05.5981687\u002B00:00",
-      "backendWorkingSetBytes": 217837568,
-      "managedHeapBytes": 23197736,
-      "gcGen0Count": 14,
-      "gcGen1Count": 3,
+      "timestamp": "2026-11-19T15:45:37.6000727\u002B00:00",
+      "backendWorkingSetBytes": 224968704,
+      "managedHeapBytes": 28349608,
+      "gcGen0Count": 17,
+      "gcGen1Count": 4,
       "gcGen2Count": 2,
-      "sqliteWalBytes": 4235392,
-      "auditId": 1
+      "sqliteWalBytes": 4264232,
+      "auditId": "1"
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:06.0891138\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:37.8850765\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 95,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 0
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 30.555,
+      "throughputPerSecond": 4.32,
+      "estimatedRemainderSeconds": 31.018,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:38.0537716\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 36,
+        "notice": 60,
+        "pass": 12
+      },
+      "categoryDeltas": {
+        "indexability": 24,
+        "structureddata": 24,
+        "accessibility": 24,
+        "content": 36
+      }
     }
   },
   {
     "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:07.0931402\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:38.8860238\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 107,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
-      "queued": 0
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 31.568,
+      "throughputPerSecond": 4.181,
+      "estimatedRemainderSeconds": 32.047,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
+    }
+  },
+  {
+    "name": "findings-updated",
+    "receivedAt": "2026-11-19T15:45:39.3876593\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 51,
+        "notice": 162,
+        "pass": 15
+      },
+      "categoryDeltas": {
+        "indexability": 30,
+        "structureddata": 31,
+        "accessibility": 30,
+        "content": 137
+      }
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:07.5981282\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:39.6015428\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:07.5977616\u002B00:00",
-      "backendWorkingSetBytes": 193847296,
-      "managedHeapBytes": 23116296,
-      "gcGen0Count": 31,
-      "gcGen1Count": 3,
-      "gcGen2Count": 2,
-      "sqliteWalBytes": 4297192,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:08.1034547\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 119,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:09.1088846\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 131,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:09.5955727\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:18:09.5951547\u002B00:00",
-      "backendWorkingSetBytes": 168599552,
-      "managedHeapBytes": 23150160,
-      "gcGen0Count": 49,
-      "gcGen1Count": 3,
-      "gcGen2Count": 2,
-      "sqliteWalBytes": 4297192,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:10.1372738\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 145,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:11.1423439\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 157,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:11.5924246\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:18:11.5920646\u002B00:00",
-      "backendWorkingSetBytes": 167927808,
-      "managedHeapBytes": 23149832,
-      "gcGen0Count": 66,
-      "gcGen1Count": 3,
-      "gcGen2Count": 2,
-      "sqliteWalBytes": 4297192,
-      "auditId": 1
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:12.1587617\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 169,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "name": "crawl-progress",
-    "receivedAt": "2026-11-18T10:18:13.2014755\u002B00:00",
-    "payload": {
-      "auditId": 1,
-      "counters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 182,
-        "failed": 2
-      },
-      "queued": 0
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:13.6049258\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:18:13.6045439\u002B00:00",
-      "backendWorkingSetBytes": 198725632,
-      "managedHeapBytes": 29525256,
-      "gcGen0Count": 102,
-      "gcGen1Count": 5,
+      "timestamp": "2026-11-19T15:45:39.6012605\u002B00:00",
+      "backendWorkingSetBytes": 193777664,
+      "managedHeapBytes": 32270184,
+      "gcGen0Count": 48,
+      "gcGen1Count": 7,
       "gcGen2Count": 4,
-      "sqliteWalBytes": 4297192,
-      "auditId": 1
+      "sqliteWalBytes": 4264232,
+      "auditId": "1"
+    }
+  },
+  {
+    "name": "crawl-progress",
+    "receivedAt": "2026-11-19T15:45:39.8986892\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "counters": {
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
+      },
+      "queued": 0,
+      "phase": "crawling",
+      "elapsedSeconds": 31.601,
+      "throughputPerSecond": 4.177,
+      "estimatedRemainderSeconds": 32.08,
+      "wafBlocked": 0,
+      "throttledHostCount": 0,
+      "meanEffectiveRate": 10
     }
   },
   {
     "name": "stage-changed",
-    "receivedAt": "2026-11-18T10:18:13.8666217\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:40.0726571\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "previousState": "running",
       "newState": "completed",
       "phase": "finalizing"
@@ -1503,66 +2237,54 @@
   },
   {
     "name": "audit-completed",
-    "receivedAt": "2026-11-18T10:18:13.8681069\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:40.0739817\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "finalCounters": {
-        "discovered": 186,
-        "fetched": 183,
-        "analyzed": 182,
-        "failed": 2
+        "queued": 134,
+        "fetched": 132,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
       },
       "reportReady": true
     }
   },
   {
     "name": "export-progress",
-    "receivedAt": "2026-11-18T10:18:14.2682186\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:40.5418206\u002B00:00",
     "payload": {
-      "exportJobId": 1,
-      "auditId": 1,
+      "exportId": "1",
+      "auditId": "1",
       "format": "csv",
-      "status": "queued"
+      "state": "queued"
     }
   },
   {
     "name": "export-delivery",
-    "receivedAt": "2026-11-18T10:18:14.5690864\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:40.8411092\u002B00:00",
     "payload": {
-      "exportJobId": 1,
-      "destinationId": 1,
-      "state": "delivering",
-      "attempt": 1,
-      "timestamp": "2026-11-18T10:18:14.5672565\u002B00:00"
+      "exportId": "1",
+      "destinationId": "1",
+      "state": "delivered"
     }
   },
   {
     "name": "export-progress",
-    "receivedAt": "2026-11-18T10:18:14.6023802\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:40.8844972\u002B00:00",
     "payload": {
-      "exportJobId": 1,
-      "auditId": 1,
+      "exportId": "1",
+      "auditId": "1",
       "format": "csv",
-      "status": "completed",
-      "filePath": "C:\\Users\\lione\\AppData\\Local\\CrawlForge-conformance-wp0803\\run-20261118-101705-3428c302\\exports\\export-1.zip"
-    }
-  },
-  {
-    "name": "export-delivery",
-    "receivedAt": "2026-11-18T10:18:14.9013271\u002B00:00",
-    "payload": {
-      "exportJobId": 1,
-      "destinationId": 1,
-      "state": "delivered",
-      "attempt": 1,
-      "timestamp": "2026-11-18T10:18:14.5708308\u002B00:00"
+      "state": "completed",
+      "filePath": "C:\\Users\\lione\\AppData\\Local\\CrawlForge-conformance-wp0803\\run-20261119-154457-94a5d271\\exports\\export-1.zip"
     }
   },
   {
     "name": "log-import-progress",
-    "receivedAt": "2026-11-18T10:18:15.0641557\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:40.9001071\u002B00:00",
     "payload": {
-      "importId": 1,
+      "importId": "1",
       "counters": {
         "linesParsed": 5,
         "linesAccepted": 5,
@@ -1573,9 +2295,9 @@
   },
   {
     "name": "log-import-completed",
-    "receivedAt": "2026-11-18T10:18:15.0949328\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:40.9289486\u002B00:00",
     "payload": {
-      "importId": 1,
+      "importId": "1",
       "finalCounters": {
         "linesParsed": 5,
         "linesAccepted": 5,
@@ -1584,7 +2306,7 @@
       "correlation": {
         "orphanCount": 0,
         "budgetWasteCount": 0,
-        "uncrawledIndexableCount": 182
+        "uncrawledIndexableCount": 128
       },
       "status": "completed",
       "counters": {
@@ -1612,93 +2334,107 @@
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:15.6007319\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:41.5859939\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:15.6003675\u002B00:00",
-      "backendWorkingSetBytes": 204263424,
-      "managedHeapBytes": 32603328,
+      "timestamp": "2026-11-19T15:45:41.585643\u002B00:00",
+      "backendWorkingSetBytes": 209997824,
+      "managedHeapBytes": 35954648,
+      "gcGen0Count": 63,
+      "gcGen1Count": 8,
+      "gcGen2Count": 5,
+      "sqliteWalBytes": 4264232,
+      "auditId": "2"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:43.5974074\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:43.5969934\u002B00:00",
+      "backendWorkingSetBytes": 229851136,
+      "managedHeapBytes": 39567688,
+      "gcGen0Count": 64,
+      "gcGen1Count": 8,
+      "gcGen2Count": 5,
+      "sqliteWalBytes": 4264232,
+      "auditId": "3"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:45.5935688\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:45.5931442\u002B00:00",
+      "backendWorkingSetBytes": 227479552,
+      "managedHeapBytes": 37197128,
+      "gcGen0Count": 75,
+      "gcGen1Count": 9,
+      "gcGen2Count": 5,
+      "sqliteWalBytes": 4606192,
+      "auditId": "3"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:47.5949714\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:47.5945449\u002B00:00",
+      "backendWorkingSetBytes": 199360512,
+      "managedHeapBytes": 37197128,
+      "gcGen0Count": 94,
+      "gcGen1Count": 9,
+      "gcGen2Count": 5,
+      "sqliteWalBytes": 4606192,
+      "auditId": "3"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:49.5879035\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:49.5874933\u002B00:00",
+      "backendWorkingSetBytes": 196726784,
+      "managedHeapBytes": 37488968,
       "gcGen0Count": 111,
-      "gcGen1Count": 6,
+      "gcGen1Count": 9,
       "gcGen2Count": 5,
-      "sqliteWalBytes": 4297192,
-      "auditId": 2
+      "sqliteWalBytes": 4606192,
+      "auditId": "3"
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:17.6023606\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:51.5964359\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:17.6019969\u002B00:00",
-      "backendWorkingSetBytes": 204300288,
-      "managedHeapBytes": 32603328,
-      "gcGen0Count": 111,
-      "gcGen1Count": 6,
+      "timestamp": "2026-11-19T15:45:51.5960259\u002B00:00",
+      "backendWorkingSetBytes": 197615616,
+      "managedHeapBytes": 34569952,
+      "gcGen0Count": 129,
+      "gcGen1Count": 10,
       "gcGen2Count": 5,
-      "sqliteWalBytes": 4297192,
-      "auditId": 2
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:19.5936997\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:18:19.5933072\u002B00:00",
-      "backendWorkingSetBytes": 204300288,
-      "managedHeapBytes": 32603328,
-      "gcGen0Count": 111,
-      "gcGen1Count": 6,
-      "gcGen2Count": 5,
-      "sqliteWalBytes": 4297192,
-      "auditId": 2
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:21.6016754\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:18:21.6013702\u002B00:00",
-      "backendWorkingSetBytes": 209817600,
-      "managedHeapBytes": 35791048,
-      "gcGen0Count": 112,
-      "gcGen1Count": 6,
-      "gcGen2Count": 5,
-      "sqliteWalBytes": 4297192,
-      "auditId": 3
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:23.5922291\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:18:23.5917687\u002B00:00",
-      "backendWorkingSetBytes": 232550400,
-      "managedHeapBytes": 36610240,
-      "gcGen0Count": 113,
-      "gcGen1Count": 6,
-      "gcGen2Count": 5,
-      "sqliteWalBytes": 4297192,
-      "auditId": 4
+      "sqliteWalBytes": 4606192,
+      "auditId": "3"
     }
   },
   {
     "name": "matrix-row-validated",
-    "receivedAt": "2026-11-18T10:18:24.9967414\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:52.8050646\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "rows": [
         {
-          "urlId": 3,
+          "urlId": "3",
           "sourceUrl": "http://127.0.0.1:47312/redirect/chain-1",
-          "verdict": 0
+          "verdict": "pass"
         }
       ]
     }
   },
   {
     "name": "log-import-progress",
-    "receivedAt": "2026-11-18T10:18:25.3327204\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:53.1465916\u002B00:00",
     "payload": {
-      "importId": 2,
+      "importId": "2",
       "counters": {
         "linesParsed": 5,
         "linesAccepted": 5,
@@ -1709,9 +2445,9 @@
   },
   {
     "name": "log-import-completed",
-    "receivedAt": "2026-11-18T10:18:25.3343398\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:53.1480882\u002B00:00",
     "payload": {
-      "importId": 2,
+      "importId": "2",
       "finalCounters": {
         "linesParsed": 5,
         "linesAccepted": 5,
@@ -1720,7 +2456,7 @@
       "correlation": {
         "orphanCount": 0,
         "budgetWasteCount": 0,
-        "uncrawledIndexableCount": 6
+        "uncrawledIndexableCount": 4
       },
       "status": "completed",
       "counters": {
@@ -1747,69 +2483,69 @@
     }
   },
   {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:25.6040327\u002B00:00",
+    "name": "export-progress",
+    "receivedAt": "2026-11-19T15:45:53.5569555\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:25.6037005\u002B00:00",
-      "backendWorkingSetBytes": 234954752,
-      "managedHeapBytes": 32093168,
-      "gcGen0Count": 114,
-      "gcGen1Count": 7,
-      "gcGen2Count": 5,
-      "sqliteWalBytes": 4297192,
-      "auditId": 5
+      "exportId": "2",
+      "auditId": "1",
+      "format": "csv",
+      "state": "queued"
     }
   },
   {
-    "name": "export-progress",
-    "receivedAt": "2026-11-18T10:18:25.8095879\u002B00:00",
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:53.5912733\u002B00:00",
     "payload": {
-      "exportJobId": 2,
-      "auditId": 1,
-      "format": "csv",
-      "status": "queued"
+      "timestamp": "2026-11-19T15:45:53.5909749\u002B00:00",
+      "backendWorkingSetBytes": 226320384,
+      "managedHeapBytes": 37685960,
+      "gcGen0Count": 168,
+      "gcGen1Count": 13,
+      "gcGen2Count": 7,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
     }
   },
   {
     "name": "schedule-fired",
-    "receivedAt": "2026-11-18T10:18:25.8986874\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:53.6450364\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
-      "auditId": 7,
+      "scheduleDefinitionId": "1",
+      "auditId": "5",
       "triggerType": "manual",
-      "startedAt": "2026-11-18T10:18:25.8919611\u002B00:00"
+      "startedAt": "2026-11-19T15:45:53.638192\u002B00:00"
     }
   },
   {
     "name": "export-progress",
-    "receivedAt": "2026-11-18T10:18:26.0917673\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:53.8920293\u002B00:00",
     "payload": {
-      "exportJobId": 2,
-      "auditId": 1,
+      "exportId": "2",
+      "auditId": "1",
       "format": "csv",
-      "status": "completed",
-      "filePath": "C:\\Users\\lione\\AppData\\Local\\CrawlForge-conformance-wp0803\\run-20261118-101705-3428c302\\exports\\export-2.zip"
+      "state": "completed",
+      "filePath": "C:\\Users\\lione\\AppData\\Local\\CrawlForge-conformance-wp0803\\run-20261119-154457-94a5d271\\exports\\export-2.zip"
     }
   },
   {
     "name": "matrix-row-validated",
-    "receivedAt": "2026-11-18T10:18:26.4220434\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:54.1169155\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "rows": [
         {
-          "urlId": 3,
+          "urlId": "3",
           "sourceUrl": "http://127.0.0.1:47312/redirect/chain-1",
-          "verdict": 0
+          "verdict": "pass"
         }
       ]
     }
   },
   {
     "name": "log-import-progress",
-    "receivedAt": "2026-11-18T10:18:26.4349723\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:54.1283619\u002B00:00",
     "payload": {
-      "importId": 3,
+      "importId": "3",
       "counters": {
         "linesParsed": 5,
         "linesAccepted": 5,
@@ -1820,9 +2556,9 @@
   },
   {
     "name": "log-import-completed",
-    "receivedAt": "2026-11-18T10:18:26.4358084\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:54.1290793\u002B00:00",
     "payload": {
-      "importId": 3,
+      "importId": "3",
       "finalCounters": {
         "linesParsed": 5,
         "linesAccepted": 5,
@@ -1859,231 +2595,449 @@
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:27.6354388\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:55.6057346\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:27.6225053\u002B00:00",
-      "backendWorkingSetBytes": 433786880,
-      "managedHeapBytes": 39760080,
-      "gcGen0Count": 117,
-      "gcGen1Count": 8,
-      "gcGen2Count": 5,
-      "sqliteWalBytes": 4297192,
-      "auditId": 7
+      "timestamp": "2026-11-19T15:45:55.5976321\u002B00:00",
+      "backendWorkingSetBytes": 449003520,
+      "managedHeapBytes": 45067200,
+      "gcGen0Count": 171,
+      "gcGen1Count": 14,
+      "gcGen2Count": 7,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:29.5920236\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:57.5938848\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:29.591706\u002B00:00",
-      "backendWorkingSetBytes": 422981632,
-      "managedHeapBytes": 40423648,
-      "gcGen0Count": 127,
-      "gcGen1Count": 11,
+      "timestamp": "2026-11-19T15:45:57.593058\u002B00:00",
+      "backendWorkingSetBytes": 451100672,
+      "managedHeapBytes": 45349048,
+      "gcGen0Count": 172,
+      "gcGen1Count": 14,
       "gcGen2Count": 7,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:45:59.5959003\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:45:59.5955274\u002B00:00",
+      "backendWorkingSetBytes": 426594304,
+      "managedHeapBytes": 47895080,
+      "gcGen0Count": 184,
+      "gcGen1Count": 17,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:01.5901349\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:01.5898435\u002B00:00",
+      "backendWorkingSetBytes": 426655744,
+      "managedHeapBytes": 47895080,
+      "gcGen0Count": 184,
+      "gcGen1Count": 17,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:03.5918856\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:03.5915433\u002B00:00",
+      "backendWorkingSetBytes": 426721280,
+      "managedHeapBytes": 48383544,
+      "gcGen0Count": 185,
+      "gcGen1Count": 17,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:05.5896236\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:05.5892303\u002B00:00",
+      "backendWorkingSetBytes": 424472576,
+      "managedHeapBytes": 48644752,
+      "gcGen0Count": 186,
+      "gcGen1Count": 17,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:07.5865563\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:07.5861327\u002B00:00",
+      "backendWorkingSetBytes": 416829440,
+      "managedHeapBytes": 45887816,
+      "gcGen0Count": 188,
+      "gcGen1Count": 18,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:09.5986136\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:09.5983078\u002B00:00",
+      "backendWorkingSetBytes": 408842240,
+      "managedHeapBytes": 45828648,
+      "gcGen0Count": 193,
+      "gcGen1Count": 18,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:11.6004611\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:11.5961076\u002B00:00",
+      "backendWorkingSetBytes": 404807680,
+      "managedHeapBytes": 45861064,
+      "gcGen0Count": 201,
+      "gcGen1Count": 18,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:13.5927272\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:13.5923272\u002B00:00",
+      "backendWorkingSetBytes": 392454144,
+      "managedHeapBytes": 45923528,
+      "gcGen0Count": 209,
+      "gcGen1Count": 18,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:15.5884901\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:15.588105\u002B00:00",
+      "backendWorkingSetBytes": 392454144,
+      "managedHeapBytes": 45901376,
+      "gcGen0Count": 214,
+      "gcGen1Count": 18,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4606192,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:17.5992321\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:17.5988303\u002B00:00",
+      "backendWorkingSetBytes": 394256384,
+      "managedHeapBytes": 46492960,
+      "gcGen0Count": 234,
+      "gcGen1Count": 18,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4775112,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:19.6003411\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:19.6000617\u002B00:00",
+      "backendWorkingSetBytes": 394235904,
+      "managedHeapBytes": 46551792,
+      "gcGen0Count": 255,
+      "gcGen1Count": 18,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4775112,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:21.5942992\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:21.5939598\u002B00:00",
+      "backendWorkingSetBytes": 394231808,
+      "managedHeapBytes": 46549128,
+      "gcGen0Count": 273,
+      "gcGen1Count": 18,
+      "gcGen2Count": 9,
+      "sqliteWalBytes": 4775112,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:23.5882185\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:23.5879144\u002B00:00",
+      "backendWorkingSetBytes": 390074368,
+      "managedHeapBytes": 41606504,
+      "gcGen0Count": 295,
+      "gcGen1Count": 20,
+      "gcGen2Count": 10,
+      "sqliteWalBytes": 4775112,
+      "auditId": "5"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:25.6012639\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:25.6008386\u002B00:00",
+      "backendWorkingSetBytes": 408363008,
+      "managedHeapBytes": 51138008,
+      "gcGen0Count": 342,
+      "gcGen1Count": 23,
+      "gcGen2Count": 12,
       "sqliteWalBytes": 4989352,
-      "auditId": null
+      "auditId": "7"
     }
   },
   {
     "name": "schedule-run-completed",
-    "receivedAt": "2026-11-18T10:18:29.9581361\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:25.8762121\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
-      "auditId": 7,
+      "scheduleDefinitionId": "1",
+      "auditId": "5",
       "triggerType": "manual",
       "outcome": "success",
-      "startedAt": "2026-11-18T10:18:25.8919611\u002B00:00",
-      "finishedAt": "2026-11-18T10:18:29.2835375\u002B00:00",
+      "startedAt": "2026-11-19T15:45:53.638192\u002B00:00",
+      "finishedAt": "2026-11-19T15:46:25.3271977\u002B00:00",
       "completionActions": []
     }
   },
   {
-    "name": "schedule-fired",
-    "receivedAt": "2026-11-18T10:18:30.8159805\u002B00:00",
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:27.6007848\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
-      "auditId": 10,
-      "triggerType": "manual",
-      "startedAt": "2026-11-18T10:18:30.8145828\u002B00:00"
+      "timestamp": "2026-11-19T15:46:27.6004169\u002B00:00",
+      "backendWorkingSetBytes": 407085056,
+      "managedHeapBytes": 50798848,
+      "gcGen0Count": 347,
+      "gcGen1Count": 23,
+      "gcGen2Count": 12,
+      "sqliteWalBytes": 4989352,
+      "auditId": "7"
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:31.6050563\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:29.5959461\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:31.604814\u002B00:00",
-      "backendWorkingSetBytes": 422510592,
-      "managedHeapBytes": 49424064,
-      "gcGen0Count": 139,
-      "gcGen1Count": 14,
-      "gcGen2Count": 9,
+      "timestamp": "2026-11-19T15:46:29.595591\u002B00:00",
+      "backendWorkingSetBytes": 401915904,
+      "managedHeapBytes": 50876824,
+      "gcGen0Count": 352,
+      "gcGen1Count": 23,
+      "gcGen2Count": 12,
       "sqliteWalBytes": 4989352,
-      "auditId": 9
+      "auditId": "7"
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:33.865296\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:31.5928642\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:33.6064674\u002B00:00",
-      "backendWorkingSetBytes": 415727616,
-      "managedHeapBytes": 51893896,
-      "gcGen0Count": 140,
-      "gcGen1Count": 14,
-      "gcGen2Count": 9,
+      "timestamp": "2026-11-19T15:46:31.5925441\u002B00:00",
+      "backendWorkingSetBytes": 397639680,
+      "managedHeapBytes": 45365736,
+      "gcGen0Count": 361,
+      "gcGen1Count": 24,
+      "gcGen2Count": 13,
       "sqliteWalBytes": 4989352,
-      "auditId": 10
+      "auditId": "7"
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:33.5925065\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:33.5922078\u002B00:00",
+      "backendWorkingSetBytes": 418443264,
+      "managedHeapBytes": 56861864,
+      "gcGen0Count": 392,
+      "gcGen1Count": 26,
+      "gcGen2Count": 15,
+      "sqliteWalBytes": 4989352,
+      "auditId": "8"
     }
   },
   {
     "name": "schedule-fired",
-    "receivedAt": "2026-11-18T10:18:34.4327694\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:34.3516812\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
+      "scheduleDefinitionId": "1",
+      "auditId": "10",
       "triggerType": "manual",
-      "startedAt": "2026-11-18T10:18:34.4308924\u002B00:00"
+      "startedAt": "2026-11-19T15:46:34.3488511\u002B00:00"
+    }
+  },
+  {
+    "name": "schedule-fired",
+    "receivedAt": "2026-11-19T15:46:34.9588931\u002B00:00",
+    "payload": {
+      "scheduleDefinitionId": "1",
+      "triggerType": "manual",
+      "startedAt": "2026-11-19T15:46:34.9567803\u002B00:00"
     }
   },
   {
     "name": "schedule-run-completed",
-    "receivedAt": "2026-11-18T10:18:34.4328864\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:34.9589135\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
+      "scheduleDefinitionId": "1",
       "triggerType": "manual",
       "outcome": "skipped",
-      "startedAt": "2026-11-18T10:18:34.4308924\u002B00:00",
-      "finishedAt": "2026-11-18T10:18:34.4308924\u002B00:00",
+      "startedAt": "2026-11-19T15:46:34.9567803\u002B00:00",
+      "finishedAt": "2026-11-19T15:46:34.9567803\u002B00:00",
+      "completionActions": [],
+      "failureReason": "Previous run still active (skipped-overlap)."
+    }
+  },
+  {
+    "name": "system-health",
+    "receivedAt": "2026-11-19T15:46:35.5912608\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-19T15:46:35.5907745\u002B00:00",
+      "backendWorkingSetBytes": 412078080,
+      "managedHeapBytes": 55846024,
+      "gcGen0Count": 402,
+      "gcGen1Count": 28,
+      "gcGen2Count": 15,
+      "sqliteWalBytes": 4989352,
+      "auditId": "8"
+    }
+  },
+  {
+    "name": "schedule-fired",
+    "receivedAt": "2026-11-19T15:46:35.9722042\u002B00:00",
+    "payload": {
+      "scheduleDefinitionId": "1",
+      "triggerType": "manual",
+      "startedAt": "2026-11-19T15:46:35.9717407\u002B00:00"
+    }
+  },
+  {
+    "name": "schedule-run-completed",
+    "receivedAt": "2026-11-19T15:46:35.972211\u002B00:00",
+    "payload": {
+      "scheduleDefinitionId": "1",
+      "triggerType": "manual",
+      "outcome": "skipped",
+      "startedAt": "2026-11-19T15:46:35.9717407\u002B00:00",
+      "finishedAt": "2026-11-19T15:46:35.9717407\u002B00:00",
       "completionActions": [],
       "failureReason": "Previous run still active (skipped-overlap)."
     }
   },
   {
     "name": "schedule-run-completed",
-    "receivedAt": "2026-11-18T10:18:34.8226317\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:36.3586486\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
-      "auditId": 10,
+      "scheduleDefinitionId": "1",
+      "auditId": "10",
       "triggerType": "manual",
       "outcome": "success",
-      "startedAt": "2026-11-18T10:18:30.8145828\u002B00:00",
-      "finishedAt": "2026-11-18T10:18:34.1710058\u002B00:00",
+      "startedAt": "2026-11-19T15:46:34.3488511\u002B00:00",
+      "finishedAt": "2026-11-19T15:46:34.8335442\u002B00:00",
       "completionActions": []
     }
   },
   {
     "name": "schedule-fired",
-    "receivedAt": "2026-11-18T10:18:35.4410578\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:36.9793777\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
-      "auditId": 11,
+      "scheduleDefinitionId": "1",
+      "auditId": "11",
       "triggerType": "manual",
-      "startedAt": "2026-11-18T10:18:35.4397828\u002B00:00"
+      "startedAt": "2026-11-19T15:46:36.977703\u002B00:00"
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:35.5991472\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:37.5932117\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:35.5987485\u002B00:00",
-      "backendWorkingSetBytes": 416174080,
-      "managedHeapBytes": 52305176,
-      "gcGen0Count": 141,
-      "gcGen1Count": 14,
-      "gcGen2Count": 9,
+      "timestamp": "2026-11-19T15:46:37.5928377\u002B00:00",
+      "backendWorkingSetBytes": 409505792,
+      "managedHeapBytes": 55890416,
+      "gcGen0Count": 410,
+      "gcGen1Count": 28,
+      "gcGen2Count": 15,
       "sqliteWalBytes": 4989352,
-      "auditId": 11
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:37.5916315\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:18:37.5912532\u002B00:00",
-      "backendWorkingSetBytes": 412352512,
-      "managedHeapBytes": 52305176,
-      "gcGen0Count": 141,
-      "gcGen1Count": 14,
-      "gcGen2Count": 9,
-      "sqliteWalBytes": 4989352,
-      "auditId": 11
+      "auditId": "8"
     }
   },
   {
     "name": "schedule-run-completed",
-    "receivedAt": "2026-11-18T10:18:39.4616508\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:38.9829709\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
-      "auditId": 11,
+      "scheduleDefinitionId": "1",
+      "auditId": "11",
       "triggerType": "manual",
       "outcome": "success",
-      "startedAt": "2026-11-18T10:18:35.4397828\u002B00:00",
-      "finishedAt": "2026-11-18T10:18:38.7789859\u002B00:00",
+      "startedAt": "2026-11-19T15:46:36.977703\u002B00:00",
+      "finishedAt": "2026-11-19T15:46:38.230483\u002B00:00",
       "completionActions": []
     }
   },
   {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:39.5926276\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:18:39.5922227\u002B00:00",
-      "backendWorkingSetBytes": 413208576,
-      "managedHeapBytes": 50026256,
-      "gcGen0Count": 142,
-      "gcGen1Count": 14,
-      "gcGen2Count": 9,
-      "sqliteWalBytes": 4989352,
-      "auditId": null
-    }
-  },
-  {
     "name": "schedule-fired",
-    "receivedAt": "2026-11-18T10:18:39.6353634\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:39.230715\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
-      "auditId": 12,
+      "scheduleDefinitionId": "1",
+      "auditId": "12",
       "triggerType": "manual",
-      "startedAt": "2026-11-18T10:18:39.6341792\u002B00:00"
+      "startedAt": "2026-11-19T15:46:39.2292423\u002B00:00"
     }
   },
   {
     "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:41.6059496\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:39.5897117\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-18T10:18:41.6055767\u002B00:00",
-      "backendWorkingSetBytes": 418508800,
-      "managedHeapBytes": 51646832,
-      "gcGen0Count": 143,
-      "gcGen1Count": 15,
-      "gcGen2Count": 9,
+      "timestamp": "2026-11-19T15:46:39.5893647\u002B00:00",
+      "backendWorkingSetBytes": 413954048,
+      "managedHeapBytes": 55903216,
+      "gcGen0Count": 420,
+      "gcGen1Count": 28,
+      "gcGen2Count": 15,
       "sqliteWalBytes": 4989352,
-      "auditId": 12
-    }
-  },
-  {
-    "name": "system-health",
-    "receivedAt": "2026-11-18T10:18:43.6036123\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-18T10:18:43.6032458\u002B00:00",
-      "backendWorkingSetBytes": 418230272,
-      "managedHeapBytes": 50812496,
-      "gcGen0Count": 145,
-      "gcGen1Count": 15,
-      "gcGen2Count": 9,
-      "sqliteWalBytes": 4989352,
-      "auditId": null
+      "auditId": "8"
     }
   },
   {
     "name": "schedule-run-completed",
-    "receivedAt": "2026-11-18T10:18:43.6550859\u002B00:00",
+    "receivedAt": "2026-11-19T15:46:41.2335532\u002B00:00",
     "payload": {
-      "scheduleDefinitionId": 1,
-      "auditId": 12,
+      "scheduleDefinitionId": "1",
+      "auditId": "12",
       "triggerType": "manual",
       "outcome": "success",
-      "startedAt": "2026-11-18T10:18:39.6341792\u002B00:00",
-      "finishedAt": "2026-11-18T10:18:42.9913584\u002B00:00",
+      "startedAt": "2026-11-19T15:46:39.2292423\u002B00:00",
+      "finishedAt": "2026-11-19T15:46:40.4102015\u002B00:00",
       "completionActions": []
     }
   }

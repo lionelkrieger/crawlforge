@@ -175,6 +175,26 @@ public sealed class LiveBackendFixture : IAsyncLifetime
     /// <summary>Shuts down the harness's own processes; keeps the scratch data for review.</summary>
     public async Task DisposeAsync()
     {
+        // WP-09-11 (G05 backend-lifecycle): stop the backend GRACEFULLY through
+        // the shell-initiated shutdown route while the hub is still connected,
+        // so the backend-lifecycle {kind:"shutdown"} notice is captured. The
+        // process kill remains the fallback when the drain does not finish.
+        if (_backendProcess is not null && !_backendProcess.HasExited && _http is not null)
+        {
+            try
+            {
+                await Rest.SendAsync(_http, "POST", "/api/system/shutdown", null);
+                _backendProcess.WaitForExit(15000);
+                // Let the hub client process the shutdown notice frame before
+                // the capture is saved (loopback delivery is near-instant).
+                await Task.Delay(500);
+            }
+            catch (Exception)
+            {
+                // Fall through to the kill fallback below.
+            }
+        }
+
         if (_hub is not null)
         {
             await SaveCaptureAsync("hub-events.json", JsonSerializer.SerializeToElement(

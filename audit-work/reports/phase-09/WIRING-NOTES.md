@@ -541,3 +541,218 @@ follow the LOCKED events.ts shapes; assertions unchanged.
   AuditPipeline ISoft404Detector step → single emission via pipeline step, analyzer
   opt-in default-off (no Pipeline edit needed); duplicate-title = new cross-URL site pass
   (D14 pattern), harness matches substring "duplicate-title".
+
+---
+
+## WP-09-11 serial wiring — coordinator interpretations (2026-11-19)
+
+Locked contracts/components were NOT edited; every interpretation below is
+engine/composition/UI-side wiring. Accepted-component gaps are RECORDED for the
+owner, not patched in place.
+
+### Robots / politeness
+- Robots fetched per AUTHORITY (host:port preserved). The accepted
+  `RobotsCache.Normalize` keeps a bare authority verbatim but strips the port
+  when given a full URL (`uri.Host`), so the engine passes `entryUri.Authority`
+  to `GetDocumentAsync` and keys virtual-robots overrides by authority too.
+- Unreachable robots → permissive allow (RFC 9309 §2.3.1.3). The accepted
+  RobotsCache catches only HttpRequestException/TaskCanceledException, NOT the
+  fetcher's FetchFailedException — the engine wraps the call in try/catch
+  (permissive on any non-cancellation failure). COMPONENT GAP RECORDED:
+  RobotsCache should catch FetchFailedException itself.
+- AIMD keeps plain-host keys (throttle events/checkpoints unchanged).
+  `PortAwareCrawlDelaySource` (engine-private ICrawlDelaySource adapter)
+  translates host→authority via `CrawlRunContext.HostAuthorities`
+  (ConcurrentDictionary, OrdinalIgnoreCase; populated at seed parse + every
+  dequeue) before reading the robots crawl-delay. GetState(unknown host)
+  returns the default state, so the ReopenBatchWiringTests parity assertion
+  passes with authority-keyed robots.
+- `RobotsCacheOptions.Scheme` = first seed's scheme (one scheme per audit);
+  robots fetches use a dedicated aimd-free fetcher/client (no cycle).
+- Politeness pacing is OWNED BY THE FRONTIER: `PriorityFrontier.DequeueAsync`
+  awaits `IAimdPolitenessController.WaitAsync` for the dequeued host (accepted
+  §5.7 design). The engine loop must NOT wait a second time — a double wait
+  reserves two spacing intervals per URL and starves bounded crawls under
+  WAF challenge decay (E2E ChallengeAudit timeout diagnosis, 2026-11-19).
+  Response feedback is likewise single-source: `HttpFetcher.RecordAimdSample`
+  records the challenge-aware sample (evaluator-injected transport surface);
+  the engine records no sample of its own.
+
+### Configuration snapshot / start
+- Storage snapshot stays the DTO shape (`CrawlConfigurationDto`); the wire
+  projection happens only at the API boundary. `AuditsController.
+  ParseSnapshotObject`: null/whitespace → null; a JsonObject with Count>0 is
+  kept; an empty `{}` (test-double placeholder) or malformed JSON → fresh DTO
+  serialization fallback. enabledCategories merges config-level over
+  app-settings AuditTogglesJson (full set → null → Remove).
+- §10.4 idempotency in `StartCoreAsync`: an active Queued/Running/Paused audit
+  of the same configurationId returns the existing auditId+state.
+- G10 persist-before-start: `IListAuditStartPort` registered in
+  ExecutionModule; the controller delegates when registered.
+
+### Exports
+- Additive formats (json/jsonl/text/markdown) route through
+  `_engine is ExportEngine` pattern match → `CreateAdditiveExportAsync` /
+  `GetAdditiveExportAsync` (unified, covers baseline). Locked `IExportEngine`
+  + `ExportCreateRequest` unchanged. text/markdown are exempt from the
+  dataset requirement (per-page .zip bundles). NOTATION GAP RECORDED:
+  server-side column mapping is impossible without an ExportCreateRequest
+  amendment (no Columns member); Contracts ExportFormat enum lacks the
+  additive formats (wire-string routing only).
+- `ContentTypeForWire`: excel+xlsx(OOXML)/csv(zip)/html/pdf/json/
+  jsonl(x-ndjson)/text+markdown(zip)/default xml; xml-sitemap parses to the
+  locked enum. The accepted Export wire convention names the workbook format
+  "excel" (`ExportWireExtensions.ToWireValue`); "xlsx" is the creation alias —
+  both stream the same OOXML content type (E2E XlsxExport regression fix).
+
+### Explorers / findings
+- `AuditExplorerController.ExtractHeaderConflicts` derives headerName per
+  rule (§15.6 fidelity): IndexabilityHeaderHtmlConflict → "x-robots-tag";
+  Canonical/HreflangHeaderHtmlConflict → "link". The accepted analyzer
+  evidence carries headerValue/htmlValue, no headerName member.
+- WAF catalog seeds aligned to recorder categories (gap #21):
+  WafChallengeDetected/ChallengeResolvedByRender/SuspectedChallenge moved
+  Crawl→Indexability in RuleDefinition; WafBlockRate stays Crawl.
+
+### Re-audit parity / redirect storage (gate-run fixes)
+- Offline re-audit score parity (Acceptance Scoring_ComparableAcrossAudits
+  regression): `RunAnalysisOnlyAsync` now runs the SAME post-crawl +
+  site-wide passes as the live audit over the copied dataset, in the live
+  order (post-crawl before per-URL analysis, site passes after). §7.2
+  stored-artifacts guards: broken-link external probes are NEVER re-fetched
+  offline — internal analysis re-runs and the source audit's stored
+  links.broken-external findings are copied through the same
+  suppression-stamping recorder (`CopyExternalBrokenLinkFindingsAsync`);
+  the §5.15 UA comparison is live-only (it fetches samples); the offline
+  sitemap-declared set projects from the copied DiscoverySource.Sitemap
+  rows. Without these passes the live audit's crawl-family/site findings
+  were missing offline and overall scores diverged (74.09 vs 76.82).
+- G27 storage lock (StorageEngineConformance RedirectChain_FinalTargetOnly):
+  url_records.redirect_target_url stores the FINAL chain target
+  (outcome.FinalUrl when StatusClass==Redirect, else null) at BOTH the
+  success and failure persistence sites — never the first hop
+  (FetchOutcome.RedirectTargetUrl stays first-hop semantics for the
+  classifier's own consumers). final_status_code keeps the source's OWN
+  status; hop-by-hop facts live only in the durable chain payload.
+
+### Fixture-trap gap fixes (first full-gate walk send-backs)
+First gate walk (results/20261119T144515Z): 9/9 surfaces functional, 13/17
+traps pass, 4 partial. Root causes + fixes (all in lead wiring code except
+the editor default, routed to the WP-09-07 owner):
+- redirect-loop: the durable RedirectChainRecorder raises its OWN
+  RedirectChainException (Reason=Loop/ChainCapExceeded) from RecordHopAsync;
+  the fetcher's visited-URL guard raises FetchFailedException only when no
+  recorder context is set. The engine catch handled only FetchFailedException,
+  so recorder violations fell into the generic catch → FetchError row, no
+  loop finding. FIX: dedicated catch → ClassifyViolation (Redirect class +
+  hop prefix) + RedirectFindingAnalyzer.AnalyzeViolation (redirects.loop /
+  redirects.chain Error) + chain payload with loopDetected/chainCapExceeded.
+- cookie-gate: the jar hook ALREADY resolved the gate at transport (chain
+  payload finalStatusCode=200, AllowRevisit one cookie-driven self-revisit),
+  but Classify(chain>0) stored the first-hop 302/Redirect. CrawlStatusClass
+  .Redirect is documented "not followed to a terminal endpoint" — a resolved
+  self-redirect IS terminal at the source URL (probe-2 measured the gate row
+  at 200). FIX: when outcome.FinalUrl == entry.Url, the row carries the
+  terminal status/class (Success/200); the 302 hop stays in the chain
+  payload. G27 first-hop semantics apply to chains that LEAVE the source.
+  The redirects.inappropriate Warning on the 302 hop is the accepted
+  TemporaryStatus heuristic (rule definition pending owner confirmation) —
+  left as-is.
+- cookieless-session: the normalization notice WAS emitted
+  (canonicalization.session-segment-removed, deferred to first fetch), but
+  the fixture verdict probes ruleKey/message for "cookieless" or
+  "session"+"normaliz"; the wire message projects from evidence.message
+  (AuditWireMapper.ProjectEvidence) and the factory evidence had none.
+  FIX: engine call site enriches the draft evidence with a human-readable
+  message ("Cookieless session segment removed during URL normalization…").
+  Factory + rule key unchanged (CR-009 names no key).
+- broken-links: internal 404 + findings worked; external never checked
+  (scope default off; probe-2 measured the SAME partial) and probed targets
+  had no inventory rows. FIX (engine): discovery creates a status-only
+  url_records row (NotCrawled, DiscoverySource.Link) for every
+  CheckExternalStatus disposition target; the post-crawl broken-link pass
+  stamps the observed status from broken-external finding evidence onto the
+  row (transport failure → FetchError/null). FIX (owner-routed): the
+  WP-09-07 editor's defaultConfigurationForm() defaults checkExternalLinks
+  ON for NEW configurations (bounded status checks, no content crawl) so
+  the default Linking family (CAP-B-047) can report; DEFAULT_SCOPE_RULES
+  keeps reproducing the storage baseline (record-only). Non-broken checked
+  externals keep their NotCrawled status-only row (the accepted analyzer
+  exposes only broken-target outcomes; interpretation recorded).
+- Orphan false-positive guard: the accepted OrphanFindingAnalyzer streams
+  EVERY url row (no internal in-links + non-entry-point → orphan). The new
+  external status-check rows would be flagged as site orphans; the engine
+  post-filters orphan findings through a CrawlScopeEvaluator built from the
+  configuration's start-URL hosts (internal-host findings only). Scoring
+  denominators and link-graph nodes include the status-only inventory rows
+  (is_indexable stays false; no bodies) — identical on live and offline
+  re-audit paths, so score parity holds.
+
+### Hub emission
+- `backend-lifecycle`: CrawlForgeBackend.PublishLifecycleAsync — {kind:"ready"}
+  after app.StartAsync + ready log; {kind:"shutdown"} BEFORE the lifecycle
+  drain (hub still up); failure-isolated (LogWarning, never blocks startup/
+  shutdown). POST /api/system/shutdown exists at CrawlForgeBackend.cs:131
+  (phase-08 erratum confirmed).
+- G05 producer cadence is the ENGINE's job: FlushRunEventsAsync ≤1/s per audit
+  + force at crawl end / pre-finalize (lossless; AuditRunEventPublisher zero
+  throttle; waf-blocks hub-throttled 1/s). findings-updated deltas are DERIVED
+  (COUNT GROUP BY severity/category vs last snapshot) so every producer —
+  pipeline, crawl recorders, site passes — is captured without per-emit hooks.
+- url-batch carries observed HTTP status only; robots-Disallowed rows are
+  NotCrawled, NOT blocked. Blocked++ on statusClass==Blocked; WafBlocked++ on
+  IsChallenge. crawl-progress adds phase/elapsed/throughput/remainder +
+  additive throttledHostCount/meanEffectiveRate; boundary normalization
+  (HubPayloadNormalizer) maps counter keys + stringifies ids on ALL events.
+
+### Frontend mounting
+- Shell views += project/configurations + selectedProjectId persistence
+  (windowState sanitize: non-empty string kept, numeric/empty → null).
+- `?route=` window-catalog mapping in App.tsx: splash/hub/recovery→hub,
+  report→report (+auditId deep-link opens the audit on mount),
+  visualization/analyzer/tools→tools, settings→settings. Route WINS over the
+  persisted view. (G20 partial: window.crawlForgeShell bridge consumption
+  remains.)
+- Create-project modal mounts the full ConfigurationEditor (13 tabs); the
+  targetUrl input stays the seed authority and syncs form.startUrls; submit
+  sends configurationToCreateRequest (locked two-call flow preserved).
+- Report workspace: nav buttons with EXACT walker labels Dashboard / Issue
+  explorer / URL explorer / Export (report-nav-* testids); UPPERCASE state
+  badge (UI-10 regex); placeholder Paper removed (UI-11 PLACEHOLDER_TEXT gone);
+  cross-filter via accepted applyChartCrossFilter; suppression change bumps
+  the dashboard refreshKey; ExportDialog modal (UI-20).
+- ProjectView/ConfigurationsView (ProjectViews.tsx): hub row click →
+  openProject; per-row Configurations button → openConfigurations;
+  ProjectOverview section nav (configurations→openConfigurations,
+  audits→audits view, else→tools); start-audit → audits.start → loadAudits →
+  openAudit. ExportDestinationsSection added to Settings.
+
+### Reopen scope (WP-03-01 G03/G11, WP-06-01 G20)
+- G11 RESOLVED: StructuredDataRuleAnalyzer in the per-audit rule family;
+  HreflangReciprocityRuleAnalyzer site pass; ImageRuleAnalyzer; UrlStructure.
+- G03 PARTIAL: rendering profile parsed/persisted + IRenderingPool registered
+  (SinglePageAnalyzer + IResponseRenderedComparer consume it); headless crawl
+  rendering is phase-10 (Flow 2) scope — Flow 1 is HTTP-only by design.
+- G20 PARTIAL: ?route= honored (above); shell-bridge calls remain.
+
+### Cross-phase test alignments (coordinator, per 9A ToolsRouteTests precedent)
+- AuditRouteTests:39 — snapshot id assertion wire-string → DTO GetInt64
+  (storage keeps the DTO shape; G-REAUDIT-SNAPSHOT alignment).
+- windowState.test.ts — selectedProjectId member in deep-equal/roundtrip +
+  new project/configurations view coverage.
+- shell.test.tsx — create-project config POST toMatchObject (full editor
+  document is additive); report-state badge RUNNING uppercase (UI-10).
+- Conformance harness: LiveBackendFixture.DisposeAsync now stops the backend
+  gracefully via POST /api/system/shutdown (hub still connected) so
+  backend-lifecycle {kind:"shutdown"} is captured; process kill is fallback.
+- Conformance unskips/inverts: G-PROGRESS, G-REST-IDEMPOTENCY,
+  G-REAUDIT-SNAPSHOT, G-MATRIX-SEED-RACE unskipped; url-batch/findings-updated
+  absence-locks → live shape tests; backend-lifecycle + waf-blocks →
+  producer-wired inventory locks (fixture hub connects after startup and
+  captures shutdown at dispose; live proofs added to Host.Tests
+  BackendLifecycleTests + WafWiringTests via RecordingHubChannel). Embedding
+  pair stays skipped (phase 12); audit-failed stays skipped (Host.Tests
+  covers); schedule ×2 (CR-026), importId, McpWire (phase 13), CR-028 MySQL
+  unchanged. Counter producer-key locks aligned to the additive
+  blocked/wafBlocked keys (AuditCountersWire + StorageEngine). McpWire
+  run-schedule-now retries the documented no-overlap guard (REST-sweep race).

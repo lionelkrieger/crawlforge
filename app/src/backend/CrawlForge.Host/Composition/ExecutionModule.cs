@@ -30,6 +30,8 @@ public sealed class ExecutionModule : IHostModule
         services.AddSingleton<IAuditExecutionService>(p => p.GetRequiredService<AuditExecutionEngine>());
         services.AddSingleton<IAuditLifecyclePort>(p => p.GetRequiredService<AuditExecutionEngine>());
         services.AddSingleton<CrawlForge.Api.Controllers.IReAuditExecutionPort>(p => p.GetRequiredService<AuditExecutionEngine>());
+        // WP-09-11: G10 persist-before-start list-audit port (REST delegates).
+        services.AddSingleton<CrawlForge.Api.Controllers.IListAuditStartPort>(p => p.GetRequiredService<AuditExecutionEngine>());
         services.AddSingleton<IBackendLifecycle>(p => p.GetRequiredService<AuditExecutionEngine>());
 
         services.AddSingleton<IBackendLifecycle, MigrationLifecycleParticipant>();

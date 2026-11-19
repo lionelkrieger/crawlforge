@@ -94,9 +94,14 @@ export function createShellServices(options: ShellServicesOptions): ShellService
 export interface ShellNavigation {
   readonly view: ShellView;
   readonly layout: PaneLayoutState;
+  readonly selectedProjectId: string | null;
   setView(view: ShellView): void;
   setLayout(layout: PaneLayoutState): void;
   openAudit(auditId: string): void;
+  /** Opens the project overview (WP-09-11 mounting). */
+  openProject(projectId: string): void;
+  /** Opens the project's configuration list (WP-09-11 mounting). */
+  openConfigurations(projectId: string): void;
 }
 
 interface ShellContextValue {
@@ -112,10 +117,12 @@ export interface ShellProviderProps {
   readonly children: ReactNode;
   /** Initial window state override (tests). */
   readonly initialWindowState?: ShellWindowState;
+  /** Deep-link audit to open on mount (G20 ?route=report&auditId=…). */
+  readonly initialAuditId?: string | null;
 }
 
 /** Provides services + persisted navigation/layout to the shell tree. */
-export function ShellProvider({ services, children, initialWindowState }: ShellProviderProps) {
+export function ShellProvider({ services, children, initialWindowState, initialAuditId }: ShellProviderProps) {
   const [windowState, setWindowState] = useState<ShellWindowState>(
     () => initialWindowState ?? loadWindowState()
   );
@@ -131,6 +138,7 @@ export function ShellProvider({ services, children, initialWindowState }: ShellP
     () => ({
       view: windowState.view,
       layout: windowState.layout,
+      selectedProjectId: windowState.selectedProjectId,
       setView: (view) => update({ ...stateRef.current, view }),
       setLayout: (layout) => update({ ...stateRef.current, layout }),
       openAudit: (auditId) => {
@@ -139,10 +147,23 @@ export function ShellProvider({ services, children, initialWindowState }: ShellP
         if (services.hub) {
           void services.hub.subscribe([auditId]).catch(() => undefined);
         }
-      }
+      },
+      openProject: (projectId) => update({ ...stateRef.current, view: 'project', selectedProjectId: projectId }),
+      openConfigurations: (projectId) =>
+        update({ ...stateRef.current, view: 'configurations', selectedProjectId: projectId })
     }),
     [windowState, update, services]
   );
+
+  // G20 deep link: the Electron window catalog appends ?route=report&auditId=X;
+  // the renderer opens that audit once on mount (route wins over persistence).
+  const deepLinkApplied = useRef(false);
+  useEffect(() => {
+    if (deepLinkApplied.current || !initialAuditId) return;
+    deepLinkApplied.current = true;
+    navigation.openAudit(initialAuditId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialAuditId]);
 
   const value = useMemo(() => ({ services, navigation }), [services, navigation]);
   return <ShellContext.Provider value={value}>{children}</ShellContext.Provider>;

@@ -1,152 +1,152 @@
 [
   {
-    "receivedAt": "2026-11-18T10:17:13.1182518\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:08.0143078\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 2,
       "rateAfter": 2.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.8819,
-      "rollingBaselineRate": 14.734920160000005,
-      "timestamp": "2026-11-18T10:17:13.1114027\u002B00:00"
+      "ttfbSampleMs": 0.7121,
+      "rollingBaselineRate": 14.260545440000003,
+      "timestamp": "2026-11-19T15:45:08.0077382\u002B00:00"
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:16.8073982\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:10.0965299\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 2.5,
       "rateAfter": 3,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.7752,
-      "rollingBaselineRate": 5.232362702028802,
-      "timestamp": "2026-11-18T10:17:16.8068389\u002B00:00"
+      "ttfbSampleMs": 0.6015,
+      "rollingBaselineRate": 5.062270729779202,
+      "timestamp": "2026-11-19T15:45:10.0960225\u002B00:00"
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:18.205839\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:12.5249018\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 3,
       "rateAfter": 3.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.6557,
-      "rollingBaselineRate": 2.1875190742007975,
-      "timestamp": "2026-11-18T10:17:18.2055\u002B00:00"
+      "ttfbSampleMs": 0.5075,
+      "rollingBaselineRate": 2.0388359447340494,
+      "timestamp": "2026-11-19T15:45:12.5244932\u002B00:00"
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:19.974225\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:13.9779208\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 3.5,
       "rateAfter": 4,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.4863,
-      "rollingBaselineRate": 1.124848202234118,
-      "timestamp": "2026-11-18T10:17:19.9738899\u002B00:00"
+      "ttfbSampleMs": 0.6835,
+      "rollingBaselineRate": 1.0484871383704537,
+      "timestamp": "2026-11-19T15:45:13.9775482\u002B00:00"
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:21.0043485\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:15.264763\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 4,
       "rateAfter": 4.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.6493,
-      "rollingBaselineRate": 0.8158975549080759,
-      "timestamp": "2026-11-18T10:17:21.0039543\u002B00:00"
+      "ttfbSampleMs": 0.5713,
+      "rollingBaselineRate": 0.8020310175012305,
+      "timestamp": "2026-11-19T15:45:15.2644329\u002B00:00"
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:22.370963\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:16.410033\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 4.5,
       "rateAfter": 5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 1.166,
-      "rollingBaselineRate": 0.8623930547922785,
-      "timestamp": "2026-11-18T10:17:22.3706718\u002B00:00"
+      "ttfbSampleMs": 0.4861,
+      "rollingBaselineRate": 0.6206277958148034,
+      "timestamp": "2026-11-19T15:45:16.409664\u002B00:00"
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:23.5873418\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:18.226875\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 5,
       "rateAfter": 5.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.7217,
-      "rollingBaselineRate": 0.781712316194334,
-      "timestamp": "2026-11-18T10:17:23.5870263\u002B00:00"
+      "ttfbSampleMs": 0.5082,
+      "rollingBaselineRate": 0.5619353800358887,
+      "timestamp": "2026-11-19T15:45:18.2265362\u002B00:00"
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:24.7071278\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:20.0030044\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
-      "rateBefore": 5.5,
-      "rateAfter": 6,
+      "rateBefore": 6,
+      "rateAfter": 6.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.8705,
-      "rollingBaselineRate": 0.7884336357705595,
-      "timestamp": "2026-11-18T10:17:24.7064924\u002B00:00"
+      "ttfbSampleMs": 0.4635,
+      "rollingBaselineRate": 0.5526702024864271,
+      "timestamp": "2026-11-19T15:45:20.0026679\u002B00:00"
     }
   },
   {
-    "receivedAt": "2026-11-18T10:17:26.3230713\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:21.5175447\u002B00:00",
     "payload": {
-      "auditId": 1,
-      "host": "127.0.0.1",
-      "trigger": "additive-increase",
-      "rateBefore": 6.5,
-      "rateAfter": 7,
-      "concurrencyBefore": 1,
-      "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.5676,
-      "rollingBaselineRate": 0.6890005186623234,
-      "timestamp": "2026-11-18T10:17:26.3225736\u002B00:00"
-    }
-  },
-  {
-    "receivedAt": "2026-11-18T10:17:27.7658277\u002B00:00",
-    "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "host": "127.0.0.1",
       "trigger": "additive-increase",
       "rateBefore": 7,
       "rateAfter": 7.5,
       "concurrencyBefore": 1,
       "concurrencyAfter": 1,
-      "ttfbSampleMs": 0.5254,
-      "rollingBaselineRate": 0.5703964605210985,
-      "timestamp": "2026-11-18T10:17:27.7655495\u002B00:00"
+      "ttfbSampleMs": 0.5004,
+      "rollingBaselineRate": 0.49021175593394267,
+      "timestamp": "2026-11-19T15:45:21.5172523\u002B00:00"
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:22.823721\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "host": "127.0.0.1",
+      "trigger": "additive-increase",
+      "rateBefore": 8,
+      "rateAfter": 8.5,
+      "concurrencyBefore": 1,
+      "concurrencyAfter": 1,
+      "ttfbSampleMs": 0.6115,
+      "rollingBaselineRate": 0.5363515109468355,
+      "timestamp": "2026-11-19T15:45:22.8233863\u002B00:00"
     }
   }
 ]

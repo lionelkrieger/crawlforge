@@ -4,17 +4,17 @@
   "configurationId": "1",
   "state": "completed",
   "phase": "finalizing",
-  "startedAt": "2026-11-18T10:17:11.551046\u002B00:00",
-  "completedAt": "2026-11-18T10:18:13.8660467\u002B00:00",
+  "startedAt": "2026-11-19T15:45:07.3138939\u002B00:00",
+  "completedAt": "2026-11-19T15:45:40.0720823\u002B00:00",
   "counters": {
-    "queued": 0,
-    "fetched": 183,
-    "error": 0,
+    "queued": 134,
+    "fetched": 132,
+    "error": 1,
     "blocked": 0,
-    "wafBlocked": null
+    "wafBlocked": 0
   },
-  "elapsedSeconds": 62.315,
-  "throughputPerSecond": 2.937,
-  "estimatedRemainderSeconds": null,
+  "elapsedSeconds": 32.758,
+  "throughputPerSecond": 4.03,
+  "estimatedRemainderSeconds": 33.255,
   "errorMessage": null
 }

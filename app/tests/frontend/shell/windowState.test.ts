@@ -31,7 +31,8 @@ describe('window state', () => {
     expect(sanitizeWindowState('garbage')).toEqual(DEFAULT_WINDOW_STATE);
     expect(sanitizeWindowState({ view: 'evil', layout: { split: 99 } })).toEqual({
       view: 'hub',
-      layout: { split: 0.85, collapsed: false, direction: 'horizontal' }
+      layout: { split: 0.85, collapsed: false, direction: 'horizontal' },
+      selectedProjectId: null
     });
   });
 
@@ -45,11 +46,19 @@ describe('window state', () => {
 
   it('roundtrips through storage', () => {
     const storage = memoryStorage();
-    saveWindowState({ view: 'tools', layout: { split: 0.4, collapsed: false, direction: 'vertical' } }, storage);
+    saveWindowState({ view: 'tools', layout: { split: 0.4, collapsed: false, direction: 'vertical' }, selectedProjectId: null }, storage);
     const loaded = loadWindowState(storage);
     expect(loaded.view).toBe('tools');
     expect(loaded.layout.split).toBe(0.4);
     expect(loaded.layout.direction).toBe('vertical');
+  });
+
+  it('carries the project/configuration views and selected project (WP-09-11)', () => {
+    const state = sanitizeWindowState({ view: 'configurations', selectedProjectId: '7', layout: { split: 0.5 } });
+    expect(state.view).toBe('configurations');
+    expect(state.selectedProjectId).toBe('7');
+    expect(sanitizeWindowState({ view: 'project', selectedProjectId: 42 }).selectedProjectId).toBeNull();
+    expect(sanitizeWindowState({ view: 'project', selectedProjectId: '' }).selectedProjectId).toBeNull();
   });
 
   it('tolerates denied storage', () => {

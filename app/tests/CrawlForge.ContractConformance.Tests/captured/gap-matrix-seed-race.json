@@ -2,28 +2,28 @@
   "gap": "G-MATRIX-SEED-RACE",
   "request": "POST /api/audits/1/redirect-matrix {rows:[chain-1\u2192redirect-target], autoSeedAudit:true}",
   "uploadStatus": 200,
-  "uploadBody": "{\u0022data\u0022:{\u0022matrixId\u0022:\u00221\u0022,\u0022rowCount\u0022:1,\u0022auditId\u0022:\u00224\u0022}}",
-  "seededAuditId": 4,
-  "terminalState": "failed",
+  "uploadBody": "{\u0022data\u0022:{\u0022matrixId\u0022:\u00221\u0022,\u0022rowCount\u0022:1,\u0022auditId\u0022:\u00223\u0022}}",
+  "seededAuditId": 3,
+  "terminalState": "completed",
   "detail": {
-    "id": "4",
+    "id": "3",
     "projectId": "1",
     "configurationId": "1",
-    "state": "failed",
+    "state": "completed",
     "phase": "finalizing",
-    "startedAt": "2026-11-18T10:18:22.3424078\u002B00:00",
-    "completedAt": "2026-11-18T10:18:24.7575635\u002B00:00",
+    "startedAt": "2026-11-19T15:45:43.534851\u002B00:00",
+    "completedAt": "2026-11-19T15:45:52.7101458\u002B00:00",
     "counters": {
-      "queued": 0,
-      "fetched": 3,
+      "queued": 134,
+      "fetched": 134,
       "error": 0,
       "blocked": 0,
-      "wafBlocked": null
+      "wafBlocked": 0
     },
-    "elapsedSeconds": 2.415,
-    "throughputPerSecond": 1.242,
-    "estimatedRemainderSeconds": null,
-    "errorMessage": "SQLite Error 19: \u0027UNIQUE constraint failed: url_records.audit_id, url_records.canonical_url\u0027."
+    "elapsedSeconds": 9.175,
+    "throughputPerSecond": 14.604,
+    "estimatedRemainderSeconds": 9.175,
+    "errorMessage": null
   },
   "mechanism": "StartAuditAsync crawl \u002B IngestAsync insert the same canonical URL concurrently; UNIQUE(audit_id, canonical_url) violation (CrawlPhaseAsync or IngestAsync depending on race order)",
   "producer": "RedirectMatrixController.cs:94-95 \u2192 AuditExecutionEngine.CrawlPhaseAsync / UrlListIngestor \u2192 SqlRepository.CreateAsync"

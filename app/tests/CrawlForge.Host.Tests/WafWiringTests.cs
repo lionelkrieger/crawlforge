@@ -1,7 +1,10 @@
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using CrawlForge.Api.Hubs;
+using CrawlForge.Contracts.Api;
 using CrawlForge.Contracts.Common;
 using CrawlForge.Contracts.Constants;
 using CrawlForge.Contracts.Crawl;
@@ -79,8 +82,10 @@ public sealed class WafWiringTests
         });
 
         var dataDirectory = Path.Combine(Path.GetTempPath(), "crawlforge-host-tests", Guid.NewGuid().ToString("N"));
+        var channel = new RecordingHubChannel();
         var backend = await CrawlForgeBackend.StartAsync(
-            [$"--CrawlForge:DataDirectory={dataDirectory}", "--CrawlForge:Port=0"]);
+            [$"--CrawlForge:DataDirectory={dataDirectory}", "--CrawlForge:Port=0"],
+            builder => builder.Services.AddSingleton<IHubClientChannel>(channel));
         try
         {
             var projects = backend.App.Services.GetRequiredService<IWriteRepository<ProjectDto>>();
@@ -138,6 +143,28 @@ public sealed class WafWiringTests
                 .ListAsync(new ListQuery(0, 100, new Dictionary<string, string> { ["auditId"] = auditId.ToString() }));
             Assert.Contains(metrics.Items, m => m.MetricKey == MetricKeys.WafBlocks && m.Value >= 1);
             Assert.Contains(metrics.Items, m => m.MetricKey == MetricKeys.WafBlockRate);
+
+            // WP-09-11 (G05): the waf-blocks hub producer emits the frozen
+            // batch shape — string auditId + blocks[] with string urlId,
+            // canonicalUrl, wire provider/challengeClass, numeric confidence.
+            var wafEvents = channel.Events.Where(e => e.Name == HubEventCatalog.WafBlocks).ToList();
+            Assert.True(wafEvents.Count > 0, "no waf-blocks hub events emitted for the challenge audit");
+            var wafPayload = JsonDocument.Parse(wafEvents[0].PayloadJson).RootElement;
+            Assert.Equal(JsonValueKind.String, wafPayload.GetProperty("auditId").ValueKind);
+            Assert.Equal(auditId.ToString(), wafPayload.GetProperty("auditId").GetString());
+            var blocks = wafPayload.GetProperty("blocks");
+            Assert.Equal(JsonValueKind.Array, blocks.ValueKind);
+            var challengeBlock = blocks.EnumerateArray().Single(b =>
+                b.GetProperty("canonicalUrl").GetString()!.EndsWith("/challenge", StringComparison.Ordinal));
+            Assert.Equal(JsonValueKind.String, challengeBlock.GetProperty("urlId").ValueKind);
+            Assert.Equal(blocked.Id.ToString(), challengeBlock.GetProperty("urlId").GetString());
+            Assert.Equal("cloudflare", challengeBlock.GetProperty("provider").GetString());
+            Assert.Equal("interstitial", challengeBlock.GetProperty("challengeClass").GetString());
+            Assert.Equal(JsonValueKind.Number, challengeBlock.GetProperty("confidence").ValueKind);
+
+            // The same flush cadence produces url-batch and findings-updated.
+            Assert.Contains(channel.Events, e => e.Name == HubEventCatalog.UrlBatch);
+            Assert.Contains(channel.Events, e => e.Name == HubEventCatalog.FindingsUpdated);
         }
         finally
         {
@@ -162,5 +189,26 @@ public sealed class WafWiringTests
                 // Best effort.
             }
         }
+    }
+
+    private sealed class RecordingHubChannel : IHubClientChannel
+    {
+        public ConcurrentQueue<(string Name, string PayloadJson)> Events { get; } = new();
+
+        public Task SendAllAsync(string eventName, string payloadJson, CancellationToken cancellationToken = default)
+        {
+            Events.Enqueue((eventName, payloadJson));
+            return Task.CompletedTask;
+        }
+
+        public Task SendGroupAsync(string groupName, string eventName, string payloadJson, CancellationToken cancellationToken = default)
+        {
+            Events.Enqueue((eventName, payloadJson));
+            return Task.CompletedTask;
+        }
+
+        public Task AddToGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+        public Task RemoveFromGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 }

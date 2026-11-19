@@ -74,13 +74,11 @@ public sealed class HubEventWireConformanceTests
     }
 
     /// <summary>
-    /// G-PROGRESS (WP-09-06 counter keys + WP-09-11 missing fields): the frozen
-    /// frontend CrawlProgressPayload (events.ts:44-61) requires string auditId,
-    /// consumer counter keys, throughputPerSecond, elapsedSeconds,
-    /// estimatedRemainderSeconds, phase — the live payload carries none of the
-    /// throughput/phase fields and uses engine counter keys + numeric auditId.
+    /// G-PROGRESS RESOLVED (WP-09-11): the engine's crawl-progress producer
+    /// emits string auditId, consumer counter keys (via HubPayloadNormalizer),
+    /// throughputPerSecond, elapsedSeconds, estimatedRemainderSeconds, phase.
     /// </summary>
-    [Fact(Skip = "G-PROGRESS: WP-09-06 counter keys + WP-09-11 throughput/phase fields + G-G numeric auditId — see GAPS.md")]
+    [Fact]
     public void CrawlProgress_FrontendContractShape()
     {
         var payload = _fixture.Hub.EventsNamed("crawl-progress").First().Payload;
@@ -541,32 +539,104 @@ public sealed class HubEventWireConformanceTests
         }
     }
 
-    /// <summary>G05: url-batch has no producer (CODEMAP §6); contract-side inventory only.</summary>
-    [Fact(Skip = "G05: url-batch has no producer in the backend (CODEMAP §6); contract-side coverage only — see GAPS.md")]
-    public void UrlBatch_NoProducer_ContractSide()
+    /// <summary>
+    /// G05 RESOLVED (WP-09-11): url-batch is produced by the engine's
+    /// FlushRunEventsAsync (≤1/s cadence, lossless delivery via
+    /// AuditRunEventPublisher). Live shape lock over the fixture audit.
+    /// </summary>
+    [Fact]
+    public async Task UrlBatch_LivePayload_SpecShape()
     {
-        AssertNoProducer("url-batch");
+        var events = _fixture.Hub.EventsNamed("url-batch")
+            .Where(e => MatchesId(e.Payload, "auditId", _fixture.AuditId))
+            .ToArray();
+        Assert.True(events.Length > 0, "no url-batch events captured for the fixture audit");
+        await _fixture.SaveCaptureAsync("hub-url-batch.json", JsonSerializer.SerializeToElement(
+            events.Select(e => new { receivedAt = e.ReceivedAt, payload = e.Payload })));
+
+        var statusClasses = new HashSet<string>(StringComparer.Ordinal) { "1xx", "2xx", "3xx", "4xx", "5xx" };
+        foreach (var captured in events)
+        {
+            var payload = captured.Payload;
+            Assert.Equal(JsonValueKind.String, payload.GetProperty("auditId").ValueKind);
+            var urls = payload.GetProperty("urls");
+            Assert.Equal(JsonValueKind.Array, urls.ValueKind);
+            foreach (var entry in urls.EnumerateArray())
+            {
+                Assert.Equal(JsonValueKind.String, entry.GetProperty("urlId").ValueKind);
+                Assert.Equal(JsonValueKind.String, entry.GetProperty("canonicalUrl").ValueKind);
+                Assert.Contains(entry.GetProperty("statusClass").GetString()!, statusClasses);
+            }
+        }
     }
 
-    /// <summary>G05: findings-updated has no producer (CODEMAP §6); contract-side inventory only.</summary>
-    [Fact(Skip = "G05: findings-updated has no producer in the backend (CODEMAP §6); contract-side coverage only — see GAPS.md")]
-    public void FindingsUpdated_NoProducer_ContractSide()
+    /// <summary>
+    /// G05 RESOLVED (WP-09-11): findings-updated is produced by the engine's
+    /// FlushRunEventsAsync — severity/category count deltas DERIVED from the
+    /// persisted finding counts against the last published snapshot.
+    /// </summary>
+    [Fact]
+    public async Task FindingsUpdated_LivePayload_SpecShape()
     {
-        AssertNoProducer("findings-updated");
+        var events = _fixture.Hub.EventsNamed("findings-updated")
+            .Where(e => MatchesId(e.Payload, "auditId", _fixture.AuditId))
+            .ToArray();
+        Assert.True(events.Length > 0, "no findings-updated events captured for the fixture audit");
+        await _fixture.SaveCaptureAsync("hub-findings-updated.json", JsonSerializer.SerializeToElement(
+            events.Select(e => new { receivedAt = e.ReceivedAt, payload = e.Payload })));
+
+        foreach (var captured in events)
+        {
+            var payload = captured.Payload;
+            Assert.Equal(JsonValueKind.String, payload.GetProperty("auditId").ValueKind);
+            foreach (var member in new[] { "severityDeltas", "categoryDeltas" })
+            {
+                var deltas = payload.GetProperty(member);
+                Assert.Equal(JsonValueKind.Object, deltas.ValueKind);
+                foreach (var delta in deltas.EnumerateObject())
+                {
+                    Assert.Equal(JsonValueKind.Number, delta.Value.ValueKind);
+                }
+            }
+        }
     }
 
-    /// <summary>G05: backend-lifecycle has no producer (CODEMAP §6); contract-side inventory only.</summary>
-    [Fact(Skip = "G05: backend-lifecycle has no producer in the backend (CODEMAP §6); contract-side coverage only — see GAPS.md")]
-    public void BackendLifecycle_NoProducer_ContractSide()
+    /// <summary>
+    /// G05 RESOLVED (WP-09-11): backend-lifecycle is produced by
+    /// CrawlForgeBackend.PublishLifecycleAsync — {kind:"ready"} at startup
+    /// (before the harness hub connects) and {kind:"shutdown"} before the
+    /// drain. The harness stops its backend through POST /api/system/shutdown
+    /// while the hub is connected, so the shutdown notice lands in the
+    /// hub-events.json capture at fixture dispose — AFTER the test run. The
+    /// mid-run lock is therefore producer-side; the live ready/shutdown shape
+    /// proof is CrawlForge.Host.Tests BackendLifecycleTests (in-process
+    /// backend + recording hub channel).
+    /// </summary>
+    [Fact]
+    public void BackendLifecycle_ProducerWired_ShapeLock()
     {
-        AssertNoProducer("backend-lifecycle");
+        var entry = PayloadInventory.Load().Hub.Events.Single(e => e.Name == "backend-lifecycle");
+        Assert.True(entry.InSpec);
+        Assert.True(entry.InCatalog);
+        Assert.False(entry.Producer.StartsWith("NONE", StringComparison.Ordinal));
+        Assert.Contains("BackendLifecycleTests", entry.Producer);
     }
 
-    /// <summary>G05: waf-blocks has no producer (CODEMAP §6); contract-side inventory only.</summary>
-    [Fact(Skip = "G05: waf-blocks has no producer in the backend (CODEMAP §6); contract-side coverage only — see GAPS.md")]
-    public void WafBlocks_NoProducer_ContractSide()
+    /// <summary>
+    /// G05 producer WIRED (WP-09-11): waf-blocks is produced by the engine's
+    /// FlushRunEventsAsync (1/s hub throttle). The fixture site serves no WAF
+    /// challenge, so there is no deterministic live trigger here — the live
+    /// producer proof is CrawlForge.Host.Tests WafWiringTests (challenge
+    /// origin → waf-blocks batch with the frozen entry shape).
+    /// </summary>
+    [Fact]
+    public void WafBlocks_ProducerWired_NoFixtureTrigger()
     {
-        AssertNoProducer("waf-blocks");
+        var entry = PayloadInventory.Load().Hub.Events.Single(e => e.Name == "waf-blocks");
+        Assert.True(entry.InSpec);
+        Assert.True(entry.InCatalog);
+        Assert.False(entry.Producer.StartsWith("NONE", StringComparison.Ordinal));
+        Assert.Contains("WafWiringTests", entry.Producer);
     }
 
     /// <summary>G05: embedding-progress has no producer (CODEMAP §6); contract-side inventory only.</summary>

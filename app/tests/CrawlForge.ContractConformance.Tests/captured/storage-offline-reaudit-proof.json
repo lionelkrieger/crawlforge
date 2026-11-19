@@ -1,8 +1,8 @@
 {
   "sourceAuditId": 2,
-  "reauditId": 3,
+  "reauditId": 4,
   "state": "completed",
-  "sourceUrlRecords": 8,
-  "reauditUrlRecords": 8,
+  "sourceUrlRecords": 6,
+  "reauditUrlRecords": 6,
   "fixtureNonGetHits": 0
 }

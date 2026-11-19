@@ -110,72 +110,76 @@ Entry points (all converge on one engine):
 
 | Entry | File → symbol | Calls |
 |---|---|---|
-| REST `POST /api/audits` | `Api/Controllers/AuditsController.cs` → `StartAuditAsync` (:95) | `IAuditExecutionService.StartAuditAsync(projectId, configurationId, Manual, overrides)` |
-| REST re-audit `POST /api/audits/{id}/reaudit` | `AuditsController.cs` → `ReauditAsync` (:282) | `IReAuditExecutionPort.ReAuditAsync(id, refresh)` |
-| MCP `start-audit` / lifecycle tools | `BE/CrawlForge.Mcp/McpToolSurface.cs` (:115 ff.) | same `IAuditExecutionService` / `IAuditLifecyclePort` |
+| REST `POST /api/audits` | `Api/Controllers/AuditsController.cs` → `StartAuditAsync` | `IListAuditStartPort.StartAsync` when registered (G10 persist-before-start: url-list/matrix rows persisted BEFORE the engine starts), else `IAuditExecutionService.StartAuditAsync`; §10.4 idempotency: an active run of the same configuration returns the existing auditId |
+| REST re-audit `POST /api/audits/{id}/reaudit` | `AuditsController.cs` → `ReauditAsync` | `IReAuditExecutionPort.ReAuditAsync(id, refresh)` — reads the DTO-shaped storage snapshot (G-REAUDIT-SNAPSHOT resolved) |
+| MCP `start-audit` / lifecycle tools | `BE/CrawlForge.Mcp/McpToolSurface.cs` | same `IAuditExecutionService` / `IAuditLifecyclePort` |
 | Scheduler | `BE/CrawlForge.Crawler/Scheduling/ScheduledAuditService.cs` | `IAuditExecutionService` |
+| UI | hub create-project modal (full ConfigurationEditor) → project view start-audit → report window | REST entries above |
 
-**Engine:** `Host/Execution/AuditExecutionEngine.cs` (implements all four port interfaces).
+**Engine:** `Host/Execution/AuditExecutionEngine.cs` (implements all four port interfaces;
+WP-09-11 serial wiring — the crawl loop is fully wired, not a stub).
 
-1. `StartAuditAsync` (:334) — loads configuration, freezes `ConfigurationSnapshotJson`, persists
-   `AuditDto` (Running/Crawling), `Task.Run(RunAuditAsync)`, publishes `stage-changed`.
-2. `RunAuditAsync` (:491) — `CrawlPhaseAsync` → `RunLinkGraphEnrichmentAsync` (:843, D15) →
-   `AnalyzePhaseAsync` → `ScoreAndFinalizeAsync`. Failures finalize as Failed with `errorMessage`.
-3. `CrawlPhaseAsync` (:535) — limits + `AimdSettingsParser.Parse` (HOTFIX-01, accepts nested + legacy
-   flat politeness JSON); per-audit `AimdPolitenessController` with `CompositeHostThrottleSink`
-   (recorder + coalesced hub sink, :586–591); `PriorityFrontier`; **own `HttpClient` via
-   `Composition/CrawlTargetHttpClientFactory.Create` (:601 — plain handler, no proxy/signed requests,
-   G09)**; `HttpFetcher` (:603); checkpoint restore (:608) else seeds from **`SeedsJson` only** (:637).
-   Loop (:654): observe persisted status → robots check (:1390) → `aimd.WaitAsync` →
-   `fetcher.FetchAsync` (:693) → **`aimd.RecordResponse(..., IsChallenge: false, ...)` (:709–710, G07)**
-   → `WafChallengeEvaluator.Evaluate` (:713) → `url_records` write (:733) → WAF detection/notice rows
-   (:741/:745) → body into `IContentStore` (:751) → `AngleSharpDomParser.Parse` +
-   `DiscoverLinksAsync` (:757–759, :1421 — zoned link inventory into `link_edges`, same-host enqueue)
-   → checkpoint every 25 fetches (:763) → `PublishProgressAsync` (:770).
-4. **RENDERING GAP (G03) — where rendering should plug in and does not:**
-   - The engine never injects `IRenderingPool`. It is registered (`EngineServicesModule.cs:98`,
-     `HeadlessRenderingPool`) but consumed only by `SinglePageAnalyzer` (`EngineServicesModule.cs:204`)
-     and tools. The crawl loop fetches HTTP only; no rendered DOM is ever captured or stored.
-   - `BuildStoredContextAsync` (:1476) rebuilds the analysis context from the stored body and returns
-     **`new PageAuditContext(auditId, url, configuration, fetch, document, null, null, null)` (:1510)** —
-     the three nulls are `RenderedDocument`, `ScopedText`, `CapturedRequests`
-     (record: `BE/CrawlForge.Contracts/Audit/PipelineContracts.cs:84–92`).
-   - Plug-in points: capture rendered DOM in `CrawlPhaseAsync` after fetch (store as a content
-     artifact), then load it in `BuildStoredContextAsync` instead of the nulls.
-5. `AnalyzePhaseAsync` (:780) — streams `url_records` in 1000-row pages; per successful URL:
-   `BuildStoredContextAsync` → `AnalyzeOnePageAsync` (:1025): `IAuditPipeline.RunAsync` →
-   `FindingEmitter.EmitAsync` (:1029) → `url_elements` + `metric_summaries` writes →
-   `IMarTechAuditor` (:1044) → `ITechnologyDetector` (:1057) → `PersistCustomContentAsync` (:1067,
-   extraction/search/snippets). Then `RunNgramSitePassAsync` (:835/:860, D14 site pass).
-6. **Pipeline:** `BE/CrawlForge.Audit/Pipeline/AuditPipeline.cs` → `RunAsync` (:80), 8 steps:
+1. `StartAuditAsync` — loads configuration, freezes `ConfigurationSnapshotJson` (storage DTO shape;
+   the API boundary merges `enabledCategories` without replacing the snapshot), persists `AuditDto`
+   (Queued), idempotency check, `Task.Run(RunAuditAsync)`, publishes `stage-changed`.
+2. `RunAuditAsync` — `CrawlPhaseAsync` → `RunPostCrawlPassesAsync` (sitemap correlation, orphan
+   analyzer, broken-link probes) → `RunSitePassesAsync` (duplicate metadata/content, URL structure,
+   hreflang reciprocity, UA comparison) → `AnalyzePhaseAsync` → `ScoreAndFinalizeAsync`. Failures
+   finalize as Failed with `errorMessage` + `audit-failed`.
+3. `CrawlPhaseAsync` — scope parse (`CrawlScopeConfigParser`: scopeRules/cookies/headers/behavior
+   keys), canonicalizer, request profile, per-audit cookie jar (`CookieJarFetchHook` merge semantics),
+   virtual robots per authority, `AimdSettingsParser.Parse` (HOTFIX-01), per-audit
+   `AimdPolitenessController` with `CompositeHostThrottleSink` + `PortAwareCrawlDelaySource`
+   (robots crawl-delay keyed by host→authority map), `PriorityFrontier`; own `HttpClient` via
+   `Composition/CrawlTargetHttpClientFactory.Create` (AllowAutoRedirect=false; redirect chains
+   recorded + persisted via `UrlElementRedirectChainStore`); checkpoint restore else seeds +
+   pre-seeded row reuse (`GetOrCreateUrlRowAsync`, G-MATRIX-SEED-RACE); sitemap ingestion
+   (`ISitemapIngestor`, skipped in list mode); list mode via `ListSeedResolver`/`ListModeIngestor`/
+   `ListDiscoveryGate` + `IPreCrawlValidator` probe. Loop: ceilings → `ObserveStatus` (real WAF
+   verdict) → dequeue → depth → robots (per AUTHORITY, port preserved; unreachable → permissive
+   allow, RFC 9309 §2.3.1.3) → row reuse/create → `aimd.WaitAsync` → `FetchContextScope` → fetch →
+   failure classification → indexability (CR-024 search-indexable) → row UPDATE → url-batch/waf-blocks
+   accumulation → redirect findings + chain outcome → body into `IContentStore` →
+   `DiscoverLinksAsync` (zoned inventory into `link_edges`; enqueue gated by scope/discovery) →
+   trap observation (`CrawlerTrapDetector`) → checkpoint → `PublishProgressAsync` +
+   `FlushRunEventsAsync` (≤1/s producer cadence, lossless).
+4. **Rendering (G03, partial):** the crawl fetches HTTP only (Flow 1). The rendering profile is
+   parsed/persisted; `IRenderingPool` (`HeadlessRenderingPool`) is registered and consumed by
+   `SinglePageAnalyzer` + `IResponseRenderedComparer` in the pipeline family. Headless crawl
+   rendering (rendered DOM capture into `PageAuditContext`) is phase-10 (Flow 2) scope.
+5. `AnalyzePhaseAsync` — streams `url_records` in pages; per successful URL:
+   `BuildStoredContextAsync` → `AnalyzeOnePageAsync`: `IAuditPipeline.RunAsync` →
+   `FindingEmitter.EmitAsync` (catalog-enriched: priority/remediationDifficulty stamped) →
+   `url_elements` + `metric_summaries` writes → `IMarTechAuditor` → `ITechnologyDetector` →
+   custom content persistence. Then n-gram site pass.
+6. **Pipeline:** `BE/CrawlForge.Audit/Pipeline/AuditPipeline.cs` → `RunAsync`, 8 steps:
    stored-HTML reuse → tolerant parse → scope resolution + element inventory → per-URL rule passes
    (`IAuditRuleAnalyzer`) → finding emission → metric aggregation → report readiness.
-7. **Analyzer/rule registration:** the rule family is composed in
-   `EngineServicesModule.RegisterAudit` (:161–177): `AuditRuleHost` over
-   `AnalyzerRuleAdapter`(`AccessibilityAnalyzer`, `ContentQualityAnalyzer`, `HreflangAnalyzer`,
-   `MobileFriendlinessAnalyzer`) + `NGramRuleAnalyzer`. Host: `Audit/Pipeline/AuditRuleHost.cs`
-   (per-analyzer failure isolation); adapter: `Host/Composition/AnalyzerRuleAdapter.cs`.
-   Rule catalogue: `AuditRuleCatalog` in `Audit/Pipeline/RuleDefinition.cs:45`; rule-key constants:
-   `Contracts/Constants/FindingRuleKeys.cs`. **Note:** `FindingEmitter` accepts an optional catalog
-   for priority/remediation-difficulty evidence enrichment, but the DI factory
-   (`EngineServicesModule.cs:223–225`) constructs it **without** the catalog — enrichment is inert.
-8. `ScoreAndFinalizeAsync` (:1173) — `WafBlockRateDiagnostic.ReportAsync` (:1179) →
-   `PersistIntelligenceAggregatesAsync` (:1197, GEO readiness + governance matrix + coverage) →
-   `AuditScoringService.ComputeAsync` + `AuditScoreRecorder.RecordAsync` (:1186–1187) →
-   `FinalizeAsync` (:1236): persists terminal status + `counters_json` (+`errorMessage` on failure),
-   publishes `stage-changed` then **`audit-failed` (:1270) or `audit-completed` (:1281)**.
-9. Hub publication points: `PublishStageAsync` (:1647, `stage-changed`), `PublishProgressAsync`
-   (:1663, `crawl-progress` throttled 1/s; counters persisted ≤2/s), `HubHostThrottleSink`
-   (`Host/Execution/HostThrottleSinks.cs`, `host-throttle`).
-10. **Counter wire mismatch (probe-2):** engine writes `discovered/fetched/analyzed/failed`
-    (`Host/Execution/AuditRunState.cs` → `AuditRunCounters.ToPayload()` :28–34); REST
-    `Api/Controllers/AuditWireMapper.cs` → `ParseCounters` (:22) reads
-    **`queued/fetched/error/blocked/wafBlocked`** — only `fetched` overlaps, so REST/UI counters
-    show 0 for the rest. Fix belongs in a change record; do not silently rename either side.
+7. **Analyzer/rule registration:** `EngineServicesModule.RegisterAudit` composes `AuditRuleHost`
+   over `AnalyzerRuleAdapter`(Accessibility/ContentQuality/Hreflang/MobileFriendliness) +
+   `NGramRuleAnalyzer` + `StructuredDataRuleAnalyzer` (G11) + `ImageRuleAnalyzer` +
+   `UrlStructureAnalyzer` + `HreflangReciprocityRuleAnalyzer`. `AuditRuleCatalog` (14 crawl-family
+   `RuleDefinition`s) is registered and injected into `FindingEmitter` (gap #21 resolved).
+   `AuditCrawlComponents` aggregate registers the wave-9A/9B crawl components (chain store, run-event
+   publisher, rewrite engine, pre-crawl validator, finding recorder, orphan/duplicate/structure/
+   hreflang analyzers, suppression reads).
+8. `ScoreAndFinalizeAsync` — WAF block-rate diagnostic → intelligence aggregates (GEO readiness +
+   governance matrix + coverage) → scoring + recorder → `FinalizeAsync`: force-flush run events,
+   persist terminal status + `counters_json` (+`errorMessage` on failure), publish `stage-changed`
+   then `audit-failed` or `audit-completed` (string ids, catalog constants).
+9. Hub publication points: `PublishStageAsync` (stage-changed), `PublishProgressAsync`
+   (crawl-progress throttled 1/s; throughput/elapsed/remainder/phase + consumer counter keys via
+   `HubPayloadNormalizer`), `FlushRunEventsAsync` (url-batch, waf-blocks, findings-updated deltas),
+   `HubHostThrottleSink` (host-throttle, HOTFIX-01 locked names), `CrawlForgeBackend.PublishLifecycleAsync`
+   (backend-lifecycle ready/shutdown).
+10. **Counters:** engine writes `discovered/fetched/analyzed/failed/blocked/wafBlocked`
+    (`AuditRunState.ToPayload`); `AuditWireMapper.ParseCounters` maps them to the consumer keys
+    `queued/fetched/error/blocked/wafBlocked` at the REST + hub boundaries (WP-09-06; storage keeps
+    engine keys — no silent rename).
 
 Findings land in `findings` via `FindingEmitter` (`Audit/Pipeline/FindingEmitter.cs`, suppression-aware,
-project-scoped); aggregates in `metric_summaries`/`audit_scores` (also recomputable via
-`Data.Repositories/AuditAggregationService.cs` → `RecomputeAsync`).
+project-scoped, catalog-enriched); aggregates in `metric_summaries`/`audit_scores` (also recomputable
+via `Data.Repositories/AuditAggregationService.cs` → `RecomputeAsync`).
 
 ## 5. API surface
 
@@ -219,39 +223,40 @@ project-scoped); aggregates in `metric_summaries`/`audit_scores` (also recomputa
 
 ## 6. Real-time hub
 
-- **Definitions:** `Api/Hubs/HubEventCatalog.cs` — 19 server→client events + `subscribe`/`unsubscribe`;
+- **Definitions:** `Api/Hubs/HubEventCatalog.cs` — 20 server→client events + `subscribe`/`unsubscribe`;
   contract `Contracts/Api/HubContracts.cs` (`IRealtimeHub.PublishAsync(HubEvent)`,
   `HubEvent(Name, PayloadJson, ThrottleKey, ThrottleInterval)`).
 - **Core:** `Api/Hubs/RealtimeHubService.cs` (throttle/coalesce, per-audit groups `audit-{id}`,
-  2 s heartbeat via `SystemHealthSampler`); transport `Api/Hubs/SignalRHubChannel.cs`;
-  hub class `Api/Hubs/CrawlForgeHub.cs` at `/hubs/realtime`.
-- **Frontend consumers:** `FE/contracts/hub/events.ts` (`HUB_SERVER_EVENT_NAMES`, :339 — **18 names**,
+  2 s heartbeat via `SystemHealthSampler`, boundary normalization via `HubPayloadNormalizer`
+  — consumer counter keys + recursive id stringification on every event, WP-09-06);
+  transport `Api/Hubs/SignalRHubChannel.cs`; hub class `Api/Hubs/CrawlForgeHub.cs` at `/hubs/realtime`.
+- **Frontend consumers:** `FE/contracts/hub/events.ts` (`HUB_SERVER_EVENT_NAMES`, :370 — **20 names**,
   payload types, guards in `hub/guards.ts`) → `FE/store/hubClient.ts` (SignalR setup) →
   `FE/store/hubDemux.ts` (`createHubDemux`, typed handlers per event) → `FE/store/crawlForgeStore.ts`
   + `FE/store/liveProgress.ts`.
 
 | Event | Production producer |
 |---|---|
-| `crawl-progress` | `Host/Execution/AuditExecutionEngine.cs` → `PublishProgressAsync` (:1663) |
-| `url-batch` | **no producer** |
-| `stage-changed` | `AuditExecutionEngine.cs` → `PublishStageAsync` (:1647) |
-| `findings-updated` | **no producer** |
-| `audit-completed` | `AuditExecutionEngine.cs` → `FinalizeAsync` (:1281) |
-| `audit-failed` | `AuditExecutionEngine.cs` → `FinalizeAsync` (:1270) — added by HOTFIX-01 (G05 list is stale here) |
-| `backend-lifecycle` | **no producer** |
+| `crawl-progress` | `Host/Execution/AuditExecutionEngine.cs` → `PublishProgressAsync` (WP-09-11: string auditId, consumer counter keys via `HubPayloadNormalizer`, throughput/elapsed/remainder/phase + additive throttledHostCount/meanEffectiveRate; ≤1/s throttle) |
+| `url-batch` | `AuditExecutionEngine.cs` → `FlushRunEventsAsync` → `AuditRunEventPublisher.PublishUrlBatchAsync` (WP-09-11; ≤1/s producer cadence, lossless) |
+| `stage-changed` | `AuditExecutionEngine.cs` → `PublishStageAsync` (WP-09-11: catalog constant, string ids, wire states) |
+| `findings-updated` | `AuditExecutionEngine.cs` → `FlushRunEventsAsync` → `AuditRunEventPublisher.PublishFindingsUpdatedAsync` (WP-09-11; deltas derived from persisted finding counts vs last snapshot) |
+| `audit-completed` | `AuditExecutionEngine.cs` → `FinalizeAsync` (WP-09-11: string auditId, finalCounters incl blocked/wafBlocked, reportReady) |
+| `audit-failed` | `AuditExecutionEngine.cs` → `FinalizeAsync` — added by HOTFIX-01; `Api/Controllers/AuditsController.cs` also publishes `start-failed` on post-create start failure (WP-09-06) |
+| `backend-lifecycle` | `Host/CrawlForgeBackend.cs` → `PublishLifecycleAsync` (WP-09-11: `{kind:"ready"}` after startup, `{kind:"shutdown"}` before the drain) |
 | `schedule-fired` | `Crawler/Scheduling/ScheduleHubEvents.cs` → `ScheduleEventPublisher.PublishFiredAsync` (from `ScheduledAuditService`) |
 | `schedule-run-completed` | `ScheduleHubEvents.cs` → `PublishRunCompletedAsync` |
 | `export-delivery` | `Export/ExportModels.cs` → `ExportEventPublisher.PublishDeliveryAsync` (from `Export/Delivery/ExportDestinationDelivery.cs`) |
-| `waf-blocks` | **no producer** (name also used as metric key / MCP resource — not a hub publish) |
+| `waf-blocks` | `AuditExecutionEngine.cs` → `FlushRunEventsAsync` (WP-09-11; 1/s hub throttle; name also used as metric key / MCP resource) |
 | `host-throttle` | `Host/Execution/HostThrottleSinks.cs` → `HubHostThrottleSink.Emit` (wire fields locked by HOTFIX-01) |
 | `system-health` | `Api/Hubs/RealtimeHubService.cs` → heartbeat (`EmitHeartbeat`) |
 | `matrix-row-validated` | `Crawler/ListMode/RedirectMatrixValidator.cs` → `EmitBatchesAsync` |
 | `log-import-progress` | `Intelligence/LogAnalyzer/LogImportService.cs` → `PublishProgressAsync` |
 | `log-import-completed` | `LogImportService.cs` → `PublishCompletedAsync` |
-| `embedding-progress` | **no producer** |
-| `embedding-completed` | **no producer** |
-| `local-notification` | `ScheduleHubEvents.cs` → `PublishLocalNotificationAsync` via `HubLocalNotificationSink` — **absent from the frontend 18-event contract** |
-| `export-progress` (extra) | `Export/ExportModels.cs` → `ExportEventPublisher.PublishProgressAsync` (from `ExportEngine.cs`) — **not in `HubEventCatalog`, not in frontend contract: emitted but unconsumed** |
+| `embedding-progress` | **no producer** (phase-12 semantics wiring) |
+| `embedding-completed` | **no producer** (phase-12 semantics wiring) |
+| `local-notification` | `ScheduleHubEvents.cs` → `PublishLocalNotificationAsync` via `HubLocalNotificationSink` — registered in the frontend contract `{title,message}` (CR-027, WP-09-11 fe1ac88) |
+| `export-progress` (extra) | `Export/ExportModels.cs` → `ExportEventPublisher.PublishProgressAsync` (from `ExportEngine.cs`) — cataloged + frontend-consumed (WP-09-10/11) |
 
 **Metrics:** `Api/Metrics/MetricFamilyCatalog.cs` (15 families); exposition
 `Api/Metrics/PrometheusMetricsExposition.cs`, served by `MetricsController` (`/metrics`).
@@ -330,12 +335,17 @@ in `Data.Repositories/SchemaNames.cs` (columns auto-derive) → (5) `AddReposito
 - **Entry:** `FE/main.tsx` → `FE/App.tsx` → `FE/shell/CrawlForgeShell.tsx` (Mantine AppShell).
   **Error boundary (HOTFIX-01):** `FE/shell/ErrorBoundary.tsx` → `SurfaceErrorBoundary`, wrapped
   around `ViewContent` at `CrawlForgeShell.tsx:186` (keyed per view, inline error + Retry).
-- **Navigation:** rail registry = `const ENTRIES` in `FE/shell/NavigationRail.tsx:26` — **5 views**:
-  `hub`, `audits`, `report`, `tools`, `settings` (`ShellView` union in `FE/shell/windowState.ts`,
-  persisted at localStorage `crawlforge.shell.windowState.v1`). `ViewContent`
-  (`CrawlForgeShell.tsx:78`) switches: hub→`HubDashboard`, audits→`AuditsView`, report→`ReportView`,
-  tools→`ToolsView`, settings→`SettingsSurface`. Command palette: `FE/shell/CommandPalette.tsx`
-  (Ctrl+K; nav + first 20 projects/audits; no saved queries/tools/plugin commands).
+- **Navigation:** rail registry = `const ENTRIES` in `FE/shell/NavigationRail.tsx` — **5 rail views**:
+  `hub`, `audits`, `report`, `tools`, `settings`; the `ShellView` union (`FE/shell/windowState.ts`,
+  persisted at localStorage `crawlforge.shell.windowState.v1`) also carries `project` +
+  `configurations` (WP-09-11, reached via hub row click / Configurations button, with
+  `selectedProjectId`). `ViewContent` (`CrawlForgeShell.tsx`) switches: hub→`HubDashboard`,
+  audits→`AuditsView`, report→`ReportView`, tools→`ToolsView`, settings→`SettingsSurface`,
+  project→`ProjectView`, configurations→`ConfigurationsView` (`FE/shell/ProjectViews.tsx`).
+  Command palette: `FE/shell/CommandPalette.tsx` (Ctrl+K; nav + first 20 projects/audits).
+  **Window routing (G20):** `FE/App.tsx` `parseWindowRoute` honors Electron's `?route=`
+  (splash/hub/recovery→hub, report→report + `auditId` deep-link, visualization/analyzer/tools→tools,
+  settings→settings); the route wins over the persisted view.
 - **Shell services / store:** `FE/shell/ShellContext.tsx` (`createShellServices`, `ShellProvider`,
   `useShell`; `ShellNavigation.openAudit` sets activeAudit + view='report' + hub subscribe).
   Stores: `FE/store/crawlForgeStore.ts` (normalized entities, windowed pages, host-throttle,
@@ -343,25 +353,25 @@ in `Data.Repositories/SchemaNames.cs` (columns auto-derive) → (5) `AddReposito
   `FE/store/windowedCache.ts` (**`MAX_WINDOWED_PAGES = 24`** vs spec ≤20), `FE/store/hubDemux.ts`,
   `FE/store/hubClient.ts`, `FE/store/apiClient.ts`, `FE/store/pluginBus.ts`,
   `FE/store/selectors.ts`, `FE/store/frontendHeap.ts`.
-- **Report-surface mounting point:** `FE/shell/AuditViews.tsx` → `ReportView`, the "Report surfaces"
-  Paper at **:312–322** is a literal placeholder ("URL / finding / link grids, charts, and the link
-  graph mount into this workspace from the report workpieces…"). Only live telemetry renders above it.
-  **A new surface becomes reachable by:** mounting its component inside `ReportView` (or a new
-  `ShellView` in `ENTRIES` + `ViewContent`), wiring data through `useShell().api` / store selectors.
-  The integrator recipe exists in `FE/surfaces/dashboards/README.md` §"Shell wiring (for the
-  integrator)" (:58–68): `useDashboardAggregates(api, auditId)` props, `applyChartCrossFilter`,
-  `VisualizationSurface` takes `api`+`auditId`. **None of that wiring exists in `shell/` today.**
-- **Built but unmounted surfaces** (only `index.ts` re-exports + tests/bench import them):
-  `FE/surfaces/dashboards/` (`AuditDashboard`, `CrawlHealthPanel`, `ScoreTrendSurface`,
-  `IntelligenceDashboards` panels, `VisualizationSurface`), `FE/surfaces/explorers/`
-  (`ExplorerHost`, `coreExplorers.tsx` 5 explorers, `analysisExplorers.tsx` 6 explorers; registry
-  `EXPLORERS`/`EXPLORER_NAV` in `explorers/index.ts` never imported by the shell),
-  `FE/graphs/{LinkGraphSurface,SemanticGraphSurface}.tsx`, `FE/charts/EChart.tsx`,
-  `FE/grid/DataGrid.tsx`, `FE/plugins/PluginManagementSurface.tsx`.
-- **Mounted surfaces:** `FE/shell/HubDashboard.tsx` (projects + New project modal),
-  `FE/shell/AuditViews.tsx` (run view), `FE/surfaces/single-page/SinglePageAnalyzer.tsx` and 11 more
-  tools via `FE/tools/ToolsWorkspace.tsx` `CATALOG` (12 entries) → `FE/shell/ToolsView.tsx`,
-  `FE/shell/SettingsSurface.tsx`, `FE/shell/StatusBar.tsx` (footer, `CrawlForgeShell.tsx:197`).
+- **Report-surface mounting (WP-09-11, G01 resolved):** `FE/shell/AuditViews.tsx` → `ReportView`
+  mounts the report workspace: nav buttons Dashboard / Issue explorer / URL explorer / Export
+  (`report-nav-*` testids) switching `ReportDashboard` (live counters + chart cross-filter via
+  `applyChartCrossFilter`), `IssueExplorer` (suppression changes bump the dashboard refreshKey),
+  `UrlExplorer`, and the `ExportDialog` modal. The UPPERCASE state badge (`report-state`) matches
+  the walker's state regex. **A new surface becomes reachable by:** mounting its component inside
+  `ReportView` (or a new `ShellView` in `ENTRIES` + `ViewContent`), wiring data through
+  `useShell().api` / store selectors. Integrator recipe: `FE/surfaces/dashboards/README.md`.
+- **Mounted surfaces (WP-09-11 additions):** `FE/shell/ProjectViews.tsx` (`ProjectView` overview +
+  `ConfigurationsView` with `ConfigurationsList`/`ConfigurationEditor` 13 tabs),
+  `FE/surfaces/dashboards/ReportDashboard.tsx`, `FE/surfaces/explorers/` Issue/URL explorers via
+  `ExplorerHost`, `FE/surfaces/exports/ExportDialog.tsx`, `ExportDestinationsSection` in Settings.
+  Still unmounted: `VisualizationSurface` + graphs (UI-14), specialist explorers beyond Issue/URL
+  (UI-16), `PluginManagementSurface` (UI-22), log import UI (UI-17).
+- **Mounted surfaces:** `FE/shell/HubDashboard.tsx` (projects + New project modal with the full
+  ConfigurationEditor; row click → project overview; per-row Configurations button),
+  `FE/shell/AuditViews.tsx` (run view + report workspace), `FE/surfaces/single-page/SinglePageAnalyzer.tsx`
+  and 11 more tools via `FE/tools/ToolsWorkspace.tsx` `CATALOG` (12 entries) → `FE/shell/ToolsView.tsx`,
+  `FE/shell/SettingsSurface.tsx` (+ export destinations), `FE/shell/StatusBar.tsx` (footer).
 
 **UI surface map** (spec: `architecture/06-frontend-shell-and-ui/04-ui-surface-map.md`;
 M = mounted, U = component exists but unmounted, N = no component; runtime verdicts: probe-2 §3):
@@ -369,29 +379,29 @@ M = mounted, U = component exists but unmounted, N = no component; runtime verdi
 | ID | Surface | Status | Component / evidence |
 |---|---|---|---|
 | UI-01 | Main hub › Projects | M | `shell/HubDashboard.tsx` |
-| UI-02 | Project overview | N | no overview screen; row click does nothing |
-| UI-03 | Project › Configurations | N | DTOs only (`contracts/api/projects.ts`) |
-| UI-04 | Configuration editor (13 tabs) | N | no editor component; 0/13 tabs |
+| UI-02 | Project overview | M (WP-09-11) | `shell/ProjectViews.tsx` `ProjectView` (hub row click; `project-overview` testid) |
+| UI-03 | Project › Configurations | M (WP-09-11) | `ConfigurationsView` + `ConfigurationsList` (`configurations-view` testid) |
+| UI-04 | Configuration editor (13 tabs) | M (WP-09-11) | `ConfigurationEditor` in ConfigurationsView + create-project modal (13/13 tabs) |
 | UI-05 | Project › Integrations | N | — |
 | UI-06 | Project › Segments | N | — |
 | UI-07 | Project › Audit history & retention | N | global audits list exists; no per-project surface |
 | UI-08 | Main hub › Clients | N | — |
 | UI-09 | Main hub › Schedules | N | routes + demux handlers exist; no UI |
-| UI-10 | Audit run view | M | `shell/AuditViews.tsx` (`AuditsView`/`ReportView` telemetry) |
-| UI-11 | Report › Dashboard | **placeholder** | `AuditViews.tsx:312–322`; real dashboards U |
-| UI-12 | Report › Issue explorer | U | `explorers/coreExplorers.tsx` `issueExplorer` + `ExplorerHost` |
-| UI-13 | Report › URL explorer & detail | U | `urlExplorer`; no URL-detail component |
-| UI-14 | Visualization window | U | `dashboards/VisualizationSurface.tsx` + graphs; Electron window exists, renderer ignores `?route=` |
+| UI-10 | Audit run view | M | `shell/AuditViews.tsx` (`AuditsView`/`ReportView` telemetry + UPPERCASE state badge) |
+| UI-11 | Report › Dashboard | M (WP-09-11) | `ReportDashboard` mounted in `ReportView` (`dashboard-charts`; placeholder removed) |
+| UI-12 | Report › Issue explorer | M (WP-09-11) | `IssueExplorer` via report-nav (`issues-grid`) |
+| UI-13 | Report › URL explorer & detail | M (WP-09-11) | `UrlExplorer` via report-nav (`url-explorer`); URL-detail drill-down via onOpenUrl |
+| UI-14 | Visualization window | U | `dashboards/VisualizationSurface.tsx` + graphs; `?route=visualization` maps to tools view (dedicated surface unmounted) |
 | UI-15 | Report › Comparison | N | `AuditComparisonReader` backend only |
 | UI-16 | Report › Specialist surfaces | U/N | extraction/ngram/log/semantic/geo/analytics/redirect-matrix/WAF explorers U; accessibility/performance/technology/templates/custom-search/snippet/rendered-comparison N |
 | UI-17 | Log file analyzer | U | `logExplorer` + `LogIntelligencePanel`; no import UI |
 | UI-18 | Single-page analyzer | M | `surfaces/single-page/SinglePageAnalyzer.tsx` via Tools |
 | UI-19 | Standalone tools | M | `tools/ToolsWorkspace.tsx` CATALOG (12 tools) |
-| UI-20 | Export dialog | N | no component uses `exports.*` routes; REST exports work |
-| UI-21 | Settings | M (partial) | `shell/SettingsSurface.tsx`; missing browser/dictionary/integrations/templates/action-log/release-check/Plugins sections |
+| UI-20 | Export dialog | M (WP-09-11) | `ExportDialog` modal via report-nav Export; `ExportDestinationsSection` in Settings |
+| UI-21 | Settings | M (partial) | `shell/SettingsSurface.tsx` (+ export destinations); missing browser/dictionary/integrations/templates/action-log/release-check/Plugins sections |
 | UI-22 | Plugin manager | U | `plugins/PluginManagementSurface.tsx`; Settings never imports it |
 | UI-23 | Status bar | M | `shell/StatusBar.tsx` |
-| UI-24 | Recovery screen | N (renderer) | Electron opens `recovery` window; renderer has no recovery component and ignores `?route=recovery` |
+| UI-24 | Recovery screen | N (renderer) | Electron opens `recovery` window; `?route=recovery` maps to hub (no dedicated recovery component) |
 
 ## 10. Electron
 
@@ -581,3 +591,30 @@ families.
 Not listed as gaps: G12 (rule taxonomy), G19 (plugin capabilities), G21 (CSP), G22 (semantics
 contract), G25–G26 (single-page/WAF drift), G29 (misc) — behavior defects rather than missing
 registration points; see UNDERBUILD-AUDIT §4.
+
+### WP-09-11 resolution pass (2026-11-19, serial wiring)
+
+The table above is the WP-08-01 snapshot. The phase-09 serial wiring resolves:
+
+| Row | Status after WP-09-11 |
+|---|---|
+| #1 G01 | RESOLVED — `ReportView` mounts ReportDashboard/IssueExplorer/UrlExplorer + ExportDialog with report-nav navigation (`FE/shell/AuditViews.tsx`); placeholder removed |
+| #3 G03 | PARTIAL — rendering profile parsed/persisted, `IRenderingPool` registered (consumed by SinglePageAnalyzer + `IResponseRenderedComparer` in the pipeline family); headless crawl rendering is phase-10 (Flow 2) scope |
+| #5 G05 | 4/6 RESOLVED — url-batch, findings-updated, backend-lifecycle, waf-blocks producers wired (§6); embedding pair remains (phase 12) |
+| #7 G07 | RESOLVED — WAF verdicts feed `AimdPolitenessController.ObserveStatus` (IsChallenge real); crawl-delay via `PortAwareCrawlDelaySource` over the robots cache |
+| #8 G08 | RESOLVED — sitemap ingestion (`ISitemapIngestor`) in the crawl phase + sitemap correlation post-pass |
+| #10 G10 | RESOLVED — persist-before-start via `IListAuditStartPort` (Api delegates when registered); list-mode ingestor wired |
+| #11 G11 | RESOLVED — `StructuredDataRuleAnalyzer` in the per-audit rule family (`EngineServicesModule`); hreflang reciprocity site pass wired |
+| #16 G18 | RESOLVED — ConfigurationsView + ConfigurationEditor mounted (UI-03/UI-04); create-project modal carries the full editor |
+| #17 G20 | PARTIAL — renderer honors `?route=` (window-catalog → shell view map, report deep-link `auditId`); `window.crawlForgeShell` bridge consumption remains |
+| #18 G23 | RESOLVED — `DuplicateContentAnalyzer` site pass invokes `ShingleNearDuplicateDetector` |
+| #20 G27 | RESOLVED — `IPreCrawlValidator` invoked (list-mode probe); redirect chains persisted via `UrlElementRedirectChainStore` + `FetchContextScope` |
+| #21 | RESOLVED — `AuditRuleCatalog` registered (14 crawl-family definitions) and injected into `FindingEmitter` |
+| #22 | RESOLVED — export-progress cataloged + frontend-consumed |
+| #23 | RESOLVED — local-notification in the frontend 20-event contract (CR-027) |
+| #24 | RESOLVED — `AuditWireMapper.ParseCounters` maps engine keys (WP-09-06); hub boundary normalization |
+| #25 UI-24 | PARTIAL — `?route=recovery` maps to the hub view; dedicated recovery component remains |
+
+Also resolved outside the table: G-REST-IDEMPOTENCY (§10.4 duplicate-start), G-REAUDIT-SNAPSHOT
+(DTO-shaped storage snapshot), G-MATRIX-SEED-RACE (pre-seeded row reuse), G-PROGRESS
+(throughput/phase fields) — see `tests/CrawlForge.ContractConformance.Tests/GAPS.md`.

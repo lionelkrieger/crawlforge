@@ -119,7 +119,8 @@ public sealed class StorageEngineConformanceTests
         Assert.Equal(JsonValueKind.Object, counters.RootElement.ValueKind);
     }
 
-    /// <summary>The engine's stored counters carry the producer keys (WP-09-06 producer side).</summary>
+    /// <summary>The engine's stored counters carry the producer keys (WP-09-06 producer side;
+    /// WP-09-11 adds the additive blocked/wafBlocked WAF sub-counts).</summary>
     [Fact]
     public void CountersJson_EngineProducerKeys()
     {
@@ -128,7 +129,7 @@ public sealed class StorageEngineConformanceTests
             new Dictionary<string, object?> { ["@id"] = _fixture.AuditId });
         using var document = JsonDocument.Parse(countersJson!);
         var keys = document.RootElement.EnumerateObject().Select(p => p.Name).OrderBy(k => k, StringComparer.Ordinal).ToArray();
-        Assert.Equal(new[] { "analyzed", "discovered", "failed", "fetched" }, keys);
+        Assert.Equal(new[] { "analyzed", "blocked", "discovered", "failed", "fetched", "wafBlocked" }, keys);
     }
 
     /// <summary>

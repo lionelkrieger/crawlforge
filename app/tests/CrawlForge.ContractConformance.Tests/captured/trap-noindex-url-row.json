@@ -5,7 +5,7 @@
   "statusClass": "2xx",
   "contentType": "text/html; charset=utf-8",
   "depth": 0,
-  "indexable": true,
+  "indexable": false,
   "title": "Noindex page",
   "blockReason": null,
   "wafProvider": null

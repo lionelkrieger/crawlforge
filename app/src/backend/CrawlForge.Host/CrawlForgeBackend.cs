@@ -1,4 +1,7 @@
 using System.Net;
+using System.Text.Json;
+using CrawlForge.Api.Hubs;
+using CrawlForge.Contracts.Api;
 using CrawlForge.Contracts.Security;
 using CrawlForge.Host.Configuration;
 using CrawlForge.Host.Diagnostics;
@@ -171,6 +174,9 @@ public sealed class CrawlForgeBackend : IAsyncDisposable
             "CrawlForge backend ready at {BaseAddress} (first run: {FirstRun}).",
             backend.BaseAddress,
             firstLaunch.FirstRun);
+        // WP-09-11 (G05): the backend-lifecycle ready signal reaches connected
+        // shells over the hub (the shell reconnects on backend restart).
+        await PublishLifecycleAsync(app, "ready", cancellationToken);
         return backend;
     }
 
@@ -190,6 +196,9 @@ public sealed class CrawlForgeBackend : IAsyncDisposable
         }
 
         _stopped = true;
+        // WP-09-11 (G05): announce shutdown BEFORE draining participants so the
+        // hub is still up and connected shells see the lifecycle transition.
+        await PublishLifecycleAsync(App, "shutdown", cancellationToken);
         await _lifecycle.StopAllAsync(cancellationToken);
         await App.StopAsync(cancellationToken);
         // Retire the handshake: delete the descriptor and invalidate the token
@@ -202,6 +211,26 @@ public sealed class CrawlForgeBackend : IAsyncDisposable
     {
         await StopAsync();
         await App.DisposeAsync();
+    }
+
+    /// <summary>
+    /// Publishes the backend-lifecycle event (G05 producer). Failure-isolated:
+    /// a hub dispatch problem never blocks startup or graceful shutdown.
+    /// </summary>
+    private static async Task PublishLifecycleAsync(WebApplication app, string kind, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var hub = app.Services.GetRequiredService<IRealtimeHub>();
+            await hub.PublishAsync(new HubEvent(
+                HubEventCatalog.BackendLifecycle,
+                JsonSerializer.Serialize(new { kind })), cancellationToken);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            app.Services.GetRequiredService<ILogger<CrawlForgeBackend>>()
+                .LogWarning(ex, "backend-lifecycle {Kind} dispatch failed.", kind);
+        }
     }
 
     private static int ResolveActualPort(WebApplication app)

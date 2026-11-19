@@ -55,7 +55,22 @@ store actions (`loadUrlPage`/`loadFindingPage`/`loadLinkPage`/
 `loadNgramPage`). Wire values are lowercase-no-hyphen; status classes keep
 their `2xx` form. Export-to-image is a local data-URL download only.
 
-## Shell wiring (for the integrator)
+## Shell wiring (WP-09-11 — mounted)
+
+The report workspace is wired in `shell/AuditViews.tsx` `ReportView`:
+
+- `ReportDashboard` is mounted with `api`, `auditId`, `liveCounters`
+  (crawl store counters ?? audit counters), `refreshKey`, `onOpenUrl`
+  (→ URL explorer pane) and `onCrossFilter` (→ `applyChartCrossFilter` +
+  pane switch to issues/urls). Suppression changes in `IssueExplorer` bump
+  `refreshKey` so aggregates reload.
+- Nav buttons carry the exact walker labels Dashboard / Issue explorer /
+  URL explorer / Export (`report-nav-*` testids); Export opens the
+  `ExportDialog` modal (UI-20).
+- `VisualizationSurface` (api + auditId) remains unmounted (UI-14); the
+  recipe below applies when it lands.
+
+### Recipe (for the remaining surfaces)
 
 - Mount surfaces inside the existing `ShellProvider` + MantineProvider.
 - `AuditDashboard`/`CrawlHealthPanel`/`ScoreTrendSurface`/intelligence

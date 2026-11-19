@@ -1245,7 +1245,7 @@
           "HubEventWireConformanceTests.AuditScopedEvents_CarryStringAuditId_FrontendContract",
           "AuditCountersWireConformanceTests.HubCounters_EngineKeys_MatchStoredCounters"
         ],
-        "gap": "WP-09-06 counter keys + WP-09-11 missing throughput/phase fields; numeric auditId (G-G)"
+        "gap": null
       },
       {
         "name": "stage-changed",
@@ -1392,48 +1392,48 @@
         "inSpec": true,
         "inFrontend": true,
         "inCatalog": true,
-        "producer": "NONE (CODEMAP §6: no producer)",
-        "liveCapture": false,
+        "producer": "AuditExecutionEngine.FlushRunEventsAsync → AuditRunEventPublisher.PublishUrlBatchAsync (WP-09-11)",
+        "liveCapture": true,
         "coveredBy": [
-          "HubEventWireConformanceTests.UrlBatch_NoProducer_ContractSide"
+          "HubEventWireConformanceTests.UrlBatch_LivePayload_SpecShape"
         ],
-        "gap": "G05: no producer"
+        "gap": null
       },
       {
         "name": "findings-updated",
         "inSpec": true,
         "inFrontend": true,
         "inCatalog": true,
-        "producer": "NONE (CODEMAP §6: no producer)",
-        "liveCapture": false,
+        "producer": "AuditExecutionEngine.FlushRunEventsAsync → AuditRunEventPublisher.PublishFindingsUpdatedAsync (WP-09-11)",
+        "liveCapture": true,
         "coveredBy": [
-          "HubEventWireConformanceTests.FindingsUpdated_NoProducer_ContractSide"
+          "HubEventWireConformanceTests.FindingsUpdated_LivePayload_SpecShape"
         ],
-        "gap": "G05: no producer"
+        "gap": null
       },
       {
         "name": "backend-lifecycle",
         "inSpec": true,
         "inFrontend": true,
         "inCatalog": true,
-        "producer": "NONE (CODEMAP §6: no producer)",
-        "liveCapture": false,
+        "producer": "CrawlForgeBackend.PublishLifecycleAsync (ready/shutdown, WP-09-11); live shape proof CrawlForge.Host.Tests.BackendLifecycleTests; shutdown captured in hub-events.json at fixture dispose",
+        "liveCapture": true,
         "coveredBy": [
-          "HubEventWireConformanceTests.BackendLifecycle_NoProducer_ContractSide"
+          "HubEventWireConformanceTests.BackendLifecycle_ProducerWired_ShapeLock"
         ],
-        "gap": "G05: no producer"
+        "gap": null
       },
       {
         "name": "waf-blocks",
         "inSpec": true,
         "inFrontend": true,
         "inCatalog": true,
-        "producer": "NONE (CODEMAP §6: no producer)",
+        "producer": "AuditExecutionEngine.FlushRunEventsAsync (WP-09-11); fixture has no WAF trigger — live proof CrawlForge.Host.Tests.WafWiringTests",
         "liveCapture": false,
         "coveredBy": [
-          "HubEventWireConformanceTests.WafBlocks_NoProducer_ContractSide"
+          "HubEventWireConformanceTests.WafBlocks_ProducerWired_NoFixtureTrigger"
         ],
-        "gap": "G05: no producer"
+        "gap": null
       },
       {
         "name": "embedding-progress",

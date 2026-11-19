@@ -1,17 +1,17 @@
 [
   {
-    "receivedAt": "2026-11-18T10:17:58.9222991\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:29.7331067\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "previousState": "running",
       "newState": "running",
       "phase": "analyzing"
     }
   },
   {
-    "receivedAt": "2026-11-18T10:18:13.8666217\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:40.0726571\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "previousState": "running",
       "newState": "completed",
       "phase": "finalizing"

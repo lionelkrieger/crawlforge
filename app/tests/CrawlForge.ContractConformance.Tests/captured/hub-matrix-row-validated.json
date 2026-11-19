@@ -1,26 +1,26 @@
 [
   {
-    "receivedAt": "2026-11-18T10:18:24.9967414\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:52.8050646\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "rows": [
         {
-          "urlId": 3,
+          "urlId": "3",
           "sourceUrl": "http://127.0.0.1:47312/redirect/chain-1",
-          "verdict": 0
+          "verdict": "pass"
         }
       ]
     }
   },
   {
-    "receivedAt": "2026-11-18T10:18:26.4220434\u002B00:00",
+    "receivedAt": "2026-11-19T15:45:54.1169155\u002B00:00",
     "payload": {
-      "auditId": 1,
+      "auditId": "1",
       "rows": [
         {
-          "urlId": 3,
+          "urlId": "3",
           "sourceUrl": "http://127.0.0.1:47312/redirect/chain-1",
-          "verdict": 0
+          "verdict": "pass"
         }
       ]
     }

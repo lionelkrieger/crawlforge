@@ -1,0 +1,221 @@
+[
+  {
+    "receivedAt": "2026-11-19T15:45:08.916782\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 2
+      },
+      "categoryDeltas": {
+        "indexability": 2
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:11.522907\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "error": 1,
+        "warning": 1
+      },
+      "categoryDeltas": {
+        "indexability": 2
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:14.7718457\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 1
+      },
+      "categoryDeltas": {
+        "indexability": 1
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:18.0404956\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "notice": 1
+      },
+      "categoryDeltas": {
+        "indexability": 1
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:29.7309799\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "error": 1,
+        "warning": 3
+      },
+      "categoryDeltas": {
+        "indexability": 2,
+        "linking": 1,
+        "crawl": 1
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:30.7510793\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "error": 4,
+        "warning": 52,
+        "notice": 129,
+        "pass": 26
+      },
+      "categoryDeltas": {
+        "indexability": 51,
+        "structureddata": 54,
+        "accessibility": 50,
+        "content": 54,
+        "performance": 2
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:31.868405\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 30,
+        "notice": 60,
+        "pass": 12
+      },
+      "categoryDeltas": {
+        "indexability": 24,
+        "structureddata": 24,
+        "accessibility": 23,
+        "content": 31
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:32.9329619\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 37,
+        "notice": 65,
+        "pass": 13
+      },
+      "categoryDeltas": {
+        "indexability": 26,
+        "structureddata": 26,
+        "accessibility": 26,
+        "content": 37
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:33.9336632\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 36,
+        "notice": 60,
+        "pass": 12
+      },
+      "categoryDeltas": {
+        "indexability": 24,
+        "structureddata": 24,
+        "accessibility": 24,
+        "content": 36
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:34.9553922\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 39,
+        "notice": 65,
+        "pass": 13
+      },
+      "categoryDeltas": {
+        "indexability": 26,
+        "structureddata": 26,
+        "accessibility": 26,
+        "content": 39
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:36.001864\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 43,
+        "notice": 75,
+        "pass": 15
+      },
+      "categoryDeltas": {
+        "indexability": 30,
+        "structureddata": 30,
+        "accessibility": 30,
+        "content": 43
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:37.0386076\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 39,
+        "notice": 65,
+        "pass": 13
+      },
+      "categoryDeltas": {
+        "indexability": 26,
+        "structureddata": 26,
+        "accessibility": 26,
+        "content": 39
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:38.0537716\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 36,
+        "notice": 60,
+        "pass": 12
+      },
+      "categoryDeltas": {
+        "indexability": 24,
+        "structureddata": 24,
+        "accessibility": 24,
+        "content": 36
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:39.3876593\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 51,
+        "notice": 162,
+        "pass": 15
+      },
+      "categoryDeltas": {
+        "indexability": 30,
+        "structureddata": 31,
+        "accessibility": 30,
+        "content": 137
+      }
+    }
+  }
+]

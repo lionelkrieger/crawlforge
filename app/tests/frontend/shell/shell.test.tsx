@@ -148,7 +148,9 @@ describe('shell composition', () => {
     click(byTestId(mounted.container, 'open-audit-7')!);
     await flush();
     expect(byTestId(mounted.container, 'report-view')).not.toBeNull();
-    expect(byTestId(mounted.container, 'report-state')!.textContent).toContain('running');
+    // WP-09-11 (UI-10): the report state badge renders the UPPERCASE state
+    // (the walker's state regex is uppercase-only).
+    expect(byTestId(mounted.container, 'report-state')!.textContent).toContain('RUNNING');
     expect(services.store.getState().audits.activeAuditId).toBe('7');
     // Lifecycle controls are live for a running audit.
     expect(byTestId(mounted.container, 'audit-pause')).not.toBeNull();
@@ -285,7 +287,10 @@ describe('project creation (locked two-call flow)', () => {
     const configPost = calls.find((c) => c.method === 'POST' && c.url.includes('/configurations'));
     expect(configPost).toBeDefined();
     expect(configPost!.url).toBe('http://127.0.0.1:5000/api/projects/99/configurations');
-    expect(JSON.parse(configPost!.body!)).toEqual({
+    // WP-09-11 (UI-04): the creation flow mounts the full configuration
+    // editor, so the create payload carries the additive engine documents
+    // alongside the locked two-call fields.
+    expect(JSON.parse(configPost!.body!)).toMatchObject({
       name: 'Default configuration',
       startUrls: ['https://gamma.example.com'],
       respectRobotsTxt: true

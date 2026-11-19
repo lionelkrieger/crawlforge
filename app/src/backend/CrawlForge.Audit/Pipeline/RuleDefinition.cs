@@ -49,10 +49,13 @@ public sealed class AuditRuleCatalog
     /// <summary>Creates a catalog seeded with the extension rule taxonomy.</summary>
     public AuditRuleCatalog()
     {
-        Seed(FindingRuleKeys.WafChallengeDetected, AuditCategory.Crawl, FindingSeverity.Warning, priority: 90, "medium");
+        // WP-09-11 (gap #21): the accepted WAF recording surface persists these
+        // three rules under Indexability (FS-CRAWL-001 §2.4.5); the catalog seed
+        // matches the producer. WafBlockRate stays Crawl (site-wide diagnostic).
+        Seed(FindingRuleKeys.WafChallengeDetected, AuditCategory.Indexability, FindingSeverity.Warning, priority: 90, "medium");
         Seed(FindingRuleKeys.WafBlockRate, AuditCategory.Crawl, FindingSeverity.Warning, priority: 85, "medium");
-        Seed(FindingRuleKeys.ChallengeResolvedByRender, AuditCategory.Crawl, FindingSeverity.Notice, priority: 10);
-        Seed(FindingRuleKeys.SuspectedChallenge, AuditCategory.Crawl, FindingSeverity.Notice, priority: 20);
+        Seed(FindingRuleKeys.ChallengeResolvedByRender, AuditCategory.Indexability, FindingSeverity.Notice, priority: 10);
+        Seed(FindingRuleKeys.SuspectedChallenge, AuditCategory.Indexability, FindingSeverity.Notice, priority: 20);
         Seed(FindingRuleKeys.ContentKeywordCannibalization, AuditCategory.Content, FindingSeverity.Warning, priority: 60, "medium");
         Seed(FindingRuleKeys.ContentTopicalGap, AuditCategory.Content, FindingSeverity.Notice, priority: 40, "medium");
         Seed(FindingRuleKeys.RedirectMatrixPass, AuditCategory.Indexability, FindingSeverity.Pass, priority: 0);

@@ -3,7 +3,7 @@
     {
       "uri": "crawlforge://audits/1/progress",
       "mimeType": "application/json",
-      "text": "{\u0022progress\u0022:{\u0022auditId\u0022:1,\u0022status\u0022:\u0022Completed\u0022,\u0022phase\u0022:\u0022Finalizing\u0022,\u0022discovered\u0022:186,\u0022fetched\u0022:183,\u0022analyzed\u0022:182,\u0022queued\u0022:0,\u0022percentComplete\u0022:97.84946236559139},\u0022throttleSummary\u0022:{\u0022127.0.0.1\u0022:10},\u0022matrixCounters\u0022:{\u0022redirectMappings\u0022:1}}"
+      "text": "{\u0022progress\u0022:{\u0022auditId\u0022:1,\u0022status\u0022:\u0022Completed\u0022,\u0022phase\u0022:\u0022Finalizing\u0022,\u0022discovered\u0022:134,\u0022fetched\u0022:132,\u0022analyzed\u0022:130,\u0022queued\u0022:0,\u0022percentComplete\u0022:97.01492537313433},\u0022throttleSummary\u0022:{\u0022127.0.0.1\u0022:10},\u0022matrixCounters\u0022:{\u0022redirectMappings\u0022:1}}"
     }
   ]
 }

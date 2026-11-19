@@ -1,27 +1,27 @@
 [
   {
     "name": "crawl-progress",
-    "auditIdKind": "Number",
+    "auditIdKind": "String",
     "sample": "1"
   },
   {
     "name": "stage-changed",
-    "auditIdKind": "Number",
+    "auditIdKind": "String",
     "sample": "1"
   },
   {
     "name": "audit-completed",
-    "auditIdKind": "Number",
+    "auditIdKind": "String",
     "sample": "1"
   },
   {
     "name": "host-throttle",
-    "auditIdKind": "Number",
+    "auditIdKind": "String",
     "sample": "1"
   },
   {
     "name": "matrix-row-validated",
-    "auditIdKind": "Number",
+    "auditIdKind": "String",
     "sample": "1"
   }
 ]

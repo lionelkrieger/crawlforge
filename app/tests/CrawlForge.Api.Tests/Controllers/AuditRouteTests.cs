@@ -36,7 +36,11 @@ public sealed class AuditRouteTests
         var audit = await host.Get<IReadRepository<AuditDto>>().GetByIdAsync(auditId);
         Assert.NotNull(audit);
         using var snapshot = JsonDocument.Parse(audit!.ConfigurationSnapshotJson);
-        Assert.Equal(configuration.Id.ToString(), snapshot.RootElement.GetProperty("id").GetString());
+        // WP-09-11 (G-REAUDIT-SNAPSHOT alignment): the frozen snapshot stays in
+        // the STORAGE DTO shape the engine deserializes as CrawlConfigurationDto
+        // (numeric id) — the wire projection is applied at the API boundary, not
+        // in storage. The previous wire-shape assertion encoded the defect.
+        Assert.Equal(configuration.Id, snapshot.RootElement.GetProperty("id").GetInt64());
         // All categories enabled by default → enabledCategories absent.
         Assert.False(snapshot.RootElement.TryGetProperty("enabledCategories", out _));
     }

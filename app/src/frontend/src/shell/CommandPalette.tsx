@@ -74,7 +74,8 @@ export function usePaletteActions(): SpotlightActionData[] {
         group: 'Projects',
         leftSection: <IconFolder size={16} />,
         keywords: `project ${project.name} ${project.tags.join(' ')}`,
-        onClick: () => navigation.setView('hub')
+        // WP-09-11 (UI-02): picking a project opens its overview, not the hub.
+        onClick: () => navigation.openProject(project.id)
       });
     }
 

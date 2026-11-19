@@ -8,7 +8,7 @@
 # done_when fixture runs execute at the phase gate after wiring (AGENT-INSTRUCTIONS.md §5.6).
 phase_id: "phase-09"
 name: "Flow 1 — HTTP Audit End to End"
-status: "in_progress"
+status: "completed"
 depends_on_phases: ["phase-08"]
 max_parallel_agents: 5
 parallel_waves:
@@ -634,9 +634,10 @@ workpieces:
   - workpiece_id: "WP-09-11"
     title: "Phase 09 Serial Wiring — Pipeline Registration, DI, Routing, Navigation & Flow-1 Gate"
     phase_id: "phase-09"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "lead"
     started_at: "2026-11-19T10:05:00Z"
+    completed_at: "2026-11-19T16:05:00Z"
     parallel_group: "wave-9C"
     depends_on_workpieces: ["WP-09-01", "WP-09-02", "WP-09-03", "WP-09-04", "WP-09-05", "WP-09-06", "WP-09-07", "WP-09-08", "WP-09-09", "WP-09-10"]
     context_files:

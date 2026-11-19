@@ -1,5 +1,5 @@
 {
-  "importId": 1,
+  "importId": "1",
   "finalCounters": {
     "linesParsed": 5,
     "linesAccepted": 5,
@@ -8,7 +8,7 @@
   "correlation": {
     "orphanCount": 0,
     "budgetWasteCount": 0,
-    "uncrawledIndexableCount": 182
+    "uncrawledIndexableCount": 128
   },
   "status": "completed",
   "counters": {

@@ -28,14 +28,15 @@ public sealed class AuditCountersWireConformanceTests
 
     /// <summary>
     /// Producer lock: the engine's stored counters_json carries exactly the
-    /// AuditRunCounters.ToPayload() keys (discovered/fetched/analyzed/failed).
+    /// AuditRunCounters.ToPayload() keys (discovered/fetched/analyzed/failed +
+    /// the additive blocked/wafBlocked WAF sub-counts, WP-09-11).
     /// </summary>
     [Fact]
     public async Task EngineCounters_ProducerKeys()
     {
         var counters = await ReadEngineCountersAsync();
         var keys = counters.EnumerateObject().Select(p => p.Name).OrderBy(k => k, StringComparer.Ordinal).ToArray();
-        Assert.Equal(new[] { "analyzed", "discovered", "failed", "fetched" }, keys);
+        Assert.Equal(new[] { "analyzed", "blocked", "discovered", "failed", "fetched", "wafBlocked" }, keys);
         Assert.True(counters.GetProperty("fetched").GetInt64() > 0, "fixture audit must have fetched URLs");
         await _fixture.SaveCaptureAsync("engine-counters.json", counters);
     }

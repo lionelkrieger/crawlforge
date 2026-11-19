@@ -184,7 +184,26 @@ public sealed class McpWireConformanceTests
     [Fact]
     public async Task ToolCall_RunScheduleNow_ConformantContent()
     {
-        var exchange = await _fixture.Mcp.CallToolAsync("run-schedule-now", new { scheduleId = _fixture.ScheduleId });
+        // The REST sweep / hub suite may fire run-now first; the scheduler's
+        // documented no-overlap guard then reports an active run — retry until
+        // that bounded run finishes (same pattern as TriggerScheduleRunAsync).
+        McpExchange exchange;
+        var deadline = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(90);
+        while (true)
+        {
+            exchange = await _fixture.Mcp.CallToolAsync("run-schedule-now", new { scheduleId = _fixture.ScheduleId });
+            var overlap = exchange.Status == 200 && !exchange.IsError
+                && exchange.Result.GetProperty("isError").GetBoolean()
+                && (exchange.Result.GetProperty("content")[0].GetProperty("text").GetString() ?? "")
+                    .Contains("already has an active run", StringComparison.Ordinal);
+            if (!overlap || DateTimeOffset.UtcNow >= deadline)
+            {
+                break;
+            }
+
+            await Task.Delay(1000);
+        }
+
         var payload = AssertToolSuccess(exchange);
         Assert.Equal(_fixture.ScheduleId, payload.GetProperty("scheduleId").GetInt64());
         Assert.Equal(JsonValueKind.Number, payload.GetProperty("auditId").ValueKind);

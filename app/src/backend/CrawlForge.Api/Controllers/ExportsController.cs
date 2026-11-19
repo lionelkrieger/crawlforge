@@ -50,16 +50,6 @@ public sealed class ExportsController : ApiControllerBase
             return NotFoundError($"Audit {request.AuditId} does not exist.");
         }
 
-        if (!TryParseFormat(request.Format, out var format))
-        {
-            return ValidationError($"Unknown export format '{request.Format}'.", [new ApiFieldError("format", "Use xlsx, csv, html, or pdf.")]);
-        }
-
-        if (request.Datasets.Count == 0)
-        {
-            return ValidationError("At least one dataset must be selected.", [new ApiFieldError("datasets", "Select one or more dataset keys.")]);
-        }
-
         long? destinationId = null;
         if (request.DestinationId is not null)
         {
@@ -69,6 +59,48 @@ public sealed class ExportsController : ApiControllerBase
             }
 
             destinationId = parsedDestination;
+        }
+
+        // WP-09-11 wiring (WP-09-10 additive surface): json/jsonl/text/markdown
+        // travel as wire strings through the additive engine surface while the
+        // locked ExportFormat enum amendment is pending. The locked interface
+        // is unchanged; the concrete engine exposes the additive creation.
+        if (CrawlForge.Export.AdditiveExportFormats.IsKnown(request.Format))
+        {
+            if (_engine is not CrawlForge.Export.ExportEngine additiveEngine)
+            {
+                return ValidationError($"Export format '{request.Format}' is unavailable.", [new ApiFieldError("format", "The additive export engine is not registered.")]);
+            }
+
+            if (request.Datasets.Count == 0 && request.Format is not ("text" or "markdown"))
+            {
+                return ValidationError("At least one dataset must be selected.", [new ApiFieldError("datasets", "Select one or more dataset keys.")]);
+            }
+
+            var additiveJob = await additiveEngine.CreateAdditiveExportAsync(auditId, request.Format, request.Datasets, cancellationToken);
+            if (destinationId is not null && additiveJob.Status == ExportJobStatus.Completed)
+            {
+                try
+                {
+                    await _delivery.DeliverAsync(additiveJob.Id, destinationId.Value, cancellationToken);
+                }
+                catch (InvalidOperationException)
+                {
+                    // Recorded in the delivery ledger and export-delivery hub event.
+                }
+            }
+
+            return CreatedEnvelope(new ExportCreateResponse(additiveJob.Id.ToString(), StateWire(additiveJob.Status)));
+        }
+
+        if (!TryParseFormat(request.Format, out var format))
+        {
+            return ValidationError($"Unknown export format '{request.Format}'.", [new ApiFieldError("format", "Use xlsx, csv, html, pdf, xml-sitemap, json, jsonl, text, or markdown.")]);
+        }
+
+        if (request.Datasets.Count == 0)
+        {
+            return ValidationError("At least one dataset must be selected.", [new ApiFieldError("datasets", "Select one or more dataset keys.")]);
         }
 
         var job = await _engine.CreateExportAsync(new ExportRequest(auditId, format, request.Datasets), cancellationToken);
@@ -99,7 +131,9 @@ public sealed class ExportsController : ApiControllerBase
     [HttpGet("{id:long}")]
     public async Task<ObjectResult> GetAsync(long id, CancellationToken cancellationToken)
     {
-        var job = await _engine.GetExportAsync(id, cancellationToken);
+        // WP-09-11: the unified additive projection covers baseline AND
+        // additive jobs (the locked GetExportAsync returns null for additive).
+        var job = await GetAnyExportAsync(id, cancellationToken);
         if (job is null)
         {
             return NotFoundError($"Export job {id} does not exist.");
@@ -108,7 +142,7 @@ public sealed class ExportsController : ApiControllerBase
         return OkEnvelope(new ExportJobWire(
             job.Id.ToString(),
             job.AuditId.ToString(),
-            FormatWire(job.Format),
+            job.Format,
             StateWire(job.Status),
             job.CreatedAt,
             job.FilePath,
@@ -122,7 +156,7 @@ public sealed class ExportsController : ApiControllerBase
     [HttpGet("{id:long}/file")]
     public async Task<IActionResult> DownloadAsync(long id, CancellationToken cancellationToken)
     {
-        var job = await _engine.GetExportAsync(id, cancellationToken);
+        var job = await GetAnyExportAsync(id, cancellationToken);
         if (job is null)
         {
             return NotFoundError($"Export job {id} does not exist.");
@@ -137,12 +171,28 @@ public sealed class ExportsController : ApiControllerBase
         {
             var stream = await _engine.OpenExportFileAsync(id, cancellationToken);
             var fileName = job.FilePath is null ? $"export-{id}" : Path.GetFileName(job.FilePath);
-            return File(stream, ContentTypeFor(job.Format), fileName);
+            return File(stream, ContentTypeForWire(job.Format), fileName);
         }
         catch (Exception ex) when (ex is FileNotFoundException or InvalidOperationException)
         {
             return NotFoundError($"Export file for job {id} is unavailable.");
         }
+    }
+
+    /// <summary>
+    /// Unified job lookup: the additive projection when the concrete engine is
+    /// registered (covers additive formats), the locked surface otherwise.
+    /// </summary>
+    private async Task<CrawlForge.Export.AdditiveExportJobDto?> GetAnyExportAsync(long id, CancellationToken cancellationToken)
+    {
+        if (_engine is CrawlForge.Export.ExportEngine additiveEngine)
+        {
+            return await additiveEngine.GetAdditiveExportAsync(id, cancellationToken);
+        }
+
+        var job = await _engine.GetExportAsync(id, cancellationToken);
+        return job is null ? null : new CrawlForge.Export.AdditiveExportJobDto(
+            job.Id, job.AuditId, FormatWire(job.Format), job.Status, job.CreatedAt, job.FilePath, job.Datasets);
     }
 
     /// <summary>Parses a wire format key.</summary>
@@ -165,6 +215,9 @@ public sealed class ExportsController : ApiControllerBase
             case "pdf":
                 format = ExportFormat.Pdf;
                 return true;
+            case "xml-sitemap":
+                format = ExportFormat.XmlSitemap;
+                return true;
             default:
                 format = ExportFormat.Excel;
                 return false;
@@ -180,20 +233,27 @@ public sealed class ExportsController : ApiControllerBase
         ExportFormat.Csv => "csv",
         ExportFormat.Html => "html",
         ExportFormat.Pdf => "pdf",
+        ExportFormat.XmlSitemap => "xml-sitemap",
         _ => "xml-sitemap",
     };
 
     private static string StateWire(ExportJobStatus status) => ApiEnumConverter<ExportJobStatus>.ToWireValue(status);
 
-    private static string ContentTypeFor(ExportFormat format) => format switch
+    private static string ContentTypeForWire(string formatWire) => formatWire switch
     {
-        ExportFormat.Excel => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        // The accepted Export wire convention names the workbook format
+        // "excel" (ExportWireExtensions.ToWireValue); "xlsx" is the creation
+        // alias. Both stream the same OOXML bytes.
+        "excel" or "xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         // §8.4 locked writer output: the CSV export is a ZIP archive of
         // RFC 4180 dataset CSVs; the HTML export is a single self-contained
         // document. Labels match the actual bytes (defect D11).
-        ExportFormat.Csv => "application/zip",
-        ExportFormat.Html => "text/html",
-        ExportFormat.Pdf => "application/pdf",
+        "csv" => "application/zip",
+        "html" => "text/html",
+        "pdf" => "application/pdf",
+        "json" => "application/json",
+        "jsonl" => "application/x-ndjson",
+        "text" or "markdown" => "application/zip",
         _ => "application/xml",
     };
 }

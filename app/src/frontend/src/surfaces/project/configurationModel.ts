@@ -207,7 +207,14 @@ export function defaultConfigurationForm(seedUrl?: string): ConfigurationFormVal
     rendering: { enabled: false, deviceProfile: null, infiniteScroll: false, captureConsole: false },
     respectRobotsTxt: true,
     virtualRobotsTxt: null,
-    scopeRules: DEFAULT_SCOPE_RULES,
+    // New configurations enable bounded external status checks by default so
+    // the default Linking rule family (broken external links, CAP-B-047) can
+    // report. The storage-level baseline (DEFAULT_SCOPE_RULES /
+    // CrawlScopeConfig.Default) stays record-only and is unchanged.
+    scopeRules: {
+      ...DEFAULT_SCOPE_RULES,
+      scope: { ...DEFAULT_SCOPE_RULES.scope, checkExternalLinks: true }
+    },
     enabledCategories: null,
     rewrite: { rules: [], hostMappings: [] }
   };

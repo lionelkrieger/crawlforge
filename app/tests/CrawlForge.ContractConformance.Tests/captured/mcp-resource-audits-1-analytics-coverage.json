@@ -3,7 +3,7 @@
     {
       "uri": "crawlforge://audits/1/analytics-coverage",
       "mimeType": "application/json",
-      "text": "{\u0022auditId\u0022:1,\u0022indexableUrlCount\u0022:182,\u0022coveredUrlCount\u0022:0,\u0022byContainer\u0022:[],\u0022detections\u0022:[]}"
+      "text": "{\u0022auditId\u0022:1,\u0022indexableUrlCount\u0022:128,\u0022coveredUrlCount\u0022:0,\u0022byContainer\u0022:[],\u0022detections\u0022:[]}"
     }
   ]
 }

@@ -296,7 +296,7 @@
     {
       "key": "audits.compare",
       "method": "GET",
-      "path": "/api/audits/compare?auditIdA=1\u0026auditIdB=3",
+      "path": "/api/audits/compare?auditIdA=1\u0026auditIdB=4",
       "status": 200,
       "contentType": "application/json",
       "enveloped": true,
@@ -476,7 +476,7 @@
     {
       "key": "audits.compareContent",
       "method": "GET",
-      "path": "/api/audits/compare/content?auditIdA=1\u0026auditIdB=3\u0026canonicalUrl=http%3A%2F%2F127.0.0.1%3A47312%2F",
+      "path": "/api/audits/compare/content?auditIdA=1\u0026auditIdB=4\u0026canonicalUrl=http%3A%2F%2F127.0.0.1%3A47312%2F",
       "status": 200,
       "contentType": "application/json",
       "enveloped": true,

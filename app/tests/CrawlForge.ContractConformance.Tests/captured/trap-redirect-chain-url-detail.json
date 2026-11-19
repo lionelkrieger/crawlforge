@@ -1,181 +1,105 @@
 {
   "id": "3",
   "canonicalUrl": "http://127.0.0.1:47312/redirect/chain-1",
-  "statusCode": 200,
-  "statusClass": "2xx",
+  "statusCode": 301,
+  "statusClass": "3xx",
   "contentType": "text/html; charset=utf-8",
   "depth": 0,
-  "indexable": true,
-  "title": "Redirect chain target",
+  "indexable": false,
+  "title": null,
   "blockReason": null,
   "wafProvider": null,
-  "responseHeaders": {
-    "content-type": "text/html; charset=utf-8"
-  },
+  "responseHeaders": {},
   "elementInventory": {
     "counts": {
-      "document_head": 1,
-      "headings": 1,
-      "resources": 1,
-      "text_statistics": 1,
-      "link_relations": 1,
-      "consent_state": 1,
-      "datalayer_snapshot": 1,
-      "serp_metrics": 1,
-      "content_scope": 1,
-      "header_directives": 1
+      "redirect-chain": 1
     },
-    "totalElements": 10
+    "totalElements": 1
   },
   "findings": [
     {
-      "id": "15",
-      "ruleKey": "accessibility.color-contrast",
-      "severity": "notice",
-      "category": "accessibility",
-      "urlId": "3",
-      "message": "Check \u0027accessibility.color-contrast\u0027 requires rendering (layout/computed style) and was not evaluated: rendering mode is disabled for this audit.",
-      "evidence": {
-        "snippet": null,
-        "selector": null,
-        "details": {
-          "ruleKey": "accessibility.color-contrast",
-          "ruleSetVersion": "1.0.0",
-          "family": "contrast",
-          "remediation": "Raise the text/background contrast ratio to at least 4.5:1 (3:1 for large text).",
-          "requiresRendering": true,
-          "details": {
-            "requiresRendering": "true",
-            "renderingEnabled": "false"
-          },
-          "firstSeenAuditId": 1
-        }
-      }
-    },
-    {
-      "id": "16",
-      "ruleKey": "accessibility.landmark-main",
-      "severity": "warning",
-      "category": "accessibility",
-      "urlId": "3",
-      "message": "The page has no main landmark (main element or role=\u0022main\u0022).",
-      "evidence": {
-        "snippet": null,
-        "selector": null,
-        "details": {
-          "ruleKey": "accessibility.landmark-main",
-          "ruleSetVersion": "1.0.0",
-          "family": "structure",
-          "remediation": "Wrap the primary content in a main element or an element with role=\u0022main\u0022.",
-          "requiresRendering": false,
-          "firstSeenAuditId": 1
-        }
-      }
-    },
-    {
-      "id": "17",
-      "ruleKey": "content.metrics",
-      "severity": "notice",
-      "category": "content",
-      "urlId": "3",
-      "message": "content metrics",
-      "evidence": {
-        "snippet": null,
-        "selector": null,
-        "details": {
-          "fleschReadingEase": -117.2015789473684,
-          "fleschKincaidGradeLevel": 67.36763157894737,
-          "wordCount": 152,
-          "sentenceCount": 1,
-          "syllableCount": 305,
-          "readingTimeMinutes": 0.76,
-          "textToHtmlRatio": 0.8614864864864865,
-          "scoped": true,
-          "spellingIssueCount": 0,
-          "serp": [
-            {
-              "role": "title",
-              "text": "Redirect chain target",
-              "fontProfileKey": "arial-desktop-title",
-              "widthPixels": 184.52,
-              "budgetPixels": 580,
-              "overflowPixels": 0,
-              "isTruncated": false,
-              "truncatedText": null
-            }
-          ],
-          "firstSeenAuditId": 1
-        }
-      }
-    },
-    {
-      "id": "18",
-      "ruleKey": "mobile.responsive-signals-missing",
-      "severity": "notice",
-      "category": "structureddata",
-      "urlId": "3",
-      "message": "mobile responsive signals missing",
-      "evidence": {
-        "snippet": null,
-        "selector": null,
-        "details": {
-          "reason": "no media queries, srcset/sizes, or picture elements found in the document",
-          "firstSeenAuditId": 1
-        }
-      }
-    },
-    {
-      "id": "19",
-      "ruleKey": "mobile.render-required",
-      "severity": "notice",
-      "category": "structureddata",
-      "urlId": "3",
-      "message": "mobile render required",
-      "evidence": {
-        "snippet": null,
-        "selector": null,
-        "details": {
-          "renderingMode": "None",
-          "skippedChecks": [
-            "tap-target-sizing",
-            "tap-target-spacing",
-            "content-to-viewport-fit"
-          ],
-          "reason": "render-dependent mobile checks require a rendered document; enable rendering to evaluate them",
-          "firstSeenAuditId": 1
-        }
-      }
-    },
-    {
-      "id": "20",
-      "ruleKey": "canonical.missing",
+      "id": "1",
+      "ruleKey": "redirects.chain",
       "severity": "warning",
       "category": "indexability",
       "urlId": "3",
-      "message": "canonical missing",
-      "evidence": {
-        "snippet": null,
-        "selector": null,
-        "details": {
-          "pageUrl": "http://127.0.0.1:47312/redirect/chain-1",
-          "firstSeenAuditId": 1
-        }
-      }
-    },
-    {
-      "id": "21",
-      "ruleKey": "indexability.indexable",
-      "severity": "pass",
-      "category": "indexability",
-      "urlId": "3",
-      "message": "indexability indexable",
+      "message": "redirects chain",
       "evidence": {
         "snippet": null,
         "selector": null,
         "details": {
           "url": "http://127.0.0.1:47312/redirect/chain-1",
-          "finalStatusCode": 200,
-          "firstSeenAuditId": 1
+          "urlId": 3,
+          "hopCount": 3,
+          "chain": [
+            {
+              "ordinal": 0,
+              "url": "http://127.0.0.1:47312/redirect/chain-1",
+              "toUrl": "http://127.0.0.1:47312/redirect/chain-2",
+              "statusCode": 301
+            },
+            {
+              "ordinal": 1,
+              "url": "http://127.0.0.1:47312/redirect/chain-2",
+              "toUrl": "http://127.0.0.1:47312/redirect/chain-3",
+              "statusCode": 302
+            },
+            {
+              "ordinal": 2,
+              "url": "http://127.0.0.1:47312/redirect/chain-3",
+              "toUrl": "http://127.0.0.1:47312/pages/redirect-target.html",
+              "statusCode": 301
+            }
+          ],
+          "finalUrl": "http://127.0.0.1:47312/pages/redirect-target.html",
+          "finalStatusCode": 200
+        }
+      }
+    },
+    {
+      "id": "2",
+      "ruleKey": "redirects.inappropriate",
+      "severity": "warning",
+      "category": "indexability",
+      "urlId": "3",
+      "message": "redirects inappropriate",
+      "evidence": {
+        "snippet": null,
+        "selector": null,
+        "details": {
+          "url": "http://127.0.0.1:47312/redirect/chain-1",
+          "urlId": 3,
+          "hopCount": 3,
+          "chain": [
+            {
+              "ordinal": 0,
+              "url": "http://127.0.0.1:47312/redirect/chain-1",
+              "toUrl": "http://127.0.0.1:47312/redirect/chain-2",
+              "statusCode": 301
+            },
+            {
+              "ordinal": 1,
+              "url": "http://127.0.0.1:47312/redirect/chain-2",
+              "toUrl": "http://127.0.0.1:47312/redirect/chain-3",
+              "statusCode": 302
+            },
+            {
+              "ordinal": 2,
+              "url": "http://127.0.0.1:47312/redirect/chain-3",
+              "toUrl": "http://127.0.0.1:47312/pages/redirect-target.html",
+              "statusCode": 301
+            }
+          ],
+          "reasons": [
+            {
+              "hopOrdinal": 1,
+              "check": "temporary-status",
+              "fromUrl": "http://127.0.0.1:47312/redirect/chain-2",
+              "toUrl": "http://127.0.0.1:47312/redirect/chain-3",
+              "statusCode": 302,
+              "description": "Hop 1 uses temporary redirect status 302; use 301/308 when the move is permanent."
+            }
+          ]
         }
       }
     }
@@ -190,107 +114,30 @@
       "anchorText": "Redirect chain",
       "domZone": "navigation",
       "equityWeight": null,
-      "weightedEquity": 3.340810438295399E-05
+      "weightedEquity": 5.0228901475507484E-05
     }
   ],
   "outboundLinks": [],
   "redirectChain": [
     {
       "url": "http://127.0.0.1:47312/redirect/chain-1",
-      "statusCode": 200,
+      "statusCode": 301,
+      "location": "http://127.0.0.1:47312/redirect/chain-2"
+    },
+    {
+      "url": "http://127.0.0.1:47312/redirect/chain-2",
+      "statusCode": 302,
+      "location": "http://127.0.0.1:47312/redirect/chain-3"
+    },
+    {
+      "url": "http://127.0.0.1:47312/redirect/chain-3",
+      "statusCode": 301,
       "location": "http://127.0.0.1:47312/pages/redirect-target.html"
     }
   ],
   "wafDetection": null,
-  "scopeDiagnostics": {
-    "included": true,
-    "matchedIncludeSelectors": [],
-    "matchedExcludeSelectors": [],
-    "scopedWordCount": 152,
-    "totalWordCount": 152
-  },
-  "topNgrams": [
-    {
-      "ngram": "target0",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    },
-    {
-      "ngram": "target1",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    },
-    {
-      "ngram": "target10",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    },
-    {
-      "ngram": "target11",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    },
-    {
-      "ngram": "target12",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    },
-    {
-      "ngram": "target13",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    },
-    {
-      "ngram": "target2",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    },
-    {
-      "ngram": "target3",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    },
-    {
-      "ngram": "target4",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    },
-    {
-      "ngram": "target5",
-      "n": 1,
-      "zone": "body",
-      "count": 9,
-      "density": 0.05921052631578947,
-      "urlId": "3"
-    }
-  ],
+  "scopeDiagnostics": null,
+  "topNgrams": null,
   "serpMetrics": null,
   "headerConflicts": null,
   "semanticRelations": null

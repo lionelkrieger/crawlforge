@@ -1,28 +1,31 @@
 {
   "countsByStatus": {
-    "2xx": 182,
-    "5xx": 2,
+    "2xx": 130,
+    "3xx": 2,
     "1xx": 1,
     "4xx": 1
   },
   "countsBySeverity": {
-    "notice": 822,
-    "warning": 515,
-    "pass": 183,
-    "error": 2
+    "warning": 370,
+    "error": 6,
+    "notice": 742,
+    "pass": 131
   },
   "countsByCategory": {
-    "accessibility": 363,
-    "content": 428,
-    "structureddata": 365,
-    "indexability": 366
+    "indexability": 269,
+    "crawl": 1,
+    "linking": 1,
+    "accessibility": 259,
+    "content": 452,
+    "structureddata": 265,
+    "performance": 2
   },
   "crawlHealth": {
-    "totalUrls": 186,
-    "fetched": 183,
-    "errorCount": 0,
+    "totalUrls": 134,
+    "fetched": 132,
+    "errorCount": 1,
     "blockedCount": 0,
-    "averageTtfbMs": 0.579
+    "averageTtfbMs": 0.5
   },
   "waf": null,
   "throttle": {

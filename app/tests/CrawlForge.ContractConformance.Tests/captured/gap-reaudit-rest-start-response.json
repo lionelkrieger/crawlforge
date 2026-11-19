@@ -1,9 +1,9 @@
 {
   "gap": "G-REAUDIT-SNAPSHOT",
   "request": "POST /api/audits/1/reaudit {refresh:false}",
-  "status": 500,
-  "contentType": "",
-  "body": "",
+  "status": 201,
+  "contentType": "application/json",
+  "body": "{\u0022data\u0022:{\u0022auditId\u0022:\u00223\u0022,\u0022sourceAuditId\u0022:\u00221\u0022,\u0022state\u0022:\u0022running\u0022}}",
   "expectedSpecBehavior": "201 envelope with {auditId, sourceAuditId, state} (ReauditResponse)",
   "owners": "WP-09-06 (Api/Controllers overwrite side) \u002B WP-09-11 (Host/Execution PayloadJson read side)"
 }

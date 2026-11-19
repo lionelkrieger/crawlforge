@@ -35,10 +35,17 @@ import {
   IconGauge,
   IconShield,
   IconLink,
-  IconClock,
   IconDatabase
 } from '../theme/icons';
 import { formatBytes, formatCount, formatDuration, formatRate, formatDateTime } from './format';
+import { ReportDashboard } from '../surfaces/dashboards/ReportDashboard';
+import { IssueExplorer } from '../surfaces/explorers/issues/IssueExplorer';
+import { UrlExplorer } from '../surfaces/explorers/urls/UrlExplorer';
+import { ExportDialog } from '../surfaces/export/ExportDialog';
+import { applyChartCrossFilter, selectionToFindingQuery, type ChartSelection } from '../charts/crossFilter';
+
+/** Report workspace panes (WP-09-11 mounting; exact nav labels per UI map). */
+type ReportPane = 'dashboard' | 'issues' | 'urls';
 
 /** Lifecycle control for the active audit (real API calls). */
 function LifecycleControls({ auditId, state }: { auditId: string; state: string }) {
@@ -164,6 +171,26 @@ export function ReportView() {
   const embedding = useLiveProgress(services.live, (state) =>
     audit ? state.embeddingByAudit[audit.id] : undefined
   );
+  // WP-09-11: the report workspace mounts the accepted report surfaces; the
+  // suppression handoff bumps the dashboard refresh key, chart cross-filters
+  // drive the accepted store loaders and switch to the matching explorer.
+  const [pane, setPane] = useState<ReportPane>('dashboard');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [exportOpen, setExportOpen] = useState(false);
+
+  const openUrl = useCallback((urlId: string) => {
+    void urlId;
+    setPane('urls');
+  }, []);
+
+  const crossFilter = useCallback(
+    (selection: ChartSelection) => {
+      if (!audit) return;
+      void applyChartCrossFilter(services.actions, audit.id, selection);
+      setPane(selectionToFindingQuery(selection) ? 'issues' : 'urls');
+    },
+    [services, audit]
+  );
 
   if (!audit) {
     return (
@@ -193,7 +220,7 @@ export function ReportView() {
           <Group gap={8}>
             <Title order={3}>Audit {audit.id}</Title>
             <Badge variant="light" color={STATE_COLORS[audit.state] ?? 'steel'} data-testid="report-state">
-              {audit.state}
+              {audit.state.toUpperCase()}
             </Badge>
           </Group>
           <Text size="sm" c="dimmed">
@@ -309,17 +336,70 @@ export function ReportView() {
         </Paper>
       ) : null}
 
-      <Paper withBorder p="md">
-        <Group gap={8} mb={4}>
-          <IconClock size={15} color="var(--mantine-color-night-2)" />
-          <Text size="xs" fw={600} tt="uppercase" lts={0.6} c="dimmed">Report surfaces</Text>
+      <Paper withBorder p="md" data-testid="report-workspace">
+        <Group gap={6} mb="sm" wrap="wrap">
+          <Button
+            size="compact-xs"
+            variant={pane === 'dashboard' ? 'light' : 'subtle'}
+            color="signal"
+            onClick={() => setPane('dashboard')}
+            data-testid="report-nav-dashboard"
+          >
+            Dashboard
+          </Button>
+          <Button
+            size="compact-xs"
+            variant={pane === 'issues' ? 'light' : 'subtle'}
+            color="signal"
+            onClick={() => setPane('issues')}
+            data-testid="report-nav-issues"
+          >
+            Issue explorer
+          </Button>
+          <Button
+            size="compact-xs"
+            variant={pane === 'urls' ? 'light' : 'subtle'}
+            color="signal"
+            onClick={() => setPane('urls')}
+            data-testid="report-nav-urls"
+          >
+            URL explorer
+          </Button>
+          <Button
+            size="compact-xs"
+            variant="subtle"
+            color="ember"
+            onClick={() => setExportOpen(true)}
+            data-testid="report-nav-export"
+          >
+            Export
+          </Button>
         </Group>
-        <Text size="sm" c="dimmed">
-          URL / finding / link grids, charts, and the link graph mount into this workspace from the
-          report workpieces; all render locally from aggregate endpoints. Live telemetry above is
-          already streaming for this audit.
-        </Text>
+        {pane === 'dashboard' ? (
+          <ReportDashboard
+            api={services.api}
+            auditId={audit.id}
+            liveCounters={crawl?.counters ?? audit.counters}
+            refreshKey={refreshKey}
+            onOpenUrl={openUrl}
+            onCrossFilter={crossFilter}
+          />
+        ) : null}
+        {pane === 'issues' ? (
+          <IssueExplorer
+            api={services.api}
+            auditId={audit.id}
+            projectId={audit.projectId}
+            onOpenUrl={openUrl}
+            onSuppressionsChanged={() => setRefreshKey((key) => key + 1)}
+          />
+        ) : null}
+        {pane === 'urls' ? (
+          <UrlExplorer auditId={audit.id} api={services.api} />
+        ) : null}
       </Paper>
+
+      <ExportDialog auditId={audit.id} open={exportOpen} onClose={() => setExportOpen(false)} />
     </Stack>
   );
 }

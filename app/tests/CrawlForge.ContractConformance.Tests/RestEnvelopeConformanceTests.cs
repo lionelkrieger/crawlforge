@@ -343,13 +343,11 @@ public sealed class RestEnvelopeConformanceTests
     }
 
     /// <summary>
-    /// G-REST-IDEMPOTENCY (documented + skipped): §10.4 requires duplicate audit
-    /// start to be idempotent while an identical run is active; the engine
-    /// (AuditExecutionEngine.StartAuditAsync, Host/Execution/AuditExecutionEngine.cs:334)
-    /// always creates a new audit. Envelope shape of both starts is asserted by
-    /// the sweep; the idempotency assertion waits for the phase-09 wiring fix.
+    /// G-REST-IDEMPOTENCY RESOLVED (WP-09-11): §10.4 idempotency — the engine's
+    /// StartCoreAsync returns the existing active audit (Queued/Running/Paused)
+    /// for the same configuration instead of creating a second run.
     /// </summary>
-    [Fact(Skip = "G-REST-IDEMPOTENCY: duplicate start creates a second audit (spec §10.4 idempotency); owner phase-09 wiring — see GAPS.md")]
+    [Fact]
     public async Task DuplicateAuditStart_IsIdempotentWhileActive()
     {
         var first = await Rest.PostDataAsync(_fixture.Http, "/api/audits", new
@@ -401,19 +399,13 @@ public sealed class RestEnvelopeConformanceTests
     }
 
     /// <summary>
-    /// G-REAUDIT-SNAPSHOT (live, skipped): re-audit of a REST-started audit
-    /// must return the created envelope with a new audit id. Today it 500s
-    /// with an empty body — AuditsController.StartAsync:146-160 overwrites the
-    /// engine's DTO configuration snapshot with the WIRE shape, and
-    /// AuditExecutionEngine.ReAuditAsync:436-437 deserializes it as
-    /// CrawlConfigurationDto ($.id string→long JsonException). Evidence:
-    /// captured/gap-reaudit-rest-start-response.json + the run scratch
-    /// backend-console.log stack. Owners: WP-09-06 (Api\Controllers overwrite
-    /// side) + WP-09-11 (Host\Execution PayloadJson read side). The same
-    /// mismatch makes REST start probabilistically fail at crawl startup
-    /// (RunAuditAsync:497 reads the snapshot the controller overwrites).
+    /// G-REAUDIT-SNAPSHOT RESOLVED (WP-09-11): REST start now merges
+    /// enabledCategories into the engine's DTO-shaped storage snapshot
+    /// (AuditsController.ParseSnapshotObject) instead of overwriting it with
+    /// the wire projection, so re-audit of a REST-started audit deserializes
+    /// cleanly and returns the created envelope with a new audit id.
     /// </summary>
-    [Fact(Skip = "G-REAUDIT-SNAPSHOT: REST-started audits' re-audit 500s (wire snapshot vs DTO read, AuditsController.cs:146-160 / AuditExecutionEngine.cs:436-437); owners WP-09-06 + WP-09-11 — see GAPS.md")]
+    [Fact]
     public async Task Reaudit_RestStartedAudit_SpecShape()
     {
         var exchange = await Rest.SendAsync(_fixture.Http, "POST", $"/api/audits/{_fixture.AuditId}/reaudit", new { refresh = false });
@@ -425,15 +417,13 @@ public sealed class RestEnvelopeConformanceTests
     }
 
     /// <summary>
-    /// G-MATRIX-SEED-RACE (live, skipped): autoSeedAudit:true must accept the
-    /// matrix and seed a validation audit that completes. Today the concurrent
-    /// crawl + ingest of the same canonical URL hits
-    /// UNIQUE(audit_id, canonical_url) and the seeded audit fails (or the
-    /// upload 500s in IngestAsync, depending on race order). Evidence:
-    /// captured/gap-matrix-seed-race.json. Owners: WP-09-06 (autoSeed ordering)
-    /// + WP-09-03 (ListMode seeder) + WP-09-11 (crawl insert path).
+    /// G-MATRIX-SEED-RACE RESOLVED (WP-09-11): the crawl loop reuses pre-seeded
+    /// url_records rows (GetOrCreateUrlRowAsync) and enqueues pre-seeded rows
+    /// through the admission gate, so autoSeedAudit's concurrent crawl + ingest
+    /// no longer collides on UNIQUE(audit_id, canonical_url); the seeded
+    /// validation audit completes.
     /// </summary>
-    [Fact(Skip = "G-MATRIX-SEED-RACE: autoSeedAudit crawl/ingest duplicate insert → UNIQUE(audit_id, canonical_url) (RedirectMatrixController.cs:94-95); owners WP-09-06 + WP-09-03 + WP-09-11 — see GAPS.md")]
+    [Fact]
     public async Task MatrixAutoSeed_StartsValidationAudit_SpecShape()
     {
         var exchange = await Rest.SendAsync(_fixture.Http, "POST", $"/api/audits/{_fixture.AuditId}/redirect-matrix", new

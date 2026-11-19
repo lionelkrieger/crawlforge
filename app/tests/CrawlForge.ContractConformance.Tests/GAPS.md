@@ -67,7 +67,18 @@ Spec paths are relative to `architecture/`; code paths relative to `app/`.
   spec-notation item for lead/owner routing (no functional defect when the
   documented rule format is used).
 
-## G-REAUDIT-SNAPSHOT — configuration snapshot wire-vs-entity mismatch (REST start race + deterministic re-audit failure)
+## G-REAUDIT-SNAPSHOT — configuration snapshot wire-vs-entity mismatch — RESOLVED (WP-09-11)
+
+- RESOLVED by the WP-09-11 serial wiring: `AuditsController.StartAuditAsync`
+  now merges `enabledCategories` into the engine's DTO-shaped storage snapshot
+  (`ParseSnapshotObject`; absent/empty/malformed → fresh DTO serialization)
+  instead of overwriting it with the wire projection. Re-audit of REST-started
+  audits deserializes cleanly; the probabilistic REST-start crawl failure is
+  gone (both snapshot writers now agree on the DTO shape).
+- **Tests:** `Reaudit_RestStartedAudit_SpecShape` UNSKIPPED (live created
+  envelope + new audit id); `ReauditWireContract_Shape` unchanged. The
+  MCP-started offline zero-network proof stays live.
+- **Owner:** WP-09-11 (done). Original evidence below retained for the record.
 
 - **Wire boundary:** REST API layer → execution engine (stored configuration
   snapshot).
@@ -108,7 +119,15 @@ Spec paths are relative to `architecture/`; code paths relative to `app/`.
   overwrite side) + WP-09-11 (owns `Host\Execution\` — the `PayloadJson` read
   side).
 
-## G-MATRIX-SEED-RACE — redirect-matrix autoSeedAudit crawl/ingest duplicate insert
+## G-MATRIX-SEED-RACE — redirect-matrix autoSeedAudit crawl/ingest duplicate insert — RESOLVED (WP-09-11)
+
+- RESOLVED by the WP-09-11 crawl-loop wiring: `GetOrCreateUrlRowAsync` reuses
+  pre-seeded `url_records` rows (matrix/list) instead of inserting duplicates,
+  and the fresh-start path enqueues pre-seeded NotCrawled rows through the
+  admission gate with seen-dedup. The seeded validation audit completes.
+- **Tests:** `MatrixAutoSeed_StartsValidationAudit_SpecShape` UNSKIPPED (live
+  autoSeedAudit:true → completed validation audit).
+- **Owner:** WP-09-11 (done). Original evidence below retained for the record.
 
 - **Wire boundary:** REST redirect-matrix upload → execution engine + URL
   ingestor (shared `url_records` table).
@@ -163,7 +182,16 @@ Spec paths are relative to `architecture/`; code paths relative to `app/`.
   `--filter KnownGap!=WP-09-06`.
 - **Owner:** phase 09 WP-09-06 (counter-key reconciliation).
 
-## G-PROGRESS — hub crawl-progress payload drift (WP-09-06 + WP-09-11)
+## G-PROGRESS — hub crawl-progress payload drift — RESOLVED (WP-09-06 + WP-09-11)
+
+- RESOLVED: WP-09-06's HubPayloadNormalizer maps counters to the consumer keys
+  and stringifies ids; WP-09-11's PublishProgressAsync adds
+  throughputPerSecond/elapsedSeconds/estimatedRemainderSeconds/phase (+
+  additive throttledHostCount/meanEffectiveRate) with string auditId.
+- **Tests:** `CrawlProgress_FrontendContractShape` UNSKIPPED (live frozen
+  contract shape); `CrawlProgress_LivePayload_ProducerShape` unchanged
+  (≤1/s average cadence).
+- **Owner:** WP-09-11 (done). Original drift description below retained.
 
 - **Producer:** `AuditExecutionEngine.PublishProgressAsync`
   (`src/backend/CrawlForge.Host/Execution/AuditExecutionEngine.cs:1663-1690`)
@@ -323,15 +351,26 @@ Spec paths are relative to `architecture/`; code paths relative to `app/`.
   `LocalNotification_NotInFrontendContract`).
 - **Owner:** WP-09-11 (done).
 
-## G05 — six spec events with no producer
+## G05 — six spec events with no producer — FOUR RESOLVED (WP-09-11)
 
-- `url-batch`, `findings-updated`, `backend-lifecycle`, `waf-blocks`,
-  `embedding-progress`, `embedding-completed` are specified
-  (02-realtime-websocket-hub.md §10.3 / §7.2 + Appendix C) and cataloged, but
-  no backend code publishes them (`app/CODEMAP.md` §6 producer table).
-- **Tests:** one contract-side `[Fact(Skip="G05: ...")]` per event in
-  `HubEventWireConformanceTests` (inventory + producer-absence lock).
-- **Owners:** the phases that wire each surface (hub wiring / WAF / semantics).
+- RESOLVED (WP-09-11 serial wiring): `url-batch` + `findings-updated`
+  (AuditExecutionEngine.FlushRunEventsAsync → AuditRunEventPublisher, ≤1/s
+  producer cadence, lossless delivery; findings deltas derived from persisted
+  counts), `backend-lifecycle` (CrawlForgeBackend.PublishLifecycleAsync —
+  ready at startup, shutdown before the drain; the harness now stops its
+  backend through POST /api/system/shutdown so the notice is captured),
+  `waf-blocks` (FlushRunEventsAsync, 1/s hub throttle; the fixture serves no
+  WAF challenge, so the live producer proof is CrawlForge.Host.Tests
+  WafWiringTests — challenge origin → frozen batch shape).
+- STILL ABSENT: `embedding-progress`, `embedding-completed` (phase-12
+  semantics wiring; contract-side absence locks remain).
+- **Tests:** `UrlBatch_LivePayload_SpecShape`,
+  `FindingsUpdated_LivePayload_SpecShape` (live, unskipped);
+  `BackendLifecycle_ProducerWired_ShapeLock` + `WafBlocks_ProducerWired_NoFixtureTrigger`
+  (inventory producer locks; live proofs in CrawlForge.Host.Tests
+  BackendLifecycleTests / WafWiringTests — the harness hub connects after
+  startup and captures shutdown at dispose); embedding absence locks unchanged.
+- **Owner:** WP-09-11 (done); embeddings → phase 12.
 
 ## G-MCP-PAGING — MCP resource paging vs CR-011
 
@@ -353,7 +392,13 @@ Spec paths are relative to `architecture/`; code paths relative to `app/`.
   (passes; locks the current error shape).
 - **Owner:** phase 13 MCP surface.
 
-## G-REST-IDEMPOTENCY — duplicate audit start not idempotent
+## G-REST-IDEMPOTENCY — duplicate audit start not idempotent — RESOLVED (WP-09-11)
+
+- RESOLVED: `AuditExecutionEngine.StartCoreAsync` returns the existing active
+  audit (Queued/Running/Paused) for the same configurationId per §10.4.
+- **Tests:** `DuplicateAuditStart_IsIdempotentWhileActive` UNSKIPPED (live
+  duplicate start returns the same auditId).
+- **Owner:** WP-09-11 (done). Original description below retained.
 
 - **Spec:** `architecture/05-api-hub-and-mcp/01-rest-api-contract.md` §10.4:
   duplicate start is idempotent while an identical run is active.
@@ -400,9 +445,10 @@ Spec paths are relative to `architecture/`; code paths relative to `app/`.
 
 ## CODEMAP inaccuracies (lead records; outside this workpiece's owned paths)
 
-- `app/CODEMAP.md` §2 step 7 claims a `POST /api/system/shutdown` route; it
-  does not exist — `SystemController` exposes only `health` + `compact`. The
-  harness kills its own backend process (packet-approved).
+- CORRECTED (phase-08 erratum, WP-09-11): `POST /api/system/shutdown` DOES
+  exist — mapped in the composition root (`CrawlForgeBackend.cs:131-135`),
+  not in SystemController. The harness now uses it for graceful shutdown
+  (backend-lifecycle capture); the process kill remains the fallback.
 - CODEMAP's `CRAWLFORGE_DATA_DIRECTORY` environment claim is wrong: the
   product binds `CrawlForge:DataDirectory` from configuration only
   (`src/backend/CrawlForge.Host/Configuration/CrawlForgePaths.cs:14`); the

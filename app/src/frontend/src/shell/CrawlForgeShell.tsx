@@ -25,11 +25,12 @@ import { CommandPalette, PaletteTrigger } from './CommandPalette';
 import { ActivityFeed } from './ActivityFeed';
 import { HubDashboard } from './HubDashboard';
 import { AuditsView, ReportView } from './AuditViews';
+import { ProjectView, ConfigurationsView } from './ProjectViews';
 import { ToolsView } from './ToolsView';
 import { SettingsSurface } from './SettingsSurface';
 import { SurfaceErrorBoundary } from './ErrorBoundary';
 import { useLiveProgress } from '../store/liveProgress';
-import type { ShellView } from './windowState';
+import type { ShellView, ShellWindowState } from './windowState';
 
 /** Connection pill (live hub state). */
 function ConnectionPill() {
@@ -83,6 +84,10 @@ function ViewContent({ view }: { view: ShellView }) {
       return <AuditsView />;
     case 'report':
       return <ReportView />;
+    case 'project':
+      return <ProjectView />;
+    case 'configurations':
+      return <ConfigurationsView />;
     case 'tools':
       return <ToolsView />;
     case 'settings':
@@ -205,15 +210,19 @@ function ShellFrame() {
 /** Shell root props. */
 export interface CrawlForgeShellProps {
   readonly services: ShellServices;
+  /** Initial window state override (G20 ?route= deep links; tests). */
+  readonly initialWindowState?: ShellWindowState;
+  /** Deep-link audit opened on mount (?route=report&auditId=…). */
+  readonly initialAuditId?: string | null;
 }
 
 /**
  * The mountable CrawlForge shell. Construct services with
  * `createShellServices` (baseUrl from the preload bridge; null = offline).
  */
-export function CrawlForgeShell({ services }: CrawlForgeShellProps) {
+export function CrawlForgeShell({ services, initialWindowState, initialAuditId }: CrawlForgeShellProps) {
   return (
-    <ShellProvider services={services}>
+    <ShellProvider services={services} initialWindowState={initialWindowState} initialAuditId={initialAuditId}>
       <ShellFrame />
     </ShellProvider>
   );

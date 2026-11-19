@@ -1,0 +1,617 @@
+{
+  "harness": "WP-08-04 fixture acceptance harness",
+  "version": "1.0.0",
+  "timestamp": "20261119T160051Z",
+  "git_head": "bfd70d5aaedb541b929e66e2215be123fde48602",
+  "fixture_base_url": "http://127.0.0.1:47311",
+  "expected_results_sha256": "9068684d683e7f4dcedabef4223d35ed69421e49ed4af591e353288a2d780211",
+  "modes_requested": [
+    "http"
+  ],
+  "selected_traps": [
+    "redirect-chain",
+    "redirect-loop",
+    "noindex",
+    "robots-blocked",
+    "canonical-conflict",
+    "broken-links",
+    "orphan",
+    "soft-404-server",
+    "cookieless-session",
+    "crawler-trap-filter",
+    "crawler-trap-calendar",
+    "cookie-gate",
+    "structured-data-errors",
+    "missing-alt",
+    "hreflang-no-return",
+    "duplicate-titles",
+    "thin-page"
+  ],
+  "selected_surfaces": [
+    "UI-01",
+    "UI-02",
+    "UI-03",
+    "UI-04",
+    "UI-10",
+    "UI-11",
+    "UI-12",
+    "UI-13",
+    "UI-20"
+  ],
+  "tls": {
+    "active": false,
+    "note": null
+  },
+  "cdp_port": 9222,
+  "app_launched_by_harness": true,
+  "environment": {
+    "cdp_port_notes": [],
+    "fixture_started_by_harness": true,
+    "fixture_reused_existing": false,
+    "session_events_file": "results/ENVIRONMENT-NOTES.md (pre-run session measurements)"
+  },
+  "global_assertions": [
+    {
+      "id": "no-non-get-requests",
+      "check": "GET /__fixture/requests -> nonGet is empty after any audit",
+      "criteria": [
+        54
+      ],
+      "ok": true,
+      "per_audit": [
+        {
+          "audit_id": "38",
+          "entry": "UI Start audit button (CDP) + REST limit-bounding + REST poll",
+          "nonGet": [],
+          "ok": true,
+          "evidence": "nonGet == [] after audit"
+        }
+      ]
+    }
+  ],
+  "product_defects": null,
+  "modes": {
+    "http": {
+      "traps": {
+        "redirect-chain": {
+          "result": "pass",
+          "evidence": "audit 38: redirectChain [{\"url\": \"http://127.0.0.1:47311/redirect/chain-1\", \"statusCode\": 301, \"location\": \"http://127.0.0.1:47311/redirect/chain-2\"}, {\"url\": \"http://127.0.0.1:47311/redirect/chain-2\", \"statusCode\": 302, \"location\": \"http://127.0.0.1:47311/redirect/chain-3\"}, {\"url\": \"http://127.0.0.1:47311/redirect/chain-; finding redirects.chain[warning] redirects chain"
+        },
+        "redirect-loop": {
+          "result": "pass",
+          "evidence": "audit 38: loop reported (redirects.loop[error] Redirect loop detected: 'http://127.0.0.1:47311/redirect/loop-b' -> 'http://127.0.0.1:47311/redirect/loop-a'.; redirects.loop[error] Redirect loop detected: 'http://127.0.0.1:47311/redirect/loop-b' -> 'http://127.0.0.1:47311/redirect/loop-a'.); audit completed without hanging."
+        },
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 38: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "robots-blocked": {
+          "result": "pass",
+          "evidence": "audit 38: not fetched (statusCode=0), blockReason=None, finding indexability.robots-blocked[warning] indexability robots blocked."
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 38: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "broken-links": {
+          "result": "pass",
+          "evidence": "audit 38: internal 404 recorded, external checked, findings links.broken-internal[error] links broken internal; links.broken-external[warning] links broken external."
+        },
+        "orphan": {
+          "result": "pass",
+          "evidence": "audit 38: orphan discovered and reported (links.orphan[warning] links orphan); inboundLinks=0."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 38: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404)."
+        },
+        "cookieless-session": {
+          "result": "pass",
+          "evidence": "audit 38: session segment stripped and reported (canonicalization.session-segment-removed[notice] Cookieless session segment removed during URL normalization; the canonical URL is stored without the session i; canonicalization.session-segment-removed[notice] Cookieless session segment removed during URL normalization; the canonical URL is stored without the session i)."
+        },
+        "crawler-trap-filter": {
+          "result": "pass",
+          "evidence": "audit 38: faceted-filter combination explosion detected/reported (trap findings=1, throttled rows=0, crawled rows=90); audit finished."
+        },
+        "crawler-trap-calendar": {
+          "result": "pass",
+          "evidence": "audit 38: calendar combination explosion detected/reported (trap findings=1, throttled rows=0, crawled rows=11); audit finished."
+        },
+        "cookie-gate": {
+          "result": "pass",
+          "evidence": "audit 38: cookie jar honored; /cookie-gate/ reached 200 after the Set-Cookie redirect."
+        },
+        "structured-data-errors": {
+          "result": "pass",
+          "evidence": "audit 38: structured-data validation errors reported (structured-data.malformed-block[error] structured data malformed block; structured-data.invalid[error] structured data invalid)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 38: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        },
+        "hreflang-no-return": {
+          "result": "pass",
+          "evidence": "audit 38: missing return tag reported (i18n.hreflang-missing-reciprocity[warning] i18n hreflang missing reciprocity)."
+        },
+        "duplicate-titles": {
+          "result": "pass",
+          "evidence": "audit 38: both pages share the identical title and a duplicate-title finding is emitted (content.duplicate-title[warning] content duplicate title)."
+        },
+        "thin-page": {
+          "result": "pass",
+          "evidence": "audit 38: content.thin-text emitted on /pages/thin.html (wordCount=6)."
+        }
+      },
+      "counts": {
+        "pass": 17,
+        "partial": 0,
+        "fail": 0,
+        "not_testable": 0
+      },
+      "evidence_pool": [
+        "38"
+      ],
+      "pooling_note": "probe-2 convention: bulk runs pooled for the acceptance matrix; per-run verdicts in runs[]"
+    }
+  },
+  "runs": [
+    {
+      "run_id": "http-ui",
+      "mode": "http",
+      "entry_point": "UI Start audit button (CDP) + REST limit-bounding + REST poll",
+      "project_id": "27",
+      "project_name": "Fixture harness http 20261119T160051Z",
+      "configuration_id": "31",
+      "audit_id": "38",
+      "limit_overrides": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      },
+      "state": "completed",
+      "transitions": [
+        {
+          "t": 0.0,
+          "state": "running",
+          "phase": "crawling",
+          "counters": {
+            "queued": 0,
+            "fetched": 0,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 56.5,
+          "state": "running",
+          "phase": "analyzing",
+          "counters": {
+            "queued": 135,
+            "fetched": 132,
+            "error": 1,
+            "blocked": 0,
+            "wafBlocked": 0
+          }
+        },
+        {
+          "t": 70.5,
+          "state": "completed",
+          "phase": "finalizing",
+          "counters": {
+            "queued": 135,
+            "fetched": 132,
+            "error": 1,
+            "blocked": 0,
+            "wafBlocked": 0
+          }
+        }
+      ],
+      "duration_s": 70.5,
+      "timed_out": false,
+      "configuration_setup": "Project + default config created through UI dialog; rendering.enabled=false (default); limits bounded via REST PUT.",
+      "start_attempts": [],
+      "safety": {
+        "ok": true,
+        "evidence": "nonGet == [] after audit",
+        "tag_hits": {
+          "total": 0,
+          "beforeConsent": 0,
+          "granted": 0,
+          "hits": []
+        }
+      },
+      "url_count": 135,
+      "finding_count": 1250,
+      "link_count": 1047,
+      "rendering_inert": {
+        "inert": false,
+        "evidence": "rendering.enabled=False; 'no rendered tree is available' findings=0; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=None",
+        "no_tree_findings": 0,
+        "js_target_present": false,
+        "js_content_words": null
+      },
+      "click_activity": {
+        "active": false,
+        "click_link_rows": 0,
+        "spa_view_urls": 0,
+        "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+      },
+      "traps": {
+        "redirect-chain": {
+          "result": "pass",
+          "evidence": "audit 38: redirectChain [{\"url\": \"http://127.0.0.1:47311/redirect/chain-1\", \"statusCode\": 301, \"location\": \"http://127.0.0.1:47311/redirect/chain-2\"}, {\"url\": \"http://127.0.0.1:47311/redirect/chain-2\", \"statusCode\": 302, \"location\": \"http://127.0.0.1:47311/redirect/chain-3\"}, {\"url\": \"http://127.0.0.1:47311/redirect/chain-; finding redirects.chain[warning] redirects chain"
+        },
+        "redirect-loop": {
+          "result": "pass",
+          "evidence": "audit 38: loop reported (redirects.loop[error] Redirect loop detected: 'http://127.0.0.1:47311/redirect/loop-b' -> 'http://127.0.0.1:47311/redirect/loop-a'.; redirects.loop[error] Redirect loop detected: 'http://127.0.0.1:47311/redirect/loop-b' -> 'http://127.0.0.1:47311/redirect/loop-a'.); audit completed without hanging."
+        },
+        "noindex": {
+          "result": "pass",
+          "evidence": "audit 38: crawled 200 (words=154); indexability.noindex emitted (directives=['noindex', 'follow']); indexability.noindex[notice] indexability noindex"
+        },
+        "robots-blocked": {
+          "result": "pass",
+          "evidence": "audit 38: not fetched (statusCode=0), blockReason=None, finding indexability.robots-blocked[warning] indexability robots blocked."
+        },
+        "canonical-conflict": {
+          "result": "pass",
+          "evidence": "audit 38: canonical.header-html-conflict emitted with headerTarget='/pages/canonical-target-header.html' htmlTarget='/pages/canonical-target-html.html'; canonical.mismatch count=1; headerConflicts.conflict=True."
+        },
+        "broken-links": {
+          "result": "pass",
+          "evidence": "audit 38: internal 404 recorded, external checked, findings links.broken-internal[error] links broken internal; links.broken-external[warning] links broken external."
+        },
+        "orphan": {
+          "result": "pass",
+          "evidence": "audit 38: orphan discovered and reported (links.orphan[warning] links orphan); inboundLinks=0."
+        },
+        "soft-404-server": {
+          "result": "pass",
+          "evidence": "audit 38: 200 page classified soft-404 (indexability.soft-404[warning] indexability soft 404)."
+        },
+        "cookieless-session": {
+          "result": "pass",
+          "evidence": "audit 38: session segment stripped and reported (canonicalization.session-segment-removed[notice] Cookieless session segment removed during URL normalization; the canonical URL is stored without the session i; canonicalization.session-segment-removed[notice] Cookieless session segment removed during URL normalization; the canonical URL is stored without the session i)."
+        },
+        "crawler-trap-filter": {
+          "result": "pass",
+          "evidence": "audit 38: faceted-filter combination explosion detected/reported (trap findings=1, throttled rows=0, crawled rows=90); audit finished."
+        },
+        "crawler-trap-calendar": {
+          "result": "pass",
+          "evidence": "audit 38: calendar combination explosion detected/reported (trap findings=1, throttled rows=0, crawled rows=11); audit finished."
+        },
+        "cookie-gate": {
+          "result": "pass",
+          "evidence": "audit 38: cookie jar honored; /cookie-gate/ reached 200 after the Set-Cookie redirect."
+        },
+        "structured-data-errors": {
+          "result": "pass",
+          "evidence": "audit 38: structured-data validation errors reported (structured-data.malformed-block[error] structured data malformed block; structured-data.invalid[error] structured data invalid)."
+        },
+        "missing-alt": {
+          "result": "pass",
+          "evidence": "audit 38: accessibility.image-alt emitted (accessibility.image-alt[error] Image has no alt attribute.)."
+        },
+        "hreflang-no-return": {
+          "result": "pass",
+          "evidence": "audit 38: missing return tag reported (i18n.hreflang-missing-reciprocity[warning] i18n hreflang missing reciprocity)."
+        },
+        "duplicate-titles": {
+          "result": "pass",
+          "evidence": "audit 38: both pages share the identical title and a duplicate-title finding is emitted (content.duplicate-title[warning] content duplicate title; content.duplicate-title[warning] content duplicate title)."
+        },
+        "thin-page": {
+          "result": "pass",
+          "evidence": "audit 38: content.thin-text emitted on /pages/thin.html (wordCount=6)."
+        }
+      },
+      "counts": {
+        "pass": 17,
+        "partial": 0,
+        "fail": 0,
+        "not_testable": 0
+      }
+    }
+  ],
+  "ui_entry": {
+    "flow": "UI New project dialog -> REST PUT limits -> UI Start audit -> CDP UI-10 inspection",
+    "note_no_ui_limit_controls": "UI-04 configuration editor absent; limits bounded via REST PUT /api/configurations/{id} (subset update), read back to verify.",
+    "create_api_calls": [
+      "POST http://127.0.0.1:52554/api/projects {\"name\":\"Fixture harness http 20261119T160051Z\",\"description\":\"WP-08-04 fixture acceptance — UI entry (CR-023)\"}",
+      "POST http://127.0.0.1:52554/api/projects/27/configurations {\"name\":\"Default configuration\",\"startUrls\":[\"http://127.0.0.1:47311/\"],\"limits\":{\"maxUrls\":null,\"maxDepth\":null,\"maxDurationSeconds\":null,\"maxResponseBytes\":null},\"aimd\":{\"initialRateR0\":2,\"alpha\":0.5,\"beta\":0.5,\"kappa\":4,\"ewmaTtfbWeight\":0.2},\"rendering\":{\"enabled\":false,\"deviceProfile\":null,\"infi",
+      "GET http://127.0.0.1:52554/api/projects "
+    ],
+    "create_post_seen": true,
+    "project_id": "27",
+    "configuration_id": "31",
+    "rest_limit_bounding": {
+      "put_payload": {
+        "limits": {
+          "maxUrls": 220,
+          "maxDepth": 6,
+          "maxDurationSeconds": 180,
+          "maxResponseBytes": null
+        }
+      },
+      "read_back_limits": {
+        "maxUrls": 220,
+        "maxDepth": 6,
+        "maxDurationSeconds": 180,
+        "maxResponseBytes": null
+      }
+    },
+    "start_button_visible_in_hub": true,
+    "project_row_visible_in_hub": true,
+    "start_api_calls": [
+      "GET http://127.0.0.1:52554/api/projects/27/configurations ",
+      "POST http://127.0.0.1:52554/api/audits {\"configurationId\":\"31\"}",
+      "GET http://127.0.0.1:52554/api/audits ",
+      "GET http://127.0.0.1:52554/api/audits/38/summary ",
+      "GET http://127.0.0.1:52554/api/audits/38/scores ",
+      "GET http://127.0.0.1:52554/api/audits/38/charts/score-trend ",
+      "GET http://127.0.0.1:52554/api/audits/38/waf-blocks/summary ",
+      "GET http://127.0.0.1:52554/api/audits/38/hosts?includeHistory=true&offset=0&limit=100 ",
+      "GET http://127.0.0.1:52554/api/audits/38/ngrams?offset=0&limit=50 ",
+      "GET http://127.0.0.1:52554/api/audits/38/ngrams/gaps?offset=0&limit=20 ",
+      "GET http://127.0.0.1:52554/api/audits/38/logs/correlation?offset=0&limit=1 ",
+      "GET http://127.0.0.1:52554/api/audits/38/charts/log-hits ",
+      "GET http://127.0.0.1:52554/api/audits/38/geo/llms-txt?offset=0&limit=100 ",
+      "GET http://127.0.0.1:52554/api/audits/38/geo/governance?offset=0&limit=200 ",
+      "GET http://127.0.0.1:52554/api/audits/38/analytics?view=tags ",
+      "GET http://127.0.0.1:52554/api/audits/38/analytics/coverage?offset=0&limit=50 ",
+      "GET http://127.0.0.1:52554/api/audits/38 ",
+      "GET http://127.0.0.1:52554/api/audits/38/findings?offset=0&limit=10&sort=severity&order=asc "
+    ],
+    "start_post_seen": true,
+    "start_click_note": "clicked (method=input, vanished=True)",
+    "start_attempts": [],
+    "ui10_running_dump": {
+      "title": "CrawlForge",
+      "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+      "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\nAudit 38\nCOMPLETED\n\nPhase crawling · started 19 Nov 18:01:03\n\nCRAWL PROGRESS\n\n132 fetched · 135 queued · 2.0/s · ETA 1m 9s\n\nERRORS\n1\nBLOCKED\n0\nWAF BLOCKED\n0\nELAPSED\n1m 7s\n\nHOST THROTTLE (AIMD)\n\nHost\tRate\tConcurrency\tTTFB EWMA\tState\n\n\n127.0.0.1\n\n\t1.3/s\t1\t2 ms\t\nTHROTTLED\nDashboard\nIssue explorer\nURL explorer\nExport\nQueued\n135\nFetched\n132\nErrors\n1\nBlocked\n0\nWAF blocked\n0\nSCORES\nOverall 0 / 100\nTotal URLs\n0\nFetched\n0\nErrors\n0\nBlocked\n0\nAvg TTFB\n—\nExport PNG\nExport PNG\nExport PNG\nExport PNG\nCategory breakdown\nNo findings — clean audit.\nCRAWL HEALTH\nTotal URLs 0\nFetched 0\nErrors 0\nBlocked 0\nAvg TTFB —\nNo host throttle state — hosts appear once the crawl starts.\nExport PNG\nExport PNG\nTOP ISSUES\nNo findings — clean audit.\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n149/1000\n\nAUDIT-COMPLETED\n\naudit 38\n\n18:02:12\nSTAGE-CHANGED\n\naudit 38\n\n18:02:12\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:11\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:11\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:10\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:10\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:09\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:09\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:08\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:08\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:07\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:07\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:06\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:06\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:05\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:05\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:04\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:04\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:03\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:03\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:02\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:02\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:01\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:01\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:00\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:00\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:59\nSTAGE-CHANGED\n\naudit 38\n\n18:01:59\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:58\nURL-BATCH\n\naudit 38\n\n18:01:58\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:58\nURL-BATCH\n\naudit 38\n\n18:01:57\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:57\nURL-BATCH\n\naudit 38\n\n18:01:56\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:56\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:55\nURL-BATCH\n\naudit 38\n\n18:01:54\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:54\nURL-BATCH\n\naudit 38\n\n18:01:53\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:53\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:52\nURL-BATCH\n\naudit 38\n\n18:01:51\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:50\nURL-BATCH\n\naudit 38\n\n18:01:50\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:49\nURL-BATCH\n\naudit 38\n\n18:01:49\nHOST-THROTTLE\n\naudit 38\n\n18:01:49\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:48\nURL-BATCH\n\naudit 38\n\n18:01:48\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:47\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:46\nURL-BATCH\n\naudit 38\n\n18:01:46\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:45\nURL-BATCH\n\naudit 38\n\n18:01:45\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:44\nURL-BATCH\n\naudit 38\n\n18:01:44\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:43\nURL-BATCH\n\naudit 38\n\n18:01:43\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:42\nURL-BATCH\n\naudit 38\n\n18:01:42\nHOST-THROTTLE\n\naudit 38\n\n18:01:42\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:41\nURL-BATCH\n\naudit 38\n\n18:01:41\nHOST-THROTTLE\n\naudit 38\n\n18:01:41\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:40\nURL-BATCH\n\naudit 38\n\n18:01:40\nHOST-THROTTLE\n\naudit 38\n\n18:01:39\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:39\nURL-BATCH\n\naudit 38\n\n18:01:38\nHOST-THROTTLE\n\naudit 38\n\n18:01:38\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:38\nURL-BATCH\n\naudit 38\n\n18:01:37\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:37\nHOST-THROTTLE\n\naudit 38\n\n18:01:37\nURL-BATCH\n\naudit 38\n\n18:01:36\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:36\nURL-BATCH\n\naudit 38\n\n18:01:35\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:35\nHOST-THROTTLE\n\naudit 38\n\n18:01:35\nURL-BATCH\n\naudit 38\n\n18:01:34\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:34\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:33\nURL-BATCH\n\naudit 38\n\n18:01:33\nHOST-THROTTLE\n\naudit 38\n\n18:01:33\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:32\nURL-BATCH\n\naudit 38\n\n18:01:32\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:31\nURL-BATCH\n\naudit 38\n\n18:01:30\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:30\nHOST-THROTTLE\n\naudit 38\n\n18:01:30\nURL-BATCH\n\naudit 38\n\n18:01:29\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:29\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:28\nURL-BATCH\n\naudit 38\n\n18:01:28\nHOST-THROTTLE\n\naudit 38\n\n18:01:27\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:27\nURL-BATCH\n\naudit 38\n\n18:01:26\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:26\nURL-BATCH\n\naudit 38\n\n18:01:25\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:25\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:24\nURL-BATCH\n\naudit 38\n\n18:01:23\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:23\nURL-BATCH\n\naudit 38\n\n18:01:22\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:22\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:21\nURL-BATCH\n\naudit 38\n\n18:01:20\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:19\nURL-BATCH\n\naudit 38\n\n18:01:19\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:18\nURL-BATCH\n\naudit 38\n\n18:01:17\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:17\nURL-BATCH\n\naudit 38\n\n18:01:16\nHOST-THROTTLE\n\naudit 38\n\n18:01:16\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:16\nURL-BATCH\n\naudit 38\n\n18:01:15\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:15\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:14\nHOST-THROTTLE\n\naudit 38\n\n18:01:14\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:14\nURL-BATCH\n\naudit 38\n\n18:01:14\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:13\nURL-BATCH\n\naudit 38\n\n18:01:13\nHOST-THROTTLE\n\naudit 38\n\n18:01:12\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:12\nURL-BATCH\n\naudit 38\n\n18:01:12\nHOST-THROTTLE\n\naudit 38\n\n18:01:11\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:11\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:11\nURL-BATCH\n\naudit 38\n\n18:01:11\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:10\nHOST-THROTTLE\n\naudit 38\n\n18:01:10\nURL-BATCH\n\naudit 38\n\n18:01:10\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:09\nURL-BATCH\n\naudit 38\n\n18:01:08\nHOST-THROTTLE\n\naudit 38\n\n18:01:08\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:08\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:07\nURL-BATCH\n\naudit 38\n\n18:01:07\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:07\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:06\nURL-BATCH\n\naudit 38\n\n18:01:06\nHOST-THROTTLE\n\naudit 38\n\n18:01:06\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:06\nURL-BATCH\n\naudit 38\n\n18:01:05\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:05\nHOST-THROTTLE\n\naudit 38\n\n18:01:04\nURL-BATCH\n\naudit 38\n\n18:01:04\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:04\nWS\n200 MiB\nHeap\n35.5 MiB\nGC\n57/8/5\nWAL\n4.11 MiB\nJS\n20.7 MiB\nbeat\n18:02:14\nCompact",
+      "buttons": [
+        "Open command palette (Ctrl+K)",
+        "Main hub",
+        "Audits",
+        "Report",
+        "Tools",
+        "Settings",
+        "Toggle activity pane",
+        "Dashboard",
+        "Issue explorer",
+        "URL explorer",
+        "Export",
+        "Export URL status distribution as image",
+        "Export Findings by severity as image",
+        "Export Findings by category as image",
+        "Export Crawl health as image",
+        "Export WAF blocks by provider as image",
+        "Export WAF block rate as image",
+        "Resize Main workspace and Live activity (Enter toggles collapse)",
+        "Compact and trim working set"
+      ],
+      "inputs": [
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "testid": "",
+          "placeholder": "",
+          "ariaLabel": ""
+        }
+      ],
+      "testids": [
+        "cf-appshell",
+        "palette-trigger",
+        "connection-pill",
+        "cf-nav-rail",
+        "nav-hub",
+        "nav-audits",
+        "nav-report",
+        "nav-tools",
+        "nav-settings",
+        "cf-split",
+        "cf-split-first",
+        "primary-pane",
+        "toggle-secondary-pane",
+        "view-content",
+        "report-view",
+        "report-state",
+        "report-progress",
+        "hosts-table",
+        "report-workspace",
+        "report-nav-dashboard",
+        "report-nav-issues",
+        "report-nav-urls",
+        "report-nav-export",
+        "dashboard-charts",
+        "dashboard-counters",
+        "dashboard-counter-tile-queued",
+        "dashboard-counter-queued",
+        "dashboard-counter-tile-fetched",
+        "dashboard-counter-fetched",
+        "dashboard-counter-tile-error",
+        "dashboard-counter-error",
+        "dashboard-counter-tile-blocked",
+        "dashboard-counter-blocked",
+        "dashboard-counter-tile-wafBlocked",
+        "dashboard-counter-wafBlocked",
+        "dashboard-scores",
+        "dashboard-score-overall",
+        "cf-dashboard",
+        "cf-dashboard-cards",
+        "cf-card-total",
+        "cf-card-fetched",
+        "cf-card-errors",
+        "cf-card-blocked",
+        "cf-card-ttfb",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-category-breakdown",
+        "dashboard-crawl-health",
+        "cf-crawl-health-panel",
+        "cf-hosts-empty",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "dashboard-top-issues",
+        "dashboard-top-issues-empty",
+        "cf-split-divider",
+        "cf-split-second",
+        "secondary-pane",
+        "activity-feed",
+        "activity-count",
+        "cf-statusbar",
+        "status-ws",
+        "status-heap",
+        "status-gc",
+        "status-wal",
+        "status-js",
+        "status-heartbeat",
+        "compact-button"
+      ]
+    },
+    "ui10_completed_dump": {
+      "title": "CrawlForge",
+      "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub",
+      "text": "CrawlForge\nSearch commands…\nCtrl K\nHub connected\n\nWORKSPACE\n\nMain hub\nAudits\nReport\nTools\nSettings\n\nLocal-first · no remote content\n\nREPORT\nHide\nAudit 1\nFAILED\n\nPhase finalizing · started 17 Nov 19:05:19\n\nCRAWL PROGRESS\n\n0 fetched · 0 queued\n\nERRORS\n0\nBLOCKED\n0\nWAF BLOCKED\n0\nELAPSED\n—\n\nHOST THROTTLE (AIMD)\n\nHost\tRate\tConcurrency\tTTFB EWMA\tState\n\n\n127.0.0.1\n\n\t1.3/s\t1\t2 ms\t\nTHROTTLED\nDashboard\nIssue explorer\nURL explorer\nExport\nQueued\n0\nFetched\n0\nErrors\n0\nBlocked\n0\nWAF blocked\n0\nSCORES\nOverall 0 / 100\nTotal URLs\n0\nFetched\n0\nErrors\n0\nBlocked\n0\nAvg TTFB\n—\nExport PNG\nExport PNG\nExport PNG\nExport PNG\nCategory breakdown\nNo findings — clean audit.\nCRAWL HEALTH\nTotal URLs 0\nFetched 0\nErrors 0\nBlocked 0\nAvg TTFB —\nNo host throttle state — hosts appear once the crawl starts.\nExport PNG\nExport PNG\nTOP ISSUES\nNo findings — clean audit.\nLIVE WORKSPACE\n\nLIVE ACTIVITY\n\n149/1000\n\nAUDIT-COMPLETED\n\naudit 38\n\n18:02:12\nSTAGE-CHANGED\n\naudit 38\n\n18:02:12\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:11\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:11\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:10\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:10\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:09\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:09\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:08\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:08\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:07\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:07\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:06\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:06\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:05\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:05\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:04\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:04\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:03\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:03\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:02\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:02\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:01\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:01\nCRAWL-PROGRESS\n\naudit 38\n\n18:02:00\nFINDINGS-UPDATED\n\naudit 38\n\n18:02:00\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:59\nSTAGE-CHANGED\n\naudit 38\n\n18:01:59\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:58\nURL-BATCH\n\naudit 38\n\n18:01:58\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:58\nURL-BATCH\n\naudit 38\n\n18:01:57\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:57\nURL-BATCH\n\naudit 38\n\n18:01:56\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:56\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:55\nURL-BATCH\n\naudit 38\n\n18:01:54\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:54\nURL-BATCH\n\naudit 38\n\n18:01:53\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:53\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:52\nURL-BATCH\n\naudit 38\n\n18:01:51\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:50\nURL-BATCH\n\naudit 38\n\n18:01:50\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:49\nURL-BATCH\n\naudit 38\n\n18:01:49\nHOST-THROTTLE\n\naudit 38\n\n18:01:49\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:48\nURL-BATCH\n\naudit 38\n\n18:01:48\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:47\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:46\nURL-BATCH\n\naudit 38\n\n18:01:46\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:45\nURL-BATCH\n\naudit 38\n\n18:01:45\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:44\nURL-BATCH\n\naudit 38\n\n18:01:44\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:43\nURL-BATCH\n\naudit 38\n\n18:01:43\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:42\nURL-BATCH\n\naudit 38\n\n18:01:42\nHOST-THROTTLE\n\naudit 38\n\n18:01:42\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:41\nURL-BATCH\n\naudit 38\n\n18:01:41\nHOST-THROTTLE\n\naudit 38\n\n18:01:41\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:40\nURL-BATCH\n\naudit 38\n\n18:01:40\nHOST-THROTTLE\n\naudit 38\n\n18:01:39\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:39\nURL-BATCH\n\naudit 38\n\n18:01:38\nHOST-THROTTLE\n\naudit 38\n\n18:01:38\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:38\nURL-BATCH\n\naudit 38\n\n18:01:37\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:37\nHOST-THROTTLE\n\naudit 38\n\n18:01:37\nURL-BATCH\n\naudit 38\n\n18:01:36\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:36\nURL-BATCH\n\naudit 38\n\n18:01:35\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:35\nHOST-THROTTLE\n\naudit 38\n\n18:01:35\nURL-BATCH\n\naudit 38\n\n18:01:34\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:34\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:33\nURL-BATCH\n\naudit 38\n\n18:01:33\nHOST-THROTTLE\n\naudit 38\n\n18:01:33\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:32\nURL-BATCH\n\naudit 38\n\n18:01:32\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:31\nURL-BATCH\n\naudit 38\n\n18:01:30\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:30\nHOST-THROTTLE\n\naudit 38\n\n18:01:30\nURL-BATCH\n\naudit 38\n\n18:01:29\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:29\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:28\nURL-BATCH\n\naudit 38\n\n18:01:28\nHOST-THROTTLE\n\naudit 38\n\n18:01:27\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:27\nURL-BATCH\n\naudit 38\n\n18:01:26\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:26\nURL-BATCH\n\naudit 38\n\n18:01:25\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:25\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:24\nURL-BATCH\n\naudit 38\n\n18:01:23\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:23\nURL-BATCH\n\naudit 38\n\n18:01:22\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:22\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:21\nURL-BATCH\n\naudit 38\n\n18:01:20\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:19\nURL-BATCH\n\naudit 38\n\n18:01:19\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:18\nURL-BATCH\n\naudit 38\n\n18:01:17\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:17\nURL-BATCH\n\naudit 38\n\n18:01:16\nHOST-THROTTLE\n\naudit 38\n\n18:01:16\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:16\nURL-BATCH\n\naudit 38\n\n18:01:15\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:15\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:14\nHOST-THROTTLE\n\naudit 38\n\n18:01:14\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:14\nURL-BATCH\n\naudit 38\n\n18:01:14\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:13\nURL-BATCH\n\naudit 38\n\n18:01:13\nHOST-THROTTLE\n\naudit 38\n\n18:01:12\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:12\nURL-BATCH\n\naudit 38\n\n18:01:12\nHOST-THROTTLE\n\naudit 38\n\n18:01:11\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:11\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:11\nURL-BATCH\n\naudit 38\n\n18:01:11\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:10\nHOST-THROTTLE\n\naudit 38\n\n18:01:10\nURL-BATCH\n\naudit 38\n\n18:01:10\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:09\nURL-BATCH\n\naudit 38\n\n18:01:08\nHOST-THROTTLE\n\naudit 38\n\n18:01:08\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:08\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:07\nURL-BATCH\n\naudit 38\n\n18:01:07\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:07\nFINDINGS-UPDATED\n\naudit 38\n\n18:01:06\nURL-BATCH\n\naudit 38\n\n18:01:06\nHOST-THROTTLE\n\naudit 38\n\n18:01:06\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:06\nURL-BATCH\n\naudit 38\n\n18:01:05\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:05\nHOST-THROTTLE\n\naudit 38\n\n18:01:04\nURL-BATCH\n\naudit 38\n\n18:01:04\nCRAWL-PROGRESS\n\naudit 38\n\n18:01:04\nWS\n209 MiB\nHeap\n38.6 MiB\nGC\n60/8/5\nWAL\n4.11 MiB\nJS\n20.7 MiB\nbeat\n18:02:18\nCompact",
+      "buttons": [
+        "Open command palette (Ctrl+K)",
+        "Main hub",
+        "Audits",
+        "Report",
+        "Tools",
+        "Settings",
+        "Toggle activity pane",
+        "Dashboard",
+        "Issue explorer",
+        "URL explorer",
+        "Export",
+        "Export URL status distribution as image",
+        "Export Findings by severity as image",
+        "Export Findings by category as image",
+        "Export Crawl health as image",
+        "Export WAF blocks by provider as image",
+        "Export WAF block rate as image",
+        "Resize Main workspace and Live activity (Enter toggles collapse)",
+        "Compact and trim working set"
+      ],
+      "inputs": [
+        {
+          "tag": "textarea",
+          "type": "textarea",
+          "testid": "",
+          "placeholder": "",
+          "ariaLabel": ""
+        }
+      ],
+      "testids": [
+        "cf-appshell",
+        "palette-trigger",
+        "connection-pill",
+        "cf-nav-rail",
+        "nav-hub",
+        "nav-audits",
+        "nav-report",
+        "nav-tools",
+        "nav-settings",
+        "cf-split",
+        "cf-split-first",
+        "primary-pane",
+        "toggle-secondary-pane",
+        "view-content",
+        "report-view",
+        "report-state",
+        "report-progress",
+        "hosts-table",
+        "report-workspace",
+        "report-nav-dashboard",
+        "report-nav-issues",
+        "report-nav-urls",
+        "report-nav-export",
+        "dashboard-charts",
+        "dashboard-counters",
+        "dashboard-counter-tile-queued",
+        "dashboard-counter-queued",
+        "dashboard-counter-tile-fetched",
+        "dashboard-counter-fetched",
+        "dashboard-counter-tile-error",
+        "dashboard-counter-error",
+        "dashboard-counter-tile-blocked",
+        "dashboard-counter-blocked",
+        "dashboard-counter-tile-wafBlocked",
+        "dashboard-counter-wafBlocked",
+        "dashboard-scores",
+        "dashboard-score-overall",
+        "cf-dashboard",
+        "cf-dashboard-cards",
+        "cf-card-total",
+        "cf-card-fetched",
+        "cf-card-errors",
+        "cf-card-blocked",
+        "cf-card-ttfb",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-category-breakdown",
+        "dashboard-crawl-health",
+        "cf-crawl-health-panel",
+        "cf-hosts-empty",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "cf-echart",
+        "cf-echart-canvas",
+        "cf-echart-export",
+        "dashboard-top-issues",
+        "dashboard-top-issues-empty",
+        "cf-split-divider",
+        "cf-split-second",
+        "secondary-pane",
+        "activity-feed",
+        "activity-count",
+        "cf-statusbar",
+        "status-ws",
+        "status-heap",
+        "status-gc",
+        "status-wal",
+        "status-js",
+        "status-heartbeat",
+        "compact-button"
+      ]
+    },
+    "proven": true
+  },
+  "exit_code": 0,
+  "exit_reason": "no fail among selected traps; global safety assertions hold",
+  "verdict_enum": [
+    "pass",
+    "partial",
+    "fail",
+    "not_testable"
+  ]
+}

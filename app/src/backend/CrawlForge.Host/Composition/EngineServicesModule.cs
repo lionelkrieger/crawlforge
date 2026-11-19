@@ -23,6 +23,8 @@ using CrawlForge.Crawler.ListMode;
 using CrawlForge.Crawler.Politeness;
 using CrawlForge.Crawler.Rendering;
 using CrawlForge.Crawler.Scheduling;
+using CrawlForge.Crawler.Sitemaps;
+using CrawlForge.Crawler.Traps;
 using CrawlForge.Crawler.Waf;
 using CrawlForge.Data.ContentStore;
 using CrawlForge.Data.Repositories;
@@ -158,6 +160,16 @@ public sealed class EngineServicesModule : IHostModule
             p.GetRequiredService<IStopWordFilter>(),
             p.GetRequiredService<IDbProvider>(),
             p.GetRequiredService<IContentScopeResolver>()));
+        // WP-09-11 (G03/G11 reopen): the structured-data, image, URL-structure
+        // and hreflang-reciprocity analyzers join the per-URL rule family. The
+        // hreflang reciprocity analyzer is a resolvable singleton shared with
+        // the engine: its per-URL pass COLLECTS hreflang sets and the engine
+        // runs RunSitePassAsync once every page completed (D14 pattern).
+        services.AddSingleton(p => new HreflangReciprocityRuleAnalyzer(
+            new HreflangReciprocityValidator(),
+            p.GetRequiredService<IDbProvider>()));
+        services.AddSingleton(p => new UrlStructureAnalyzer(
+            p.GetRequiredService<IReadRepository<UrlRecordDto>>()));
         services.AddSingleton<IAuditRuleAnalyzer>(p =>
         {
             var scopeResolver = p.GetRequiredService<IContentScopeResolver>();
@@ -166,6 +178,11 @@ public sealed class EngineServicesModule : IHostModule
             var hreflang = new HreflangAnalyzer();
             var mobile = new MobileFriendlinessAnalyzer();
             var ngrams = p.GetRequiredService<NGramRuleAnalyzer>();
+            var structuredData = new StructuredDataRuleAnalyzer(
+                p.GetRequiredService<StructuredDataValidator>());
+            var images = new ImageRuleAnalyzer();
+            var urlStructure = p.GetRequiredService<UrlStructureAnalyzer>();
+            var hreflangReciprocity = p.GetRequiredService<HreflangReciprocityRuleAnalyzer>();
             return new AuditRuleHost(
             [
                 new AnalyzerRuleAdapter([], accessibility.AnalyzeAsync),
@@ -173,6 +190,10 @@ public sealed class EngineServicesModule : IHostModule
                 new AnalyzerRuleAdapter([], hreflang.AnalyzeAsync),
                 new AnalyzerRuleAdapter([], mobile.AnalyzeAsync),
                 ngrams,
+                structuredData,
+                images,
+                urlStructure,
+                hreflangReciprocity,
             ]);
         });
 
@@ -220,10 +241,91 @@ public sealed class EngineServicesModule : IHostModule
             p.GetRequiredService<IReadRepository<FindingSuppressionDto>>(),
             p.GetRequiredService<IWriteRepository<FindingSuppressionDto>>(),
             p.GetRequiredService<ScoringRecomputeCoordinator>()));
+        // WP-09-11 (gap #21): the emitter carries the rule catalog so emitted
+        // findings resolve their declarative rule definitions.
         services.AddSingleton(p => new FindingEmitter(
             p.GetRequiredService<IReadRepository<FindingSuppressionDto>>(),
-            p.GetRequiredService<IWriteRepository<FindingDto>>()));
-        services.AddSingleton(_ => new AuditRuleCatalog());
+            p.GetRequiredService<IWriteRepository<FindingDto>>(),
+            p.GetRequiredService<AuditRuleCatalog>()));
+        services.AddSingleton(_ =>
+        {
+            var catalog = new AuditRuleCatalog();
+            // WP-09-11: crawl-family rule keys registered additively (open
+            // taxonomy; categories/severities match the accepted producers).
+            catalog.Register(new RuleDefinition(CrawlFindingRuleKeys.RobotsBlocked,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(CrawlFindingRuleKeys.RobotsBlocked), 70, "low"));
+            catalog.Register(new RuleDefinition(CrawlFindingRuleKeys.SessionSegmentRemoved,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Notice,
+                RecommendationKeys.ForRule(CrawlFindingRuleKeys.SessionSegmentRemoved), 20));
+            catalog.Register(new RuleDefinition(CrawlFindingRuleKeys.CookielessRedirectLoop,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(CrawlFindingRuleKeys.CookielessRedirectLoop), 75, "low"));
+            catalog.Register(new RuleDefinition(CrawlFindingRuleKeys.UaComparisonMaterialDifference,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(CrawlFindingRuleKeys.UaComparisonMaterialDifference), 80, "medium"));
+            catalog.Register(new RuleDefinition(RedirectRuleKeys.Loop,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Error,
+                RecommendationKeys.ForRule(RedirectRuleKeys.Loop), 90, "medium"));
+            catalog.Register(new RuleDefinition(RedirectRuleKeys.Inappropriate,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(RedirectRuleKeys.Inappropriate), 60, "low"));
+            catalog.Register(new RuleDefinition(RedirectRuleKeys.Chain,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(RedirectRuleKeys.Chain), 50, "low"));
+            catalog.Register(new RuleDefinition(SitemapRuleKeys.MissingUrl,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(SitemapRuleKeys.MissingUrl), 55, "low"));
+            catalog.Register(new RuleDefinition(SitemapRuleKeys.NonIndexable,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(SitemapRuleKeys.NonIndexable), 65, "low"));
+            catalog.Register(new RuleDefinition(SitemapRuleKeys.Redirecting,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(SitemapRuleKeys.Redirecting), 60, "low"));
+            catalog.Register(new RuleDefinition(LinkRuleKeys.Orphan,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(LinkRuleKeys.Orphan), 55, "medium"));
+            catalog.Register(new RuleDefinition(LinkRuleKeys.BrokenInternal,
+                Contracts.Enums.AuditCategory.Linking, Contracts.Enums.FindingSeverity.Error,
+                RecommendationKeys.ForRule(LinkRuleKeys.BrokenInternal), 85, "low"));
+            catalog.Register(new RuleDefinition(LinkRuleKeys.BrokenExternal,
+                Contracts.Enums.AuditCategory.Linking, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(LinkRuleKeys.BrokenExternal), 70, "low"));
+            catalog.Register(new RuleDefinition(CrawlerTrapRuleKeys.TrapDetected,
+                Contracts.Enums.AuditCategory.Crawl, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(CrawlerTrapRuleKeys.TrapDetected), 80, "medium"));
+            return catalog;
+        });
+
+        // WP-09-11 serial wiring: the crawl-component aggregate consumed by the
+        // execution engine (per-audit components are built inside the crawl
+        // phase; these are the shared, stateless surfaces).
+        services.AddSingleton(p => new AuditCrawlComponents(
+            new UrlElementRedirectChainStore(
+                p.GetRequiredService<IReadRepository<UrlElementDto>>(),
+                p.GetRequiredService<IWriteRepository<UrlElementDto>>()),
+            new AuditRunEventPublisher(p.GetRequiredService<IRealtimeHub>()),
+            p.GetRequiredService<IUrlRewriteEngine>(),
+            p.GetRequiredService<IPreCrawlValidator>(),
+            new CrawlFindingRecorder(p.GetRequiredService<IDbProvider>()),
+            new OrphanFindingAnalyzer(p.GetRequiredService<IDbProvider>()),
+            new DuplicateMetadataAnalyzer(
+                p.GetRequiredService<IReadRepository<UrlRecordDto>>(),
+                p.GetRequiredService<IReadRepository<UrlElementDto>>()),
+            new DuplicateContentAnalyzer(
+                new ShingleNearDuplicateDetector(
+                    p.GetRequiredService<IReadRepository<ContentArtifactDto>>(),
+                    p.GetRequiredService<IContentStore>(),
+                    p.GetRequiredService<ITolerantDomParser>(),
+                    p.GetRequiredService<IContentScopeResolver>()),
+                p.GetRequiredService<IReadRepository<ContentArtifactDto>>(),
+                p.GetRequiredService<IReadRepository<UrlRecordDto>>(),
+                p.GetRequiredService<IContentStore>(),
+                p.GetRequiredService<ITolerantDomParser>(),
+                p.GetRequiredService<IContentScopeResolver>()),
+            p.GetRequiredService<UrlStructureAnalyzer>(),
+            p.GetRequiredService<HreflangReciprocityRuleAnalyzer>(),
+            p.GetRequiredService<IReadRepository<FindingSuppressionDto>>()));
         services.AddSingleton(p => new OfflinePageContextBuilder(
             p.GetRequiredService<IDbProvider>(),
             p.GetRequiredService<IContentStore>(),
@@ -253,8 +355,9 @@ public sealed class EngineServicesModule : IHostModule
         services.AddSingleton<ITechnologyDetector>(p => new TechnologyDetector(
             p.GetRequiredService<TechnologyFingerprintCatalogue>(),
             p.GetRequiredService<ITolerantDomParser>()));
-        services.AddSingleton<IStructuredDataValidator>(p => new StructuredDataValidator(
+        services.AddSingleton(p => new StructuredDataValidator(
             p.GetRequiredService<ITolerantDomParser>()));
+        services.AddSingleton<IStructuredDataValidator>(p => p.GetRequiredService<StructuredDataValidator>());
 
         // Custom content family (WP-06-01 reopen, defect D5): the accepted
         // extraction/search/snippet surfaces run per page in the engine and

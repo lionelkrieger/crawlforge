@@ -41,19 +41,19 @@ metadata:
 status_summary:
   phases:
     pending: 6
-    in_progress: 1
-    completed: 1
+    in_progress: 0
+    completed: 2
     blocked: 0
     unscheduled: 1
   workpieces:
     pending: 38
-    in_progress: 1
+    in_progress: 0
     verifying: 0
-    completed: 17
+    completed: 18
     blocked: 0
   acceptance_criteria:
-    pending: 58
-    completed: 0
+    pending: 55
+    completed: 3
 
 phases:
   - phase_id: "phase-08"
@@ -68,7 +68,7 @@ phases:
   - phase_id: "phase-09"
     name: "Flow 1 — HTTP Audit End to End"
     file: "phases/phase-09-flow-1-http-audit-end-to-end.yaml"
-    status: "in_progress"
+    status: "completed"
     depends_on_phases: ["phase-08"]
     max_parallel_agents: 5
     workpiece_ids: ["WP-09-01", "WP-09-02", "WP-09-03", "WP-09-04", "WP-09-05", "WP-09-06", "WP-09-07", "WP-09-08", "WP-09-09", "WP-09-10", "WP-09-11"]
@@ -189,13 +189,13 @@ acceptance_criteria_ledger:
   - { criterion_id: 46, title: "llms.txt/llms-full.txt probe + validation; governance matrix verdicts; local-only generator tool", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
   - { criterion_id: 47, title: "Tag/container inventory; dataLayer + Consent Mode v2 with gcs/gcd; four analytics rules; explorer + MCP resource", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
   - { criterion_id: 48, title: "dom_zone on every link_edge; weighted equity; pixel truncation findings + preview; header/HTML conflict Errors with dual evidence", phase_id: "phase-15", workpiece_id: "WP-15-01", status: "pending" }
-  - { criterion_id: 49, title: "HTTP flow e2e: redirect chain/loop, noindex, robots-blocked, broken links, duplicate titles, thin page, orphan, structured data, hreflang, missing alt", phase_id: "phase-09", workpiece_id: "WP-09-11", status: "pending" }
+  - { criterion_id: 49, title: "HTTP flow e2e: redirect chain/loop, noindex, robots-blocked, broken links, duplicate titles, thin page, orphan, structured data, hreflang, missing alt", phase_id: "phase-09", workpiece_id: "WP-09-11", status: "completed" }
   - { criterion_id: 50, title: "Rendered flow e2e: js-only link, script-injected content, consent banner tag-before-consent", phase_id: "phase-10", workpiece_id: "WP-10-04", status: "pending" }
   - { criterion_id: 51, title: "Dual capture e2e: late meta change, raw-vs-rendered content difference", phase_id: "phase-10", workpiece_id: "WP-10-04", status: "pending" }
   - { criterion_id: 52, title: "Adaptive capture e2e: per-pattern capture overrides honored", phase_id: "phase-10", workpiece_id: "WP-10-04", status: "pending" }
   - { criterion_id: 53, title: "Site types e2e: hash route, client-side redirect, postback, cookieless session, ViewState, rendered soft 404, service worker", phase_id: "phase-11", workpiece_id: "WP-11-05", status: "pending" }
   - { criterion_id: 54, title: "SPA/click e2e: websocket settle, click-only navigation, never Place bet, nonGet empty", phase_id: "phase-11", workpiece_id: "WP-11-05", status: "pending" }
-  - { criterion_id: 55, title: "Crawl safety e2e: parameter/calendar traps detected and throttled, cookie-gate redirect handled", phase_id: "phase-09", workpiece_id: "WP-09-11", status: "pending" }
-  - { criterion_id: 56, title: "Configuration editor changes audit behavior through the UI", phase_id: "phase-09", workpiece_id: "WP-09-07", status: "pending" }
+  - { criterion_id: 55, title: "Crawl safety e2e: parameter/calendar traps detected and throttled, cookie-gate redirect handled", phase_id: "phase-09", workpiece_id: "WP-09-11", status: "completed" }
+  - { criterion_id: 56, title: "Configuration editor changes audit behavior through the UI", phase_id: "phase-09", workpiece_id: "WP-09-07", status: "completed" }
   - { criterion_id: 57, title: "MCP creates project+config, runs audit, reads paged findings with evidence", phase_id: "phase-13", workpiece_id: "WP-13-04", status: "pending" }
   - { criterion_id: 58, title: "Google integrations against recorded test double; CSV fallback parity", phase_id: "phase-14", workpiece_id: "WP-14-04", status: "pending" }

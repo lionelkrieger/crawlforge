@@ -29,6 +29,12 @@ import { selectAudits, selectProjects } from '../store/selectors';
 import { IconFolder, IconSpider, IconPlus, IconShield, IconChevronRight } from '../theme/icons';
 import { formatCount, formatDateTime } from './format';
 import type { AuditSummary } from '../contracts/api/audits';
+import { ConfigurationEditor } from '../surfaces/project/ConfigurationEditor';
+import {
+  configurationToCreateRequest,
+  defaultConfigurationForm,
+  type ConfigurationFormValue
+} from '../surfaces/project/configurationModel';
 
 /** Audit state → badge color. */
 export const STATE_COLORS: Record<string, string> = {
@@ -63,8 +69,17 @@ function CreateProjectModal({ opened, onClose }: { opened: boolean; onClose: () 
   const [name, setName] = useState('');
   const [targetUrl, setTargetUrl] = useState('');
   const [description, setDescription] = useState('');
+  // WP-09-11 (UI-04): the full 13-tab configuration editor is mounted in the
+  // creation flow; the target URL input stays the seed authority and syncs
+  // into the form's startUrls.
+  const [form, setForm] = useState<ConfigurationFormValue>(() => defaultConfigurationForm());
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const updateTargetUrl = useCallback((value: string) => {
+    setTargetUrl(value);
+    setForm((current) => ({ ...current, startUrls: value.trim() ? [value.trim()] : [] }));
+  }, []);
 
   const submit = useCallback(async () => {
     if (!services.api) {
@@ -94,11 +109,11 @@ function CreateProjectModal({ opened, onClose }: { opened: boolean; onClose: () 
       const projectId = created.data.id;
       const configured = await services.api.request('configurations.create', {
         params: { id: projectId },
-        body: {
+        body: configurationToCreateRequest({
+          ...form,
           name: 'Default configuration',
-          startUrls: [targetUrl.trim()],
-          respectRobotsTxt: true
-        }
+          startUrls: [targetUrl.trim()]
+        })
       });
       if (configured.error) {
         const fieldReasons = configured.error.fieldErrors
@@ -111,16 +126,17 @@ function CreateProjectModal({ opened, onClose }: { opened: boolean; onClose: () 
       setName('');
       setTargetUrl('');
       setDescription('');
+      setForm(defaultConfigurationForm());
       onClose();
     } catch {
       setError('Transport failure — is the backend running?');
     } finally {
       setPending(false);
     }
-  }, [services, name, targetUrl, description, onClose]);
+  }, [services, name, targetUrl, description, form, onClose]);
 
   return (
-    <Modal opened={opened} onClose={onClose} title="New project" data-testid="create-project-modal">
+    <Modal opened={opened} onClose={onClose} title="New project" size="xl" data-testid="create-project-modal">
       <Stack gap="sm">
         <TextInput
           label="Project name"
@@ -134,7 +150,7 @@ function CreateProjectModal({ opened, onClose }: { opened: boolean; onClose: () 
           label="Target URL (crawl seed)"
           placeholder="https://example.com"
           value={targetUrl}
-          onChange={(event) => setTargetUrl(event.currentTarget.value)}
+          onChange={(event) => updateTargetUrl(event.currentTarget.value)}
           data-testid="project-url-input"
           description="Stored as the default configuration's start URL."
           required
@@ -146,6 +162,7 @@ function CreateProjectModal({ opened, onClose }: { opened: boolean; onClose: () 
           onChange={(event) => setDescription(event.currentTarget.value)}
           data-testid="project-description-input"
         />
+        <ConfigurationEditor value={form} onChange={setForm} />
         {error ? (
           <Text size="sm" c="var(--cf-danger)" data-testid="create-project-error">{error}</Text>
         ) : null}
@@ -296,7 +313,12 @@ export function HubDashboard() {
               </Table.Thead>
               <Table.Tbody>
                 {projects.map((project) => (
-                  <Table.Tr key={project.id} data-testid={`project-row-${project.id}`}>
+                  <Table.Tr
+                    key={project.id}
+                    data-testid={`project-row-${project.id}`}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigation.openProject(project.id)}
+                  >
                     <Table.Td>
                       <Text size="sm" fw={600}>{project.name}</Text>
                       {project.tags.length > 0 ? (
@@ -310,17 +332,34 @@ export function HubDashboard() {
                     <Table.Td><Text size="sm" c="dimmed">{project.description ?? project.scopeSummary ?? '—'}</Text></Table.Td>
                     <Table.Td><Text size="xs" c="dimmed">{formatDateTime(project.createdAt)}</Text></Table.Td>
                     <Table.Td>
-                      <Button
-                        size="compact-xs"
-                        color="ember"
-                        leftSection={<IconSpider size={12} />}
-                        loading={startingProjectId === project.id}
-                        disabled={startingProjectId !== null}
-                        onClick={() => void startAudit(project.id)}
-                        data-testid={`start-audit-${project.id}`}
-                      >
-                        Start audit
-                      </Button>
+                      <Group gap={6} wrap="nowrap">
+                        <Button
+                          size="compact-xs"
+                          variant="subtle"
+                          color="steel"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            navigation.openConfigurations(project.id);
+                          }}
+                          data-testid={`project-configurations-${project.id}`}
+                        >
+                          Configurations
+                        </Button>
+                        <Button
+                          size="compact-xs"
+                          color="ember"
+                          leftSection={<IconSpider size={12} />}
+                          loading={startingProjectId === project.id}
+                          disabled={startingProjectId !== null}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void startAudit(project.id);
+                          }}
+                          data-testid={`start-audit-${project.id}`}
+                        >
+                          Start audit
+                        </Button>
+                      </Group>
                     </Table.Td>
                   </Table.Tr>
                 ))}

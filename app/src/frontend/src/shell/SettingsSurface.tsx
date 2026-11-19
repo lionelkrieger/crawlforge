@@ -29,6 +29,7 @@ import { selectSettings } from '../store/selectors';
 import type { AppSettings, DiagnosticArtifact } from '../contracts/api/system';
 import { IconDatabase, IconPlug, IconShield, IconSettings, IconRefresh, IconX } from '../theme/icons';
 import { formatBytes, formatDateTime } from './format';
+import { ExportDestinationsSection } from '../surfaces/export/ExportDestinationsSection';
 
 /** Section wrapper. */
 function Section({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
@@ -281,6 +282,9 @@ export function SettingsSurface() {
             : 'Disabled — direct connections.'}
         </Text>
       </Section>
+
+      {/* WP-09-11 (UI-21): user-owned export delivery targets, off by default. */}
+      <ExportDestinationsSection />
 
       <Section title="Diagnostics" icon={<IconRefresh size={16} color="var(--mantine-color-lime-4)" />}>
         <Stack gap="sm">

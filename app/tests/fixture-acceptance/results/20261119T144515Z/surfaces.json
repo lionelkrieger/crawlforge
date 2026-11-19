@@ -1,0 +1,120 @@
+{
+  "UI-01": {
+    "id": "UI-01",
+    "surface": "Main hub › Projects",
+    "spec_path": "Shell start screen (first run proceeds to New project)",
+    "status": "reachable_and_functional",
+    "evidence": "Hub renders real local aggregates: 26 project rows, 37 audit rows, New project button present=True. Project creation through the New project dialog is exercised by the UI-entry audit.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261119T144515Z\\screenshots\\UI-01-hub.png",
+    "attempts": [],
+    "project_rows": 26,
+    "audit_rows": 37
+  },
+  "UI-02": {
+    "id": "UI-02",
+    "surface": "Main hub › Project overview",
+    "spec_path": "Main hub › Projects › select project",
+    "status": "reachable_and_functional",
+    "evidence": "Project overview rendered with project sections.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261119T144515Z\\screenshots\\UI-02-attempt.png",
+    "attempts": [
+      {
+        "action": "click project-row-26",
+        "result": {
+          "clicked": true,
+          "rect": {
+            "x": 541.953125,
+            "y": 395.0234375,
+            "w": 559.90625,
+            "h": 113.984375,
+            "tag": "TR",
+            "text": "Fixture harness http 20261119T144515ZWP-08-04 fixture acceptance — UI entry (CR-023)19 Nov 16:45:37ConfigurationsStart a"
+          },
+          "method": "input",
+          "vanishedAfterDispatch": true
+        },
+        "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub"
+      },
+      {
+        "action": "dblclick project row",
+        "error": "CDP click did not succeed within 10.0s (attempts=26): {\"clicked\": false, \"error\": \"element not found: testid=project-row-26\"}"
+      },
+      {
+        "action": "command palette project pick",
+        "url": "file:///E:/Crawlforge/app/src/frontend/dist/index.html?route=hub"
+      }
+    ]
+  },
+  "UI-03": {
+    "id": "UI-03",
+    "surface": "Project › Configurations",
+    "spec_path": "Project overview › Configurations",
+    "status": "reachable_and_functional",
+    "evidence": "Spec path Project overview › Configurations (overview itself unreachable, UI-02): markers present ['Configurations']. No Configurations entry in rail, project row or command palette.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261119T144515Z\\screenshots\\UI-03-attempt.png",
+    "attempts": []
+  },
+  "UI-04": {
+    "id": "UI-04",
+    "surface": "Configuration editor",
+    "spec_path": "Project › Configurations › open/new configuration",
+    "status": "reachable_and_functional",
+    "evidence": "Configuration editor tabs present: ['Scope', 'Crawl as and capture', 'Limits', 'Rules', 'Directives', 'Resources and external scope', 'Authentication and cookies', 'Click discovery and site types', 'Consent states', 'Analysis categories', 'Thresholds', 'Extraction and search', 'Advanced'].",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261119T144515Z\\screenshots\\UI-04-new-project-dialog.png",
+    "attempts": []
+  },
+  "UI-10": {
+    "id": "UI-10",
+    "surface": "Audit run view",
+    "spec_path": "Project overview › Start audit, or Audits › running audit",
+    "status": "reachable_and_functional",
+    "evidence": "Audit run view renders real run data for audit 37: state badge, progress/counters and host-throttle telemetry present; lifecycle controls mounted for active runs.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261119T144515Z\\screenshots\\UI-10-run-view.png",
+    "attempts": [
+      {
+        "action": "nav-audits",
+        "audits_view": true
+      },
+      {
+        "action": "open audit 37",
+        "opened": true
+      }
+    ]
+  },
+  "UI-11": {
+    "id": "UI-11",
+    "surface": "Report › Dashboard",
+    "spec_path": "Audits › open audit (report window opens on Dashboard)",
+    "status": "reachable_and_functional",
+    "evidence": "Dashboard grids/charts render real aggregate data.",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261119T144515Z\\screenshots\\UI-11-report-dashboard.png",
+    "attempts": []
+  },
+  "UI-12": {
+    "id": "UI-12",
+    "surface": "Report › Issue explorer",
+    "spec_path": "Report window navigation",
+    "status": "reachable_and_functional",
+    "evidence": "Report navigation entries present: ['Issue explorer', 'Issues'].",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261119T144515Z\\screenshots\\UI-12-attempt.png",
+    "attempts": []
+  },
+  "UI-13": {
+    "id": "UI-13",
+    "surface": "Report › URL explorer and URL detail",
+    "spec_path": "Report window navigation; drill-down from any surface",
+    "status": "reachable_and_functional",
+    "evidence": "Report navigation entries present: ['URL explorer', 'URLs'].",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261119T144515Z\\screenshots\\UI-13-attempt.png",
+    "attempts": []
+  },
+  "UI-20": {
+    "id": "UI-20",
+    "surface": "Export dialog",
+    "spec_path": "Report window › Export (every surface)",
+    "status": "reachable_and_functional",
+    "evidence": "Export control present: ['Export'].",
+    "screenshot": "E:\\Crawlforge\\app\\tests\\fixture-acceptance\\results\\20261119T144515Z\\screenshots\\UI-20-attempt.png",
+    "attempts": []
+  }
+}

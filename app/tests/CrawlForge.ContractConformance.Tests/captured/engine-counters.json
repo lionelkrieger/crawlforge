@@ -1,6 +1,8 @@
 {
-  "discovered": 186,
-  "fetched": 183,
-  "analyzed": 182,
-  "failed": 2
+  "discovered": 134,
+  "fetched": 132,
+  "analyzed": 130,
+  "failed": 1,
+  "blocked": 0,
+  "wafBlocked": 0
 }

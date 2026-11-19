@@ -7,7 +7,7 @@
  */
 
 /** The shell's navigable views (window catalog subset owned by the shell). */
-export type ShellView = 'hub' | 'audits' | 'report' | 'tools' | 'settings';
+export type ShellView = 'hub' | 'audits' | 'report' | 'tools' | 'settings' | 'project' | 'configurations';
 
 /** Persisted split-pane layout. */
 export interface PaneLayoutState {
@@ -23,6 +23,8 @@ export interface PaneLayoutState {
 export interface ShellWindowState {
   readonly view: ShellView;
   readonly layout: PaneLayoutState;
+  /** Selected project for the project/configuration views (WP-09-11). */
+  readonly selectedProjectId: string | null;
 }
 
 const STORAGE_KEY = 'crawlforge.shell.windowState.v1';
@@ -30,10 +32,11 @@ const STORAGE_KEY = 'crawlforge.shell.windowState.v1';
 /** Default layout: 62/38 horizontal split, hub view. */
 export const DEFAULT_WINDOW_STATE: ShellWindowState = {
   view: 'hub',
-  layout: { split: 0.62, collapsed: false, direction: 'horizontal' }
+  layout: { split: 0.62, collapsed: false, direction: 'horizontal' },
+  selectedProjectId: null
 };
 
-const VIEWS: readonly ShellView[] = ['hub', 'audits', 'report', 'tools', 'settings'];
+const VIEWS: readonly ShellView[] = ['hub', 'audits', 'report', 'tools', 'settings', 'project', 'configurations'];
 
 /** Validates and clamps an unknown persisted value. */
 export function sanitizeWindowState(value: unknown): ShellWindowState {
@@ -45,13 +48,18 @@ export function sanitizeWindowState(value: unknown): ShellWindowState {
     typeof layout?.split === 'number' && Number.isFinite(layout.split)
       ? Math.max(0.15, Math.min(0.85, layout.split))
       : DEFAULT_WINDOW_STATE.layout.split;
+  const selectedProjectId =
+    typeof candidate.selectedProjectId === 'string' && candidate.selectedProjectId.length > 0
+      ? candidate.selectedProjectId
+      : null;
   return {
     view,
     layout: {
       split,
       collapsed: layout?.collapsed === true,
       direction: layout?.direction === 'vertical' ? 'vertical' : 'horizontal'
-    }
+    },
+    selectedProjectId
   };
 }
 

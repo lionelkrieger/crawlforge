@@ -1,0 +1,830 @@
+[
+  {
+    "receivedAt": "2026-11-19T15:45:07.7413399\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "1",
+          "canonicalUrl": "http://127.0.0.1:47312/",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:08.9042638\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "2",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/noindex.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "3",
+          "canonicalUrl": "http://127.0.0.1:47312/redirect/chain-1",
+          "statusClass": "3xx"
+        },
+        {
+          "urlId": "4",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/orphan.html",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:10.1042698\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "5",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/redirect-target.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "6",
+          "canonicalUrl": "http://127.0.0.1:47312/spa/",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "7",
+          "canonicalUrl": "http://127.0.0.1:47312/hash-app/",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:11.5226648\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "8",
+          "canonicalUrl": "http://127.0.0.1:47312/live/odds.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "11",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/canonical-conflict.html",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:12.5296817\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "12",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/broken-links.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "13",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/js-link.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "14",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/js-content.html",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:13.7105752\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "15",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/late-meta.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "16",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/soft-404.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "17",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/js-redirect.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "18",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/postback.aspx",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:14.7715214\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "19",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/viewstate-large.aspx",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "20",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "21",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/11",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "22",
+          "canonicalUrl": "http://127.0.0.1:47312/cookie-gate/",
+          "statusClass": "3xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:16.3448007\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "23",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/consent.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "24",
+          "canonicalUrl": "http://127.0.0.1:47312/sw-app/",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "25",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/structured-data.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "26",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/images.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "27",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/mixed-content.html",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:17.0350949\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "28",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/hreflang-en.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "29",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/dup-title-a.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "30",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/dup-title-b.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "31",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/thin.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "32",
+          "canonicalUrl": "http://127.0.0.1:47312/spa/markets",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:18.040253\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "33",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/does-not-exist.html",
+          "statusClass": "4xx"
+        },
+        {
+          "urlId": "34",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/session.aspx",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "35",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "36",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "37",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=s",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:19.1544925\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "38",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "39",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "40",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "41",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "42",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "43",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:20.1691693\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "44",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "45",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/10",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "46",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/12",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "47",
+          "canonicalUrl": "http://127.0.0.1:47312/pages/hreflang-fr.html",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "48",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "49",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=m",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:21.2368574\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "50",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "51",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "52",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "53",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "54",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "55",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "56",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=s",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:22.3203629\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "57",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "58",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "59",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "60",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "61",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "62",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "63",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "64",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=s\u0026sort=price",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:23.4204689\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "65",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=s\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "66",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "67",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "68",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "69",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=m\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "70",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=m\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "71",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "72",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "73",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026size=m",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:24.5187827\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "74",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=l\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "75",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=l\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "76",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "77",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "78",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "79",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "80",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "81",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "82",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "83",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026sort=name",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:25.5230346\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "84",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "85",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/9",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "86",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/1",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "87",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=s\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "88",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=s\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "89",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "90",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "91",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "92",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=m\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "93",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=m\u0026sort=name",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:26.6248623\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "94",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "95",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "96",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "97",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=l\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "98",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=l\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "99",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "100",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "101",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "102",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "103",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "104",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026sort=price",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:27.7382331\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "105",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "106",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "107",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "108",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=s\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "109",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=s\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "110",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "111",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "112",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "113",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "114",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "115",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026size=m",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:28.8121831\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "116",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "117",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026size=m",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "118",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=l\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "119",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=l\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "120",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "121",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "122",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026size=l",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "123",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "124",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "125",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "126",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026sort=name",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-19T15:45:29.6216575\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
+        {
+          "urlId": "127",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "128",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "129",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/8",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "130",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/2",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "131",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/7",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "132",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/3",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "133",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/6",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "134",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/4",
+          "statusClass": "2xx"
+        }
+      ]
+    }
+  }
+]

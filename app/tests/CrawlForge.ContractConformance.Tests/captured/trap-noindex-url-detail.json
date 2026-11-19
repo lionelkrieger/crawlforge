@@ -5,7 +5,7 @@
   "statusClass": "2xx",
   "contentType": "text/html; charset=utf-8",
   "depth": 0,
-  "indexable": true,
+  "indexable": false,
   "title": "Noindex page",
   "blockReason": null,
   "wafProvider": null,
@@ -29,7 +29,7 @@
   },
   "findings": [
     {
-      "id": "9",
+      "id": "20",
       "ruleKey": "accessibility.color-contrast",
       "severity": "notice",
       "category": "accessibility",
@@ -53,7 +53,7 @@
       }
     },
     {
-      "id": "10",
+      "id": "21",
       "ruleKey": "accessibility.landmark-main",
       "severity": "warning",
       "category": "accessibility",
@@ -73,7 +73,34 @@
       }
     },
     {
-      "id": "11",
+      "id": "22",
+      "ruleKey": "content.thin-text",
+      "severity": "notice",
+      "category": "content",
+      "urlId": "2",
+      "message": "content thin text",
+      "evidence": {
+        "snippet": null,
+        "selector": null,
+        "details": {
+          "wordCount": 154,
+          "wordThreshold": 200,
+          "textToHtmlRatio": 0.8232286340394448,
+          "ratioThreshold": 0.1,
+          "visibleTextLength": 1127,
+          "markupLength": 1369,
+          "text": "Not for the index noidx0 noidx1 noidx2 noidx3 noidx4 noidx5 noidx6 noidx7 noidx8 noidx9 noidx10 noidx11 noidx12 noidx13 noidx14 noidx15 noidx16 noidx0 noidx1 noidx2 noidx3 noidx4 noidx5 noidx6 noidx7 noidx8 noidx9 noidx10 noidx11 noidx12 noidx13 noidx14 noidx15 noidx16 noidx0 noidx1 noidx2 noidx3 noidx4 noidx5 noidx6 noidx7 noidx8 noidx9 noidx10 noidx11 noidx12 noidx13 noidx14 noidx15 noidx16 noidx0 noidx1 noidx2 noidx3 noidx4 noidx5 noidx6 noidx7 noidx8 noidx9 noidx10 noidx11 noidx12 noidx13 noidx14 noidx15 noidx16 noidx0 noidx1 noidx2 noidx3 noidx4 noidx5 noidx6 noidx7 noidx8 noidx9 noidx10 noidx11 noidx12 noidx13 noidx14 noidx15 noidx16 noidx0 noidx1 noidx2 noidx3 noidx4 noidx5 noidx6 noidx7 noidx8 noidx9 noidx10 noidx11 noidx12 noidx13 noidx14 noidx15 noidx16 noidx0 noidx1 noidx2 noidx3 noidx4 noidx5 noidx6 noidx7 noidx8 noidx9 noidx10 noidx11 noidx12 noidx13 noidx14 noidx15 noidx16 noidx0 noidx1 noidx2 noidx3 noidx4 noidx5 noidx6 noidx7 noidx8 noidx9 noidx10 noidx11 noidx12 noidx13 noidx14 noidx15 noidx16 noidx0 noidx1 noidx2 noidx3 noidx4 noidx5 noidx6 noidx7 noidx8 noidx9 noidx10 noidx11 noidx12 noidx13",
+          "textTruncated": false,
+          "scoped": true,
+          "reasons": [
+            "word-count"
+          ],
+          "firstSeenAuditId": 1
+        }
+      }
+    },
+    {
+      "id": "23",
       "ruleKey": "content.metrics",
       "severity": "notice",
       "category": "content",
@@ -109,7 +136,7 @@
       }
     },
     {
-      "id": "12",
+      "id": "24",
       "ruleKey": "mobile.responsive-signals-missing",
       "severity": "notice",
       "category": "structureddata",
@@ -125,7 +152,7 @@
       }
     },
     {
-      "id": "13",
+      "id": "25",
       "ruleKey": "mobile.render-required",
       "severity": "notice",
       "category": "structureddata",
@@ -147,7 +174,7 @@
       }
     },
     {
-      "id": "14",
+      "id": "26",
       "ruleKey": "indexability.noindex",
       "severity": "notice",
       "category": "indexability",
@@ -179,7 +206,7 @@
       "anchorText": "Noindex page",
       "domZone": "navigation",
       "equityWeight": null,
-      "weightedEquity": 3.340810438295399E-05
+      "weightedEquity": 5.0228901475507484E-05
     }
   ],
   "outboundLinks": [],

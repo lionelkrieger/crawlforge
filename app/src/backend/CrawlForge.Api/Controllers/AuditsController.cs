@@ -293,8 +293,12 @@ public sealed class AuditsController : ApiControllerBase
         // category toggles are configured (absent = all enabled, Scoring README).
         // WP-09-06 (WP-09-07 §3): the config-level enabledCategories document
         // member wins over the app-settings AuditTogglesJson fallback.
-        var snapshot = JsonSerializer.SerializeToNode(
-            ProjectWireMapper.ToConfiguration(configuration, null), ApiJsonOptions.Default)!.AsObject();
+        // WP-09-11 (G-REAUDIT-SNAPSHOT): the snapshot stays in the STORAGE DTO
+        // shape the engine wrote at start (the engine deserializes it as
+        // CrawlConfigurationDto); merge enabledCategories into that document
+        // instead of overwriting it with the wire projection.
+        var snapshot = ParseSnapshotObject(audit.ConfigurationSnapshotJson)
+            ?? JsonSerializer.SerializeToNode(configuration, ApiJsonOptions.Default)!.AsObject();
         var enabledCategories = await ResolveEnabledCategoriesAsync(configuration, cancellationToken);
         if (enabledCategories is not null)
         {
@@ -646,6 +650,28 @@ public sealed class AuditsController : ApiControllerBase
             .Select(t => t.Key)
             .ToList();
         return enabled.Count == toggles.Count ? null : enabled;
+    }
+
+    /// <summary>
+    /// Parses the engine-written storage snapshot (DTO shape); null when absent,
+    /// empty (test-double placeholder), or malformed so the caller falls back to
+    /// a fresh DTO serialization.
+    /// </summary>
+    private static JsonObject? ParseSnapshotObject(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonNode.Parse(json) is JsonObject { Count: > 0 } obj ? obj : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 
     private async Task<IReadOnlyList<FindingWire>> ProjectComparisonFindingsAsync(
