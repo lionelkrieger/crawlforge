@@ -553,6 +553,296 @@ def trap_paths(traps: list[dict]) -> list[str]:
 
 # --- main --------------------------------------------------------------------
 
+def ui_edit_56_walk(rest: RestClient, cdp: CdpSession, fixture: FixtureServer, results: ResultsDir,
+                    ts: str, traps: list[dict]) -> dict:
+    """Phase-10 step 0 — criterion #56 proof through UI-04 controls ONLY.
+
+    Run A: create the project via the UI dialog, open the configuration editor
+    (UI-03 -> UI-04), turn the cookie jar OFF and set max URLs to 50 with the
+    editor controls, save (the UI's own PUT), start the audit from the UI.
+    Expect: cookie-gate ends in a redirect loop and the audit fetches <= 50 URLs.
+    Run B: turn the cookie jar back ON and max URLs back to Unlimited through
+    the editor, save, re-run from the UI. Expect: cookie-gate passes (200).
+
+    The harness performs NO REST writes: every configuration change goes
+    through the editor controls over CDP; REST is used read-only for
+    read-back verification and audit polling (the same inspection the UI
+    performs). Screenshots + read-backs + verdicts are the evidence.
+    """
+    name = f"Fixture harness 56 {ts}"
+    gate_trap = next(t for t in traps if t["id"] == "cookie-gate")
+    gate_path = gate_trap["urls"][0]
+    evidence: dict = {
+        "criterion": 56,
+        "flow": "UI New project dialog -> UI-04 editor (cookie jar + max URLs) -> UI save -> UI Start audit; run A jar OFF/maxUrls 50, run B jar ON/unlimited",
+        "no_rest_writes": True,
+        "project_name": name,
+        "runs": [],
+        "checks": [],
+    }
+
+    def check(check_id: str, ok: bool, detail: str) -> None:
+        evidence["checks"].append({"id": check_id, "ok": bool(ok), "detail": detail})
+        log(f"#56 check {check_id}: {'OK' if ok else 'FAIL'} — {detail}")
+
+    # ── Create the project through the UI dialog (CR-023 machinery) ─────────
+    cdp.events(clear=True)
+    cdp.click(testid="nav-hub")
+    cdp.wait(900)
+    cdp.click(testid="new-project-button")
+    cdp.must_wait_for(testid="create-project-modal", timeout_ms=10000)
+    cdp.wait(400)
+    cdp.fill(name, testid="project-name-input")
+    cdp.fill(fixture.base_url + "/", testid="project-url-input")
+    cdp.fill("Phase-10 step 0 — criterion #56 UI-edit proof", testid="project-description-input")
+    cdp.click(testid="create-project-submit")
+    project = None
+    deadline = time.monotonic() + 25.0
+    while time.monotonic() < deadline:
+        projects = rest.paged("/api/projects")
+        project = next((p for p in projects if p.get("name") == name), None)
+        if project is not None:
+            break
+        time.sleep(0.7)
+    if project is None:
+        raise RuntimeError("#56 walk: UI project creation did not produce a project row within 25s")
+    pid = project["id"]
+    configs = rest.paged(f"/api/projects/{pid}/configurations")
+    if not configs:
+        raise RuntimeError("#56 walk: UI dialog did not create a default configuration")
+    cid = configs[0]["id"]
+    evidence["project_id"] = pid
+    evidence["configuration_id"] = cid
+    log(f"#56 walk: project {pid} / config {cid} created via UI dialog")
+
+    # ── Editor navigation + control helpers (UI-04 only) ────────────────────
+    def open_editor() -> None:
+        cdp.click(testid="nav-hub")
+        cdp.wait(700)
+        cdp.click(testid=f"project-row-{pid}")
+        cdp.must_wait_for(testid="project-overview", timeout_ms=10000)
+        cdp.click(testid="overview-nav-configurations")
+        cdp.must_wait_for(testid="configurations-list", timeout_ms=10000)
+        cdp.click(testid=f"configuration-edit-{cid}")
+        cdp.must_wait_for(testid="configuration-editor", timeout_ms=10000)
+        cdp.wait(400)
+
+    def switch_checked(testid: str) -> bool:
+        return bool(cdp.eval(f"document.querySelector('[data-testid=\"{testid}\"]').checked"))
+
+    def click_control(testid: str) -> str:
+        try:
+            r = cdp.click(testid=testid, timeout=6.0)
+            return f"input ({r.get('method')})"
+        except CdpError:
+            # DOM fallback on the SAME UI control (the cdp helper's own
+            # fallback path); recorded, never a REST shortcut.
+            cdp.eval(f"document.querySelector('[data-testid=\"{testid}\"]').click()")
+            cdp.wait(250)
+            return "dom-fallback"
+
+    def set_jar(enabled: bool, shot: str) -> dict:
+        cdp.click(testid="config-tab-auth")
+        cdp.must_wait_for(testid="config-panel-auth", timeout_ms=8000)
+        cdp.wait(300)
+        before = switch_checked("config-cookie-jar")
+        method = "unchanged"
+        if before != enabled:
+            method = click_control("config-cookie-jar")
+        after = switch_checked("config-cookie-jar")
+        cdp.shot(results.path("screenshots") / shot)
+        return {"before": before, "after": after, "method": method}
+
+    def set_max_urls(value: int | None, shot: str) -> dict:
+        cdp.click(testid="config-tab-limits")
+        cdp.must_wait_for(testid="config-panel-limits", timeout_ms=8000)
+        cdp.wait(300)
+        unlimited = switch_checked("config-limit-max-urls-unlimited")
+        steps: list[str] = []
+        if value is None:
+            if not unlimited:
+                steps.append("unlimited-on:" + click_control("config-limit-max-urls-unlimited"))
+        else:
+            if unlimited:
+                steps.append("unlimited-off:" + click_control("config-limit-max-urls-unlimited"))
+                cdp.wait(300)
+            cdp.fill(str(value), testid="config-limit-max-urls-override")
+            steps.append(f"fill-override:{value}")
+        settled = cdp.eval("document.querySelector('[data-testid=\"config-limit-max-urls-override\"]').value")
+        unlimited_after = switch_checked("config-limit-max-urls-unlimited")
+        cdp.shot(results.path("screenshots") / shot)
+        return {"steps": steps, "override_value": settled, "unlimited_after": unlimited_after}
+
+    def set_max_duration(value: int, shot: str) -> dict:
+        # The fixture's calendar trap expands without bound; an unlimited
+        # run B is bounded by a duration ceiling SET THROUGH THE UI (still a
+        # #56 edit-behavior proof, and the walk stays measurable).
+        cdp.click(testid="config-tab-limits")
+        cdp.must_wait_for(testid="config-panel-limits", timeout_ms=8000)
+        cdp.wait(300)
+        unlimited = switch_checked("config-limit-max-duration-unlimited")
+        steps: list[str] = []
+        if unlimited:
+            steps.append("unlimited-off:" + click_control("config-limit-max-duration-unlimited"))
+            cdp.wait(300)
+        cdp.fill(str(value), testid="config-limit-max-duration-override")
+        steps.append(f"fill-override:{value}")
+        settled = cdp.eval("document.querySelector('[data-testid=\"config-limit-max-duration-override\"]').value")
+        cdp.shot(results.path("screenshots") / shot)
+        return {"steps": steps, "override_value": settled}
+
+    def save_and_readback(expect_jar: bool, expect_max_urls: int | None,
+                          expect_duration: int | None = None) -> dict:
+        cdp.events(clear=True)
+        cdp.click(testid="configuration-save")
+        put_seen = False
+        cfg = None
+        deadline = time.monotonic() + 20.0
+        while time.monotonic() < deadline:
+            ev = cdp.events()
+            if any(r.get("method") == "PUT" and f"/api/configurations/{cid}" in (r.get("url") or "")
+                   for r in ev.get("requests") or []):
+                put_seen = True
+            cfg = rest.data("GET", f"/api/configurations/{cid}")
+            jar = ((cfg.get("scopeRules") or {}).get("cookieJar") or {}).get("enabled")
+            limits = cfg.get("limits") or {}
+            ok = put_seen and jar == expect_jar and limits.get("maxUrls") == expect_max_urls
+            if expect_duration is not None:
+                ok = ok and limits.get("maxDurationSeconds") == expect_duration
+            if ok:
+                break
+            time.sleep(0.6)
+        limits = (cfg.get("limits") or {})
+        return {"put_seen": put_seen,
+                "read_back": {"cookieJar.enabled": ((cfg.get("scopeRules") or {}).get("cookieJar") or {}).get("enabled"),
+                              "limits.maxUrls": limits.get("maxUrls"),
+                              "limits.maxDurationSeconds": limits.get("maxDurationSeconds")}}
+
+    def ui_start() -> str:
+        baseline = rest.paged("/api/audits", params={"projectId": str(pid)})
+        baseline_max = max((int(a["id"]) for a in baseline
+                            if str(a.get("configurationId")) == str(cid)), default=0)
+        cdp.click(testid="nav-hub")
+        cdp.wait(900)
+        cdp.must_wait_for(testid=f"start-audit-{pid}", timeout_ms=12000)
+        cdp.events(clear=True)
+        try:
+            cdp.click(testid=f"start-audit-{pid}", timeout=6.0)
+        except CdpError as e:
+            log(f"#56 walk: start click helper note (effect wait decides): {e}")
+        new_id = None
+        deadline = time.monotonic() + 20.0
+        while time.monotonic() < deadline:
+            audits = rest.paged("/api/audits", params={"projectId": str(pid)})
+            mine = [a for a in audits if str(a.get("configurationId")) == str(cid)]
+            if mine:
+                top = max(mine, key=lambda a: int(a["id"]))
+                if int(top["id"]) > baseline_max:
+                    new_id = str(top["id"])
+                    break
+            time.sleep(0.6)
+        if new_id is None:
+            raise RuntimeError("#56 walk: UI Start audit did not create an audit within 20s")
+        return new_id
+
+    def run_and_measure(label: str, cap_s: float) -> tuple[dict, dict]:
+        audit_id, polled, attempts = start_with_retry(ui_start, rest, fixture, results.fixture_log,
+                                                      f"#56 {label}", cap_s=cap_s)
+        final = polled["final"]
+        run = {
+            "run_id": f"56-{label}", "mode": "http", "entry_point": f"UI Start audit button (CDP), {label}",
+            "project_id": pid, "project_name": name, "configuration_id": cid, "audit_id": audit_id,
+            "state": str(final.get("state", "")).lower(),
+            "transitions": polled["transitions"], "duration_s": polled["elapsed_s"],
+            "timed_out": polled["timed_out"], "start_attempts": attempts,
+            "counters": final.get("counters") or {},
+        }
+        safety_check(fixture, run, results.fixture_log)
+        data = pull_audit_data(rest, audit_id, [gate_path], fixture.base_url)
+        run["url_count"] = len(data["urls"])
+        run["finding_count"] = len(data["findings"])
+        results.write_json(f"audit-{audit_id}-data.json", data)
+        ctx = make_ctx("http", run, data, fixture, False)
+        verdicts = evaluate_matrix([gate_trap], "http", ctx, data, ["cookie-gate"])
+        run["traps"] = verdicts
+        run["counts"] = count_verdicts(verdicts)
+        evidence["runs"].append(run)
+        log(f"#56 {label}: audit {audit_id} {run['state']} — urls={run['url_count']} "
+            f"fetched={run['counters'].get('fetched')} cookie-gate={verdicts['cookie-gate']['result']}")
+        return run, data
+
+    def gate_row(data: dict) -> dict | None:
+        full = fixture.base_url + gate_path
+        return next((u for u in data["urls"] if u.get("canonicalUrl") == full), None)
+
+    def loop_finding_for(data: dict, row: dict | None) -> dict | None:
+        for f in data["findings"]:
+            if str(f.get("ruleKey") or "") != "redirects.loop":
+                continue
+            blob = json.dumps(f, default=str)
+            if "cookie-gate" in blob or (row is not None and str(f.get("urlId")) == str(row.get("id"))):
+                return f
+        return None
+
+    # ── Run A: jar OFF + maxUrls 50, all through UI-04 ──────────────────────
+    open_editor()
+    jar_a = set_jar(False, "UI-04-A-auth-jar-off.png")
+    limit_a = set_max_urls(50, "UI-04-A-limits-50.png")
+    save_a = save_and_readback(expect_jar=False, expect_max_urls=50)
+    evidence["run_a_editor"] = {"jar": jar_a, "maxUrls": limit_a, "save": save_a}
+    check("a-jar-off-via-ui", jar_a["after"] is False, f"editor switch {jar_a}")
+    check("a-maxurls-50-via-ui", limit_a["override_value"] == "50" and limit_a["unlimited_after"] is False,
+          f"editor limit field {limit_a}")
+    check("a-save-readback", save_a["put_seen"] and save_a["read_back"] == {"cookieJar.enabled": False, "limits.maxUrls": 50, "limits.maxDurationSeconds": None},
+          f"UI save PUT + REST read-back {save_a}")
+    run_a, data_a = run_and_measure("A-jar-off-max50", cap_s=300)
+    row_a = gate_row(data_a)
+    loop_a = loop_finding_for(data_a, row_a)
+    fetched_a = int(run_a["counters"].get("fetched") or 0)
+    cdp.shot(results.path("screenshots") / "UI-10-A-completed.png")
+    check("a-audit-completed", run_a["state"] == "completed", f"state={run_a['state']}")
+    check("a-maxurls-honored", 0 < fetched_a <= 50, f"counters.fetched={fetched_a} (cap 50 set in UI-04)")
+    check("a-cookie-gate-not-200", row_a is not None and row_a.get("statusCode") != 200,
+          f"cookie-gate row statusCode={row_a.get('statusCode') if row_a else 'ROW MISSING'}")
+    check("a-cookie-gate-loop-finding", loop_a is not None,
+          f"redirects.loop finding for cookie-gate: {json.dumps(loop_a, default=str)[:200] if loop_a else 'NONE'}")
+    check("a-cookie-gate-verdict-not-pass", run_a["traps"]["cookie-gate"]["result"] != "pass",
+          f"verdict={run_a['traps']['cookie-gate']['result']} (jar off must not pass)")
+
+    # ── Run B: jar ON + unlimited URLs + UI-set duration ceiling ────────────
+    open_editor()
+    jar_b = set_jar(True, "UI-04-B-auth-jar-on.png")
+    limit_b = set_max_urls(None, "UI-04-B-limits-unlimited.png")
+    duration_b = set_max_duration(300, "UI-04-B-limits-duration-300.png")
+    save_b = save_and_readback(expect_jar=True, expect_max_urls=None, expect_duration=300)
+    evidence["run_b_editor"] = {"jar": jar_b, "maxUrls": limit_b, "maxDuration": duration_b, "save": save_b}
+    check("b-jar-on-via-ui", jar_b["after"] is True, f"editor switch {jar_b}")
+    check("b-maxurls-unlimited-via-ui", limit_b["unlimited_after"] is True, f"editor limit field {limit_b}")
+    check("b-duration-300-via-ui", duration_b["override_value"] == "300", f"editor duration field {duration_b}")
+    check("b-save-readback", save_b["put_seen"] and save_b["read_back"] == {"cookieJar.enabled": True, "limits.maxUrls": None, "limits.maxDurationSeconds": 300},
+          f"UI save PUT + REST read-back {save_b}")
+    run_b, data_b = run_and_measure("B-jar-on-unlimited", cap_s=720)
+    row_b = gate_row(data_b)
+    fetched_b = int(run_b["counters"].get("fetched") or 0)
+    cdp.shot(results.path("screenshots") / "UI-10-B-completed.png")
+    check("b-audit-completed", run_b["state"] == "completed", f"state={run_b['state']}")
+    check("b-url-cap-lifted", fetched_b > 50, f"counters.fetched={fetched_b} (> run A's UI-set 50 cap proves the Unlimited flip)")
+    check("b-cookie-gate-200", row_b is not None and row_b.get("statusCode") == 200,
+          f"cookie-gate row statusCode={row_b.get('statusCode') if row_b else 'ROW MISSING'}")
+    check("b-cookie-gate-verdict-pass", run_b["traps"]["cookie-gate"]["result"] == "pass",
+          f"verdict={run_b['traps']['cookie-gate']['result']}")
+
+    safety_ok = all(e["ok"] for e in results.fixture_log)
+    check("safety-nonget-empty", safety_ok, "GET /__fixture/requests nonGet==[] after both audits")
+    evidence["ok"] = all(c["ok"] for c in evidence["checks"])
+    evidence["summary"] = (
+        f"#56 UI-edit proof: run A (jar off, maxUrls 50 via UI-04) audit {run_a['audit_id']} "
+        f"fetched={fetched_a}, cookie-gate loop={loop_a is not None}; run B (jar on via UI-04) "
+        f"audit {run_b['audit_id']} cookie-gate={run_b['traps']['cookie-gate']['result']}; "
+        f"all {len(evidence['checks'])} checks {'OK' if evidence['ok'] else 'NOT ALL OK'}")
+    return evidence
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="WP-08-04 CrawlForge fixture acceptance harness")
     ap.add_argument("--mode", default="http", help="http|js|dual|adaptive (comma list allowed)")
@@ -564,6 +854,8 @@ def main() -> int:
     ap.add_argument("--tls-cert", default=None, help="PEM certificate for the fixture HTTPS variant")
     ap.add_argument("--tls-key", default=None, help="PEM private key for the fixture HTTPS variant")
     ap.add_argument("--rest-start", action="store_true", help="start the http bulk audit via REST instead of the UI (debug)")
+    ap.add_argument("--ui-edit-56", action="store_true",
+                    help="phase-10 step 0: criterion #56 proof — two UI-started audits whose configs are edited through UI-04 controls only (cookie jar + max URLs); no REST writes")
     ap.add_argument("--reuse-app", action="store_true", help="reuse an already-running harness app on 9222/9223 (debug; not shut down)")
     ap.add_argument("--keep-app", action="store_true", help="leave the app running after the run (debug)")
     ap.add_argument("--results-root", default=str(HARNESS_DIR / "results"), help="evidence root directory")
@@ -645,6 +937,30 @@ def main() -> int:
             log(f"reusing running app on CDP {cdp_port}")
         cdp = CdpSession(cdp_port)
         log(f"CDP session attached to {cdp.page_url}")
+
+        # Phase-10 step 0: criterion #56 UI-edit proof (own two-audit flow).
+        if args.ui_edit_56:
+            evidence = ui_edit_56_walk(rest, cdp, fixture, results, ts, traps)
+            results.write_json("ui-edit-56.json", evidence)
+            results.write_json("fixture-request-log.json", results.fixture_log)
+            results.write_json("audit-ids.json", {
+                "project_id": evidence.get("project_id"),
+                "configuration_id": evidence.get("configuration_id"),
+                "audit_ids": [r.get("audit_id") for r in evidence["runs"]],
+            })
+            global_ok = all(e["ok"] for e in results.fixture_log) if results.fixture_log else True
+            exit_code = 0 if (evidence["ok"] and global_ok) else 1
+            exit_reason = evidence["summary"] + ("" if global_ok else "; global no-non-get FAILED")
+            results.write_text("summary.md", "\n".join([
+                f"# Fixture acceptance — criterion #56 UI-edit proof ({ts})", "",
+                f"- harness {HARNESS_VERSION}, git HEAD `{git_head()}`",
+                f"- expected-results.json sha256 `{expected_sha}`",
+                f"- {evidence['summary']}", "",
+                "| check | ok | detail |", "|---|---|---|",
+                *[f"| {c['id']} | {'OK' if c['ok'] else 'FAIL'} | {c['detail'][:160]} |" for c in evidence["checks"]],
+            ]))
+            log(f"EXIT {exit_code}: {exit_reason}")
+            return exit_code
 
         run_audit_flows = selected_traps is None or len(selected_traps) > 0
         if run_audit_flows:

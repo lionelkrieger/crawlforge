@@ -207,14 +207,14 @@ public sealed class HubSequencingE2ETests
             return null;
         }
 
-        // G-G (WP-09-06 hub normalizer): wire auditId is a STRING; legacy
-        // numeric producers are tolerated during the transition.
-        return value.ValueKind switch
-        {
-            JsonValueKind.Number when value.TryGetInt64(out var id) => id,
-            JsonValueKind.String when long.TryParse(value.GetString(), out var id) => id,
-            _ => null
-        };
+        // Phase-10 step 0 tightening (2456592 transitional tolerance removed):
+        // the locked hub contract carries auditId as a STRING EntityId (G-G,
+        // WP-09-06 normalizer). A numeric producer is a contract violation,
+        // not a legacy shape to tolerate — return null so the sequencing
+        // assertions fail loudly.
+        return value.ValueKind == JsonValueKind.String && long.TryParse(value.GetString(), out var id)
+            ? id
+            : null;
     }
 
     private static int PayloadInt(string payloadJson, string property)

@@ -1,0 +1,306 @@
+{
+  "criterion": 56,
+  "flow": "UI New project dialog -> UI-04 editor (cookie jar + max URLs) -> UI save -> UI Start audit; run A jar OFF/maxUrls 50, run B jar ON/unlimited",
+  "no_rest_writes": true,
+  "project_name": "Fixture harness 56 20261119T212202Z",
+  "runs": [
+    {
+      "run_id": "56-A-jar-off-max50",
+      "mode": "http",
+      "entry_point": "UI Start audit button (CDP), A-jar-off-max50",
+      "project_id": "28",
+      "project_name": "Fixture harness 56 20261119T212202Z",
+      "configuration_id": "32",
+      "audit_id": "39",
+      "state": "completed",
+      "transitions": [
+        {
+          "t": 0.0,
+          "state": "running",
+          "phase": "crawling",
+          "counters": {
+            "queued": 0,
+            "fetched": 0,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": null
+          }
+        },
+        {
+          "t": 14.1,
+          "state": "running",
+          "phase": "analyzing",
+          "counters": {
+            "queued": 108,
+            "fetched": 49,
+            "error": 2,
+            "blocked": 0,
+            "wafBlocked": 0
+          }
+        },
+        {
+          "t": 20.2,
+          "state": "completed",
+          "phase": "finalizing",
+          "counters": {
+            "queued": 108,
+            "fetched": 50,
+            "error": 2,
+            "blocked": 0,
+            "wafBlocked": 0
+          }
+        }
+      ],
+      "duration_s": 20.2,
+      "timed_out": false,
+      "start_attempts": [],
+      "counters": {
+        "queued": 108,
+        "fetched": 50,
+        "error": 2,
+        "blocked": 0,
+        "wafBlocked": 0
+      },
+      "safety": {
+        "ok": true,
+        "evidence": "nonGet == [] after audit",
+        "tag_hits": {
+          "total": 0,
+          "beforeConsent": 0,
+          "granted": 0,
+          "hits": []
+        }
+      },
+      "fixture_requests": {
+        "nonGet": [],
+        "tagHits": []
+      },
+      "url_count": 54,
+      "finding_count": 455,
+      "rendering_inert": {
+        "inert": false,
+        "evidence": "rendering.enabled=False; 'no rendered tree is available' findings=0; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=None",
+        "no_tree_findings": 0,
+        "js_target_present": false,
+        "js_content_words": null
+      },
+      "click_activity": {
+        "active": false,
+        "click_link_rows": 0,
+        "spa_view_urls": 0,
+        "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+      },
+      "traps": {
+        "cookie-gate": {
+          "result": "partial",
+          "evidence": "audit 39: redirect recorded (1 hops) but gate not passed (statusCode=302)."
+        }
+      },
+      "counts": {
+        "pass": 0,
+        "partial": 1,
+        "fail": 0,
+        "not_testable": 0
+      }
+    },
+    {
+      "run_id": "56-B-jar-on-unlimited",
+      "mode": "http",
+      "entry_point": "UI Start audit button (CDP), B-jar-on-unlimited",
+      "project_id": "28",
+      "project_name": "Fixture harness 56 20261119T212202Z",
+      "configuration_id": "32",
+      "audit_id": "40",
+      "state": "running",
+      "transitions": [
+        {
+          "t": 0.0,
+          "state": "running",
+          "phase": "crawling",
+          "counters": {
+            "queued": 31,
+            "fetched": 1,
+            "error": 0,
+            "blocked": 0,
+            "wafBlocked": 0
+          }
+        }
+      ],
+      "duration_s": 602.0,
+      "timed_out": true,
+      "start_attempts": [],
+      "counters": {
+        "queued": 1121,
+        "fetched": 1116,
+        "error": 1,
+        "blocked": 0,
+        "wafBlocked": 0
+      },
+      "safety": {
+        "ok": true,
+        "evidence": "nonGet == [] after audit",
+        "tag_hits": {
+          "total": 0,
+          "beforeConsent": 0,
+          "granted": 0,
+          "hits": []
+        }
+      },
+      "fixture_requests": {
+        "nonGet": [],
+        "tagHits": []
+      },
+      "url_count": 1120,
+      "finding_count": 6,
+      "rendering_inert": {
+        "inert": false,
+        "evidence": "rendering.enabled=False; 'no rendered tree is available' findings=0; /pages/js-only-target.html present=False; /pages/js-content.html totalWordCount=None",
+        "no_tree_findings": 0,
+        "js_target_present": false,
+        "js_content_words": null
+      },
+      "click_activity": {
+        "active": false,
+        "click_link_rows": 0,
+        "spa_view_urls": 0,
+        "evidence": "click-zone link rows=0; click-only /spa/promotions|/spa/results URLs=0"
+      },
+      "traps": {
+        "cookie-gate": {
+          "result": "pass",
+          "evidence": "audit 40: cookie jar honored; /cookie-gate/ reached 200 after the Set-Cookie redirect."
+        }
+      },
+      "counts": {
+        "pass": 1,
+        "partial": 0,
+        "fail": 0,
+        "not_testable": 0
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "a-jar-off-via-ui",
+      "ok": true,
+      "detail": "editor switch {'before': True, 'after': False, 'method': 'input (input)'}"
+    },
+    {
+      "id": "a-maxurls-50-via-ui",
+      "ok": true,
+      "detail": "editor limit field {'steps': ['unlimited-off:input (input)', 'fill-override:50'], 'override_value': '50', 'unlimited_after': False}"
+    },
+    {
+      "id": "a-save-readback",
+      "ok": true,
+      "detail": "UI save PUT + REST read-back {'put_seen': True, 'read_back': {'cookieJar.enabled': False, 'limits.maxUrls': 50}}"
+    },
+    {
+      "id": "a-audit-completed",
+      "ok": true,
+      "detail": "state=completed"
+    },
+    {
+      "id": "a-maxurls-honored",
+      "ok": true,
+      "detail": "counters.fetched=50 (cap 50 set in UI-04)"
+    },
+    {
+      "id": "a-cookie-gate-not-200",
+      "ok": true,
+      "detail": "cookie-gate row statusCode=302"
+    },
+    {
+      "id": "a-cookie-gate-loop-finding",
+      "ok": true,
+      "detail": "redirects.loop finding for cookie-gate: {\"id\": \"42720\", \"ruleKey\": \"redirects.loop\", \"severity\": \"error\", \"category\": \"indexability\", \"urlId\": \"5785\", \"message\": \"Redirect loop detected at 'http://127.0.0.1:47311/cookie-gate/'.\", \"evidence\""
+    },
+    {
+      "id": "a-cookie-gate-verdict-not-pass",
+      "ok": true,
+      "detail": "verdict=partial (jar off must not pass)"
+    },
+    {
+      "id": "b-jar-on-via-ui",
+      "ok": true,
+      "detail": "editor switch {'before': False, 'after': True, 'method': 'input (input)'}"
+    },
+    {
+      "id": "b-maxurls-unlimited-via-ui",
+      "ok": true,
+      "detail": "editor limit field {'steps': ['unlimited-on:input (input)'], 'override_value': '', 'unlimited_after': True}"
+    },
+    {
+      "id": "b-save-readback",
+      "ok": true,
+      "detail": "UI save PUT + REST read-back {'put_seen': True, 'read_back': {'cookieJar.enabled': True, 'limits.maxUrls': None}}"
+    },
+    {
+      "id": "b-audit-completed",
+      "ok": false,
+      "detail": "state=running"
+    },
+    {
+      "id": "b-cookie-gate-200",
+      "ok": true,
+      "detail": "cookie-gate row statusCode=200"
+    },
+    {
+      "id": "b-cookie-gate-verdict-pass",
+      "ok": true,
+      "detail": "verdict=pass"
+    },
+    {
+      "id": "safety-nonget-empty",
+      "ok": true,
+      "detail": "GET /__fixture/requests nonGet==[] after both audits"
+    }
+  ],
+  "project_id": "28",
+  "configuration_id": "32",
+  "run_a_editor": {
+    "jar": {
+      "before": true,
+      "after": false,
+      "method": "input (input)"
+    },
+    "maxUrls": {
+      "steps": [
+        "unlimited-off:input (input)",
+        "fill-override:50"
+      ],
+      "override_value": "50",
+      "unlimited_after": false
+    },
+    "save": {
+      "put_seen": true,
+      "read_back": {
+        "cookieJar.enabled": false,
+        "limits.maxUrls": 50
+      }
+    }
+  },
+  "run_b_editor": {
+    "jar": {
+      "before": false,
+      "after": true,
+      "method": "input (input)"
+    },
+    "maxUrls": {
+      "steps": [
+        "unlimited-on:input (input)"
+      ],
+      "override_value": "",
+      "unlimited_after": true
+    },
+    "save": {
+      "put_seen": true,
+      "read_back": {
+        "cookieJar.enabled": true,
+        "limits.maxUrls": null
+      }
+    }
+  },
+  "ok": false,
+  "summary": "#56 UI-edit proof: run A (jar off, maxUrls 50 via UI-04) audit 39 fetched=50, cookie-gate loop=True; run B (jar on via UI-04) audit 40 cookie-gate=pass; all 15 checks NOT ALL OK"
+}

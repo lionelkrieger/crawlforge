@@ -217,7 +217,11 @@ public sealed class ListModeE2ETests
         }, WireOptions);
         Assert.Equal(System.Net.HttpStatusCode.Created, start.StatusCode);
         var startEnvelope = await WireJson.EnvelopeAsync(start);
-        var newAuditId = long.Parse(startEnvelope.GetProperty("data").GetProperty("auditId").GetString()!);
+        // Phase-10 step 0: the locked REST envelope carries auditId as a STRING
+        // EntityId — assert the kind explicitly, never tolerate a numeric id.
+        var startIdToken = startEnvelope.GetProperty("data").GetProperty("auditId");
+        Assert.Equal(JsonValueKind.String, startIdToken.ValueKind);
+        var newAuditId = long.Parse(startIdToken.GetString()!);
 
         var audit = await backend.Service<IReadRepository<AuditDto>>().GetByIdAsync(newAuditId);
         Assert.NotNull(audit);
@@ -370,7 +374,10 @@ public sealed class ListModeE2ETests
         Assert.True(upload.IsSuccessStatusCode, $"Matrix upload failed: {(int)upload.StatusCode} {uploadBody}");
         var uploadEnvelope = JsonDocument.Parse(uploadBody).RootElement;
         Assert.Equal(5, uploadEnvelope.GetProperty("data").GetProperty("rowCount").GetInt32());
-        var seededAuditId = long.Parse(uploadEnvelope.GetProperty("data").GetProperty("auditId").GetString()!);
+        // Phase-10 step 0: string EntityId lock (see the start-envelope assert).
+        var seededIdToken = uploadEnvelope.GetProperty("data").GetProperty("auditId");
+        Assert.Equal(JsonValueKind.String, seededIdToken.ValueKind);
+        var seededAuditId = long.Parse(seededIdToken.GetString()!);
         await backend.WaitForStatusAsync(seededAuditId, AuditStatus.Completed, TimeSpan.FromSeconds(60));
 
         // The auto-seeded audit carries the five sources as list seeds.
