@@ -807,10 +807,9 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         // AllowRevisit); CookieJarMessageHandler is the alternative
         // transport-level integration and is NOT wired simultaneously (its
         // replace semantics would drop profile cookies merged by the hook).
-        using var httpClient = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
-        {
-            Timeout = TimeSpan.FromSeconds(limits?.FetchTimeoutSeconds ?? 60)
-        };
+        // Construction lives in the approved crawl-target boundary scope
+        // (NET-02): CrawlTargetTransportFactory, Crawler/Fetching.
+        using var httpClient = CrawlTargetTransportFactory.Create(limits?.FetchTimeoutSeconds ?? 60);
         var fetcherOptions = new HttpFetcherOptions(
             defaultTimeoutSeconds: limits?.FetchTimeoutSeconds ?? 60,
             maxResponseBytes: maxResponseBytes,
@@ -822,10 +821,8 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
 
         // Robots cache fetches through a dedicated aimd-free fetcher (the
         // crawl-delay floor source must exist before the AIMD controller).
-        using var robotsClient = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
-        {
-            Timeout = TimeSpan.FromSeconds(limits?.FetchTimeoutSeconds ?? 60)
-        };
+        // Same approved crawl-target boundary scope as the crawl transport.
+        using var robotsClient = CrawlTargetTransportFactory.Create(limits?.FetchTimeoutSeconds ?? 60);
         var robotsFetcher = new HttpFetcher(fetcherOptions, robotsClient);
         var robotsScheme = seedUrls.Count > 0 && Uri.TryCreate(seedUrls[0], UriKind.Absolute, out var firstSeed)
             ? firstSeed.Scheme
