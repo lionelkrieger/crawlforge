@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Authentication;
+using System.Text;
 using CrawlForge.Contracts.Crawl;
 
 namespace CrawlForge.Crawler.Fetching;
@@ -68,6 +69,7 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
     private readonly ProxyOptions? _proxyOptions;
     private readonly IFetchHook? _fetchHook;
     private readonly Func<CancellationToken, Task<HttpClient>>? _httpClientFactory;
+    private readonly IWafChallengeEvaluator? _wafChallengeEvaluator;
     private readonly SemaphoreSlim _proxyGate = new(1, 1);
     private HttpClient? _proxiedClient;
     private HttpClient? _factoryClient;
@@ -100,6 +102,14 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
     /// proxy is configured; the fetcher owns and disposes the created client.
     /// Null keeps using the injected <paramref name="httpClient"/>.
     /// </param>
+    /// <param name="wafChallengeEvaluator">
+    /// Optional WAF evaluator making the transport's AIMD sample challenge-aware
+    /// (lead-approved single-recording fix for the engine/fetcher double sample).
+    /// When supplied together with an AIMD controller, the one recorded sample
+    /// carries the evaluator's IsChallenge verdict on the terminal response; the
+    /// engine must then stop recording its own sample. Null keeps the baseline
+    /// IsChallenge:false sample.
+    /// </param>
     /// <exception cref="ArgumentNullException">Options or client is null.</exception>
     /// <exception cref="ArgumentException">A signing secret is supplied without a handler.</exception>
     public HttpFetcher(
@@ -112,7 +122,8 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
         ILoopbackInterceptingProxy? interceptingProxy = null,
         ProxyOptions? proxyOptions = null,
         IFetchHook? fetchHook = null,
-        Func<CancellationToken, Task<HttpClient>>? httpClientFactory = null)
+        Func<CancellationToken, Task<HttpClient>>? httpClientFactory = null,
+        IWafChallengeEvaluator? wafChallengeEvaluator = null)
     {
         _options = options ?? throw new ArgumentNullException(nameof(options));
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -129,6 +140,7 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
         _proxyOptions = proxyOptions;
         _fetchHook = fetchHook;
         _httpClientFactory = httpClientFactory;
+        _wafChallengeEvaluator = wafChallengeEvaluator;
 
         // Per-hop linked cancellation controls timeouts, not the client clock.
         _httpClient.Timeout = Timeout.InfiniteTimeSpan;
@@ -282,9 +294,26 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
                 string nextUrl = ResolveRedirectTarget(currentUrl, response.Headers.Location);
                 if (_redirectRecorder is not null && context is not null)
                 {
-                    await _redirectRecorder
-                        .RecordHopAsync(context.AuditId, context.UrlId, new RedirectHop(hop, currentUrl, nextUrl, statusCode), cancellationToken)
-                        .ConfigureAwait(false);
+                    var redirectHop = new RedirectHop(hop, currentUrl, nextUrl, statusCode);
+                    if (_redirectRecorder is RedirectChainRecorder cookieAwareRecorder)
+                    {
+                        // Cookie-aware overload (cf-wp-09-02): retain the redirect
+                        // response's Set-Cookie on the chain snapshot for
+                        // persistence/evidence. The locked interface path carries
+                        // no headers and stays unchanged for other recorders.
+                        IReadOnlyList<string>? setCookies = response.Headers.TryGetValues("Set-Cookie", out var cookieValues)
+                            ? cookieValues.ToList()
+                            : null;
+                        await cookieAwareRecorder
+                            .RecordHopAsync(context.AuditId, context.UrlId, redirectHop, setCookies, cancellationToken)
+                            .ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await _redirectRecorder
+                            .RecordHopAsync(context.AuditId, context.UrlId, redirectHop, cancellationToken)
+                            .ConfigureAwait(false);
+                    }
                 }
 
                 // Standard user-agent behavior: 303 always switches to GET;
@@ -423,10 +452,25 @@ public sealed class HttpFetcher : IHttpFetcher, IDisposable
             return;
         }
 
-        // Challenge samples (IsChallenge=true) are fed by the WAF pass itself.
+        // Single challenge-aware sample at the transport layer (lead-approved
+        // fix for the engine/fetcher double recording): when an evaluator is
+        // injected, the sample carries its verdict on the terminal response;
+        // the engine then stops recording its own sample. Without an evaluator
+        // the baseline IsChallenge:false sample is unchanged.
+        var isChallenge = false;
+        if (_wafChallengeEvaluator is not null)
+        {
+            var snippet = result.Body.Length > 0
+                ? Encoding.UTF8.GetString(result.Body.Span[..Math.Min(result.Body.Length, 4096)])
+                : null;
+            isChallenge = _wafChallengeEvaluator
+                .Evaluate(new WafEvaluationInput(result.FinalUrl, result.StatusCode, result.Headers, snippet))
+                .IsChallenge;
+        }
+
         _aimdController.RecordResponse(
             finalUri.Host,
-            new HostResponseSample(result.Ttfb.TotalMilliseconds, result.StatusCode, IsChallenge: false, DateTimeOffset.UtcNow));
+            new HostResponseSample(result.Ttfb.TotalMilliseconds, result.StatusCode, isChallenge, DateTimeOffset.UtcNow));
     }
 
     private async Task<HttpClient> GetClientAsync(CancellationToken cancellationToken)

@@ -6,9 +6,10 @@ cf-wp-09-02 (cookie jar), cf-wp-09-03 (proxy/signing/rewrite), phase-gate confor
 
 Verification (cwd `E:\Crawlforge\app`, SDK 10.0.404, `CF_AGENT_ID=cf-wp-09-01`):
 - `dotnet build src\backend\CrawlForge.Crawler\CrawlForge.Crawler.csproj` → 0 warnings / 0 errors.
-- `dotnet test tests\CrawlForge.Crawler.Tests\CrawlForge.Crawler.Tests.csproj --filter "FullyQualifiedName~CrawlForge.Crawler.Tests.Sitemaps|FullyQualifiedName~CrawlForge.Crawler.Tests.Fetching|FullyQualifiedName~CrawlForge.Crawler.Tests.Frontier"` → 277 passed.
-- Full suite (same project, no filter) → 865 passed / 0 failed.
-- New WP-09-01 tests: 105 (12 classes), incl. 6 live fixture tests on OWN port 47313.
+- `dotnet test tests\CrawlForge.Crawler.Tests\CrawlForge.Crawler.Tests.csproj --filter "FullyQualifiedName~CrawlForge.Crawler.Tests.Sitemaps|FullyQualifiedName~CrawlForge.Crawler.Tests.Fetching|FullyQualifiedName~CrawlForge.Crawler.Tests.Frontier"` → 290 passed.
+- Full suite (same project, no filter) → 878 passed / 0 failed.
+- New WP-09-01 tests: 118 (13 classes), incl. 7 live fixture tests on OWN port 47313.
+- cf-wp-09-02 relay addendum (AIMD single sample, per-hop Set-Cookie, handler composition): §8.
 
 ## 1. Redirect-chain persistence (url_elements mechanism, zero migration)
 
@@ -209,3 +210,62 @@ Live tests use OWN node copy of read-only `app\tests\fixture-site\server.mjs` on
 no listener remains after the run; `Live_FixtureRecorder_NoNonGetRequests` asserts the
 fixture nonGet list is empty. No %APPDATA%\CrawlForge access, no owner projects, no git
 commits, no new NuGet, no csproj edits, no schedule/MySQL work.
+
+## 8. Addendum — cf-wp-09-02 relay items (lead-approved, implemented)
+
+### 8.1 Single challenge-aware AIMD sample (double-recording fix)
+`HttpFetcher` ctor additive param 11: `IWafChallengeEvaluator? wafChallengeEvaluator = null`.
+With an AIMD controller AND evaluator injected, the ONE transport sample
+(`RecordAimdSample`, called once per completed fetch on the terminal response) carries
+the evaluator's `IsChallenge` verdict; input = `WafEvaluationInput(result.FinalUrl,
+result.StatusCode, result.Headers, UTF8 body snippet bounded to 4096 bytes — same
+bound as the engine's Snippet)`. Null evaluator → baseline `IsChallenge:false`.
+**Lead wiring**: inject evaluator + aimd into the engine's fetcher
+(`AuditExecutionEngine.cs:603–605`) and REMOVE the engine-side `aimd.RecordResponse`
+at :709–710 (or pass `aimdController:null` there and keep the DI fetcher as the single
+recorder). The engine's WAF evaluate at :713 for record fields stays (separate concern).
+Tests: `HttpFetcherTransportSamplesTests` (verdict once, null baseline, no-controller
+no-invocation, 4096 bound, single sample on terminal of a redirect chain).
+
+### 8.2 Per-hop Set-Cookie on chain snapshots/payloads
+- `RedirectChainSnapshot.HopSetCookies` (additive init property,
+  `IReadOnlyDictionary<int, IReadOnlyList<string>>`, ordinal → Set-Cookie values;
+  empty default — existing 3-arg constructions unchanged).
+- `RedirectChainRecorder.RecordHopAsync(auditId, urlId, hop, IReadOnlyList<string>?
+  setCookies, ct)` public overload; the locked interface method delegates with null.
+  `HttpFetcher` calls the overload when the injected recorder is the concrete
+  `RedirectChainRecorder` (runtime type check), else the interface path — other
+  recorder implementations are unaffected.
+- Persistence: `RedirectChainHopPayload.SetCookies` additive init property,
+  `[JsonIgnore(WhenWritingNull)]` — canonical hop JSON `{ordinal,url,toUrl,statusCode}`
+  is byte-identical for cookie-less hops; cookie hops gain `"setCookies":[…]`.
+  `RedirectChainJson.FromSnapshot` maps snapshot cookies into the payload.
+- **Cookie-gate loop tolerance**: the recorder tolerates ONE self-redirect carrying
+  Set-Cookie per chain (cookie-aware overload only) — mirrors the fetcher's
+  `AllowRevisit` escape hatch so the fixture cookie gate works UNDER a fetch context
+  (without this, hop recording would throw Loop before the hook could allow the
+  revisit). Self-redirects without cookies, repeat self-hops, and cross-URL loops
+  stay strict; the interface path stays strict.
+- Proof: unit `Fetcher_CookieGateWithRecorderAndJarHook_Returns200` + live
+  `SitemapLiveFixtureTests.Live_CookieGate_WithRecorderAndJarHook_Returns200AfterOneSelfRedirect`
+  (fixture `/cookie-gate/`: 302 self + Set-Cookie → 200; self-hop durable with cookie).
+
+### 8.3 Handler-wrapped HttpClient composition (CrawlTargetHttpClientFactory)
+The factory lives in Host\Composition (lead wiring scope) — NOT edited here. The
+fetcher composes with any handler chain: injected HttpClient or `httpClientFactory`
+may wrap `CookieJarMessageHandler` (or any DelegatingHandler). Requirements:
+- Keep `AllowAutoRedirect = false` on the inner handler (the fetcher follows redirects
+  manually so every hop is recorded/hooked).
+- A transport-level jar captures Set-Cookie on every hop incl. retries; the fetcher's
+  `IFetchHook.AllowRevisit` is STILL required for cookie-gate self-redirects (the
+  visited-URL guard is above the handler). `PreviousResponse.Headers["Set-Cookie"]`
+  tells the hook a cookie was set regardless of which layer stores it; combine with
+  the recorder's cookie tolerance (8.2) when a fetch context is set.
+- `IFetchHook` and a handler jar coexist without conflict (hook sees the message
+  before send and the response after receive; the handler sees the wire exchange).
+
+### 8.4 Updated verification counts
+- Owned filter: **290 passed / 0 failed** (was 277; +12 transport/cookie unit tests,
+  +1 live cookie-gate test).
+- Full Crawler.Tests suite: **878 passed / 0 failed** (was 865).
+- Production Crawler build: 0 warnings / 0 errors. New WP-09-01 test total: 118.

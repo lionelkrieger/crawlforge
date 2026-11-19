@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using CrawlForge.Contracts.Common;
 using CrawlForge.Contracts.Crawl;
 using CrawlForge.Contracts.Entities;
@@ -32,7 +33,17 @@ public static class RedirectChainElementGroup
 /// <param name="Url">URL that issued the redirect (hop source).</param>
 /// <param name="ToUrl">Redirect target, when known.</param>
 /// <param name="StatusCode">Redirect status code (3xx).</param>
-public sealed record RedirectChainHopPayload(int Ordinal, string Url, string? ToUrl, int StatusCode);
+public sealed record RedirectChainHopPayload(int Ordinal, string Url, string? ToUrl, int StatusCode)
+{
+    /// <summary>
+    /// Additive (WP-09-01, cf-wp-09-02 request): Set-Cookie values observed on
+    /// this hop's redirect response, when recorded through the cookie-aware
+    /// recorder path. Omitted from JSON when absent, so the canonical hop shape
+    /// <c>{ordinal,url,toUrl,statusCode}</c> is unchanged for cookie-less chains.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<string>? SetCookies { get; init; }
+}
 
 /// <summary>
 /// Persisted redirect-chain payload for one URL (stored as the
@@ -115,7 +126,12 @@ public static class RedirectChainJson
         ArgumentNullException.ThrowIfNull(snapshot);
         return new RedirectChainPayload(
             snapshot.Hops.OrderBy(h => h.Ordinal)
-                .Select(h => new RedirectChainHopPayload(h.Ordinal, h.FromUrl, h.ToUrl, h.StatusCode))
+                .Select(h => new RedirectChainHopPayload(h.Ordinal, h.FromUrl, h.ToUrl, h.StatusCode)
+                {
+                    SetCookies = snapshot.HopSetCookies.TryGetValue(h.Ordinal, out var cookies) && cookies.Count > 0
+                        ? cookies
+                        : null,
+                })
                 .ToList(),
             FinalUrl: null,
             FinalStatusCode: null,

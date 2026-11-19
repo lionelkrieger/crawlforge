@@ -214,6 +214,42 @@ public sealed class SitemapLiveFixtureTests : IClassFixture<SitemapLiveFixtureTe
     }
 
     [Fact]
+    public async Task Live_CookieGate_WithRecorderAndJarHook_Returns200AfterOneSelfRedirect()
+    {
+        await _server.Server.ResetAsync();
+        var store = new InMemoryRedirectChainStore();
+        var recorder = new RedirectChainRecorder(10, RedirectChainPersistence.CreatePersistHook(store));
+        var jar = new CookieJarFetchHook();
+        using var fetcher = new HttpFetcher(
+            new HttpFetcherOptions(maxRetryAttempts: 0, retryBackoffBaseMilliseconds: 1),
+            new HttpClient(new HttpClientHandler { AllowAutoRedirect = false, UseProxy = false }),
+            recorder, fetchHook: jar);
+        var gateUrl = _server.Server.BaseUrl + "/cookie-gate/";
+
+        FetchContextScope.Current = new FetchContext(AuditId, 103);
+        HttpFetchResult result;
+        try
+        {
+            result = await fetcher.FetchAsync(new HttpFetchRequest(gateUrl));
+        }
+        finally
+        {
+            FetchContextScope.Current = null;
+        }
+
+        // The gate returned 200 after ONE cookie-driven self-redirect, and the
+        // self-hop is durable with its Set-Cookie (cf-wp-09-02 composition).
+        Assert.Equal(200, result.StatusCode);
+        Assert.Equal(gateUrl, result.FinalUrl);
+        RedirectChainPayload? payload = await store.GetPayloadAsync(103);
+        Assert.Single(payload!.Hops);
+        Assert.Equal(302, payload.Hops[0].StatusCode);
+        Assert.Equal(gateUrl, payload.Hops[0].Url);
+        Assert.Equal(gateUrl, payload.Hops[0].ToUrl);
+        Assert.Contains(payload.Hops[0].SetCookies!, c => c.Contains("fixture_gate=1"));
+    }
+
+    [Fact]
     public async Task Live_FixtureRecorder_NoNonGetRequests()
     {
         using JsonDocument requests = await _server.Server.RequestsAsync();
