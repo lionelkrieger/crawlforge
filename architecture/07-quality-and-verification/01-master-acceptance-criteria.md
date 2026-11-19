@@ -33,7 +33,7 @@
 15. Content comparison between two audits renders fully offline from the content store; re-audit reuses stored bodies without network access.
 16. With the MCP interface enabled, it completes the standard protocol handshake over both the loopback SSE and stdio transports, rejects invalid tokens, and is unreachable from non-loopback addresses; token rotation invalidates prior clients.
 17. Stored credentials (site, destination, proxy, external database, automation token) are encrypted at rest and never derived from hardware or OS identity.
-18. Configuring a user-owned external client-server database migrates the schema and runs a full audit with identical report output; reverting to the default file-based provider works via archive import; the connection-test action reports reachability and credential validity before first use.
+18. **Deferred (CR-028, D-020):** external client-server database provider parity. Not verified in this version; restored if the MySQL-class provider is brought back into scope. **[Amended by CR-028, D-020]**
 19. The backend runs under the mandated server garbage-collection profile, verifiable through the version/diagnostics surface.
 20. The local metrics endpoint serves the standardized exposition format on loopback only, with no identity dimensions; no metrics are pushed or transmitted anywhere.
 21. An abnormal backend termination produces a local native minidump; no diagnostic artifact is ever transmitted automatically; the user can view and purge artifacts from the settings surface.
@@ -103,3 +103,8 @@
 Replaced text in criterion #40:
 
 > 40. **60 FPS virtual scrolling at 500k rows.** With 500,000+ URL rows, the URL explorer (and the Issue, Link, Custom Extraction, and N-Gram explorers) mount at most 50 DOM rows and sustain 60 FPS scrolling (p95 frame time ≤ 16.7 ms); multi-column sorting, instant filtering, column pinning, and dynamic extraction columns remain functional; keyboard navigation and ARIA row semantics are preserved.
+### CR-028 (2026-11-17; D-020)
+
+Replaced text in criterion #18:
+
+> 18. Configuring a user-owned external client-server database migrates the schema and runs a full audit with identical report output; reverting to the default file-based provider works via archive import; the connection-test action reports reachability and credential validity before first use.

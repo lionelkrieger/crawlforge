@@ -28,7 +28,7 @@
 
 - **Window catalog:** splash; main hub (projects, dashboards, and schedules); report window; visualization window; single-page analyzer; standalone tools (section 8.7); settings; backend-failure/recovery screen.
 - **Shell duties:** spawn, monitor, and restart the backend; discover the backend port; load only local UI assets; provide native file dialogs for export/import; surface OS taskbar progress and local notifications; persist window state.
-- **Settings surfaces** include: database provider selection with connection-test feedback; export-destination management with test-connection feedback; proxy configuration; user-dictionary management; the MCP automation-interface toggle with transport selection, token display, and rotation; diagnostics management (open, inspect, and purge local logs and crash artifacts); UI language selection.
+- **Settings surfaces** include: database information (location and size of the local database; provider selection is deferred, CR-028); export-destination management with test-connection feedback; proxy configuration; user-dictionary management; the MCP automation-interface toggle with transport selection, token display, and rotation; diagnostics management (open, inspect, and purge local logs and crash artifacts); UI language selection. **[Amended by CR-028, D-020]**
 - **Recovery screen** shows local diagnostic information and a pointer to the local crash-artifact directory after repeated backend failures.
 - **UI state** derives entirely from the local API and hub. No entitlement-driven screens exist; the first-run experience proceeds directly to project creation.
 - No remote content and no embedded views of vendor services. An optional embedded preview of crawled pages is sandboxed and loads only the crawled target.
@@ -198,3 +198,8 @@ Replaced text in §7.5 performance budgets (scrolling row):
 Replaced text in live status-bar telemetry table:
 
 > | `gcGen0/1/2Counts` | Backend runtime | GC generation collection counts, aggregated across server-GC heaps |
+### CR-028 (2026-11-17; D-020)
+
+Replaced text in §12 settings surfaces:
+
+> - **Settings surfaces** include: database provider selection with connection-test feedback; export-destination management with test-connection feedback; proxy configuration; user-dictionary management; the MCP automation-interface toggle with transport selection, token display, and rotation; diagnostics management (open, inspect, and purge local logs and crash artifacts); UI language selection.

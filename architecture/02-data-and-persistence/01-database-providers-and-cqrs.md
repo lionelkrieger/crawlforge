@@ -15,11 +15,9 @@
 > **Verbatim source — FS-CRAWL-001 v1.4: 2.4 Persistence foundation — verbatim and unabridged**
 
 ### 2.4 Persistence foundation
-> Capabilities: CAP-L-X02, CAP-L-X03
+> Capabilities: CAP-L-X02 · Decisions: D-020 · Change records: CR-028
 
-- **Configurable database providers.** Persistence is abstracted behind a provider contract; the application is not restricted to a single storage engine. Two provider classes are supported:
-  - **Default — local file-based embedded database (SQLite-class):** resides in the per-user application data directory; zero configuration, zero network, fully offline.
-  - **Optional — external client-server relational database (MySQL-class):** for high-volume deployments. Addressed by a user-configured connection (host, port, database name, credentials). The server is the **user's own infrastructure**; credentials are encrypted at rest (section 9.1). No vendor-hosted database exists or is contacted.
+- **Database provider.** Persistence is abstracted behind a provider contract. **This version ships one provider: a local file-based embedded database (SQLite-class)** in the per-user application data directory, with zero configuration, zero network and full offline operation. The provider contract is kept, so an **external client-server provider (MySQL-class) can be added later**; it is deferred (section 15.1 of `07-quality-and-verification/02-open-scope-decisions.md`). **[Amended by CR-028, D-020]**
 - The **logical schema, read models, and migration ledger are provider-agnostic**; each provider supplies a dialect-specific migration path to the same logical schema version. Provider selection and connection settings live in application settings. Switching providers is an explicit, user-initiated operation using the archive export/import mechanism — never automatic.
 - **Durability and integrity:** the file-based provider uses write-ahead logging; the external provider uses its native transactional durability. Foreign keys are enforced; all multi-row writes occur inside transactions on either provider.
 - Schema evolution is handled by **versioned migrations** applied automatically at backend startup, before the API begins serving, on the configured provider.
@@ -50,3 +48,15 @@
 > **Verbatim source — FS-CRAWL-002 v1.1: §1.4 rule 6 — verbatim excerpt (the complete §1.4 invariant set lives in 01-foundation-and-governance/01-clean-room-and-exclusions.md)**
 
 6. **Provider agnosticism.** Every new schema object is logical (§2.4, §9.1); both the embedded file-based and the optional external client-server provider implement it. Aggregate views are materialized as precomputed read models where the provider lacks native view support (§8.1 pattern).
+
+---
+
+## Amendment history
+
+### CR-028 (2026-11-17; D-020)
+
+Replaced text in §2.4 (configurable database providers):
+
+> - **Configurable database providers.** Persistence is abstracted behind a provider contract; the application is not restricted to a single storage engine. Two provider classes are supported:
+>   - **Default — local file-based embedded database (SQLite-class):** resides in the per-user application data directory; zero configuration, zero network, fully offline.
+>   - **Optional — external client-server relational database (MySQL-class):** for high-volume deployments. Addressed by a user-configured connection (host, port, database name, credentials). The server is the **user's own infrastructure**; credentials are encrypted at rest (section 9.1). No vendor-hosted database exists or is contacted.

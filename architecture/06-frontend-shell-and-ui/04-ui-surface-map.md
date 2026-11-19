@@ -306,7 +306,6 @@ The configuration editor (UI-04) has these tabs: Scope; Crawl as and capture; Li
 | CAP-K-X05 | Per-project retention and storage reporting | UI-07 | UI-07 | UI-07 |
 | CAP-L-X01 | Platform security and diagnostics infrastructure | UI-21; UI-21 Diagnostics | - | UI-21 Diagnostics |
 | CAP-L-X02 | Project archive export/import and provider switching | UI-07 archive export/import | UI-07 | UI-07 |
-| CAP-L-X03 | MySQL provider parity and schema authority | UI-21 Database | - | UI-21 Database |
 | CAP-L-X04 | Local plugin system | UI-22 | UI-22 | UI-22 |
 | CAP-L-X05 | Real-time hub events and metrics observability | - | - | UI-23, UI-10, UI-21 Diagnostics |
 | CAP-L-X06 | Electron native shell integration | UI-21 | - | all windows |

@@ -31,3 +31,4 @@ Status values: `draft` (awaiting owner review), `approved` (may be applied), `ap
 | CR-025 | Status-bar GC count field names follow the code | clarification | applied | D-020 | CAP-L-X05 | 05/02 §7.2; 06/01 §7.2 | 2026-11-18 |
 | CR-026 | Schedule wire field is named recurrence | clarification | applied | D-020 | CAP-H-188 | 03/04 §6.1 | 2026-11-18 |
 | CR-027 | Add local-notification to the hub contract | addition | applied | D-020 | CAP-H-188, CAP-L-X05 | 05/02 Appendix C | 2026-11-18 |
+| CR-028 | Defer the external MySQL-class database provider | amendment | applied | D-020 | CAP-L-X03 (deferred) | 02/01 §2.4; 07/01 #18; 06/01 §12; 07/02 §15.1; UI map; register | 2026-11-18 |

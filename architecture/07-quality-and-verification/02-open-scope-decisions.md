@@ -45,7 +45,7 @@ Replaced text in §15 item 5:
 > 5. **Raw-SQL administration tool** — whether a direct query interface over the local database is offered as a power-user/debug tool (the interactive query builder per section 8.7 is already specified). Not required by this version.
 
 ### 15.1 Deferred capabilities (CR-017)
-> Decisions: D-017 · Change records: CR-017
+> Decisions: D-017, D-020 · Change records: CR-017, CR-028
 
 **[Added by CR-017]** Recorded as deferred: not specified now and not built in the next build-plan extension; revisited after the core end-to-end flows (#49 to #58) pass acceptance.
 
@@ -68,4 +68,5 @@ Replaced text in §15 item 5:
 | CAP-I-195 | Prioritise by confidence |
 | CAP-I-198 | Root-cause grouping |
 | CAP-H-X01 | Offline website copy export |
+| CAP-L-X03 | MySQL provider parity and schema authority (external MySQL-class provider; deferred by CR-028) |
 

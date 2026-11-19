@@ -73,3 +73,6 @@ untagged:
   CAP-J-211:
     status: via MCP (AI client)
     ref: D-008, D-017; CR-017; architecture 01/01 §1.5
+  CAP-L-X03:
+    status: deferred
+    ref: D-020; CR-028; architecture 07/02 §15.1
