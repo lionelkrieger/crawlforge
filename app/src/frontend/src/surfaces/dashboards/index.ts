@@ -8,6 +8,7 @@
 
 export { AuditDashboard, type AuditDashboardProps } from './AuditDashboard';
 export { CrawlHealthPanel, type CrawlHealthPanelProps } from './CrawlHealthPanel';
+export { ReportDashboard, type ReportDashboardProps } from './ReportDashboard';
 export { ScoreTrendSurface, type ScoreTrendSurfaceProps } from './ScoreTrendSurface';
 export {
   NgramTopicalPanel,

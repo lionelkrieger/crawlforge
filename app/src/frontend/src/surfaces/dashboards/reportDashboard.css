@@ -1,0 +1,163 @@
+/*
+ * Report dashboard styles (WP-09-08). Additive only — counters, scores,
+ * crawl-health rollup, and top-issues list around the accepted WP-06-04
+ * chart surfaces. Scoped under .cf-report-dashboard.
+ */
+
+.cf-report-dashboard { display: grid; gap: 14px; }
+
+.cf-report-dashboard .cf-explorer-note {
+  font-size: 12px;
+  color: var(--mantine-color-night-3, #8892a8);
+  padding: 6px 10px;
+  border-left: 2px solid var(--mantine-color-night-5, #2b3348);
+}
+.cf-report-dashboard .cf-explorer-loading {
+  font-size: 12px;
+  color: var(--mantine-color-night-3, #8892a8);
+  font-style: italic;
+}
+.cf-report-dashboard .cf-explorer-error {
+  font-size: 12.5px;
+  color: var(--cf-danger, #f03e3e);
+  border: 1px solid color-mix(in srgb, var(--cf-danger, #f03e3e) 40%, transparent);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.cf-report-dashboard .cf-explorer-empty {
+  font-size: 13px;
+  color: var(--mantine-color-night-3, #8892a8);
+  padding: 16px;
+}
+
+.cf-report-dashboard .cf-dashboard-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mantine-color-night-2, #c9d1e0);
+}
+
+/* Counter strip */
+.cf-report-dashboard .cf-dashboard-counters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.cf-report-dashboard .cf-dashboard-counter {
+  background: var(--mantine-color-night-7, #1d2436);
+  border: 1px solid var(--mantine-color-night-5, #2b3348);
+  border-radius: 6px;
+  padding: 8px 14px;
+  min-width: 110px;
+}
+.cf-report-dashboard .cf-dashboard-counter-label {
+  font-size: 11px;
+  color: var(--mantine-color-night-4, #8892a8);
+}
+.cf-report-dashboard .cf-dashboard-counter-value {
+  font-size: 20px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--mantine-color-night-0, #c9d1e0);
+}
+
+/* Scores */
+.cf-report-dashboard .cf-dashboard-scores {
+  display: grid;
+  gap: 6px;
+  background: var(--mantine-color-night-7, #1d2436);
+  border: 1px solid var(--mantine-color-night-5, #2b3348);
+  border-radius: 6px;
+  padding: 12px;
+}
+.cf-report-dashboard .cf-dashboard-score-overall {
+  font-size: 16px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--mantine-color-signal-3, #66d9e8);
+}
+.cf-report-dashboard .cf-dashboard-score-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.cf-report-dashboard .cf-dashboard-score-category {
+  min-width: 130px;
+  color: var(--mantine-color-night-1, #aab4c8);
+}
+.cf-report-dashboard .cf-dashboard-score-track {
+  flex: 1;
+  height: 6px;
+  background: var(--mantine-color-night-6, #2b3348);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cf-report-dashboard .cf-dashboard-score-fill {
+  display: block;
+  height: 100%;
+  background: var(--mantine-color-signal-6, #22b8cf);
+}
+.cf-report-dashboard .cf-dashboard-score-value {
+  min-width: 36px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--mantine-color-night-0, #c9d1e0);
+}
+.cf-report-dashboard .cf-dashboard-score-count {
+  color: var(--mantine-color-night-4, #8892a8);
+  font-size: 11px;
+}
+
+/* Crawl health rollup */
+.cf-report-dashboard .cf-dashboard-crawl-health {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--mantine-color-night-1, #aab4c8);
+}
+
+/* Top issues */
+.cf-report-dashboard .cf-dashboard-top-issues { display: grid; gap: 6px; }
+.cf-report-dashboard .cf-dashboard-issue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.cf-report-dashboard .cf-dashboard-issue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  background: var(--mantine-color-night-7, #1d2436);
+  border: 1px solid var(--mantine-color-night-5, #2b3348);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.cf-report-dashboard .cf-dashboard-issue-rule {
+  font-family: var(--mantine-font-family-monospace, monospace);
+  font-size: 11.5px;
+  color: var(--mantine-color-ember-3, #ffd8a8);
+}
+.cf-report-dashboard .cf-dashboard-issue-message {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--mantine-color-night-1, #aab4c8);
+}
+.cf-report-dashboard .cf-evidence-open-url {
+  font-size: 11.5px;
+  color: var(--mantine-color-signal-3, #66d9e8);
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--mantine-color-signal-6, #22b8cf) 40%, transparent);
+  border-radius: 6px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
