@@ -7,8 +7,13 @@ namespace CrawlForge.Audit.Indexability;
 
 /// <summary>
 /// Indexability analyzer (FS-CRAWL-001 §7.6): status classification per the
-/// crawl-status taxonomy, robots state, meta/header robots directives,
-/// canonical chain validation, and soft-404 flagging (criterion #28).
+/// crawl-status taxonomy, robots state, meta/header robots directives, and
+/// canonical chain validation. Soft-404 flagging (criterion #28) belongs to
+/// the dedicated <see cref="ISoft404Detector"/> pipeline step — the sole
+/// emission path guaranteeing one <c>indexability.soft-404</c> finding per URL
+/// (WP-09-05 dedup); this analyzer emits soft-404 only under the explicit
+/// <see cref="IndexabilityAnalyzerOptions.EmitSoft404Findings"/> opt-in for
+/// standalone compositions.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -29,15 +34,24 @@ public sealed class IndexabilityAnalyzer : IIndexabilityAnalyzer
     private static readonly JsonSerializerOptions EvidenceOptions = new(JsonSerializerDefaults.Web);
 
     private readonly ISoft404Detector? _soft404Detector;
+    private readonly IndexabilityAnalyzerOptions _options;
 
     /// <summary>Creates an analyzer with an optional soft-404 detector.</summary>
     /// <param name="soft404Detector">
-    /// Optional detector; when supplied, success pages are additionally
-    /// evaluated for soft-404 content (criterion #28).
+    /// Optional detector used for soft-404 evaluation (criterion #28). Finding
+    /// EMISSION is controlled by <paramref name="options"/>: by default the
+    /// pipeline's dedicated <c>ISoft404Detector</c> step is the sole emitter,
+    /// so this analyzer does not emit soft-404 findings (WP-09-05 dedup —
+    /// probe-2 measured two findings per URL when both paths emitted).
     /// </param>
-    public IndexabilityAnalyzer(ISoft404Detector? soft404Detector = null)
+    /// <param name="options">
+    /// Composition options; null uses <see cref="IndexabilityAnalyzerOptions.Default"/>
+    /// (soft-404 emission delegated to the pipeline's dedicated detector step).
+    /// </param>
+    public IndexabilityAnalyzer(ISoft404Detector? soft404Detector = null, IndexabilityAnalyzerOptions? options = null)
     {
         _soft404Detector = soft404Detector;
+        _options = options ?? IndexabilityAnalyzerOptions.Default;
     }
 
     /// <inheritdoc />
@@ -93,8 +107,12 @@ public sealed class IndexabilityAnalyzer : IIndexabilityAnalyzer
             AddCanonicalFindings(findings, context, html, headers);
         }
 
-        // 5. Soft-404 flagging, distinct from hard HTTP errors.
-        if (_soft404Detector is not null)
+        // 5. Soft-404 flagging, distinct from hard HTTP errors. Emission is
+        // OPT-IN (WP-09-05 dedup): the audit pipeline's dedicated
+        // ISoft404Detector step is the sole emission path, so by default this
+        // analyzer neither runs nor emits soft-404 — exactly one finding per
+        // URL regardless of how the detector is composed.
+        if (_soft404Detector is not null && _options.EmitSoft404Findings)
         {
             Soft404Verdict verdict = await _soft404Detector.DetectAsync(context, cancellationToken).ConfigureAwait(false);
             if (verdict.IsSoft404)

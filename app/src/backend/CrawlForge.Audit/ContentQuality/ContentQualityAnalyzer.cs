@@ -7,9 +7,10 @@ namespace CrawlForge.Audit.ContentQuality;
 
 /// <summary>
 /// Content-quality analyzer facade (FS-CRAWL-001 §7.8/§7.12, FS-CRAWL-002
-/// §15.3): readability, reading time, text-to-HTML, spelling, and SERP pixel
-/// measurement over the Scoped Visible Text Tree when configured —
-/// baseline-identical full visible text when unconfigured (FS-CRAWL-002 §4).
+/// §15.3): thin content (word count + text-to-HTML ratio), readability,
+/// reading time, spelling, and SERP pixel measurement over the Scoped Visible
+/// Text Tree when configured — baseline-identical full visible text when
+/// unconfigured (FS-CRAWL-002 §4).
 /// The locked interface returns findings; <see cref="AnalyzePageAsync"/>
 /// additionally surfaces the serp_metrics inventory and metric contributions.
 /// </summary>
@@ -93,7 +94,7 @@ public sealed class ContentQualityAnalyzer : IContentQualityAnalyzer
         var spellingIssues = await CheckSpellingAsync(context, document, text, cancellationToken).ConfigureAwait(false);
         var serpMeasurements = MeasureSerp(context, document);
 
-        var findings = BuildFindings(context, readability, textMetrics, scoped, spellingIssues, serpMeasurements);
+        var findings = BuildFindings(context, text, readability, textMetrics, scoped, spellingIssues, serpMeasurements);
         var inventory = BuildInventory(serpMeasurements);
         var metrics = BuildMetrics(readability, textMetrics, scoped, serpMeasurements);
         return new ContentQualityReport(findings, inventory, metrics);
@@ -170,6 +171,7 @@ public sealed class ContentQualityAnalyzer : IContentQualityAnalyzer
 
     private List<FindingDraft> BuildFindings(
         PageAuditContext context,
+        string text,
         ReadabilityScore readability,
         TextMetricsResult textMetrics,
         bool scoped,
@@ -206,16 +208,39 @@ public sealed class ContentQualityAnalyzer : IContentQualityAnalyzer
                 JsonSerializer.Serialize(evidence, JsonOptions), RecommendationKey: null));
         }
 
-        if (textMetrics.MarkupLength > 0 && textMetrics.TextToHtmlRatio < _options.ThinTextRatioThreshold)
+        // Thin content (FS-CRAWL-001 §7.4 content-quality row, §7.12; WP-09-05
+        // defect fix): the visible WORD COUNT below threshold is the primary
+        // signal (fixture trap "thin-page": 6 visible words). The text-to-HTML
+        // ratio remains the secondary §7.12 signal. Either fires ONE finding
+        // per URL, and the evidence carries the counted text itself — scoped
+        // when a content scope is configured (FS-CRAWL-002 §4.3).
+        var thinByWordCount = textMetrics.WordCount < _options.ThinContentWordThreshold;
+        var thinByRatio = textMetrics.MarkupLength > 0 && textMetrics.TextToHtmlRatio < _options.ThinTextRatioThreshold;
+        if (thinByWordCount || thinByRatio)
         {
-            var evidence = new
+            var reasons = new List<string>(2);
+            if (thinByWordCount)
             {
-                ratio = textMetrics.TextToHtmlRatio,
-                threshold = _options.ThinTextRatioThreshold,
-                wordCount = textMetrics.WordCount,
-                visibleTextLength = textMetrics.VisibleTextLength,
-                markupLength = textMetrics.MarkupLength,
-            };
+                reasons.Add("word-count");
+            }
+
+            if (thinByRatio)
+            {
+                reasons.Add("text-to-html-ratio");
+            }
+
+            var truncated = text.Length > ThinTextEvidence.TextBound;
+            var evidence = new ThinTextEvidence(
+                textMetrics.WordCount,
+                _options.ThinContentWordThreshold,
+                textMetrics.TextToHtmlRatio,
+                _options.ThinTextRatioThreshold,
+                textMetrics.VisibleTextLength,
+                textMetrics.MarkupLength,
+                truncated ? text[..ThinTextEvidence.TextBound] : text,
+                truncated,
+                scoped,
+                reasons);
             findings.Add(new FindingDraft(
                 ContentQualityRuleKeys.ThinText, AuditCategory.Content, FindingSeverity.Notice, urlId,
                 JsonSerializer.Serialize(evidence, JsonOptions), RecommendationKey: null));

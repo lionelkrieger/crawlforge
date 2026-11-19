@@ -112,8 +112,12 @@ public sealed class IndexabilityPersistenceTests
                 new[] { DomBuilder.Text("p", "The page you requested was not found.") })),
             fetch: IndexabilityContextFactory.Fetch(headers: headers, body: html));
 
-        // First audit: run rules and persist findings.
-        var indexability = new IndexabilityAnalyzer(new Soft404Detector());
+        // First audit: run rules and persist findings. This is a STANDALONE
+        // composition (no audit pipeline), so soft-404 emission is explicitly
+        // opted in — in the pipeline the dedicated ISoft404Detector step is the
+        // sole emitter (WP-09-05 single-emission contract).
+        var indexability = new IndexabilityAnalyzer(
+            new Soft404Detector(), new IndexabilityAnalyzerOptions(EmitSoft404Findings: true));
         var equivalency = new HeaderHtmlEquivalencyAnalyzer();
         List<FindingDraft> firstRun = new();
         firstRun.AddRange(await indexability.AnalyzeAsync(original));

@@ -11,7 +11,12 @@ namespace CrawlForge.Audit.ContentQuality;
 /// </summary>
 public static class ContentQualityRuleKeys
 {
-    /// <summary>Thin-content signal: visible-text-to-markup ratio below threshold.</summary>
+    /// <summary>
+    /// Thin content (FS-CRAWL-001 §7.4 content-quality row, §7.12; fixture trap
+    /// "thin-page"): visible word count below the configured threshold, or a
+    /// visible-text-to-markup ratio below the ratio threshold. One finding per
+    /// URL carrying the counted (scoped) text as evidence.
+    /// </summary>
     public const string ThinText = "content.thin-text";
 
     /// <summary>Misspelled tokens detected against the bundled dictionary.</summary>
@@ -19,29 +24,117 @@ public static class ContentQualityRuleKeys
 
     /// <summary>Notice annotation carrying the page content-metric payload.</summary>
     public const string Metrics = "content.metrics";
+
+    /// <summary>
+    /// Duplicate page titles (FS-CRAWL-001 §7.4 content-quality row, §7.6
+    /// aggregation pass; CAP-B-040): one site-wide finding per duplicated title
+    /// grouping ALL affected URLs.
+    /// </summary>
+    public const string DuplicateTitle = "content.duplicate-title";
+
+    /// <summary>
+    /// Duplicate meta descriptions (FS-CRAWL-001 §7.4 content-quality row;
+    /// CAP-B-042): one site-wide finding per duplicated description grouping
+    /// ALL affected URLs.
+    /// </summary>
+    public const string DuplicateDescription = "content.duplicate-description";
+
+    /// <summary>
+    /// Exact duplicate content (FS-CRAWL-001 §7.5; CAP-B-062/CAP-F-139): one
+    /// site-wide finding per group of URLs whose normalized visible text is
+    /// identical (SHA-256 equality over the whitespace-normalized text).
+    /// </summary>
+    public const string DuplicateContent = "content.duplicate-content";
+
+    /// <summary>
+    /// Near-duplicate content (FS-CRAWL-001 §7.4 content-quality row, §7.5
+    /// shingle similarity; CAP-B-063/CAP-F-140): one site-wide finding per
+    /// URL pair above the similarity threshold that is not an exact duplicate.
+    /// </summary>
+    public const string NearDuplicateContent = "content.near-duplicate-content";
 }
 
 /// <summary>
 /// Content-quality configuration (FS-CRAWL-001 §7.12): reading-time rate,
-/// thin-content threshold, spelling behavior, and default SERP budgets.
+/// thin-content thresholds, spelling behavior, and default SERP budgets.
+/// Thresholds are locally configurable with application defaults taken from
+/// the rule definitions (§7.5); no remote catalogue is consulted (E2).
 /// </summary>
 /// <param name="WordsPerMinute">Reading-time words-per-minute rate (configurable).</param>
-/// <param name="ThinTextRatioThreshold">Text-to-HTML ratio below which content is thin.</param>
+/// <param name="ThinTextRatioThreshold">Text-to-HTML ratio below which content is thin (§7.12 thin-content signal).</param>
 /// <param name="SpellingEnabled">Whether spelling checks run.</param>
 /// <param name="MaxSpellingIssues">Bound on spelling issues reported per page.</param>
 /// <param name="PreferredCheckingLanguage">Fallback checking language when the page declares none.</param>
 /// <param name="DefaultSerpBudgets">SERP budgets used when the configuration supplies none.</param>
+/// <param name="ThinContentWordThreshold">
+/// Visible word count below which content is thin (FS-CRAWL-001 §7.4
+/// content-quality row; fixture trap "thin-page"). Application default 200
+/// words — the industry-standard thin-content threshold; configurable per
+/// audit through this options surface. A page strictly below this count emits
+/// <see cref="ContentQualityRuleKeys.ThinText"/> regardless of its markup ratio.
+/// </param>
 public sealed record ContentQualityOptions(
     int WordsPerMinute = 200,
     double ThinTextRatioThreshold = 0.10,
     bool SpellingEnabled = true,
     int MaxSpellingIssues = 100,
     string PreferredCheckingLanguage = "en-US",
-    SerpBudgetSettings? DefaultSerpBudgets = null)
+    SerpBudgetSettings? DefaultSerpBudgets = null,
+    int ThinContentWordThreshold = 200)
 {
     /// <summary>Default options (§15.3 desktop budgets: title ≈580px, description ≈920px).</summary>
     public static ContentQualityOptions Default { get; } = new(
         DefaultSerpBudgets: new SerpBudgetSettings(580, 920, "arial-desktop"));
+}
+
+/// <summary>
+/// Structured evidence payload of the <c>content.thin-text</c> finding
+/// (FS-CRAWL-001 §7.4/§7.12; WP-09-05 thin-content defect fix). Carries the
+/// COUNTED text itself — the scoped visible text when a content scope is
+/// configured (FS-CRAWL-002 §4.3), the full visible text otherwise — plus both
+/// thin-content signals and the thresholds that fired. Serialized camelCase
+/// into findings.evidence_json.
+/// </summary>
+/// <param name="WordCount">Visible word count of the counted text.</param>
+/// <param name="WordThreshold">Configured thin-content word threshold.</param>
+/// <param name="TextToHtmlRatio">Visible-text length over full markup size.</param>
+/// <param name="RatioThreshold">Configured text-to-HTML ratio threshold.</param>
+/// <param name="VisibleTextLength">Character length of the counted text.</param>
+/// <param name="MarkupLength">Full markup size in bytes; 0 when unknown.</param>
+/// <param name="Text">The counted (possibly scoped) visible text, bounded by <see cref="TextBound"/>.</param>
+/// <param name="TextTruncated">Whether <paramref name="Text"/> was truncated at the evidence bound.</param>
+/// <param name="Scoped">Whether the counted text was scope-filtered.</param>
+/// <param name="Reasons">Which signals fired: "word-count" and/or "text-to-html-ratio".</param>
+public sealed record ThinTextEvidence(
+    int WordCount,
+    int WordThreshold,
+    double TextToHtmlRatio,
+    double RatioThreshold,
+    int VisibleTextLength,
+    int MarkupLength,
+    string Text,
+    bool TextTruncated,
+    bool Scoped,
+    IReadOnlyList<string> Reasons)
+{
+    /// <summary>Evidence bound on the counted text (characters). Thin pages are
+    /// far below this bound; it only guards pathological long-token pages.</summary>
+    public const int TextBound = 8192;
+}
+
+/// <summary>
+/// Cross-URL duplicate-content pass configuration (FS-CRAWL-001 §7.5/§7.6).
+/// </summary>
+/// <param name="NearDuplicateSimilarityThreshold">Minimum shingle Jaccard similarity reported as near-duplicate (0–1).</param>
+/// <param name="MaxReportedPairs">Bound on near-duplicate pair findings emitted in one pass (scale invariance, §7.6).</param>
+/// <param name="MaxGroupMembers">Bound on URL members listed in one exact-duplicate group's evidence; the full count always rides <c>urlCount</c>.</param>
+public sealed record DuplicateContentOptions(
+    double NearDuplicateSimilarityThreshold = 0.9,
+    int MaxReportedPairs = 1000,
+    int MaxGroupMembers = 500)
+{
+    /// <summary>Default options.</summary>
+    public static DuplicateContentOptions Default { get; } = new();
 }
 
 /// <summary>

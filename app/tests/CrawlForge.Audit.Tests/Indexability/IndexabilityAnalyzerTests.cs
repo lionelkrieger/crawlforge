@@ -232,13 +232,40 @@ public sealed class IndexabilityAnalyzerTests
         Assert.Equal("header", evidence.RootElement.GetProperty("source").GetString());
     }
 
+    /// <summary>
+    /// WP-09-05 single-emission contract, DEFAULT mode: with the detector
+    /// injected but no opt-in, the analyzer does NOT emit soft-404 — the audit
+    /// pipeline's dedicated ISoft404Detector step is the sole emitter (probe-2
+    /// measured two findings per URL when both paths emitted).
+    /// </summary>
     [Fact]
-    public async Task Soft404Page_EmitsDistinctWarning_WhenDetectorInjected()
+    public async Task Soft404Page_DefaultComposition_DelegatesEmissionToPipelineStep()
     {
         DomDocument document = DomBuilder.Document(
             IndexabilityContextFactory.PageUrl,
             DomBuilder.Page("404 - Page Not Found", null, new[] { DomBuilder.Text("p", "Sorry, the page you requested could not be found.") }));
         var analyzer = new IndexabilityAnalyzer(new Soft404Detector());
+
+        IReadOnlyList<FindingDraft> findings = await analyzer.AnalyzeAsync(IndexabilityContextFactory.Context(document: document));
+
+        Assert.DoesNotContain(findings, f => f.RuleKey == IndexabilityRuleKeys.Soft404);
+        Assert.DoesNotContain(findings, f => f.RuleKey == IndexabilityRuleKeys.NonIndexableStatus);
+    }
+
+    /// <summary>
+    /// WP-09-05 single-emission contract, OPT-IN mode: standalone compositions
+    /// that run the analyzer WITHOUT the pipeline's dedicated detector step
+    /// enable EmitSoft404Findings and get exactly one distinct soft-404
+    /// Warning (criterion #28), separate from hard HTTP errors.
+    /// </summary>
+    [Fact]
+    public async Task Soft404Page_OptInEmission_EmitsDistinctWarning()
+    {
+        DomDocument document = DomBuilder.Document(
+            IndexabilityContextFactory.PageUrl,
+            DomBuilder.Page("404 - Page Not Found", null, new[] { DomBuilder.Text("p", "Sorry, the page you requested could not be found.") }));
+        var analyzer = new IndexabilityAnalyzer(
+            new Soft404Detector(), new IndexabilityAnalyzerOptions(EmitSoft404Findings: true));
 
         IReadOnlyList<FindingDraft> findings = await analyzer.AnalyzeAsync(IndexabilityContextFactory.Context(document: document));
 
