@@ -58,8 +58,12 @@ Gap IDs (G01–G29) refer to `audit-work/reports/UNDERBUILD-AUDIT.md`; runtime v
 **Gotcha:** the renderer **ignores `?route=`** — zero reads of `location.search` in `app/src/frontend`.
 Every window loads the same shell at the persisted localStorage view (G20).
 
-Data directory: `%APPDATA%/CrawlForge` unless `CrawlForge:DataDirectory` / `CRAWLFORGE_DATA_DIRECTORY`
-override (`Host/Configuration/CrawlForgePaths.cs`; `EL/main.ts`). Files there: `crawlforge.db`,
+Data directory: `%APPDATA%/CrawlForge` unless the **backend** configuration overrides it via
+`CrawlForge:DataDirectory` (`Host/Configuration/CrawlForgePaths.cs:14` reads `IOptions<CrawlForgeOptions>`
+only — command line `--CrawlForge:DataDirectory=…` or the standard `CrawlForge__DataDirectory`
+environment variable). **`CRAWLFORGE_DATA_DIRECTORY` is Electron-side only** (`EL/main.ts:168–170`,
+handshake discovery path); the backend does not bind it, so setting it alone desynchronizes the
+shell from the backend — set both to relocate. Files there: `crawlforge.db`,
 `settings.json`, `loopback-handshake.json`, `backend-port.json`, `mcp-endpoint.json`, `mcp-token.json`,
 `entropy.key`, `content-store/`, `exports/`, `diagnostics/`, `window-state.json`.
 
@@ -441,8 +445,12 @@ M = mounted, U = component exists but unmounted, N = no component; runtime verdi
 **Fixture site:** `app/tests/fixture-site/server.mjs` → `http://127.0.0.1:47311`;
 `GET /__fixture/reset` before each run, `GET /__fixture/requests` after (`nonGet` must be empty);
 `expected-results.json` — 31 traps + global assertion `no-non-get-requests`.
-**Fixture acceptance harness:** `app/tests/fixture-acceptance/` **does not exist yet** — build plan
-WP-08-04 owns it. Runners: `dotnet test app/CrawlForge.sln`; `npm test` (vitest workspaces);
+**Fixture acceptance harness (WP-08-04, delivered):** `app/tests/fixture-acceptance/` —
+`run_fixture_acceptance.py` (`--mode http|js|dual|adaptive`, `--traps`, `--surfaces`, `--mcp`,
+`--scheduled`, `--rest-start`, `--reuse-app`; see its `README.md` + `DESIGN.md`). Starts the
+fixture site, launches the app through the normal entry points, compares against
+`expected-results.json`, checks `/__fixture/requests`, walks UI surfaces over CDP.
+Runners: `dotnet test app/CrawlForge.sln`; `npm test` (vitest workspaces);
 UI automation via a **copy** of the launch script with `--remote-debugging-port=9222` (CDP).
 
 ## 12. "How to add" checklists
