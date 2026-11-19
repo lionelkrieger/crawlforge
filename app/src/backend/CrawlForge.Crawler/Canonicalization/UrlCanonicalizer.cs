@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using CrawlForge.Contracts.Crawl;
 
 namespace CrawlForge.Crawler.Canonicalization;
@@ -8,8 +9,10 @@ namespace CrawlForge.Crawler.Canonicalization;
 /// Deterministic, idempotent URL canonicalization (FS-CRAWL-001 §5.2): scheme and
 /// host lowercased, default ports removed, fragments discarded, percent-encoding
 /// normalized, trailing-slash policy applied consistently, query parameters sorted
-/// and filtered by the configured policy with known session trackers stripped, and
-/// relative references resolved against the document base (honoring base overrides).
+/// and filtered by the configured policy with known session trackers stripped,
+/// ASP.NET cookieless session segments (<c>(S(...))</c>/<c>(A(...))</c>/<c>(F(...))</c>)
+/// removed (CR-009), and relative references resolved against the document base
+/// (honoring base overrides).
 /// Ordered regex rewrite rules run during canonicalization before seen-set keying
 /// (FS-CRAWL-002 §10.4). The canonical form is the unique crawl key per audit.
 /// </summary>
@@ -54,6 +57,32 @@ public sealed class UrlCanonicalizer : IUrlCanonicalizer
     public string Canonicalize(string url) => Canonicalize(url, documentBase: null);
 
     /// <summary>
+    /// Canonicalizes a URL and reports the material normalizations applied, so
+    /// the engine can surface them (fixture trap <c>cookieless-session</c>:
+    /// the removed session segment is reported, not silently dropped).
+    /// </summary>
+    /// <param name="url">Absolute or relative URL reference.</param>
+    /// <param name="documentBase">Declaring document base; null falls back to the configured default.</param>
+    /// <returns>The canonical URL plus the applied reportable changes.</returns>
+    public CanonicalizationOutcome CanonicalizeDetailed(string url, string? documentBase = null)
+    {
+        var canonical = CanonicalizeCore(url, documentBase, out var removed);
+        return new CanonicalizationOutcome(canonical, url.Trim(), removed);
+    }
+
+    /// <summary>
+    /// Outcome of one canonicalization: the canonical crawl key plus the
+    /// cookieless session segments removed from the input path (CR-009).
+    /// </summary>
+    /// <param name="CanonicalUrl">The canonical URL (unique crawl key).</param>
+    /// <param name="InputUrl">The trimmed input reference.</param>
+    /// <param name="RemovedSessionSegments">Session segments removed from the path, in path order.</param>
+    public sealed record CanonicalizationOutcome(
+        string CanonicalUrl,
+        string InputUrl,
+        IReadOnlyList<string> RemovedSessionSegments);
+
+    /// <summary>
     /// Canonicalizes a URL, resolving relative references against an explicit
     /// document base (a declared base override wins over the configured default).
     /// </summary>
@@ -61,8 +90,12 @@ public sealed class UrlCanonicalizer : IUrlCanonicalizer
     /// <param name="documentBase">Declaring document base; null falls back to the configured default.</param>
     /// <returns>The canonical URL string.</returns>
     /// <exception cref="ArgumentException">The URL is empty, non-http(s), or relative without any base.</exception>
-    public string Canonicalize(string url, string? documentBase)
+    public string Canonicalize(string url, string? documentBase) =>
+        CanonicalizeCore(url, documentBase, out _);
+
+    private string CanonicalizeCore(string url, string? documentBase, out IReadOnlyList<string> removedSessionSegments)
     {
+        removedSessionSegments = [];
         if (string.IsNullOrWhiteSpace(url))
         {
             throw new ArgumentException("The URL must not be empty.", nameof(url));
@@ -97,6 +130,12 @@ public sealed class UrlCanonicalizer : IUrlCanonicalizer
             path = "/";
         }
 
+        // ASP.NET cookieless session segments are removed from paths (CR-009).
+        if (_options.StripCookielessSessionSegments)
+        {
+            path = RemoveCookielessSessionSegments(path, out removedSessionSegments);
+        }
+
         path = ApplyTrailingSlashPolicy(path);
         builder.Append(path);
 
@@ -125,6 +164,46 @@ public sealed class UrlCanonicalizer : IUrlCanonicalizer
         }
 
         return new Uri(parsedBase, url).AbsoluteUri;
+    }
+
+    /// <summary>
+    /// One ASP.NET cookieless session segment: <c>(S(...))</c>, <c>(A(...))</c> or
+    /// <c>(F(...))</c>, in literal or percent-encoded form. The inner token carries
+    /// no nested parentheses (session ids are opaque literals).
+    /// </summary>
+    private static readonly Regex CookielessSessionSegment = new(
+        @"^(?:\((?:S|A|F)\([^()]*\)\)|%28(?:S|A|F)%28[^()]*%29%29)$",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
+
+    /// <summary>
+    /// Removes cookieless session segments from a path, collapsing the surrounding
+    /// slashes: <c>/(S(abc))/pages/session.aspx</c> becomes <c>/pages/session.aspx</c>.
+    /// </summary>
+    private static string RemoveCookielessSessionSegments(string path, out IReadOnlyList<string> removed)
+    {
+        var segments = path.Split('/');
+        var kept = new List<string>(segments.Length);
+        var dropped = new List<string>();
+        foreach (var segment in segments)
+        {
+            if (segment.Length > 0 && CookielessSessionSegment.IsMatch(segment))
+            {
+                dropped.Add(segment);
+            }
+            else
+            {
+                kept.Add(segment);
+            }
+        }
+
+        removed = dropped;
+        if (dropped.Count == 0)
+        {
+            return path;
+        }
+
+        var rebuilt = string.Join('/', kept);
+        return rebuilt.Length == 0 ? "/" : rebuilt;
     }
 
     private string ApplyTrailingSlashPolicy(string path) => _options.TrailingSlash switch

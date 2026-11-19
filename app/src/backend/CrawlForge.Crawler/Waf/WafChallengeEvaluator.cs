@@ -6,13 +6,18 @@ namespace CrawlForge.Crawler.Waf;
 
 /// <summary>
 /// Pre-audit WAF fingerprinting evaluator (FS-CRAWL-002 §2): Stage A matches
-/// header and cookie markers, Stage B matches a bounded leading body snippet
-/// (pre-parse, never a full document parse). A response is classified as a
-/// challenge only when at least two independent facets corroborate and the
-/// aggregate confidence reaches the policy threshold (default 0.8); weaker
-/// hits are reported as suspected. Detection and reporting only — no challenge
-/// solving, replay, token forging, or evasion (exclusion E3); verdicts derive
-/// solely from the local catalogue and the observed response (exclusion E4).
+/// header and cookie markers, Stage B matches the bounded leading body snippet
+/// through the five-facet set (body substring, title, dom-marker selector,
+/// script source/inline markers — pre-parse, never a full document parse).
+/// Eligibility (§2.4.1): only 2xx responses with HTML content type may
+/// transition to waf-challenge; signatures on other responses are evidence
+/// annotations only. Corroboration guard (§2.3.3): a challenge verdict needs
+/// the policy confidence threshold (default 0.8) AND either at least two
+/// independent facet types or one high-specificity provider-specific
+/// header/cookie marker; weaker hits are reported as suspected. Detection and
+/// reporting only — no challenge solving, replay, token forging, or evasion
+/// (exclusion E3); verdicts derive solely from the local catalogue and the
+/// observed response (exclusion E4).
 /// </summary>
 public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
 {
@@ -77,14 +82,23 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
         var parsed = _parsed ?? throw new InvalidOperationException(
             "The evaluator is not initialized; call InitializeAsync before Evaluate.");
 
+        // Eligibility (§2.4.1): only 2xx HTML responses may become waf-challenge;
+        // signatures on other responses are evidence annotations only.
+        var (eligible, statusEligible, contentTypeEligible) = AssessEligibility(input);
+
         if (!_policy.Enabled)
         {
-            return CleanResult(input, parsed, disabled: true);
+            return CleanResult(input, parsed, disabled: true, eligible, statusEligible, contentTypeEligible);
         }
 
         var snippet = BoundSnippet(input.BodySnippet);
+
+        // Stage B evidence is extracted once per response, bounded by policy.
+        var stageB = snippet is null ? null : StageBExtractor.Extract(snippet, _policy.StageBNodeLimit);
+
         var candidates = new List<Candidate>();
         var suspectedKeys = new List<string>();
+        var suspectedCandidates = new List<Candidate>();
 
         foreach (var signature in parsed.Signatures)
         {
@@ -95,18 +109,18 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
             {
                 if (marker.MatchesHeaders(input.Headers))
                 {
-                    matches.Add(new MarkerMatch(signature.Signature.Key, marker.Facet, FormatMarker(marker), marker.Weight));
+                    matches.Add(new MarkerMatch(signature.Signature.Key, marker.Facet, FormatMarker(marker), marker.Weight, marker.HighSpecificity));
                 }
             }
 
-            // Stage B: bounded pre-parse body facet.
-            if (snippet is not null)
+            // Stage B: bounded pre-parse — body, title, dom-marker, script facets.
+            if (stageB is not null)
             {
                 foreach (var marker in signature.BodyMarkers)
                 {
-                    if (marker.MatchesBody(snippet))
+                    if (marker.MatchesStageB(stageB))
                     {
-                        matches.Add(new MarkerMatch(signature.Signature.Key, marker.Facet, FormatMarker(marker), marker.Weight));
+                        matches.Add(new MarkerMatch(signature.Signature.Key, marker.Facet, FormatMarker(marker), marker.Weight, marker.HighSpecificity));
                     }
                 }
             }
@@ -118,22 +132,34 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
 
             var facets = matches.Select(m => m.Facet).Distinct().OrderBy(f => f).ToList();
             var confidence = Math.Min(1.0, matches.Sum(m => m.Weight));
-            var corroborated = facets.Count >= _policy.MinimumCorroboratingFacets
-                && confidence >= _policy.ConfidenceThreshold;
 
-            if (corroborated)
+            // Corroboration guard (§2.3.3): two independent facet types OR one
+            // high-specificity provider-specific header/cookie marker.
+            var corroborated = confidence >= _policy.ConfidenceThreshold
+                && (facets.Count >= _policy.MinimumCorroboratingFacets
+                    || matches.Any(m => m.HighSpecificity));
+
+            if (eligible && corroborated)
             {
                 candidates.Add(new Candidate(signature.Signature, confidence, facets, matches));
             }
             else
             {
                 suspectedKeys.Add(signature.Signature.Key);
+                suspectedCandidates.Add(new Candidate(signature.Signature, confidence, facets, matches));
             }
         }
 
         if (candidates.Count == 0)
         {
-            return CleanResult(input, parsed, disabled: false, suspectedKeys);
+            // Suspected evidence carries the strongest candidate's facets and
+            // confidence (§2.3.3 Notice path) — attribution stays non-blocking.
+            var bestSuspected = suspectedCandidates
+                .OrderByDescending(c => c.Confidence)
+                .ThenByDescending(c => c.Facets.Count)
+                .ThenBy(c => c.Signature.Key, StringComparer.Ordinal)
+                .FirstOrDefault();
+            return CleanResult(input, parsed, disabled: false, eligible, statusEligible, contentTypeEligible, suspectedKeys, bestSuspected);
         }
 
         var winner = candidates
@@ -157,7 +183,10 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
             winner.Signature.ChallengeClass,
             winner.Confidence,
             winner.Facets,
-            winner.Matches);
+            winner.Matches,
+            eligible,
+            statusEligible,
+            contentTypeEligible);
 
         return new WafEvaluationResult(
             IsChallenge: true,
@@ -177,11 +206,39 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
         return bodySnippet[.._policy.BodySnippetLimit];
     }
 
+    private static (bool Eligible, bool StatusEligible, bool ContentTypeEligible) AssessEligibility(WafEvaluationInput input)
+    {
+        var statusEligible = input.StatusCode is >= 200 and < 300;
+
+        string? contentType = null;
+        foreach (var (key, value) in input.Headers)
+        {
+            if (string.Equals(key, "content-type", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = value;
+                break;
+            }
+        }
+
+        // An absent content type is treated as potentially HTML (the fetch
+        // layer records the header when the server sends one); an explicit
+        // non-HTML type is never eligible (§2.4.1).
+        var contentTypeEligible = string.IsNullOrWhiteSpace(contentType)
+            || contentType.Contains("text/html", StringComparison.OrdinalIgnoreCase)
+            || contentType.Contains("application/xhtml+xml", StringComparison.OrdinalIgnoreCase);
+
+        return (statusEligible && contentTypeEligible, statusEligible, contentTypeEligible);
+    }
+
     private WafEvaluationResult CleanResult(
         WafEvaluationInput input,
         ParsedCatalogue parsed,
         bool disabled,
-        IReadOnlyList<string>? suspectedKeys = null)
+        bool eligible,
+        bool statusEligible,
+        bool contentTypeEligible,
+        IReadOnlyList<string>? suspectedKeys = null,
+        Candidate? bestSuspected = null)
     {
         var evidence = BuildEvidence(
             input,
@@ -190,9 +247,12 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
             suspected: !disabled && suspectedKeys is { Count: > 0 },
             WafProvider.Unknown,
             WafChallengeClass.Unknown,
-            confidence: 0,
-            facets: [],
-            matches: []);
+            confidence: bestSuspected?.Confidence ?? 0,
+            facets: bestSuspected?.Facets ?? [],
+            matches: bestSuspected?.Matches ?? [],
+            eligible,
+            statusEligible,
+            contentTypeEligible);
         return new WafEvaluationResult(
             IsChallenge: false,
             WafProvider.Unknown,
@@ -210,7 +270,10 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
         WafChallengeClass challengeClass,
         double confidence,
         IReadOnlyList<WafFacet> facets,
-        IReadOnlyList<MarkerMatch> matches)
+        IReadOnlyList<MarkerMatch> matches,
+        bool eligible,
+        bool statusEligible,
+        bool contentTypeEligible)
     {
         var headers = input.Headers
             .OrderBy(h => h.Key, StringComparer.OrdinalIgnoreCase)
@@ -222,6 +285,9 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
             statusCode = input.StatusCode,
             isChallenge,
             suspected,
+            eligible,
+            statusEligible,
+            contentTypeEligible,
             provider = (int)provider,
             providerName = provider.ToString(),
             challengeClass = (int)challengeClass,
@@ -234,6 +300,7 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
                 facet = m.Facet.ToString(),
                 marker = m.Marker,
                 weight = m.Weight,
+                highSpecificity = m.HighSpecificity,
             }).ToList(),
             observedHeaders = headers,
             catalogueVersion = parsed.BundledVersion,
@@ -243,17 +310,25 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
                 confidenceThreshold = _policy.ConfidenceThreshold,
                 minimumCorroboratingFacets = _policy.MinimumCorroboratingFacets,
                 bodySnippetLimit = _policy.BodySnippetLimit,
+                stageBNodeLimit = _policy.StageBNodeLimit,
             },
         };
         return JsonSerializer.Serialize(payload, EvidenceJsonOptions);
     }
 
-    private static string FormatMarker(WafMarker marker) => marker.Facet switch
+    private static string FormatMarker(WafMarker marker)
     {
-        WafFacet.Cookie => "cookie:" + marker.Name + (marker.ValueSubstring is null ? string.Empty : "~" + marker.ValueSubstring),
-        WafFacet.Header => marker.Name + (marker.ValueSubstring is null ? string.Empty : "~" + marker.ValueSubstring),
-        _ => marker.Name,
-    };
+        var text = marker.Facet switch
+        {
+            WafFacet.Cookie => "cookie:" + marker.Name + (marker.ValueSubstring is null ? string.Empty : "~" + marker.ValueSubstring),
+            WafFacet.Header => marker.Name + (marker.ValueSubstring is null ? string.Empty : "~" + marker.ValueSubstring),
+            WafFacet.Title => "title:" + marker.Name,
+            WafFacet.DomMarker => "dom:" + marker.Name,
+            WafFacet.Script => "script:" + marker.Name,
+            _ => marker.Name,
+        };
+        return marker.HighSpecificity ? text + "|high" : text;
+    }
 
     private sealed record ParsedCatalogue(string BundledVersion, string Revision, IReadOnlyList<ParsedSignature> Signatures);
 
@@ -262,7 +337,7 @@ public sealed class WafChallengeEvaluator : IWafChallengeEvaluator
         IReadOnlyList<WafMarker> HeaderMarkers,
         IReadOnlyList<WafMarker> BodyMarkers);
 
-    private sealed record MarkerMatch(string SignatureKey, WafFacet Facet, string Marker, double Weight);
+    private sealed record MarkerMatch(string SignatureKey, WafFacet Facet, string Marker, double Weight, bool HighSpecificity);
 
     private sealed record Candidate(
         WafSignature Signature,

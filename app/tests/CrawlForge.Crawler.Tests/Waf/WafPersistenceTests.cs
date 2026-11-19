@@ -83,7 +83,7 @@ public class WafPersistenceTests : IAsyncLifetime
         Assert.Equal(1, await _db.CountRowsAsync("findings"));
     }
 
-    /// <summary>The per-URL waf-challenge-detected finding is reported in the Crawl category.</summary>
+    /// <summary>The per-URL waf-challenge-detected finding is reported in the Indexability category (§2.4.5).</summary>
     [Fact]
     public async Task ChallengeFindingIsReported()
     {
@@ -91,7 +91,7 @@ public class WafPersistenceTests : IAsyncLifetime
         await recorder.RecordChallengeAsync(1, 1, evaluator.Evaluate(WafResponses.CloudflareInterstitial()));
 
         Assert.Equal(FindingRuleKeys.WafChallengeDetected, await _db.ScalarAsync("SELECT rule_key FROM findings;"));
-        Assert.Equal((int)AuditCategory.Crawl, Convert.ToInt32(await _db.ScalarAsync("SELECT category FROM findings;")));
+        Assert.Equal((int)AuditCategory.Indexability, Convert.ToInt32(await _db.ScalarAsync("SELECT category FROM findings;")));
         Assert.Equal((int)FindingSeverity.Warning, Convert.ToInt32(await _db.ScalarAsync("SELECT severity FROM findings;")));
         Assert.Equal(1L, Convert.ToInt64(await _db.ScalarAsync("SELECT url_id FROM findings;")));
     }

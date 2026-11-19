@@ -9,8 +9,10 @@ namespace CrawlForge.Crawler.Tests.Waf;
 
 /// <summary>
 /// Evaluator behavior: Stage A (header/cookie) and Stage B (bounded pre-parse)
-/// fingerprinting, the two-facet corroboration guard, the 0.8 default
-/// confidence threshold, provider attribution, and detection-only verdicts.
+/// fingerprinting, the corroboration guard (two independent facets or one
+/// high-specificity marker), the 0.8 default confidence threshold, the
+/// 2xx+HTML eligibility gate (§2.4.1), provider attribution, and
+/// detection-only verdicts.
 /// </summary>
 public class WafEvaluatorTests : IAsyncLifetime
 {
@@ -182,14 +184,24 @@ public class WafEvaluatorTests : IAsyncLifetime
         Assert.Empty(result.MatchedSignatureKeys);
     }
 
-    /// <summary>Challenge pages served with non-200 statuses are still classified.</summary>
+    /// <summary>
+    /// Non-2xx challenge signatures are evidence annotations only (§2.4.1):
+    /// the status class never transitions to waf-challenge, but the matched
+    /// signatures and eligibility facts are retained in the evidence.
+    /// </summary>
     [Fact]
-    public async Task Non200ChallengeIsDetected()
+    public async Task Non200ChallengeIsAnnotationOnly()
     {
         var evaluator = await WafChallengeEvaluator.CreateAsync(_db.Catalogue);
         var result = evaluator.Evaluate(WafResponses.CloudflareWith403());
-        Assert.True(result.IsChallenge);
-        Assert.Equal(WafProvider.Cloudflare, result.Provider);
+        Assert.False(result.IsChallenge);
+        Assert.NotEmpty(result.MatchedSignatureKeys);
+        Assert.Contains(result.MatchedSignatureKeys, k => k.Contains("cloudflare", StringComparison.OrdinalIgnoreCase));
+
+        using var evidence = JsonDocument.Parse(result.EvidenceJson);
+        Assert.False(evidence.RootElement.GetProperty("eligible").GetBoolean());
+        Assert.False(evidence.RootElement.GetProperty("statusEligible").GetBoolean());
+        Assert.True(evidence.RootElement.GetProperty("suspected").GetBoolean());
     }
 
     /// <summary>The pre-parse stage never inspects body content beyond the configured bound.</summary>

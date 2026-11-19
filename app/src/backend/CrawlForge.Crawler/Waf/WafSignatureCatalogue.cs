@@ -249,12 +249,37 @@ public sealed class WafSignatureCatalogue : IWafSignatureCatalogue
                     : "cookie:" + cookieMarker);
             }
 
+            // Five-facet set (§2.3.1): optional title/dom/script marker arrays
+            // ride the locked WafSignature.BodyMarkers list through the facet
+            // prefix grammar (title:/dom:/script:), additive to the asset shape.
+            var bodyMarkers = (entry.BodyMarkers ?? []).ToList();
+            foreach (var titleMarker in entry.TitleMarkers ?? [])
+            {
+                bodyMarkers.Add(titleMarker.StartsWith("title:", StringComparison.OrdinalIgnoreCase)
+                    ? titleMarker
+                    : "title:" + titleMarker);
+            }
+
+            foreach (var domMarker in entry.DomMarkers ?? [])
+            {
+                bodyMarkers.Add(domMarker.StartsWith("dom:", StringComparison.OrdinalIgnoreCase)
+                    ? domMarker
+                    : "dom:" + domMarker);
+            }
+
+            foreach (var scriptMarker in entry.ScriptMarkers ?? [])
+            {
+                bodyMarkers.Add(scriptMarker.StartsWith("script:", StringComparison.OrdinalIgnoreCase)
+                    ? scriptMarker
+                    : "script:" + scriptMarker);
+            }
+
             yield return new WafSignature(
                 entry.Key,
                 provider,
                 challengeClass,
                 headerMarkers,
-                entry.BodyMarkers ?? [],
+                bodyMarkers,
                 IsBundled: true);
         }
     }
@@ -270,5 +295,8 @@ public sealed class WafSignatureCatalogue : IWafSignatureCatalogue
         [property: JsonRequired] string ChallengeClass,
         IReadOnlyList<string>? HeaderMarkers,
         IReadOnlyList<string>? CookieMarkers,
-        IReadOnlyList<string>? BodyMarkers);
+        IReadOnlyList<string>? BodyMarkers,
+        IReadOnlyList<string>? TitleMarkers,
+        IReadOnlyList<string>? DomMarkers,
+        IReadOnlyList<string>? ScriptMarkers);
 }

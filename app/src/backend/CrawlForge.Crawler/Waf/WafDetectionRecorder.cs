@@ -130,7 +130,7 @@ public sealed class WafDetectionRecorder
             auditId,
             urlId,
             FindingRuleKeys.WafChallengeDetected,
-            AuditCategory.Crawl,
+            AuditCategory.Indexability,
             FindingSeverity.Warning,
             result.EvidenceJson,
             cancellationToken).ConfigureAwait(false);
@@ -172,7 +172,7 @@ public sealed class WafDetectionRecorder
             auditId,
             urlId,
             FindingRuleKeys.SuspectedChallenge,
-            AuditCategory.Crawl,
+            AuditCategory.Indexability,
             FindingSeverity.Notice,
             result.EvidenceJson,
             cancellationToken).ConfigureAwait(false);
@@ -227,7 +227,7 @@ public sealed class WafDetectionRecorder
                 auditId,
                 urlId,
                 FindingRuleKeys.ChallengeResolvedByRender,
-                AuditCategory.Crawl,
+                AuditCategory.Indexability,
                 FindingSeverity.Notice,
                 evidenceJson,
                 cancellationToken).ConfigureAwait(false);

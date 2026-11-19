@@ -17,6 +17,9 @@ public sealed record WafDetectionPolicy
     /// <summary>Default body-snippet bound for the pre-parse stage (64 KiB).</summary>
     public const int DefaultBodySnippetLimit = 64 * 1024;
 
+    /// <summary>Default node bound for the Stage B pre-parse tag scan (§2.2).</summary>
+    public const int DefaultStageBNodeLimit = 2000;
+
     /// <summary>Default site-wide block-rate warning threshold (1%).</summary>
     public const double DefaultBlockRateWarningThreshold = 0.01;
 
@@ -50,6 +53,12 @@ public sealed record WafDetectionPolicy
     /// pre-parse stage. The pass never parses the full document.
     /// </summary>
     public int BodySnippetLimit { get; init; } = DefaultBodySnippetLimit;
+
+    /// <summary>
+    /// Maximum number of start tags (and script elements) inspected by the
+    /// Stage B pre-parse for dom-marker/script facets (§2.2 bound).
+    /// </summary>
+    public int StageBNodeLimit { get; init; } = DefaultStageBNodeLimit;
 
     /// <summary>Site-wide block rate at or above which a Warning finding is reported.</summary>
     public double BlockRateWarningThreshold { get; init; } = DefaultBlockRateWarningThreshold;

@@ -49,6 +49,15 @@ public sealed record CanonicalizationOptions
     public TrailingSlashPolicy TrailingSlash { get; init; } = TrailingSlashPolicy.Preserve;
 
     /// <summary>
+    /// Remove ASP.NET cookieless session segments (<c>(S(...))</c>, <c>(A(...))</c>,
+    /// <c>(F(...))</c>) from paths during canonicalization (FS-CRAWL-001 §5.2 as
+    /// amended by CR-009/D-004). Default on: the amended baseline removes them, so
+    /// an unconfigured project reproduces the specified behavior. Turning the
+    /// option off retains the segments verbatim (local configuration only).
+    /// </summary>
+    public bool StripCookielessSessionSegments { get; init; } = true;
+
+    /// <summary>
     /// Additional session-tracking parameter names to strip, extending the bundled
     /// local set. Bundled defaults are always applied (FS-CRAWL-001 §5.2).
     /// </summary>
