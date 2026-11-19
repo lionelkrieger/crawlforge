@@ -347,9 +347,10 @@ workpieces:
   - workpiece_id: "WP-09-06"
     title: "Audit & Configuration REST Conformance — Counter Keys, Run Lifecycle, Hub Run Events"
     phase_id: "phase-09"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "cf-wp-09-02"
     started_at: "2026-11-19T06:58:00Z"
+    completed_at: "2026-11-19T08:20:00Z"
     parallel_group: "wave-9B"
     depends_on_workpieces: ["WP-08-03"]
     context_files:
