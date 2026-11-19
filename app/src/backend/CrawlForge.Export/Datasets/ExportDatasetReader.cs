@@ -39,9 +39,31 @@ public sealed class ExportDatasetReader
     /// <param name="keys">Requested dataset keys.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Streaming datasets, each enumerable exactly once.</returns>
+    public IAsyncEnumerable<ExportDataset> ReadAsync(
+        long auditId,
+        IReadOnlyList<string> keys,
+        CancellationToken cancellationToken = default)
+        => ReadAsync(auditId, keys, includeIdentifiers: false, cancellationToken);
+
+    /// <summary>
+    /// Reads the requested datasets, optionally prepending stable entity
+    /// identifiers (WP-09-10, agent data contract §11.8: "every exported row
+    /// carries the same stable identifiers as the API"). Identifier mode adds
+    /// url_id / finding_id+url_id / link_id+source_url_id+target_url_id /
+    /// url_id (extraction, snippets) columns; baseline column order is
+    /// otherwise unchanged. Aggregate datasets (summary, ngrams,
+    /// redirect-matrix, waf-blocks, semantic-opportunity, analytics) keep
+    /// their natural keys in both modes.
+    /// </summary>
+    /// <param name="auditId">Audit to export.</param>
+    /// <param name="keys">Requested dataset keys.</param>
+    /// <param name="includeIdentifiers">Prepend stable identifier columns.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Streaming datasets, each enumerable exactly once.</returns>
     public async IAsyncEnumerable<ExportDataset> ReadAsync(
         long auditId,
         IReadOnlyList<string> keys,
+        bool includeIdentifiers,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(keys);
@@ -61,20 +83,37 @@ public sealed class ExportDatasetReader
                     yield return new ExportDataset(key, SummaryColumns(), StreamSummaryAsync(auditId, cancellationToken));
                     break;
                 case ExportDatasetKeys.Urls:
-                    yield return new ExportDataset(key, UrlColumns(), StreamUrlsAsync(auditId, cancellationToken));
+                    yield return includeIdentifiers
+                        ? new ExportDataset(key, [new ExportColumn("url_id", "URL Id", "number"), .. UrlColumns()], StreamUrlsWithIdAsync(auditId, cancellationToken))
+                        : new ExportDataset(key, UrlColumns(), StreamUrlsAsync(auditId, cancellationToken));
                     break;
                 case ExportDatasetKeys.Findings:
-                    yield return new ExportDataset(key, FindingColumns(), StreamFindingsAsync(auditId, cancellationToken));
+                    yield return includeIdentifiers
+                        ? new ExportDataset(
+                            key,
+                            [new ExportColumn("finding_id", "Finding Id", "number"), new ExportColumn("url_id", "URL Id", "number"), .. FindingColumns()],
+                            StreamFindingsWithIdAsync(auditId, cancellationToken))
+                        : new ExportDataset(key, FindingColumns(), StreamFindingsAsync(auditId, cancellationToken));
                     break;
                 case ExportDatasetKeys.Links:
-                    yield return new ExportDataset(key, LinkColumns(), StreamLinksAsync(auditId, cancellationToken));
+                    yield return includeIdentifiers
+                        ? new ExportDataset(
+                            key,
+                            [
+                                new ExportColumn("link_id", "Link Id", "number"),
+                                new ExportColumn("source_url_id", "Source URL Id", "number"),
+                                new ExportColumn("target_url_id", "Target URL Id", "number"),
+                                .. LinkColumns(),
+                            ],
+                            StreamLinksWithIdAsync(auditId, cancellationToken))
+                        : new ExportDataset(key, LinkColumns(), StreamLinksAsync(auditId, cancellationToken));
                     break;
                 case ExportDatasetKeys.CustomExtraction:
-                    var extraction = await BuildExtractionDatasetAsync(auditId, cancellationToken).ConfigureAwait(false);
+                    var extraction = await BuildExtractionDatasetAsync(auditId, includeIdentifiers, cancellationToken).ConfigureAwait(false);
                     yield return extraction;
                     break;
                 case ExportDatasetKeys.Snippets:
-                    var snippets = await BuildSnippetDatasetAsync(auditId, cancellationToken).ConfigureAwait(false);
+                    var snippets = await BuildSnippetDatasetAsync(auditId, includeIdentifiers, cancellationToken).ConfigureAwait(false);
                     yield return snippets;
                     break;
                 case ExportDatasetKeys.NGrams:
@@ -347,9 +386,68 @@ public sealed class ExportDatasetReader
         }
     }
 
+    // ---- identifier-mode row sources (WP-09-10, §11.8 stable identifiers) ----
+
+    private async IAsyncEnumerable<ExportRow> StreamUrlsWithIdAsync(long auditId, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        await using var connection = await _provider.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT `id`, `canonical_url`, `host`, `path`, `depth`, `discovery_source`, `status_class`, `final_status_code`, `redirect_target_url`, `content_type`, `size_bytes`, `robots_state`, `indexability_flags`, `is_indexable`, `timing_json` FROM `url_records` WHERE `audit_id` = @auditId ORDER BY `canonical_url`";
+        AddAuditParameter(command, auditId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            yield return new ExportRow(
+            [
+                Cell(reader, 0), Cell(reader, 1), Cell(reader, 2), Cell(reader, 3), Cell(reader, 4),
+                ((DiscoverySource)reader.GetInt32(5)).ToString(),
+                ((CrawlStatusClass)reader.GetInt32(6)).ToString(),
+                Cell(reader, 7), Cell(reader, 8), Cell(reader, 9), Cell(reader, 10),
+                ((RobotsState)reader.GetInt32(11)).ToString(),
+                Cell(reader, 12), BoolCell(reader, 13), Cell(reader, 14),
+            ]);
+        }
+    }
+
+    private async IAsyncEnumerable<ExportRow> StreamFindingsWithIdAsync(long auditId, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        await using var connection = await _provider.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT f.`id`, f.`url_id`, f.`rule_key`, f.`category`, f.`severity`, u.`canonical_url`, f.`evidence_json`, f.`recommendation_key`, f.`is_suppressed` FROM `findings` f LEFT JOIN `url_records` u ON u.`id` = f.`url_id` WHERE f.`audit_id` = @auditId ORDER BY f.`severity`, f.`rule_key`";
+        AddAuditParameter(command, auditId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            yield return new ExportRow(
+            [
+                Cell(reader, 0), Cell(reader, 1), Cell(reader, 2),
+                ((AuditCategory)reader.GetInt32(3)).ToString(),
+                ((FindingSeverity)reader.GetInt32(4)).ToString(),
+                Cell(reader, 5), Cell(reader, 6), Cell(reader, 7), BoolCell(reader, 8),
+            ]);
+        }
+    }
+
+    private async IAsyncEnumerable<ExportRow> StreamLinksWithIdAsync(long auditId, [EnumeratorCancellation] CancellationToken cancellationToken)
+    {
+        await using var connection = await _provider.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT l.`id`, l.`source_url_id`, l.`target_url_id`, s.`canonical_url`, l.`canonical_target_url`, t.`canonical_url`, l.`anchor_text`, l.`relation_flags`, l.`is_internal` FROM `link_edges` l JOIN `url_records` s ON s.`id` = l.`source_url_id` LEFT JOIN `url_records` t ON t.`id` = l.`target_url_id` WHERE l.`audit_id` = @auditId ORDER BY s.`canonical_url`, l.`canonical_target_url`";
+        AddAuditParameter(command, auditId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            yield return new ExportRow(
+            [
+                Cell(reader, 0), Cell(reader, 1), Cell(reader, 2),
+                Cell(reader, 3), Cell(reader, 4), Cell(reader, 5), Cell(reader, 6), Cell(reader, 7), BoolCell(reader, 8),
+            ]);
+        }
+    }
+
     // ---- dynamic datasets (locked DynamicColumnSchema contract) -------------
 
-    private async Task<ExportDataset> BuildExtractionDatasetAsync(long auditId, CancellationToken cancellationToken)
+    private async Task<ExportDataset> BuildExtractionDatasetAsync(long auditId, bool includeIdentifiers, CancellationToken cancellationToken)
     {
         var rules = await LoadExtractionRulesAsync(auditId, cancellationToken).ConfigureAwait(false);
         var maxOrdinals = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -385,7 +483,9 @@ public sealed class ExportDatasetReader
             .ToList();
         var descriptors = DynamicColumnSchema.BuildExtractionColumns(rules, representatives);
 
-        var columns = new List<ExportColumn> { new("url", "URL", "text") };
+        var columns = includeIdentifiers
+            ? new List<ExportColumn> { new("url_id", "URL Id", "number"), new("url", "URL", "text") }
+            : new List<ExportColumn> { new("url", "URL", "text") };
         var indexByKey = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var descriptor in descriptors)
         {
@@ -399,7 +499,7 @@ public sealed class ExportDatasetReader
         return new ExportDataset(
             ExportDatasetKeys.CustomExtraction,
             columns,
-            StreamExtractionRowsAsync(auditId, descriptors, indexByKey, columns.Count, cancellationToken));
+            StreamExtractionRowsAsync(auditId, descriptors, indexByKey, columns.Count, includeIdentifiers, cancellationToken));
     }
 
     private async IAsyncEnumerable<ExportRow> StreamExtractionRowsAsync(
@@ -407,6 +507,7 @@ public sealed class ExportDatasetReader
         IReadOnlyList<DynamicColumnDescriptor> descriptors,
         Dictionary<string, int> indexByKey,
         int columnCount,
+        bool withUrlId,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         await using var connection = await _provider.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -418,13 +519,19 @@ public sealed class ExportDatasetReader
         long currentUrl = -1;
         string? currentUrlText = null;
         string?[] cells = new string?[columnCount];
+        var urlIndex = withUrlId ? 1 : 0;
         var hasRow = false;
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
             var urlId = reader.GetInt64(0);
             if (hasRow && urlId != currentUrl)
             {
-                cells[0] = currentUrlText;
+                cells[urlIndex] = currentUrlText;
+                if (withUrlId)
+                {
+                    cells[0] = currentUrl.ToString(CultureInfo.InvariantCulture);
+                }
+
                 yield return new ExportRow(cells);
                 cells = new string?[columnCount];
             }
@@ -446,12 +553,17 @@ public sealed class ExportDatasetReader
 
         if (hasRow)
         {
-            cells[0] = currentUrlText;
+            cells[urlIndex] = currentUrlText;
+            if (withUrlId)
+            {
+                cells[0] = currentUrl.ToString(CultureInfo.InvariantCulture);
+            }
+
             yield return new ExportRow(cells);
         }
     }
 
-    private async Task<ExportDataset> BuildSnippetDatasetAsync(long auditId, CancellationToken cancellationToken)
+    private async Task<ExportDataset> BuildSnippetDatasetAsync(long auditId, bool includeIdentifiers, CancellationToken cancellationToken)
     {
         var firstSeen = new List<SnippetResultDraft>();
         var seenKeys = new HashSet<string>(StringComparer.Ordinal);
@@ -472,11 +584,18 @@ public sealed class ExportDatasetReader
         }
 
         var descriptors = DynamicColumnSchema.BuildSnippetColumns(firstSeen);
-        var columns = new List<ExportColumn>
-        {
-            new("url", "URL", "text"),
-            new("snippet_key", "Snippet", "text"),
-        };
+        var columns = includeIdentifiers
+            ? new List<ExportColumn>
+            {
+                new("url_id", "URL Id", "number"),
+                new("url", "URL", "text"),
+                new("snippet_key", "Snippet", "text"),
+            }
+            : new List<ExportColumn>
+            {
+                new("url", "URL", "text"),
+                new("snippet_key", "Snippet", "text"),
+            };
         var indexByKey = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var descriptor in descriptors)
         {
@@ -487,25 +606,27 @@ public sealed class ExportDatasetReader
         return new ExportDataset(
             ExportDatasetKeys.Snippets,
             columns,
-            StreamSnippetRowsAsync(auditId, indexByKey, columns.Count, cancellationToken));
+            StreamSnippetRowsAsync(auditId, indexByKey, columns.Count, includeIdentifiers, cancellationToken));
     }
 
     private async IAsyncEnumerable<ExportRow> StreamSnippetRowsAsync(
         long auditId,
         Dictionary<string, int> indexByKey,
         int columnCount,
+        bool withUrlId,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         await using var connection = await _provider.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
-        command.CommandText = "SELECT u.`canonical_url`, s.`snippet_key`, s.`rows_json` FROM `snippet_results` s JOIN `url_records` u ON u.`id` = s.`url_id` WHERE s.`audit_id` = @auditId ORDER BY s.`id`";
+        command.CommandText = "SELECT s.`url_id`, u.`canonical_url`, s.`snippet_key`, s.`rows_json` FROM `snippet_results` s JOIN `url_records` u ON u.`id` = s.`url_id` WHERE s.`audit_id` = @auditId ORDER BY s.`id`";
         AddAuditParameter(command, auditId);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
-            var url = reader.GetString(0);
-            var snippetKey = reader.GetString(1);
-            using var rows = JsonDocument.Parse(reader.GetString(2));
+            var urlId = reader.GetInt64(0);
+            var url = reader.GetString(1);
+            var snippetKey = reader.GetString(2);
+            using var rows = JsonDocument.Parse(reader.GetString(3));
             if (rows.RootElement.ValueKind != JsonValueKind.Array)
             {
                 continue;
@@ -514,8 +635,14 @@ public sealed class ExportDatasetReader
             foreach (var row in rows.RootElement.EnumerateArray())
             {
                 var cells = new string?[columnCount];
-                cells[0] = url;
-                cells[1] = snippetKey;
+                var urlIndex = withUrlId ? 1 : 0;
+                if (withUrlId)
+                {
+                    cells[0] = urlId.ToString(CultureInfo.InvariantCulture);
+                }
+
+                cells[urlIndex] = url;
+                cells[urlIndex + 1] = snippetKey;
                 if (row.ValueKind == JsonValueKind.Object)
                 {
                     foreach (var property in row.EnumerateObject())

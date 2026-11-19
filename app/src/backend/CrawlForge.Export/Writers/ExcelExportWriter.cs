@@ -1,3 +1,4 @@
+using System.Globalization;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -10,7 +11,10 @@ namespace CrawlForge.Export.Writers;
 /// <see cref="OpenXmlWriter"/> with inline strings — no shared-string table and
 /// no in-memory workbook DOM — so memory stays bounded at 500k+ rows
 /// (FS-CRAWL-002 §7.1). Dynamic columns appear exactly as the dataset schema
-/// declares them.
+/// declares them. WP-09-10 completion (CAP-H-174): cells whose column
+/// ValueType is number/boolean are written as typed numeric/boolean cells
+/// (invariant parsing) so spreadsheets can sort, sum, and filter natively;
+/// unparseable values fall back to inline strings — no data is ever dropped.
 /// </summary>
 public static class ExcelExportWriter
 {
@@ -42,10 +46,10 @@ public static class ExcelExportWriter
                 writer.WriteStartElement(new SheetData());
 
                 uint rowIndex = 1;
-                WriteRow(writer, rowIndex++, dataset.Columns.Select(c => c.Label));
+                WriteRow(writer, rowIndex++, null, dataset.Columns.Select(c => c.Label));
                 await foreach (var row in dataset.Rows.WithCancellation(cancellationToken).ConfigureAwait(false))
                 {
-                    WriteRow(writer, rowIndex++, row.Values);
+                    WriteRow(writer, rowIndex++, dataset.Columns, row.Values);
                 }
 
                 writer.WriteEndElement(); // SheetData
@@ -73,16 +77,43 @@ public static class ExcelExportWriter
         }
     }
 
-    private static void WriteRow(OpenXmlWriter writer, uint rowIndex, IEnumerable<string?> values)
+    private static void WriteRow(OpenXmlWriter writer, uint rowIndex, IReadOnlyList<ExportColumn>? columns, IEnumerable<string?> values)
     {
         writer.WriteStartElement(new Row { RowIndex = rowIndex });
+        var index = 0;
         foreach (var value in values)
         {
-            writer.WriteStartElement(new Cell { DataType = CellValues.InlineString });
-            writer.WriteElement(new InlineString(new Text(value ?? string.Empty)));
-            writer.WriteEndElement();
+            var valueType = columns is not null && index < columns.Count ? columns[index].ValueType : "text";
+            WriteCell(writer, valueType, value);
+            index++;
         }
 
+        writer.WriteEndElement();
+    }
+
+    private static void WriteCell(OpenXmlWriter writer, string valueType, string? value)
+    {
+        if (value is not null)
+        {
+            if (valueType == "number" && double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var number))
+            {
+                writer.WriteStartElement(new Cell { DataType = CellValues.Number });
+                writer.WriteElement(new CellValue(number.ToString("R", CultureInfo.InvariantCulture)));
+                writer.WriteEndElement();
+                return;
+            }
+
+            if (valueType == "boolean" && bool.TryParse(value, out var flag))
+            {
+                writer.WriteStartElement(new Cell { DataType = CellValues.Boolean });
+                writer.WriteElement(new CellValue(flag ? "1" : "0"));
+                writer.WriteEndElement();
+                return;
+            }
+        }
+
+        writer.WriteStartElement(new Cell { DataType = CellValues.InlineString });
+        writer.WriteElement(new InlineString(new Text(value ?? string.Empty)));
         writer.WriteEndElement();
     }
 

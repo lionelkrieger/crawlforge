@@ -32,6 +32,10 @@ public static class PdfSummaryWriter
 
         LocalFontResolver.EnsureRegistered();
         using var document = new PdfDocument();
+        // WP-09-10: uncompressed content streams keep the report text
+        // extractable/verifiable (parse-back conformance) at a modest size
+        // cost — the PDF is a bounded summary surface (≤200 rows/dataset).
+        document.Options.CompressContentStreams = false;
         document.Info.Title = $"CrawlForge Report — Audit {auditId}";
         document.Info.Creator = "CrawlForge (local export)";
 
@@ -97,6 +101,22 @@ public static class PdfSummaryWriter
             DrawWrapped(dataset.Key, headerFont, XBrushes.Black);
             DrawWrapped(string.Join(" | ", dataset.Columns.Select(c => c.Label)), bodyFont, XBrushes.Gray);
 
+            // WP-09-10 (CAP-H-177): the findings section carries a severity
+            // rollup so the PDF report summarizes issue pressure at a glance.
+            var severityIndex = -1;
+            var severityCounts = new Dictionary<string, int>(StringComparer.Ordinal);
+            if (dataset.Key == "findings")
+            {
+                for (var i = 0; i < dataset.Columns.Count; i++)
+                {
+                    if (dataset.Columns[i].Key == "severity")
+                    {
+                        severityIndex = i;
+                        break;
+                    }
+                }
+            }
+
             var rows = 0;
             await foreach (var row in dataset.Rows.WithCancellation(cancellationToken).ConfigureAwait(false))
             {
@@ -106,8 +126,21 @@ public static class PdfSummaryWriter
                     break;
                 }
 
+                if (severityIndex >= 0 && severityIndex < row.Values.Count && row.Values[severityIndex] is { } severity)
+                {
+                    severityCounts[severity] = severityCounts.TryGetValue(severity, out var count) ? count + 1 : 1;
+                }
+
                 DrawWrapped(string.Join(" | ", row.Values.Select(v => v ?? string.Empty)), bodyFont, XBrushes.Black);
                 rows++;
+            }
+
+            if (severityIndex >= 0)
+            {
+                var rollup = severityCounts.Count == 0
+                    ? "Findings rendered: 0."
+                    : "Findings rendered: " + rows + " — " + string.Join(", ", severityCounts.OrderByDescending(p => p.Value).Select(p => $"{p.Key}={p.Value}")) + ".";
+                DrawWrapped(rollup, bodyFont, XBrushes.Gray);
             }
         }
 

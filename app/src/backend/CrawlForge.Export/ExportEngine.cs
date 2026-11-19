@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
+using System.Globalization;
 using CrawlForge.Contracts.Api;
+using CrawlForge.Contracts.Audit;
 using CrawlForge.Contracts.Enums;
 using CrawlForge.Contracts.Persistence;
 using CrawlForge.Export.Datasets;
@@ -32,6 +34,8 @@ public sealed class ExportEngine : IExportEngine, IDisposable
     private readonly ExportEventPublisher _events;
     private readonly ExportOptions _options;
     private readonly string? _templateDirectory;
+    private readonly IContentStore? _contentStore;
+    private readonly ITolerantDomParser? _domParser;
     private readonly ConcurrentDictionary<long, Task> _running = new();
     private readonly CancellationTokenSource _lifetime = new();
 
@@ -41,12 +45,16 @@ public sealed class ExportEngine : IExportEngine, IDisposable
     /// <param name="events">Hub event publisher.</param>
     /// <param name="options">Export options.</param>
     /// <param name="templateDirectory">Optional HTML template asset directory.</param>
+    /// <param name="contentStore">Content store for full-page text/Markdown exports (WP-09-10; Host wiring).</param>
+    /// <param name="domParser">Tolerant DOM parser for full-page content conversion (WP-09-10; Host wiring).</param>
     public ExportEngine(
         IDbProvider provider,
         ExportJobRegistry jobs,
         ExportEventPublisher events,
         ExportOptions? options = null,
-        string? templateDirectory = null)
+        string? templateDirectory = null,
+        IContentStore? contentStore = null,
+        ITolerantDomParser? domParser = null)
     {
         ArgumentNullException.ThrowIfNull(provider);
         ArgumentNullException.ThrowIfNull(jobs);
@@ -56,6 +64,8 @@ public sealed class ExportEngine : IExportEngine, IDisposable
         _events = events;
         _options = options ?? ExportOptions.Default;
         _templateDirectory = templateDirectory;
+        _contentStore = contentStore;
+        _domParser = domParser;
     }
 
     /// <inheritdoc/>
@@ -73,7 +83,51 @@ public sealed class ExportEngine : IExportEngine, IDisposable
 
     /// <inheritdoc/>
     public Task<ExportJobDto?> GetExportAsync(long exportJobId, CancellationToken cancellationToken = default)
-        => Task.FromResult(_jobs.Get(exportJobId)?.ToDto());
+    {
+        var record = _jobs.Get(exportJobId);
+        // Additive-format jobs cannot be represented by the locked enum DTO;
+        // they are read through GetAdditiveExportAsync (WP-09-10).
+        return Task.FromResult(record is null || record.IsAdditive ? null : record.ToDto());
+    }
+
+    /// <summary>
+    /// Creates an additive-format export job (WP-09-10: json, jsonl, text,
+    /// markdown) and returns immediately. Progress flows over the same
+    /// <c>export-progress</c> hub event as baseline jobs. Text/Markdown are
+    /// full-page content exports (one file per stored page); dataset selection
+    /// applies to json/jsonl only.
+    /// </summary>
+    /// <param name="auditId">Audit to export.</param>
+    /// <param name="formatWire">Additive wire format key.</param>
+    /// <param name="datasets">Selected dataset keys (json/jsonl; ignored for page content).</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The created additive export job.</returns>
+    /// <exception cref="ArgumentException">Unknown additive format key.</exception>
+    public async Task<AdditiveExportJobDto> CreateAdditiveExportAsync(
+        long auditId,
+        string formatWire,
+        IReadOnlyList<string> datasets,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(datasets);
+        var record = _jobs.CreateAdditive(auditId, formatWire, datasets);
+        await PublishProgressAsync(record, null).ConfigureAwait(false);
+
+        var token = _lifetime.Token;
+        var task = Task.Run(() => GenerateAsync(record, token), CancellationToken.None);
+        _running[record.Id] = task;
+        return record.ToAdditiveDto();
+    }
+
+    /// <summary>
+    /// Reads any export job through the additive wire projection (baseline
+    /// jobs included — the format is the authoritative wire key).
+    /// </summary>
+    /// <param name="exportJobId">Export job identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The additive job projection, or null when absent.</returns>
+    public Task<AdditiveExportJobDto?> GetAdditiveExportAsync(long exportJobId, CancellationToken cancellationToken = default)
+        => Task.FromResult(_jobs.Get(exportJobId)?.ToAdditiveDto());
 
     /// <inheritdoc/>
     public Task<Stream> OpenExportFileAsync(long exportJobId, CancellationToken cancellationToken = default)
@@ -113,67 +167,9 @@ public sealed class ExportEngine : IExportEngine, IDisposable
 
             Directory.CreateDirectory(_options.OutputDirectory);
             var reader = new ExportDatasetReader(_provider);
-            string path;
-            switch (record.Format)
-            {
-                case ExportFormat.Excel:
-                    path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.xlsx");
-                    await using (var file = File.Create(path))
-                    {
-                        await ExcelExportWriter.WriteAsync(file, reader.ReadAsync(record.AuditId, record.Datasets, cancellationToken), cancellationToken).ConfigureAwait(false);
-                    }
-
-                    break;
-
-                case ExportFormat.Csv:
-                    path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.zip");
-                    await using (var file = File.Create(path))
-                    {
-                        await CsvExportWriter.WriteAsync(file, reader.ReadAsync(record.AuditId, record.Datasets, cancellationToken), cancellationToken).ConfigureAwait(false);
-                    }
-
-                    break;
-
-                case ExportFormat.Html:
-                    path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.html");
-                    await using (var file = File.Create(path))
-                    {
-                        await HtmlReportWriter.WriteAsync(file, record.AuditId, reader.ReadAsync(record.AuditId, record.Datasets, cancellationToken), _templateDirectory, cancellationToken).ConfigureAwait(false);
-                    }
-
-                    break;
-
-                case ExportFormat.Pdf:
-                    path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.pdf");
-                    await using (var file = File.Create(path))
-                    {
-                        await PdfSummaryWriter.WriteAsync(file, record.AuditId, reader.ReadAsync(record.AuditId, record.Datasets, cancellationToken), cancellationToken).ConfigureAwait(false);
-                    }
-
-                    break;
-
-                case ExportFormat.XmlSitemap:
-                    var sitemap = new SitemapWriter(_provider, _options);
-                    var eligible = await sitemap.CountEligibleUrlsAsync(record.AuditId, cancellationToken).ConfigureAwait(false);
-                    if (eligible <= _options.SitemapMaxUrlsPerFile)
-                    {
-                        path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.xml");
-                        await using var file = File.Create(path);
-                        await sitemap.WriteSingleAsync(file, record.AuditId, cancellationToken).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.zip");
-                        var baseUrl = await ResolveBaseUrlAsync(record.AuditId, cancellationToken).ConfigureAwait(false);
-                        await using var file = File.Create(path);
-                        await sitemap.WriteIndexAsync(file, record.AuditId, baseUrl, cancellationToken).ConfigureAwait(false);
-                    }
-
-                    break;
-
-                default:
-                    throw new InvalidOperationException($"Unknown export format '{record.Format}'.");
-            }
+            var path = record.IsAdditive
+                ? await GenerateAdditiveAsync(record, reader, cancellationToken).ConfigureAwait(false)
+                : await GenerateBaselineAsync(record, reader, cancellationToken).ConfigureAwait(false);
 
             _jobs.Set(record with { Status = ExportJobStatus.Completed, FilePath = path });
             await PublishProgressAsync(_jobs.Get(record.Id)!, null).ConfigureAwait(false);
@@ -184,6 +180,110 @@ public sealed class ExportEngine : IExportEngine, IDisposable
             _jobs.Set(record with { Status = ExportJobStatus.Failed, FailureMessage = ex.Message });
             await PublishProgressAsync(_jobs.Get(record.Id)!, ex.Message).ConfigureAwait(false);
         }
+    }
+
+    private async Task<string> GenerateBaselineAsync(ExportJobRecord record, ExportDatasetReader reader, CancellationToken cancellationToken)
+    {
+        string path;
+        switch (record.Format)
+        {
+            case ExportFormat.Excel:
+                path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.xlsx");
+                await using (var file = File.Create(path))
+                {
+                    await ExcelExportWriter.WriteAsync(file, reader.ReadAsync(record.AuditId, record.Datasets, cancellationToken), cancellationToken).ConfigureAwait(false);
+                }
+
+                break;
+
+            case ExportFormat.Csv:
+                path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.zip");
+                await using (var file = File.Create(path))
+                {
+                    await CsvExportWriter.WriteAsync(file, reader.ReadAsync(record.AuditId, record.Datasets, cancellationToken), cancellationToken).ConfigureAwait(false);
+                }
+
+                break;
+
+            case ExportFormat.Html:
+                path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.html");
+                await using (var file = File.Create(path))
+                {
+                    await HtmlReportWriter.WriteAsync(file, record.AuditId, reader.ReadAsync(record.AuditId, record.Datasets, cancellationToken), _templateDirectory, cancellationToken).ConfigureAwait(false);
+                }
+
+                break;
+
+            case ExportFormat.Pdf:
+                path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.pdf");
+                await using (var file = File.Create(path))
+                {
+                    await PdfSummaryWriter.WriteAsync(file, record.AuditId, reader.ReadAsync(record.AuditId, record.Datasets, cancellationToken), cancellationToken).ConfigureAwait(false);
+                }
+
+                break;
+
+            case ExportFormat.XmlSitemap:
+                var sitemap = new SitemapWriter(_provider, _options);
+                var eligible = await sitemap.CountEligibleUrlsAsync(record.AuditId, cancellationToken).ConfigureAwait(false);
+                if (eligible <= _options.SitemapMaxUrlsPerFile)
+                {
+                    path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.xml");
+                    await using var file = File.Create(path);
+                    await sitemap.WriteSingleAsync(file, record.AuditId, cancellationToken).ConfigureAwait(false);
+                }
+                else
+                {
+                    path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}.zip");
+                    var baseUrl = await ResolveBaseUrlAsync(record.AuditId, cancellationToken).ConfigureAwait(false);
+                    await using var file = File.Create(path);
+                    await sitemap.WriteIndexAsync(file, record.AuditId, baseUrl, cancellationToken).ConfigureAwait(false);
+                }
+
+                break;
+
+            default:
+                throw new InvalidOperationException($"Unknown export format '{record.Format}'.");
+        }
+
+        return path;
+    }
+
+    private async Task<string> GenerateAdditiveAsync(ExportJobRecord record, ExportDatasetReader reader, CancellationToken cancellationToken)
+    {
+        var formatWire = record.FormatWire!;
+        var path = Path.Combine(_options.OutputDirectory, $"export-{record.Id}{AdditiveExportFormats.ExtensionFor(formatWire)}");
+        await using var file = File.Create(path);
+        switch (formatWire)
+        {
+            case AdditiveExportFormats.Json:
+                // Agent contract (§11.8): summary-first compact JSON; every row
+                // carries the same stable identifiers as the API.
+                await JsonExportWriter.WriteAsync(file, record.AuditId, reader.ReadAsync(record.AuditId, record.Datasets, includeIdentifiers: true, cancellationToken), cancellationToken).ConfigureAwait(false);
+                break;
+
+            case AdditiveExportFormats.JsonLines:
+                await JsonExportWriter.WriteLinesAsync(file, reader.ReadAsync(record.AuditId, record.Datasets, includeIdentifiers: true, cancellationToken), cancellationToken).ConfigureAwait(false);
+                break;
+
+            case AdditiveExportFormats.Text:
+            case AdditiveExportFormats.Markdown:
+                if (_contentStore is null || _domParser is null)
+                {
+                    throw new InvalidOperationException(
+                        "Full-page content export requires the content store and DOM parser (Host wiring handoff, WP-09-10).");
+                }
+
+                var pageWriter = new PageContentExportWriter(_provider, _contentStore, _domParser);
+                var pageFormat = formatWire == AdditiveExportFormats.Text ? PageContentFormat.PlainText : PageContentFormat.Markdown;
+                await pageWriter.WriteAsync(file, record.AuditId, pageFormat, cancellationToken).ConfigureAwait(false);
+                break;
+
+            default:
+                throw new InvalidOperationException($"Unknown additive export format '{formatWire}'.");
+        }
+
+        return path;
     }
 
     private async Task<string> ResolveBaseUrlAsync(long auditId, CancellationToken cancellationToken)
@@ -206,5 +306,11 @@ public sealed class ExportEngine : IExportEngine, IDisposable
 
     private Task PublishProgressAsync(ExportJobRecord record, string? message)
         => _events.PublishProgressAsync(
-            new ExportProgressPayload(record.Id, record.AuditId, record.Format.ToWireValue(), record.Status.ToWireValue(), record.FilePath, message));
+            new ExportProgressPayload(
+                record.Id.ToString(CultureInfo.InvariantCulture),
+                record.AuditId.ToString(CultureInfo.InvariantCulture),
+                record.EffectiveFormatWire,
+                record.Status.ToWireValue(),
+                record.FilePath,
+                message));
 }

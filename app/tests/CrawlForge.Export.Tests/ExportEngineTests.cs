@@ -86,9 +86,9 @@ public sealed class ExportEngineTests : IAsyncLifetime
         await RunToCompletionAsync(engine, new ExportRequest(_auditId, ExportFormat.Csv, []));
 
         var progress = _stack.Hub.Events.Where(e => e.Name == ExportHubEventNames.ExportProgress).ToList();
-        Assert.Contains(progress, e => e.PayloadJson.Contains("\"status\":\"queued\""));
-        Assert.Contains(progress, e => e.PayloadJson.Contains("\"status\":\"running\""));
-        Assert.Contains(progress, e => e.PayloadJson.Contains("\"status\":\"completed\""));
+        Assert.Contains(progress, e => e.PayloadJson.Contains("\"state\":\"queued\""));
+        Assert.Contains(progress, e => e.PayloadJson.Contains("\"state\":\"running\""));
+        Assert.Contains(progress, e => e.PayloadJson.Contains("\"state\":\"completed\""));
     }
 
     /// <summary>Generation failure yields a Failed job + event, never an exception to the caller.</summary>
@@ -102,7 +102,7 @@ public sealed class ExportEngineTests : IAsyncLifetime
         var finished = await engine.GetExportAsync(job.Id);
         Assert.NotNull(finished);
         Assert.Equal(ExportJobStatus.Failed, finished.Status);
-        Assert.Contains(_stack.Hub.Events, e => e.Name == ExportHubEventNames.ExportProgress && e.PayloadJson.Contains("\"status\":\"failed\""));
+        Assert.Contains(_stack.Hub.Events, e => e.Name == ExportHubEventNames.ExportProgress && e.PayloadJson.Contains("\"state\":\"failed\""));
     }
 
     /// <summary>Opening an incomplete or unknown job fails cleanly.</summary>

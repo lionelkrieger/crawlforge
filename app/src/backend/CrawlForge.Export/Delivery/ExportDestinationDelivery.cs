@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Data.Common;
+using System.Globalization;
 using CrawlForge.Contracts.Api;
 using CrawlForge.Contracts.Enums;
 using CrawlForge.Contracts.Persistence;
@@ -170,9 +171,20 @@ public sealed class ExportDestinationDelivery : IExportDestinationDelivery
     {
         var entry = new DeliveryLedgerEntry(jobId, destinationId, state, attempt, message, DateTimeOffset.UtcNow);
         _ledger[(jobId, destinationId)] = entry;
-        await _events.PublishDeliveryAsync(
-            new ExportDeliveryPayload(jobId, destinationId, state, attempt, message, entry.UpdatedAt),
-            cancellationToken).ConfigureAwait(false);
+
+        // G-F fix (WP-09-10): the frozen frontend guard (guards.ts
+        // isExportDeliveryPayload) accepts only delivered/retrying/failed with
+        // string identifiers. The internal "delivering" transition is ledger
+        // state only — publishing it would be dropped by the consumer.
+        if (state is ExportDeliveryStates.Delivered or ExportDeliveryStates.Retrying or ExportDeliveryStates.Failed)
+        {
+            await _events.PublishDeliveryAsync(
+                new ExportDeliveryPayload(
+                    jobId.ToString(CultureInfo.InvariantCulture),
+                    destinationId.ToString(CultureInfo.InvariantCulture),
+                    state),
+                cancellationToken).ConfigureAwait(false);
+        }
     }
 
     private sealed record DestinationRow(ExportDestinationClass Class, string EndpointDetailsJson, string? EncryptedCredentialsJson, bool IsEnabled);

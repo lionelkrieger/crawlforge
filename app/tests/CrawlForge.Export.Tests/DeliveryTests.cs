@@ -45,7 +45,8 @@ public sealed class DeliveryTests : IAsyncLifetime
 
     private long JobId => _jobs.Get(1)!.Id;
 
-    /// <summary>Successful delivery: delivering → delivered, hub events, ledger.</summary>
+    /// <summary>Successful delivery: ledger delivering → delivered; hub carries
+    /// only the frozen frontend states with string identifiers (G-F fix).</summary>
     [Fact]
     public async Task Deliver_Succeeds_With_State_Transitions()
     {
@@ -60,8 +61,13 @@ public sealed class DeliveryTests : IAsyncLifetime
         Assert.Equal(1, entry.Attempt);
         Assert.Single(_transport.Sends);
         var events = _stack.Hub.Events.Where(e => e.Name == ExportHubEventNames.ExportDelivery).Select(e => e.PayloadJson).ToList();
-        Assert.Contains(events, p => p.Contains("\"state\":\"delivering\""));
         Assert.Contains(events, p => p.Contains("\"state\":\"delivered\""));
+        // G-F: "delivering" is internal ledger state — the frozen frontend
+        // guard (guards.ts DELIVERY_STATES) rejects it, so it never hits the hub.
+        Assert.DoesNotContain(events, p => p.Contains("\"state\":\"delivering\""));
+        // Frozen wire shape: exportId + destinationId are STRINGS (EntityId).
+        Assert.Contains(events, p => p.Contains($"\"exportId\":\"{JobId}\"") && p.Contains($"\"destinationId\":\"{destinationId}\""));
+        Assert.DoesNotContain(events, p => p.Contains("exportJobId"));
     }
 
     /// <summary>Transient failures retry with bounded backoff, then deliver.</summary>

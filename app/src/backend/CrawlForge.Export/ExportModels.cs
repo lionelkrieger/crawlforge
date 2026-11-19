@@ -143,38 +143,44 @@ public static class ExportHubEventNames
 }
 
 /// <summary>
-/// Typed payload of the <c>export-progress</c> hub event.
+/// Typed payload of the <c>export-progress</c> hub event (WP-09-10, G-I fix).
+/// Wire shape matches the proposed additive frontend contract: string entity
+/// identifiers (<c>EntityId</c> convention) and <c>state</c> (the
+/// ExportJobState vocabulary queued/running/completed/failed), mirroring
+/// ExportJobWire. Additive catalog entry is a lead handoff (events.ts +
+/// HubEventCatalog); the producer already emits this exact shape.
 /// </summary>
-/// <param name="ExportJobId">The export job.</param>
-/// <param name="AuditId">The exported audit.</param>
+/// <param name="ExportId">The export job (string identifier).</param>
+/// <param name="AuditId">The exported audit (string identifier).</param>
 /// <param name="Format">Wire format value.</param>
-/// <param name="Status">Wire status value.</param>
+/// <param name="State">Wire job state value.</param>
 /// <param name="FilePath">Local file path when completed.</param>
 /// <param name="Message">Failure or progress detail.</param>
 public sealed record ExportProgressPayload(
-    long ExportJobId,
-    long AuditId,
+    string ExportId,
+    string AuditId,
     string Format,
-    string Status,
+    string State,
     string? FilePath,
     string? Message);
 
 /// <summary>
-/// Typed payload of the <c>export-delivery</c> hub event.
+/// Typed payload of the <c>export-delivery</c> hub event (WP-09-10, G-F fix).
+/// Wire shape matches the frozen frontend contract exactly (events.ts
+/// ExportDeliveryPayload, guards.ts isExportDeliveryPayload): string
+/// <c>exportId</c> + <c>destinationId</c> and a state from the frozen
+/// vocabulary delivered/retrying/failed. The internal <c>delivering</c>
+/// transition stays in the delivery ledger only — it is NOT a hub state
+/// (the frontend guard rejects it). Attempt/message detail lives in the
+/// ledger (<see cref="DeliveryLedgerEntry"/>), not on the wire.
 /// </summary>
-/// <param name="ExportJobId">The delivered export job.</param>
-/// <param name="DestinationId">The user-configured destination.</param>
-/// <param name="State">delivering, delivered, retrying, or failed.</param>
-/// <param name="Attempt">1-based attempt number.</param>
-/// <param name="Message">Outcome detail.</param>
-/// <param name="Timestamp">Transition timestamp (UTC).</param>
+/// <param name="ExportId">The delivered export job (string identifier).</param>
+/// <param name="DestinationId">The user-configured destination (string identifier).</param>
+/// <param name="State">delivered, retrying, or failed.</param>
 public sealed record ExportDeliveryPayload(
-    long ExportJobId,
-    long DestinationId,
-    string State,
-    int Attempt,
-    string? Message,
-    DateTimeOffset Timestamp);
+    string ExportId,
+    string DestinationId,
+    string State);
 
 /// <summary>
 /// Publishes the export engine's typed hub events through the locked
@@ -210,7 +216,7 @@ public sealed class ExportEventPublisher
             new HubEvent(
                 ExportHubEventNames.ExportProgress,
                 JsonSerializer.Serialize(payload, JsonOptions),
-                $"export-progress:{payload.ExportJobId}",
+                $"export-progress:{payload.ExportId}",
                 TimeSpan.FromMilliseconds(250)),
             cancellationToken);
     }
@@ -226,7 +232,7 @@ public sealed class ExportEventPublisher
             new HubEvent(
                 ExportHubEventNames.ExportDelivery,
                 JsonSerializer.Serialize(payload, JsonOptions),
-                $"export-delivery:{payload.ExportJobId}:{payload.DestinationId}",
+                $"export-delivery:{payload.ExportId}:{payload.DestinationId}",
                 TimeSpan.FromMilliseconds(250)),
             cancellationToken);
     }
