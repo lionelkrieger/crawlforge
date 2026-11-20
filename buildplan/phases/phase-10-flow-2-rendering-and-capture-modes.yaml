@@ -152,7 +152,9 @@ workpieces:
   - workpiece_id: "WP-10-03"
     title: "Rendered Comparison UI — Rendered Tab, Comparison Surface, Render Artifacts"
     phase_id: "phase-10"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "cf-wp-10-03"
+    started_at: "2026-11-20T07:40:00Z"
     parallel_group: "wave-10B"
     depends_on_workpieces: ["WP-10-01", "WP-10-02"]
     context_files:

@@ -3,7 +3,8 @@
 | Workpiece | Wave | Mechanism | Agent id | Dispatched (UTC) | Report file | Commit |
 |---|---|---|---|---|---|---|
 | WP-10-A1 | 10A0 | subagent | 9136c195-638f-493a-919d-39dd104f0b51 | 2026-11-19T21:48Z | A1-REVIEW-CHECKLIST.md | 2cb4311 (+0307fe8 integration) |
-| WP-10-01 | 10A | subagent (re-dispatch) + fix round | ba00a8d0-e854-4187-834a-f81ed2e1cd66 → fix: 7de020f4-5b69-495e-89eb-b1125e5386fa | 2026-11-20T03:25Z / fix 05:00Z | WP-10-01-REPORT.md | pending fix |
+| WP-10-03 | 10B | subagent | 94c5f86d-8653-44bd-9ba8-3118ed53f537 | 2026-11-20T07:40Z | WP-10-03-REPORT.md (pending) | — |
+| WP-10-01 | 10A | subagent (re-dispatch) + fix round | ba00a8d0-e854-4187-834a-f81ed2e1cd66 → fix: 7de020f4-5b69-495e-89eb-b1125e5386fa | 2026-11-20T03:25Z / fix 05:00Z | WP-10-01-REPORT.md | accepted 7c4b8ac |
 | WP-10-02 | 10A | subagent | cd5e53d7-558c-4b4c-9174-e4b98e3b047b | 2026-11-20T03:15Z | WP-10-02-REPORT.md | 690f2ed (ACCEPTED 04:15Z) |
 | WP-10-05 | 10A | subagent | 87288b9e-0750-4e00-b583-de01bc91863a | 2026-11-20T03:15Z | WP-10-05-REPORT.md | dc15529 (ACCEPTED 04:30Z) |
 | WP-10-03 | 10B | subagent (pending) | — | — | dispatch-WP-10-03.md ready | — |

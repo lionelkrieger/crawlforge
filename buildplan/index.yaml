@@ -46,8 +46,8 @@ status_summary:
     blocked: 0
     unscheduled: 1
   workpieces:
-    pending: 36
-    in_progress: 0
+    pending: 35
+    in_progress: 1
     verifying: 0
     completed: 22
     blocked: 0
