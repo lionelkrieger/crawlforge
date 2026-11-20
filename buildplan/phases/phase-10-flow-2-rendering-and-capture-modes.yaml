@@ -7,7 +7,7 @@
 # of rendered documents is delivered by WP-10-02 against the pool contract and connected in wiring.
 phase_id: "phase-10"
 name: "Flow 2 — Rendering and Capture Modes"
-status: "pending"
+status: "in_progress"
 depends_on_phases: ["phase-08", "phase-09"]
 max_parallel_agents: 3
 parallel_waves:
@@ -295,7 +295,10 @@ workpieces:
   - workpiece_id: "WP-10-A1"
     title: "Contract Amendment — Additive Category, WAF-Class, Indexability-Flag Members and Rule Keys (D-021)"
     phase_id: "phase-10"
-    status: "pending"
+    status: "completed"
+    assigned_agent: "cf-wp-10-a1"
+    started_at: "2026-11-19T21:48:00Z"
+    completed_at: "2026-11-19T23:45:00Z"
     parallel_group: "wave-10A0"
     depends_on_workpieces: ["WP-09-11"]
     context_files:

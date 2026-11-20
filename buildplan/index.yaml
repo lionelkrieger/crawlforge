@@ -40,16 +40,16 @@ metadata:
 
 status_summary:
   phases:
-    pending: 6
-    in_progress: 0
+    pending: 5
+    in_progress: 1
     completed: 2
     blocked: 0
     unscheduled: 1
   workpieces:
-    pending: 40
+    pending: 39
     in_progress: 0
     verifying: 0
-    completed: 18
+    completed: 19
     blocked: 0
   acceptance_criteria:
     pending: 55
@@ -77,7 +77,7 @@ phases:
   - phase_id: "phase-10"
     name: "Flow 2 — Rendering and Capture Modes"
     file: "phases/phase-10-flow-2-rendering-and-capture-modes.yaml"
-    status: "pending"
+    status: "in_progress"
     depends_on_phases: ["phase-08", "phase-09"]
     max_parallel_agents: 3
     workpiece_ids: ["WP-10-01", "WP-10-02", "WP-10-03", "WP-10-04", "WP-10-05", "WP-10-A1"]

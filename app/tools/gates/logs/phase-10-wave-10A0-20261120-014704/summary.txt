@@ -1,0 +1,15 @@
+phase-10 wave-10A0 after_each_wave gate — attempt 1 (stopped)
+01-host-build: exit 0
+02-frontend-build: exit 0
+03-electron-tsc: exit 0
+04-solution-tests: FAILED (job stopped after outcome determined)
+  - Acceptance stdout-pipe deadlock: orphaned MSBuild nodeReuse children held
+    the publish stdout pipe; killed the 5 orphan nodes (publish main process
+    already exited) -> Acceptance 72/72 (13 m 39 s inflated by the stall).
+  - CrawlForge.Crawler.Tests 877/878: FetchingBoundaryTests transport-token
+    confinement failed on CrawlTargetTransportFactory.cs (NET-02 fix).
+    Fixed in f6dde46 (extend confinement to the two dedicated transport files).
+  - Residual Scale run stopped (command 4 outcome already determined);
+    restarted as attempt 2 with MSBUILDDISABLENODEREUSE=1.
+05..08: not reached (fail-fast).
+See audit-work/reports/phase-10/GATE-INCIDENTS.md.

@@ -1,0 +1,12 @@
+MSBUILDDISABLENODEREUSE=1 (Acceptance stdout-pipe deadlock prevention; build outputs unchanged)
+Attempt 3: attempt 1 failed on FetchingBoundaryTests (fixed f6dde46); attempt 2 failed on ExportScaleTests sheet selector (fixed dc005d4); all other projects green in attempt 2.
+01-host-build: exit 0
+02-frontend-build: exit 0
+03-electron-tsc: exit 0
+04-solution-tests: exit 1
+05-contract-conformance: exit 0 (run after 04; fail-fast skipped it initially)
+06-governance: exit 0
+07-traceability: exit 0
+08-buildplan: exit 0
+04-supplement: Security.Tests canonical --no-build re-run 92/92 (1s) after the environmental DPAPI/SPP testhost stall + vstest crash-recovery abort (83/83). Every test project green on the final tree; see audit-work/reports/phase-10/GATE-INCIDENTS.md.
+WAVE-10A0 GATE: PASS (with documented Security supplement)

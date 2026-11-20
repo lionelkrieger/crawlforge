@@ -9,7 +9,9 @@
     "indexable": true,
     "title": "CrawlForge fixture home",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "seed"
   },
   {
     "id": "2",
@@ -21,7 +23,9 @@
     "indexable": false,
     "title": "Noindex page",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "seed"
   },
   {
     "id": "3",
@@ -33,7 +37,9 @@
     "indexable": false,
     "title": null,
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "seed"
   },
   {
     "id": "4",
@@ -45,7 +51,9 @@
     "indexable": true,
     "title": "Orphan page (sitemap only)",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "sitemap"
   },
   {
     "id": "5",
@@ -57,7 +65,9 @@
     "indexable": true,
     "title": "Redirect chain target",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "sitemap"
   },
   {
     "id": "6",
@@ -69,7 +79,9 @@
     "indexable": true,
     "title": "Fixture SPA",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "sitemap"
   },
   {
     "id": "7",
@@ -81,7 +93,9 @@
     "indexable": true,
     "title": "Hash-routed app",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "sitemap"
   },
   {
     "id": "8",
@@ -93,7 +107,9 @@
     "indexable": true,
     "title": "Live odds",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "sitemap"
   },
   {
     "id": "9",
@@ -105,7 +121,9 @@
     "indexable": false,
     "title": null,
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "10",
@@ -117,7 +135,9 @@
     "indexable": false,
     "title": null,
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "11",
@@ -129,7 +149,9 @@
     "indexable": false,
     "title": "Canonical conflict",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "12",
@@ -141,7 +163,9 @@
     "indexable": true,
     "title": "Broken links",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "13",
@@ -153,7 +177,9 @@
     "indexable": true,
     "title": "JavaScript-only link",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "14",
@@ -165,7 +191,9 @@
     "indexable": true,
     "title": "Script-injected content",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "15",
@@ -177,7 +205,9 @@
     "indexable": true,
     "title": "Raw title before script",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "16",
@@ -189,7 +219,9 @@
     "indexable": true,
     "title": "Page not found",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "17",
@@ -201,7 +233,9 @@
     "indexable": true,
     "title": "Client-side redirect",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "18",
@@ -213,7 +247,9 @@
     "indexable": true,
     "title": "ASP.NET postback navigation",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "19",
@@ -225,7 +261,9 @@
     "indexable": true,
     "title": "Large ViewState",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "20",
@@ -237,7 +275,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "21",
@@ -249,7 +289,9 @@
     "indexable": true,
     "title": "Events 2026-11",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "22",
@@ -261,7 +303,9 @@
     "indexable": true,
     "title": "Cookie gate passed",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "23",
@@ -273,7 +317,9 @@
     "indexable": true,
     "title": "Consent banner",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "24",
@@ -285,7 +331,9 @@
     "indexable": true,
     "title": "Service worker app",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "25",
@@ -297,7 +345,9 @@
     "indexable": true,
     "title": "Structured data errors",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "26",
@@ -309,7 +359,9 @@
     "indexable": true,
     "title": "Images without alt text",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "27",
@@ -321,7 +373,9 @@
     "indexable": true,
     "title": "Mixed content",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "28",
@@ -333,7 +387,9 @@
     "indexable": true,
     "title": "Hreflang English",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "29",
@@ -345,7 +401,9 @@
     "indexable": true,
     "title": "Duplicate title",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "30",
@@ -357,7 +415,9 @@
     "indexable": true,
     "title": "Duplicate title",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "31",
@@ -369,7 +429,9 @@
     "indexable": true,
     "title": "Thin page",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "32",
@@ -381,7 +443,9 @@
     "indexable": true,
     "title": "Fixture SPA",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "33",
@@ -393,7 +457,9 @@
     "indexable": false,
     "title": null,
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "34",
@@ -405,7 +471,9 @@
     "indexable": true,
     "title": "Cookieless session page",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "35",
@@ -417,7 +485,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "36",
@@ -429,7 +499,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "37",
@@ -441,7 +513,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "38",
@@ -453,7 +527,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "39",
@@ -465,7 +541,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "40",
@@ -477,7 +555,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "41",
@@ -489,7 +569,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "42",
@@ -501,7 +583,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "43",
@@ -513,7 +597,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "44",
@@ -525,7 +611,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "45",
@@ -537,7 +625,9 @@
     "indexable": true,
     "title": "Events 2026-10",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "46",
@@ -549,7 +639,9 @@
     "indexable": true,
     "title": "Events 2026-12",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "47",
@@ -561,7 +653,9 @@
     "indexable": true,
     "title": "Hreflang French",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "48",
@@ -573,7 +667,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "49",
@@ -585,7 +681,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "50",
@@ -597,7 +695,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "51",
@@ -609,7 +709,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "52",
@@ -621,7 +723,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "53",
@@ -633,7 +737,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "54",
@@ -645,7 +751,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "55",
@@ -657,7 +765,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "56",
@@ -669,7 +779,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "57",
@@ -681,7 +793,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "58",
@@ -693,7 +807,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "59",
@@ -705,7 +821,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "60",
@@ -717,7 +835,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "61",
@@ -729,7 +849,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "62",
@@ -741,7 +863,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "63",
@@ -753,7 +877,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "64",
@@ -765,7 +891,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "65",
@@ -777,7 +905,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "66",
@@ -789,7 +919,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "67",
@@ -801,7 +933,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "68",
@@ -813,7 +947,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "69",
@@ -825,7 +961,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "70",
@@ -837,7 +975,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "71",
@@ -849,7 +989,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "72",
@@ -861,7 +1003,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "73",
@@ -873,7 +1017,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "74",
@@ -885,7 +1031,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "75",
@@ -897,7 +1045,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "76",
@@ -909,7 +1059,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "77",
@@ -921,7 +1073,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "78",
@@ -933,7 +1087,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "79",
@@ -945,7 +1101,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "80",
@@ -957,7 +1115,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "81",
@@ -969,7 +1129,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "82",
@@ -981,7 +1143,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "83",
@@ -993,7 +1157,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "84",
@@ -1005,7 +1171,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "85",
@@ -1017,7 +1185,9 @@
     "indexable": true,
     "title": "Events 2026-9",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "86",
@@ -1029,7 +1199,9 @@
     "indexable": true,
     "title": "Events 2027-1",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "87",
@@ -1041,7 +1213,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "88",
@@ -1053,7 +1227,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "89",
@@ -1065,7 +1241,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "90",
@@ -1077,7 +1255,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "91",
@@ -1089,7 +1269,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "92",
@@ -1101,7 +1283,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "93",
@@ -1113,7 +1297,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "94",
@@ -1125,7 +1311,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "95",
@@ -1137,7 +1325,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "96",
@@ -1149,7 +1339,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "97",
@@ -1161,7 +1353,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "98",
@@ -1173,7 +1367,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "99",
@@ -1185,7 +1381,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "100",
@@ -1197,7 +1395,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "101",
@@ -1209,7 +1409,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "102",
@@ -1221,7 +1423,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "103",
@@ -1233,7 +1437,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "104",
@@ -1245,7 +1451,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "105",
@@ -1257,7 +1465,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "106",
@@ -1269,7 +1479,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "107",
@@ -1281,7 +1493,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "108",
@@ -1293,7 +1507,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "109",
@@ -1305,7 +1521,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "110",
@@ -1317,7 +1535,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "111",
@@ -1329,7 +1549,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "112",
@@ -1341,7 +1563,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "113",
@@ -1353,7 +1577,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "114",
@@ -1365,7 +1591,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "115",
@@ -1377,7 +1605,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "116",
@@ -1389,7 +1619,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "117",
@@ -1401,7 +1633,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "118",
@@ -1413,7 +1647,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "119",
@@ -1425,7 +1661,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "120",
@@ -1437,7 +1675,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "121",
@@ -1449,7 +1689,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "122",
@@ -1461,7 +1703,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "123",
@@ -1473,7 +1717,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "124",
@@ -1485,7 +1731,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "125",
@@ -1497,7 +1745,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "126",
@@ -1509,7 +1759,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "127",
@@ -1521,7 +1773,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "128",
@@ -1533,7 +1787,9 @@
     "indexable": true,
     "title": "Product filter",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "129",
@@ -1545,7 +1801,9 @@
     "indexable": true,
     "title": "Events 2026-8",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "130",
@@ -1557,7 +1815,9 @@
     "indexable": true,
     "title": "Events 2027-2",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "131",
@@ -1569,7 +1829,9 @@
     "indexable": true,
     "title": "Events 2026-7",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "132",
@@ -1581,7 +1843,9 @@
     "indexable": true,
     "title": "Events 2027-3",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "133",
@@ -1593,7 +1857,9 @@
     "indexable": true,
     "title": "Events 2026-6",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   },
   {
     "id": "134",
@@ -1605,6 +1871,8 @@
     "indexable": true,
     "title": "Events 2027-4",
     "blockReason": null,
-    "wafProvider": null
+    "wafProvider": null,
+    "captureSource": null,
+    "discoverySource": "link"
   }
 ]

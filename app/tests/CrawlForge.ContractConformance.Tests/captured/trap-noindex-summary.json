@@ -25,7 +25,7 @@
     "fetched": 132,
     "errorCount": 1,
     "blockedCount": 0,
-    "averageTtfbMs": 0.5
+    "averageTtfbMs": 0.584
   },
   "waf": null,
   "throttle": {

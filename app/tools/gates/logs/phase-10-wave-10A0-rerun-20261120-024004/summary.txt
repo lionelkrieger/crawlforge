@@ -1,0 +1,5 @@
+MSBUILDDISABLENODEREUSE=1 (prevents the Acceptance stdout-pipe deadlock from orphaned MSBuild nodeReuse children; build outputs unchanged)
+01-host-build: exit 0
+02-frontend-build: exit 0
+03-electron-tsc: exit 0
+04-solution-tests: exit 1

@@ -11,8 +11,8 @@
     "configurationId": "1",
     "state": "completed",
     "phase": "finalizing",
-    "startedAt": "2026-11-19T15:45:43.534851\u002B00:00",
-    "completedAt": "2026-11-19T15:45:52.7101458\u002B00:00",
+    "startedAt": "2026-11-20T03:09:05.6634261\u002B00:00",
+    "completedAt": "2026-11-20T03:09:16.9567493\u002B00:00",
     "counters": {
       "queued": 134,
       "fetched": 134,
@@ -20,9 +20,9 @@
       "blocked": 0,
       "wafBlocked": 0
     },
-    "elapsedSeconds": 9.175,
-    "throughputPerSecond": 14.604,
-    "estimatedRemainderSeconds": 9.175,
+    "elapsedSeconds": 11.293,
+    "throughputPerSecond": 11.865,
+    "estimatedRemainderSeconds": 11.293,
     "errorMessage": null
   },
   "mechanism": "StartAuditAsync crawl \u002B IngestAsync insert the same canonical URL concurrently; UNIQUE(audit_id, canonical_url) violation (CrawlPhaseAsync or IngestAsync depending on race order)",

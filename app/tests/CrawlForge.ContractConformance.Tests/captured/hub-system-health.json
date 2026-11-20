@@ -1,66 +1,66 @@
 [
   {
-    "receivedAt": "2026-11-19T15:45:07.6012534\u002B00:00",
+    "receivedAt": "2026-11-20T03:08:28.7422634\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-19T15:45:07.5971264\u002B00:00",
-      "backendWorkingSetBytes": 128516096,
-      "managedHeapBytes": 12373072,
+      "timestamp": "2026-11-20T03:08:28.7412186\u002B00:00",
+      "backendWorkingSetBytes": 143777792,
+      "managedHeapBytes": 11109552,
       "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
-      "sqliteWalBytes": 634512,
+      "sqliteWalBytes": 1442032,
       "auditId": "1"
     }
   },
   {
-    "receivedAt": "2026-11-19T15:45:09.6006292\u002B00:00",
+    "receivedAt": "2026-11-20T03:08:30.7431414\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-19T15:45:09.599875\u002B00:00",
-      "backendWorkingSetBytes": 143302656,
-      "managedHeapBytes": 12373072,
+      "timestamp": "2026-11-20T03:08:30.7423109\u002B00:00",
+      "backendWorkingSetBytes": 153010176,
+      "managedHeapBytes": 11109552,
       "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
-      "sqliteWalBytes": 1466752,
+      "sqliteWalBytes": 1751032,
       "auditId": "1"
     }
   },
   {
-    "receivedAt": "2026-11-19T15:45:11.5927419\u002B00:00",
+    "receivedAt": "2026-11-20T03:08:32.7456736\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-19T15:45:11.5922005\u002B00:00",
-      "backendWorkingSetBytes": 151351296,
-      "managedHeapBytes": 12373072,
-      "gcGen0Count": 4,
-      "gcGen1Count": 1,
-      "gcGen2Count": 0,
-      "sqliteWalBytes": 1821072,
-      "auditId": "1"
-    }
-  },
-  {
-    "receivedAt": "2026-11-19T15:45:13.5969029\u002B00:00",
-    "payload": {
-      "timestamp": "2026-11-19T15:45:13.5963248\u002B00:00",
+      "timestamp": "2026-11-20T03:08:32.7449345\u002B00:00",
       "backendWorkingSetBytes": 158855168,
-      "managedHeapBytes": 12373072,
+      "managedHeapBytes": 11109552,
       "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
-      "sqliteWalBytes": 2146552,
+      "sqliteWalBytes": 2080632,
       "auditId": "1"
     }
   },
   {
-    "receivedAt": "2026-11-19T15:45:15.5980454\u002B00:00",
+    "receivedAt": "2026-11-20T03:08:34.7385405\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-19T15:45:15.5975825\u002B00:00",
-      "backendWorkingSetBytes": 175517696,
-      "managedHeapBytes": 20832544,
+      "timestamp": "2026-11-20T03:08:34.738064\u002B00:00",
+      "backendWorkingSetBytes": 166912000,
+      "managedHeapBytes": 33428544,
       "gcGen0Count": 5,
       "gcGen1Count": 2,
       "gcGen2Count": 1,
-      "sqliteWalBytes": 2851072,
+      "sqliteWalBytes": 2785152,
+      "auditId": "1"
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T03:08:36.740566\u002B00:00",
+    "payload": {
+      "timestamp": "2026-11-20T03:08:36.7400584\u002B00:00",
+      "backendWorkingSetBytes": 178196480,
+      "managedHeapBytes": 18495616,
+      "gcGen0Count": 6,
+      "gcGen1Count": 3,
+      "gcGen2Count": 1,
+      "sqliteWalBytes": 3300152,
       "auditId": "1"
     }
   }

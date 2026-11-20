@@ -8,5 +8,7 @@
   "indexable": false,
   "title": "Noindex page",
   "blockReason": null,
-  "wafProvider": null
+  "wafProvider": null,
+  "captureSource": null,
+  "discoverySource": "seed"
 }
