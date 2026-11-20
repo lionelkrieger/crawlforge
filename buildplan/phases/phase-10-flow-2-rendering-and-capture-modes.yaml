@@ -42,9 +42,10 @@ workpieces:
   - workpiece_id: "WP-10-01"
     title: "Direct CDP Rendering Layer, Pinned Bundled Browser & Loopback Proxy Capture"
     phase_id: "phase-10"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "cf-wp-10-01"
     started_at: "2026-11-20T03:15:00Z"
+    completed_at: "2026-11-20T05:25:00Z"
     parallel_group: "wave-10A"
     depends_on_workpieces: ["WP-08-03", "WP-08-04"]
     context_files:

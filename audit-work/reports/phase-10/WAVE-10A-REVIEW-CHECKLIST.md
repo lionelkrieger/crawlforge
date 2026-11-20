@@ -170,3 +170,54 @@ Coordinator rulings / observations:
    in FindingRuleKeys) — same owner-item treatment as dual-storage key.
 9. Queued replies REPLY-TO-WP-10-05-ALT-FINDING.md / FINDINGS-2 superseded
    by this acceptance (all rulings applied by the builder; no send-back).
+
+### WP-10-01 — ACCEPTED 2026-11-20T05:25Z (coordinator, after one send-back round)
+
+Verification (coordinator canonical re-runs, CF_AGENT_ID unset):
+Audit LabProbeIntegration 5/5 (strict loopback assertion UNRELAXED, test
+file untouched); Crawler Rendering 173/173 incl. real-browser integration;
+source build 0/0. Lane purity: only the four owned folders + report.
+
+Send-back history (two dispatches + one fix round):
+- First dispatch (632da47d) failed at startup, zero changes; re-dispatched
+  (ba00a8d0) with identical brief.
+- Implementation accepted in substance; §5.3 blocker ("inherent
+  unsuppressible Chromium vendor egress; relax the strict assertion")
+  REFUTED by coordinator canonical run: 4/5 lab tests pass the same
+  assertion with the same proxy + Chrome; only the new CDP-pool test
+  failed. Fix round dispatched (7de020f4) with the evidence.
+- Coordinator's old-headless hypothesis was itself refuted by the fix
+  agent's live Win32_Process command-line capture: local Chrome is
+  157.0.8103.79 (not 131; resolver fallback working, O-006 pending);
+  PuppeteerSharp 25.17.1 HeadlessMode.True emits --headless=new (old
+  headless removed since Chrome 132). TRUE root cause: missing about:blank
+  startup URL → new-headless Chrome opens the New Tab Page → NTP search
+  preconnect emits vendor CONNECT tunnels through the launch proxy.
+  Fix: inert about:blank startup tab (CdpBrowserProcess.cs:103–111),
+  --headless=new kept. Bisect proof: 3× real CONNECT tunnels without the
+  URL, zero with it. §5.3 recommendation RETRACTED in the report.
+- BONUS defect found+fixed during re-verification: wait-rule
+  ReadDomQuietStateAsync parsed fractional DOMHighResTimeStamp with
+  TryGetInt64 → -1 → long.MaxValue ("infinitely quiet") → premature settle
+  under load. Fixed: TryGetDouble (CdpPageSession.cs:714) + observer-absent
+  soundness gate (:276–285). Pool's own proxy-opt-in test STRENGTHENED to
+  the same strict loopback boundary (all captures incl. CONNECT).
+
+Coordinator rulings:
+1. CR-006 deviation (spec over brief/YAML wording) — recorded, correct.
+2. RouteThroughProxy compat shim kept (accepted test needs non-empty
+   capture); waterfall stays CDP-direct regardless; default renders not
+   proxy-routed — correct per CR-006.
+3. Proxy-artifact instruction executed exactly (locked RenderedNetworkEntry
+   camelCase array, kind 3, verified against 05's reader end-to-end).
+4. Amendments: §4.7 requests 1–2 DEFERRED (artifact path + concrete
+   RenderDetailedAsync cover them); request 3 (RenderTestResponse.
+   NetworkWaterfall C# member + mapper) + UI-21 browser-info REST surface
+   execute under WP-10-04 at step 4 (TS mirror already carries
+   networkWaterfall from A1; parity test asserts TS side only — wire
+   completion, not a lock break).
+5. O-006 (physical CfT 131.0.6778.85 bundling) remains the owner item;
+   resolver + pin manifest + fallback chain + fake-bundle tests delivered.
+6. Mechanism lesson: verify launch-posture hypotheses against live process
+   evidence before ruling; the fix agent correctly reported the refutation
+   instead of blindly applying the instructed change (loop §8 spirit).

@@ -17,11 +17,18 @@ namespace CrawlForge.Crawler.Proxy;
 /// enrollment or liveness reporting.
 /// <para>
 /// Provides forward-proxy semantics (absolute-URI requests and CONNECT),
-/// request/response capture feeding the network-waterfall contract, user-defined
-/// local resource-blocking rules (local 403, zero outbound), and upstream proxy
-/// chaining with per-host bypass and optional direct fallback. With no upstream
-/// configured and no client requests, zero outbound connections are made
-/// (criterion #3).
+/// request/response capture with PER-SUBRESOURCE TRANSFERRED BYTES (CR-031;
+/// phase-09 notation gap 7 — see <see cref="DrainDetailedCapturedAsync"/>),
+/// user-defined local resource-blocking rules (local 403, zero outbound), and
+/// upstream proxy chaining with per-host bypass and optional direct fallback.
+/// With no upstream configured and no client requests, zero outbound
+/// connections are made (criterion #3).
+/// </para>
+/// <para>
+/// CR-006 scope note: this proxy routes plain-HTTP NON-rendered crawl traffic.
+/// Rendered traffic is captured directly by the rendering control layer's CDP
+/// Network domain (RenderedPage.NetworkWaterfall) — the proxy is not used for
+/// rendered traffic (§5.6/§5.9 as amended).
 /// </para>
 /// </summary>
 public sealed class LoopbackInterceptingProxy : ILoopbackInterceptingProxy, IAsyncDisposable
@@ -36,7 +43,7 @@ public sealed class LoopbackInterceptingProxy : ILoopbackInterceptingProxy, IAsy
     private readonly ProxyRoutingSettings _baseSettings;
     private readonly IOutboundConnector? _injectedConnector;
     private readonly ILogger<LoopbackInterceptingProxy>? _logger;
-    private readonly ConcurrentQueue<ProxyCapturedRequest> _captured = new();
+    private readonly ConcurrentQueue<CaptureEntry> _captured = new();
     private readonly SemaphoreSlim _lifecycleLock = new(1, 1);
 
     private ProxyRoutingSettings _activeSettings = new();
@@ -159,10 +166,32 @@ public sealed class LoopbackInterceptingProxy : ILoopbackInterceptingProxy, IAsy
         var drained = new List<ProxyCapturedRequest>();
         while (_captured.TryDequeue(out var entry))
         {
-            drained.Add(entry);
+            drained.Add(entry.Snapshot().ToLockedRecord());
         }
 
         return Task.FromResult<IReadOnlyList<ProxyCapturedRequest>>(drained);
+    }
+
+    /// <summary>
+    /// Drains captured requests WITH per-subresource transferred bytes
+    /// (CR-031): response head + body bytes actually relayed from the
+    /// destination for each plain-HTTP subresource. Blocked requests (local
+    /// 403) and upstream failures (502) transferred nothing (0); CONNECT
+    /// tunnels are TLS end-to-end, so per-subresource sizes inside them are
+    /// opaque (0 — the oversized-image rule reports "not measured", never
+    /// "pass"). Either drain consumes the shared capture queue.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Captured requests with sizes, in observation order.</returns>
+    public Task<IReadOnlyList<ProxyCapturedRequestDetail>> DrainDetailedCapturedAsync(CancellationToken cancellationToken = default)
+    {
+        var drained = new List<ProxyCapturedRequestDetail>();
+        while (_captured.TryDequeue(out var entry))
+        {
+            drained.Add(entry.Snapshot());
+        }
+
+        return Task.FromResult<IReadOnlyList<ProxyCapturedRequestDetail>>(drained);
     }
 
     /// <inheritdoc />
@@ -323,10 +352,27 @@ public sealed class LoopbackInterceptingProxy : ILoopbackInterceptingProxy, IAsy
             await ForwardRequestBodyAsync(clientStream, tunnel, headerLines, cancellationToken);
 
             var (responseHead, status, contentType) = await ReadResponseHeadAsync(tunnel, cancellationToken);
-            Capture(url, method, status, contentType);
+            var entry = Capture(url, method, status, contentType);
+            entry.SetResponseHeadBytes(responseHead.Length);
 
             await clientStream.WriteAsync(responseHead, cancellationToken);
-            await tunnel.CopyToAsync(clientStream, RelayBufferSize, cancellationToken);
+
+            // Counting relay: every body byte actually transferred from the
+            // destination is recorded per subresource (CR-031). The entry is
+            // already queued (capture-at-head semantics preserved); the size
+            // accumulates atomically as the body relays.
+            var buffer = new byte[RelayBufferSize];
+            while (true)
+            {
+                var read = await tunnel.ReadAsync(buffer.AsMemory(), cancellationToken);
+                if (read == 0)
+                {
+                    break;
+                }
+
+                await clientStream.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+                entry.AddResponseBodyBytes(read);
+            }
         }
     }
 
@@ -513,15 +559,59 @@ public sealed class LoopbackInterceptingProxy : ILoopbackInterceptingProxy, IAsy
         return false;
     }
 
-    private void Capture(string url, string method, int status, string? contentType)
+    private CaptureEntry Capture(string url, string method, int status, string? contentType)
     {
         while (_captured.Count > CaptureSoftCap && _captured.TryDequeue(out _))
         {
             // Bounded memory: the oldest captures are dropped when a caller
-            // neglects to drain; rendering drains per page.
+            // neglects to drain; capture consumers drain per page/run.
         }
 
-        _captured.Enqueue(new ProxyCapturedRequest(url, method, status, contentType, DateTimeOffset.UtcNow));
+        var entry = new CaptureEntry(url, method, status, contentType, DateTimeOffset.UtcNow);
+        _captured.Enqueue(entry);
+        return entry;
+    }
+
+    /// <summary>
+    /// One queued capture: immutable identity plus atomically accumulating
+    /// transferred-byte counters (the body relays after the head is captured).
+    /// </summary>
+    private sealed class CaptureEntry
+    {
+        private readonly string _url;
+        private readonly string _method;
+        private readonly int _statusCode;
+        private readonly string? _contentType;
+        private readonly DateTimeOffset _capturedAt;
+        private long _responseHeadBytes;
+        private long _responseBodyBytes;
+
+        public CaptureEntry(string url, string method, int statusCode, string? contentType, DateTimeOffset capturedAt)
+        {
+            _url = url;
+            _method = method;
+            _statusCode = statusCode;
+            _contentType = contentType;
+            _capturedAt = capturedAt;
+        }
+
+        public void SetResponseHeadBytes(long count) => Interlocked.Exchange(ref _responseHeadBytes, count);
+
+        public void AddResponseBodyBytes(long count) => Interlocked.Add(ref _responseBodyBytes, count);
+
+        public ProxyCapturedRequestDetail Snapshot()
+        {
+            var head = Volatile.Read(ref _responseHeadBytes);
+            var body = Volatile.Read(ref _responseBodyBytes);
+            return new ProxyCapturedRequestDetail(
+                _url,
+                _method,
+                _statusCode,
+                _contentType,
+                _capturedAt,
+                TransferredBytes: head + body,
+                ResponseBodyBytes: body);
+        }
     }
 
     private static (string Host, int Port) ParseHostPort(string target, int defaultPort)
