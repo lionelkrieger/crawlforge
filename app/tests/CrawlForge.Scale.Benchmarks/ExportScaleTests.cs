@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Text.Json;
+using System.Xml.Linq;
 using CrawlForge.Api.Controllers;
 using CrawlForge.Contracts.Api;
 using CrawlForge.Contracts.Entities;
@@ -85,10 +86,15 @@ public sealed class ExportScaleTests
         using (var archive = new ZipArchive(stream, ZipArchiveMode.Read))
         {
             Assert.NotNull(archive.GetEntry("xl/workbook.xml"));
-            var urlSheet = archive.Entries.FirstOrDefault(e =>
-                e.FullName.StartsWith("xl/worksheets/", StringComparison.Ordinal) && e.Length > 10_000_000);
+            // Resolve the URL worksheet BY NAME through the workbook relationship
+            // map. The old first-entry-over-10MB heuristic selected the SUMMARY
+            // sheet once D-021's three new scoring categories grew it past 10 MB
+            // (phase-10 wave-10A0 gate); name resolution is stable regardless of
+            // sheet sizes. The row-population assertion is unchanged.
+            var urlSheet = ResolveWorksheet(archive, "urls");
             Assert.NotNull(urlSheet);
-            urlSheetRows = await CountSheetRowsAsync(urlSheet!, cancellationToken);
+            Assert.True(urlSheet!.Length > 10_000_000, "URL worksheet suspiciously small.");
+            urlSheetRows = await CountSheetRowsAsync(urlSheet, cancellationToken);
         }
         Assert.Equal(DeterministicDataset.UrlCount + 1, urlSheetRows);
 
@@ -189,6 +195,45 @@ public sealed class ExportScaleTests
             carry = chunk.Length >= 6 ? chunk[^6..] : chunk;
         }
         return rows;
+    }
+
+    private static ZipArchiveEntry? ResolveWorksheet(ZipArchive archive, string sheetName)
+    {
+        var workbookEntry = archive.GetEntry("xl/workbook.xml");
+        var relsEntry = archive.GetEntry("xl/_rels/workbook.xml.rels");
+        if (workbookEntry is null || relsEntry is null)
+        {
+            return null;
+        }
+
+        XNamespace main = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+        XNamespace officeRel = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        XNamespace packageRel = "http://schemas.openxmlformats.org/package/2006/relationships";
+
+        using var workbookStream = workbookEntry.Open();
+        var workbook = XDocument.Load(workbookStream);
+        var relationshipId = workbook.Descendants(main + "sheet")
+            .FirstOrDefault(sheet => (string?)sheet.Attribute("name") == sheetName)
+            ?.Attribute(officeRel + "id")?.Value;
+        if (relationshipId is null)
+        {
+            return null;
+        }
+
+        using var relsStream = relsEntry.Open();
+        var relationships = XDocument.Load(relsStream);
+        var target = relationships.Descendants(packageRel + "Relationship")
+            .FirstOrDefault(relationship => (string?)relationship.Attribute("Id") == relationshipId)
+            ?.Attribute("Target")?.Value;
+        if (target is null)
+        {
+            return null;
+        }
+
+        // Targets may be package-absolute ("/xl/worksheets/sheet2.xml") or
+        // relative to the xl/ part folder ("worksheets/sheet2.xml").
+        var path = target.StartsWith('/') ? target.TrimStart('/') : "xl/" + target;
+        return archive.GetEntry(path);
     }
 
     private static async Task<SeedManifest> EnsureSeededAsync(CancellationToken cancellationToken)
