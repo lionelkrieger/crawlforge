@@ -1,10 +1,10 @@
 [
   {
-    "receivedAt": "2026-11-20T05:33:29.3357735\u002B00:00",
+    "receivedAt": "2026-11-20T07:36:29.6889565\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-20T05:33:29.3350338\u002B00:00",
-      "backendWorkingSetBytes": 144023552,
-      "managedHeapBytes": 11979960,
+      "timestamp": "2026-11-20T07:36:29.6877378\u002B00:00",
+      "backendWorkingSetBytes": 142729216,
+      "managedHeapBytes": 11078904,
       "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
@@ -13,11 +13,11 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T05:33:31.3391849\u002B00:00",
+    "receivedAt": "2026-11-20T07:36:31.6887019\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-20T05:33:31.3379397\u002B00:00",
-      "backendWorkingSetBytes": 152449024,
-      "managedHeapBytes": 11979960,
+      "timestamp": "2026-11-20T07:36:31.6880305\u002B00:00",
+      "backendWorkingSetBytes": 150581248,
+      "managedHeapBytes": 11078904,
       "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
@@ -26,11 +26,11 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T05:33:33.324383\u002B00:00",
+    "receivedAt": "2026-11-20T07:36:33.6890155\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-20T05:33:33.3235512\u002B00:00",
-      "backendWorkingSetBytes": 158375936,
-      "managedHeapBytes": 11979960,
+      "timestamp": "2026-11-20T07:36:33.6885532\u002B00:00",
+      "backendWorkingSetBytes": 158683136,
+      "managedHeapBytes": 11078904,
       "gcGen0Count": 4,
       "gcGen1Count": 1,
       "gcGen2Count": 0,
@@ -39,28 +39,28 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T05:33:35.32523\u002B00:00",
+    "receivedAt": "2026-11-20T07:36:35.6892174\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-20T05:33:35.324734\u002B00:00",
-      "backendWorkingSetBytes": 176455680,
-      "managedHeapBytes": 20924120,
+      "timestamp": "2026-11-20T07:36:35.6887472\u002B00:00",
+      "backendWorkingSetBytes": 175964160,
+      "managedHeapBytes": 16925344,
       "gcGen0Count": 5,
       "gcGen1Count": 2,
       "gcGen2Count": 1,
-      "sqliteWalBytes": 2760432,
+      "sqliteWalBytes": 2785152,
       "auditId": "1"
     }
   },
   {
-    "receivedAt": "2026-11-20T05:33:37.3348351\u002B00:00",
+    "receivedAt": "2026-11-20T07:36:37.6902439\u002B00:00",
     "payload": {
-      "timestamp": "2026-11-20T05:33:37.3343107\u002B00:00",
-      "backendWorkingSetBytes": 178200576,
-      "managedHeapBytes": 20924120,
+      "timestamp": "2026-11-20T07:36:37.6897729\u002B00:00",
+      "backendWorkingSetBytes": 178249728,
+      "managedHeapBytes": 16925344,
       "gcGen0Count": 5,
       "gcGen1Count": 2,
       "gcGen2Count": 1,
-      "sqliteWalBytes": 3275432,
+      "sqliteWalBytes": 3300152,
       "auditId": "1"
     }
   }

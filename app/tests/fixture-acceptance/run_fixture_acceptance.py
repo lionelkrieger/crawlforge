@@ -363,45 +363,207 @@ def ui_entry_audit(rest: RestClient, cdp: CdpSession, fixture: FixtureServer, re
     return run, data, evidence
 
 
-def wire_probe_run(mode: str, rest: RestClient, fixture: FixtureServer, results: ResultsDir,
-                   ts: str, traps: list[dict], selected: list[str] | None) -> dict:
-    """dual/adaptive: MEASURE the wire-contract absence (no audit is run — the
-    mode cannot be exercised through any normal entry point)."""
-    name = f"Fixture harness wire-probe {mode} {ts}"
-    project = create_project(rest, name, f"{WORKPIECE} — probe for {mode} capture wire support")
+def ui_capture_mode_audit(mode: str, rest: RestClient, cdp: CdpSession, fixture: FixtureServer,
+                          results: ResultsDir, ts: str, traps: list[dict],
+                          selected: list[str] | None) -> tuple[dict, dict]:
+    """js/dual/adaptive (WP-10-04 conversion of the former wire_probe_run):
+    a REAL audit started through the UI with the capture mode selected IN THE
+    UI-04 capture tab. Project via the UI New project dialog; limits bounded
+    via REST PUT (the UI has no limit controls — recorded); mode selected and
+    saved through the configuration editor over CDP; started with the hub
+    Start audit button; trap matrix evaluated on real capture evidence.
+    The historical wire-probe absence measurement is superseded: the
+    captureMode/captureSettings wire binding is live (WP-10-A1 + WP-10-02)."""
+    name = f"Fixture harness {mode} {ts}"
+    evidence: dict = {
+        "flow": f"UI New project dialog -> REST PUT limits -> UI-04 capture tab mode={mode} -> UI save -> UI Start audit -> CDP UI-10 inspection",
+        "note_no_ui_limit_controls": "Limits bounded via REST PUT /api/configurations/{id} (subset update), read back to verify.",
+        "capture_mode": mode,
+    }
+    cdp.events(clear=True)
+    cdp.click(testid="nav-hub")
+    cdp.wait(900)
+    cdp.click(testid="new-project-button")
+    cdp.must_wait_for(testid="create-project-modal", timeout_ms=10000)
+    cdp.wait(400)
+    cdp.fill(name, testid="project-name-input")
+    cdp.fill(fixture.base_url + "/", testid="project-url-input")
+    cdp.fill(f"{WORKPIECE} fixture acceptance — {mode} capture mode (UI entry)", testid="project-description-input")
+    cdp.click(testid="create-project-submit")
+    project = None
+    post_seen = False
+    deadline = time.monotonic() + 25.0
+    while time.monotonic() < deadline:
+        ev = cdp.events()
+        if any(r.get("method") == "POST" and (r.get("url") or "").rstrip("/").endswith("/api/projects")
+               for r in ev.get("requests") or []):
+            post_seen = True
+        projects = rest.paged("/api/projects")
+        project = next((p for p in projects if p.get("name") == name), None)
+        if project is not None:
+            break
+        time.sleep(0.7)
+    evidence["create_post_seen"] = post_seen
+    if project is None:
+        evidence["proven"] = False
+        results.write_json(f"ui-capture-{mode}.json", evidence)
+        raise RuntimeError(f"{mode}: UI project creation did not produce a project row within 25s")
     pid = project["id"]
-    body = {
-        "name": f"Fixture harness {mode} probe",
-        "startUrls": [fixture.base_url + "/"],
-        "respectRobotsTxt": True,
-        "rendering": {"enabled": True, "deviceProfile": "desktop", "infiniteScroll": False, "captureConsole": True},
-        "captureMode": mode,
-        "renderingMode": mode,
-    }
-    status, created = rest.request("POST", f"/api/projects/{pid}/configurations", body)
-    readback = None
-    cid = None
-    if isinstance(created, dict) and created.get("data"):
-        cid = created["data"].get("id")
-        readback = rest.data("GET", f"/api/configurations/{cid}")
-    wire_evidence = (
-        f"POST configuration with captureMode={mode!r}/renderingMode={mode!r} -> HTTP {status}; "
-        f"read-back rendering={json.dumps((readback or {}).get('rendering'))}; "
-        f"captureMode persisted={(readback or {}).get('captureMode') is not None}; "
-        "RenderingSettingsWire members are only enabled/deviceProfile/infiniteScroll/captureConsole "
-        "(app/src/backend/CrawlForge.Api/Controllers/ProjectWireContracts.cs:23) — no dual/adaptive capture contract exists."
-    )
-    results.write_json(f"wire-probe-{mode}.json", {"request": body, "status": status, "created": created, "readback": readback})
+    configs = rest.paged(f"/api/projects/{pid}/configurations")
+    if not configs:
+        raise RuntimeError(f"{mode}: UI New project dialog did not create a default configuration")
+    cid = configs[0]["id"]
+    evidence["project_id"] = pid
+    evidence["configuration_id"] = cid
+    bounded = bound_configuration_limits(rest, cid, BULK_LIMITS)
+    evidence["rest_limit_bounding"] = {"put_payload": {"limits": BULK_LIMITS}, "read_back_limits": bounded.get("limits")}
+    log(f"{mode} capture: project {pid} via dialog; config {cid} bounded via REST PUT")
+
+    # ── Mode selection IN THE UI (criterion #50/#51/#52 requirement) ─────────
+    cdp.click(testid=f"project-row-{pid}")
+    cdp.must_wait_for(testid="project-overview", timeout_ms=10000)
+    cdp.click(testid="overview-nav-configurations")
+    cdp.must_wait_for(testid="configurations-view", timeout_ms=10000)
+    cdp.click(testid=f"configuration-edit-{cid}")
+    cdp.must_wait_for(testid="configurations-editor-pane", timeout_ms=10000)
+    cdp.click(testid="config-tab-crawl-as")
+    cdp.must_wait_for(testid="config-panel-crawl-as", timeout_ms=10000)
+    cdp.wait(300)
+    # Native select driven through the React value setter + bubbling change
+    # (same technique as the UI-12 category walker probe).
+    set_result = cdp.eval(
+        "(() => { const el = document.querySelector('[data-testid=\"config-capture-mode\"]');"
+        " if (!el) return 'missing';"
+        " const setter = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, 'value').set;"
+        f" setter.call(el, {json.dumps(mode)});"
+        " el.dispatchEvent(new Event('change', { bubbles: true }));"
+        " return el.value; })()")
+    evidence["mode_select_result"] = set_result
+    cdp.shot(results.path("screenshots") / f"UI-04-capture-{mode}.png")
+    if set_result != mode:
+        evidence["proven"] = False
+        results.write_json(f"ui-capture-{mode}.json", evidence)
+        raise RuntimeError(f"{mode}: capture-mode select did not take the value (result={set_result!r})")
+    cdp.click(testid="configuration-save")
+    saved = False
+    deadline = time.monotonic() + 15.0
+    while time.monotonic() < deadline:
+        if cdp.count("[data-testid='configurations-editor-pane']") == 0:
+            saved = True
+            break
+        time.sleep(0.5)
+    readback = rest.data("GET", f"/api/configurations/{cid}")
+    evidence["save_closed_editor"] = saved
+    evidence["read_back_capture_mode"] = (readback or {}).get("captureMode")
+    evidence["read_back_rendering"] = (readback or {}).get("rendering")
+    results.write_json(f"ui-capture-{mode}-config.json", {"readback": readback})
+    if (readback or {}).get("captureMode") != mode:
+        evidence["proven"] = False
+        results.write_json(f"ui-capture-{mode}.json", evidence)
+        raise RuntimeError(f"{mode}: configuration read-back captureMode != {mode!r} after UI save")
+    if not ((readback or {}).get("rendering") or {}).get("enabled"):
+        evidence["proven"] = False
+        results.write_json(f"ui-capture-{mode}.json", evidence)
+        raise RuntimeError(f"{mode}: rendering.enabled not true after selecting capture mode {mode!r}")
+    log(f"{mode} capture: mode selected + saved through UI-04; read-back captureMode={mode}, rendering.enabled=true")
+
+    # ── Start the audit IN THE UI (hub Start audit button) ───────────────────
+    cdp.click(testid="back-to-hub")
+    cdp.must_wait_for(testid="new-project-button", timeout_ms=10000)
+    button_present = False
+    btn_deadline = time.monotonic() + 12.0
+    while time.monotonic() < btn_deadline:
+        button_present = cdp.count(f"[data-testid='start-audit-{pid}']") > 0
+        if button_present:
+            break
+        time.sleep(0.5)
+    evidence["start_button_visible_in_hub"] = button_present
+    if not button_present:
+        evidence["proven"] = False
+        results.write_json(f"ui-capture-{mode}.json", evidence)
+        raise RuntimeError(f"{mode}: Start audit button never rendered in the hub window; "
+                           "capture-mode acceptance requires a UI start (no REST fallback)")
+
+    def ui_start_fn() -> str:
+        baseline = rest.paged("/api/audits", params={"projectId": str(pid)})
+        baseline_max = max((int(a["id"]) for a in baseline
+                            if str(a.get("configurationId")) == str(cid)), default=0)
+        cdp.events(clear=True)
+        click_note = "clicked"
+        try:
+            r = cdp.click(testid=f"start-audit-{pid}", timeout=6.0)
+            click_note = f"clicked (method={r.get('method')}, vanished={r.get('vanishedAfterDispatch', False)})"
+        except CdpError as e:
+            click_note = f"click helper reported failure (effect wait decides): {e}"
+        new_id = None
+        post_seen = False
+        deadline = time.monotonic() + 20.0
+        while time.monotonic() < deadline:
+            ev = cdp.events()
+            if any(r.get("method") == "POST" and "/api/audits" in (r.get("url") or "")
+                   for r in ev.get("requests") or []):
+                post_seen = True
+            audits = rest.paged("/api/audits", params={"projectId": str(pid)})
+            mine = [a for a in audits if str(a.get("configurationId")) == str(cid)]
+            if mine:
+                top = max(mine, key=lambda a: int(a["id"]))
+                if int(top["id"]) > baseline_max:
+                    new_id = str(top["id"])
+                    break
+            time.sleep(0.6)
+        evidence["start_post_seen"] = post_seen
+        evidence["start_click_note"] = click_note
+        if new_id is None:
+            try:
+                evidence["start_failure_dump"] = cdp.dump()
+                cdp.shot(results.path("screenshots") / f"UI-10-{mode}-start-failed.png")
+            except CdpError as e:
+                evidence["start_failure_capture_error"] = str(e)
+            results.write_json(f"ui-capture-{mode}.json", evidence)
+            raise RuntimeError(f"{mode}: UI Start audit did not create an audit within 20s "
+                               f"(POST /api/audits seen={post_seen}; {click_note})")
+        return new_id
+
+    audit_id, polled, attempts = start_with_retry(ui_start_fn, rest, fixture, results.fixture_log,
+                                                  f"{mode} capture UI entry", cap_s=600)
+    evidence["start_attempts"] = attempts
+    evidence["proven"] = True
+    cdp.shot(results.path("screenshots") / f"UI-10-{mode}-running.png")
+    final = polled["final"]
     run = {
-        "run_id": f"{mode}-wire-probe", "mode": mode, "entry_point": "REST configuration wire probe (no audit — mode unsupported)",
-        "project_id": pid, "project_name": name, "configuration_id": cid, "audit_id": None,
-        "limit_overrides": None, "state": "not_run", "wire_probe_evidence": wire_evidence,
+        "run_id": f"{mode}-ui", "mode": mode,
+        "entry_point": "UI Start audit button (CDP) + UI-04 capture-mode selection + REST limit-bounding + REST poll",
+        "project_id": pid, "project_name": name, "configuration_id": cid, "audit_id": audit_id,
+        "limit_overrides": BULK_LIMITS, "state": str(final.get("state", "")).lower(),
+        "transitions": polled["transitions"], "duration_s": polled["elapsed_s"],
+        "timed_out": polled["timed_out"],
+        "configuration_setup": f"Project + default config via UI dialog; captureMode={mode} selected and saved through the UI-04 capture tab; rendering.enabled=true; limits bounded via REST PUT.",
+        "start_attempts": attempts,
     }
-    ctx = {"base_url": fixture.base_url, "tls_active": fixture.scheme == "https", "wire_probe_evidence": wire_evidence}
-    run["traps"] = evaluate_matrix(traps, mode, ctx, {}, selected)
+    safety_check(fixture, run, results.fixture_log)
+    data = pull_audit_data(rest, audit_id, trap_paths(traps), fixture.base_url)
+    run["url_count"] = len(data["urls"])
+    run["finding_count"] = len(data["findings"])
+    run["link_count"] = len(data["links"])
+    results.write_json(f"audit-{audit_id}-data.json", data)
+    try:
+        cdp.click(testid="nav-audits")
+        cdp.wait(1200)
+        if cdp.count(f"[data-testid='open-audit-{audit_id}']") > 0:
+            cdp.click(testid=f"open-audit-{audit_id}")
+        else:
+            cdp.click(text="Open report")
+        cdp.wait(2000)
+        evidence["ui10_completed_dump"] = cdp.dump()
+        cdp.shot(results.path("screenshots") / f"UI-10-{mode}-completed.png")
+    except CdpError as e:
+        evidence["ui10_inspection_error"] = str(e)
+    results.write_json(f"ui-capture-{mode}.json", evidence)
+    ctx = make_ctx(mode, run, data, fixture, fixture.scheme == "https")
+    run["traps"] = evaluate_matrix(traps, mode, ctx, data, selected)
     run["counts"] = count_verdicts(run["traps"])
-    log(f"mode {mode}: wire probe recorded; all selected traps not_testable ({run['counts']})")
-    return run
+    log(f"{mode} capture: audit {audit_id} {run['state']} — urls={run['url_count']} findings={run['finding_count']} counts={run['counts']}")
+    return run, data
 
 
 def mcp_flow_run(rest: RestClient, fixture: FixtureServer, results: ResultsDir, ts: str,
@@ -965,8 +1127,12 @@ def main() -> int:
         run_audit_flows = selected_traps is None or len(selected_traps) > 0
         if run_audit_flows:
             for mode in modes:
-                if mode in ("dual", "adaptive"):
-                    runs.append(wire_probe_run(mode, rest, fixture, results, ts, traps, selected_traps))
+                if mode in ("js", "dual", "adaptive"):
+                    # WP-10-04: real UI-started capture-mode audits (the former
+                    # wire-probe absence measurement is superseded).
+                    run, data = ui_capture_mode_audit(mode, rest, cdp, fixture, results, ts, traps, selected_traps)
+                    runs.append(run)
+                    bulk_datas[mode] = data
                     continue
                 if mode == "http" and not args.rest_start:
                     run, data, ui_entry_evidence = ui_entry_audit(rest, cdp, fixture, results, ts, traps, selected_traps)
@@ -992,7 +1158,7 @@ def main() -> int:
             inert = rendering_inertness(inert_src, js_data is not None)
             merged_req: dict = {"nonGet": [], "tagHits": []}
             for m in bulk_modes:
-                r = next(x for x in runs if x.get("run_id") in (f"{m}-rest", "http-ui") and x.get("mode") == m)
+                r = next(x for x in runs if x.get("run_id") in (f"{m}-rest", f"{m}-ui", "http-ui") and x.get("mode") == m)
                 fr = r.get("fixture_requests") or {}
                 merged_req["nonGet"].extend(fr.get("nonGet") or [])
                 merged_req["tagHits"].extend(fr.get("tagHits") or [])
@@ -1001,7 +1167,7 @@ def main() -> int:
                 "rendering_inert": inert, "click_activity": click_discovery_activity(pooled),
                 "fixture_requests": merged_req, "tag_hits": inspect_tag_hits(merged_req),
                 "audit_state": "completed" if all(
-                    next(x for x in runs if x.get("mode") == m and x.get("run_id") in (f"{m}-rest", "http-ui")).get("state") == "completed"
+                    next(x for x in runs if x.get("mode") == m and x.get("run_id") in (f"{m}-rest", f"{m}-ui", "http-ui")).get("state") == "completed"
                     for m in bulk_modes) else "incomplete",
                 "limit_overrides": BULK_LIMITS,
             }

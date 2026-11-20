@@ -1,0 +1,13 @@
+Wave-10A gate RETRY after two test-only reconciliations (stale superseded-behavior assertions):
+  Audit ResponseRenderedComparerTests title-delta Warning->Error (FS-CRAWL-001 7.18, WP-10-02);
+  Crawler SitemapLiveFixtureTests legacy redirects.inappropriate -> redirects.inappropriate-temporary-status (CR-029, WP-10-05).
+First attempt: 18/20 projects green incl Scale 10/10 51m39s + Security 92/92 (no DPAPI stall); the 2 failures were the stale assertions only.
+Post-fix verification: Audit 838/838, Crawler 1077/1077 (one interim live-fixture flake, clean on re-run). MSBUILDDISABLENODEREUSE=1.
+01-host-build: exit 0
+02-frontend-build: exit 0
+03-electron-tsc: exit 0
+04-solution-tests: exit 0
+05-contract-conformance: exit 0
+06-governance: exit 0
+07-traceability: exit 0
+08-buildplan: exit 0

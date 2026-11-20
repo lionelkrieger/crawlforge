@@ -26,12 +26,12 @@
     "fetched": 132,
     "errorCount": 1,
     "blockedCount": 0,
-    "averageTtfbMs": 0.795
+    "averageTtfbMs": 0.8
   },
   "waf": null,
   "throttle": {
     "throttledHostCount": 1,
-    "meanEffectiveRate": 2.108,
-    "adjustmentCount": 22
+    "meanEffectiveRate": 3.2292,
+    "adjustmentCount": 18
   }
 }

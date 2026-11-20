@@ -123,6 +123,23 @@ bundled list + Microdata LocalName; CR-031 not-measured≠pass via artifact
 reads; AuditScoreWireConformanceTests real producer→score→read-back.
 Granted one-file test extension applied exactly (five itemized assertions).
 
-### Wave-10A gate
-Running (job pwsh-cd53aa29d774472f; 8 commands; MSBUILDDISABLENODEREUSE=1).
-Result appended at completion.
+### Wave-10A gate — PASS (retry, 2026-11-20T09:35Z)
+
+First attempt (07:26Z): 18/20 test projects green incl. Scale 10/10
+(51m39s) and Security 92/92 (no DPAPI stall this time); 2 failures, BOTH
+stale assertions superseded by accepted behavior changes — reconciled by
+the coordinator (test-only, behavior-strengthening, cited):
+- Audit ResponseRenderedComparerTests.TitleAlteredByScript: Warning→Error
+  (FS-CRAWL-001 §7.18, WP-10-02).
+- Crawler SitemapLiveFixtureTests.Live_RedirectChain: legacy
+  redirects.inappropriate → redirects.inappropriate-temporary-status
+  (CR-029 per-case keys, WP-10-05).
+Retry (08:37Z, logs phase-10-wave-10A-retry-20261120-083757): ALL 8
+commands exit 0 — host build, frontend build, electron tsc, solution tests
+(20 projects; Audit 838/838, Crawler 1077/1077 incl. CaptureModes 48 +
+Rendering 173 official runs), ContractConformance, governance,
+traceability, buildplan. MSBUILDDISABLENODEREUSE=1 throughout.
+Note: owner commit cd49fb3 (D-022 gate rhythm v2.1 for phases 11–12 —
+phase 10 unaffected) accidentally swept the coordinator's uncommitted
+WP-10-04 WIP (captured shapes, evidence, the comparer reconciliation,
+plan, first gate log); nothing changed on disk; carried forward here.

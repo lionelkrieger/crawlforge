@@ -38,20 +38,25 @@ Progress log (mid-flight messages):
 - 01: actively writing (CdpRenderingModels, CdpBrowserFactory,
   FakeRenderHarness, NetworkWaterfallRecorderTests); fixing own compile
   errors iteratively; proxy-artifact + CS0050 notes queued for completion.
-- 01 fix round (7de020f4): coordinator's old-headless hypothesis REFUTED by
-  live Win32_Process command-line capture of the PASSING probe browser:
-  (1) local Chrome is 157.0.8103.79 (not 131 — no bundled CfT yet, resolver
-  fallback chain working as designed; O-006 pending); (2) PuppeteerSharp
-  25.17.1 HeadlessMode.True emits --headless=new (old headless removed from
-  the binary since 132) — headless mode is NOT the delta; (3) REAL delta:
-  PuppeteerSharp passes about:blank as the startup URL; CdpBrowserProcess
-  passes none → new-headless Chrome opens the New Tab Page → NTP emits the
-  vendor preconnect CONNECTs through the launch proxy. Fix: about:blank
-  startup URL (minimal), empirical bisection of remaining PuppeteerSharp
-  implicit defaults if needed. No assertion relaxation; Audit test untouched.
-  Lesson: verify launch-posture hypotheses against live process evidence
-  before ruling; the fix agent correctly reported the refutation instead of
-  blindly applying the instructed change (loop §8 spirit).
+- 01 fix round (7de020f4): RESOLVED — about:blank startup URL (NTP egress)
+  + latent wait-rule TryGetDouble fix; canonical 5/5 + 173/173; accepted,
+  committed 7c4b8ac. Coordinator's old-headless hypothesis refuted by live
+  process evidence (Chrome 157; PuppeteerSharp HeadlessMode.True emits
+  --headless=new; old headless removed since 132). Lesson recorded.
+- Wave-10A gate: first attempt 18/20 projects green; 2 stale assertions
+  reconciled (comparer title-delta Warning→Error §7.18; sitemap live test
+  legacy redirects.inappropriate→per-case temporary-status CR-029). RETRY
+  ALL 8 COMMANDS EXIT 0 (logs phase-10-wave-10A-retry-20261120-083757).
+  WAVE-10A GATE: PASS. Security 92/92 no stall; Scale 10/10.
+- Owner commit cd49fb3 (D-022, phases 11–12 gate rhythm — phase 10
+  unaffected) swept coordinator WIP (captured shapes, evidence, comparer
+  reconciliation, plan, first gate log). No disk changes; referenced in
+  the WP-10-04 commit + phase report.
+- Harness conversion IMPLEMENTED during the gate (python-only):
+  ui_capture_mode_audit replaces wire_probe_run for js/dual/adaptive
+  (UI-04 mode selection, no REST-start fallback); verdict gating updated;
+  t_late_meta_change strengthened (dual values + critical noindex);
+  39/39 harness unit tests. Live verification at step 5.
 
 Wave-10A ownership boundaries (no overlaps):
 - 01: Crawler/Rendering + Crawler/Proxy + assets/browser + Crawler.Tests/Rendering

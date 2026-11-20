@@ -205,7 +205,35 @@ coordinator-owned) += phase-10 definitions:
 - IssueExplorer wire list += 3 (surfaces/explorers/issues — OUTSIDE 05's
   ownership; coordinator applies 05's handoff line).
 
-## 7. Harness conversion (python — safe to edit during gate runs)
+## 7. Harness conversion — IMPLEMENTED (live verification at step 5)
+
+Done during the wave-10A gate retry (python-only, 39/39 harness unit tests):
+- `wire_probe_run` REPLACED by `ui_capture_mode_audit(mode, rest, cdp, ...)`
+  (run_fixture_acceptance.py:366+): UI dialog creation → REST limit bounding
+  → project-row → overview-nav-configurations → configuration-edit-{cid} →
+  config-tab-crawl-as → config-capture-mode native select via React value
+  setter → configuration-save → REST read-back asserts captureMode==mode AND
+  rendering.enabled==true → back-to-hub → start-audit-{pid} (NO REST
+  fallback — capture-mode acceptance requires a UI start) → start_with_retry
+  → pull data → evaluate_matrix on real evidence → UI-10 inspection.
+  run_id f"{mode}-ui"; both pooled-matrix matchers updated.
+- Dispatch: js/dual/adaptive ALL route through ui_capture_mode_audit
+  (js was REST-started before; criterion #50 wants UI-started js evidence).
+- verdicts.py gating: dual/adaptive no longer blanket-not_testable; the
+  legacy wire_probe_evidence branch kept for old contexts; capture=='dual'
+  now requires mode=='dual' (adaptive samples, cannot guarantee dual capture
+  of the trap page).
+- t_late_meta_change STRENGTHENED: asserts title delta dual values (raw
+  'Raw title before script' vs rendered 'Rendered title after script'),
+  canonical delta field==canonical → late-meta-other, and render.noindex-
+  delta critical:true + direction rendered-only + rawNoindex false +
+  renderedNoindex true + locked Error severity. partial verdict when some
+  evidence present.
+- UI dependency: config-capture-mode must be a NATIVE select (step-4 UI
+  implementation decision) and mode != non-js must set rendering.enabled.
+- ui_walker.py category assertions DONE earlier (e654361).
+
+Original design notes (kept for reference):
 
 `run_fixture_acceptance.py` — replace `wire_probe_run` (:366–404) with
 `ui_capture_mode_audit(mode, ...)` for js/dual/adaptive (dispatch :969):
@@ -253,12 +281,28 @@ raw+rendered directives, meta AND X-Robots-Tag, direction field.
 ui_12 category_probe (images→accessibility.image-alt, internationalization→
 hreflang). Step-5 regression asserts on those extra fields.
 
-## 8. Pre-crawl validation
+## 8. Pre-crawl validation + soft-404 client route
 
 Browser resolution failure must fail BEFORE the crawl (§5.6.3):
-`PreCrawlValidator` (registered :103–105) gains the browser check per 01's
-handoff — none of bundled CfT / user path / Chrome / Edge → validation
-failure with the actionable message.
+`PreCrawlValidator` (registered EngineServicesModule:103–105) gains the
+browser check per 01's handoff — none of bundled CfT / user path / Chrome /
+Edge → validation failure with the actionable message.
+
+**soft-404-client-route (WP-10-04 done_when)** — design verified against
+source: PageAuditContext.RenderedDocument ALREADY exists (locked
+PipelineContracts.cs:90) → NO contract change. Extend
+`Soft404Detector.DetectAsync` (Audit/Indexability/Soft404Detector.cs:36):
+after the raw-document evaluation, when NOT isSoft404 AND
+context.RenderedDocument is not null, run the SAME phrase/structural
+heuristics over the rendered title + visible text; on match emit the
+verdict with reason "rendered-client-route" and evidence carrying
+source="rendered" + rendered title/wordCount + raw title (dual context).
+The pipeline's dedicated ISoft404Detector step stays the SOLE emitter
+(WP-09-05 dedup preserved — one indexability.soft-404 per URL). Fixture:
+/spa/does-not-exist raw SPA shell (no error phrase) vs rendered 'Page not
+found' title → 0.9 confidence. Harness t_soft_404_client_route matches any
+'soft-404' key ✓. Component test: raw-clean + rendered-error → classified;
+raw-error unchanged; no rendered doc → unchanged behavior.
 
 ## 9. Verification order (step 5)
 

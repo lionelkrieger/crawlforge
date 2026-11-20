@@ -677,14 +677,16 @@ def evaluate_trap(trap: dict, mode: str, ctx: dict, data: dict) -> dict:
     def nt(reason: str) -> dict:
         return {"result": "not_testable", "evidence": reason}
 
-    # 1. Modes with no wire-contract support cannot be exercised at all.
-    if mode in ("dual", "adaptive"):
-        wire = ctx.get("wire_probe_evidence") or "no dual/adaptive capture field exists in RenderingSettingsWire"
+    # 1. Legacy wire-probe contexts (pre-WP-10-04 builds with no capture-mode
+    # wire support) stay not_testable. Real dual/adaptive audits (WP-10-04
+    # UI-started capture flows) evaluate normally below.
+    if mode in ("dual", "adaptive") and ctx.get("wire_probe_evidence"):
+        wire = ctx["wire_probe_evidence"]
         return nt(f"capture mode '{mode}' has no wire-contract support on this build ({wire}); the mode cannot be exercised through any normal entry point, so no trap of this mode is testable.")
 
     # 2. Capture gating.
-    if capture == "dual" and mode in ("http", "js"):
-        return nt(f"trap requires dual capture; --mode {mode} cannot exercise it (expected-results.json capture='dual').")
+    if capture == "dual" and mode != "dual":
+        return nt(f"trap requires dual capture; --mode {mode} does not dual-capture every page (expected-results.json capture='dual').")
     if capture == "js" and mode == "http":
         return nt(f"trap requires JS capture; --mode http runs with rendering.enabled=false, so it cannot be exercised.")
     if "requires_tls" in flags and not ctx.get("tls_active"):
