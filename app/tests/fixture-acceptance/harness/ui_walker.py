@@ -317,13 +317,31 @@ class UiWalker:
         shot = self.shot("UI-11-report-dashboard")
         placeholder = PLACEHOLDER_TEXT.lower() in _text(d)
         grids = any(_testid(d, t) for t in ("findings-grid", "url-explorer", "issues-grid", "dashboard-charts"))
+        # Phase-10 (D-021): capture the category score rows as evidence — the
+        # three new categories (images/securityandprotocol/internationalization)
+        # must carry real scores once the phase-gate audit has run. Testids are
+        # token-based (dashboard-score-row-{wire token}); values are read from
+        # the DOM, never inferred.
+        score_rows = {}
+        try:
+            raw = self.cdp.eval(
+                "JSON.stringify(Array.from(document.querySelectorAll('[data-testid^=\"dashboard-score-\"]'))"
+                ".filter(e => e.getAttribute('data-testid') !== 'dashboard-score-overall')"
+                ".map(e => [e.getAttribute('data-testid').replace('dashboard-score-', ''), e.textContent.trim()]))")
+            if isinstance(raw, str):
+                score_rows = dict(json.loads(raw))
+        except (CdpError, ValueError, TypeError):
+            score_rows = {}
         if placeholder and not grids:
             self.record("UI-11", "reachable_but_placeholder",
                         f"Report workspace shows the static placeholder text '{PLACEHOLDER_TEXT}' and no dashboard "
                         "data grid/chart. Live telemetry above it is real, but the Dashboard surface itself is an empty frame (CR-018: never functional).",
-                        shot)
+                        shot, extra={"category_scores": score_rows})
         elif grids:
-            self.record("UI-11", "reachable_and_functional", "Dashboard grids/charts render real aggregate data.", shot)
+            self.record("UI-11", "reachable_and_functional",
+                        f"Dashboard grids/charts render real aggregate data. Category score rows present: "
+                        f"{sorted(score_rows.keys())}.",
+                        shot, extra={"category_scores": score_rows})
         else:
             self.record("UI-11", "not_reachable", "No report workspace mounted.", shot)
 
@@ -342,8 +360,73 @@ class UiWalker:
                         "telemetry labels do not count); the report frame exposes only live telemetry and the "
                         "placeholder pane (see UI-11).", shot)
 
+    def _set_category_filter(self, token: str) -> str:
+        """Drive the IssueExplorer native <select> through the React value
+        setter + a bubbling change event (the only reliable way to change a
+        controlled native select over CDP). Returns the select's value."""
+        expr = (
+            "(() => { const el = document.querySelector('[data-testid=\"issues-filter-category\"]');"
+            " if (!el) return 'missing';"
+            " const setter = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, 'value').set;"
+            f" setter.call(el, {json.dumps(token)});"
+            " el.dispatchEvent(new Event('change', { bubbles: true }));"
+            " return el.value; })()")
+        result = self.cdp.eval(expr)
+        return str(result)
+
+    def ui_12_category_probe(self) -> dict:
+        """Phase-10 (D-021) regression: missing-alt must appear under Images
+        and hreflang-no-return under Internationalization in the issue
+        explorer's category filter. Runs against the CURRENT report audit;
+        every step is recorded, nothing inferred."""
+        probe: dict = {"steps": []}
+        d = self.dump()
+        if not _testid(d, "issues-grid"):
+            try:
+                self.cdp.click(text="Issue explorer")
+                self.cdp.wait(1200)
+            except CdpError as e:
+                probe["steps"].append({"action": "open Issue explorer", "error": str(e)})
+                probe["reachable"] = False
+                return probe
+            d = self.dump()
+        probe["reachable"] = _testid(d, "issues-grid")
+        if not probe["reachable"]:
+            return probe
+        for token, needle in (("images", "accessibility.image-alt"),
+                              ("internationalization", "hreflang")):
+            step: dict = {"category": token, "needle": needle}
+            try:
+                step["select_value"] = self._set_category_filter(token)
+                self.cdp.wait(1200)
+                grid = self.dump()
+                step["grid_mounted"] = _testid(grid, "issues-grid")
+                step["needle_present"] = needle.lower() in _text(grid)
+                step["row_count"] = self.cdp.count(
+                    "[data-testid^='issues-suppress-'], [data-testid^='issues-unsuppress-']")
+                step["screenshot"] = self.shot(f"UI-12-category-{token}")
+            except CdpError as e:
+                step["error"] = str(e)
+            probe["steps"].append(step)
+        try:
+            self._set_category_filter("")
+            self.cdp.wait(600)
+        except CdpError:
+            pass
+        return probe
+
     def ui_12(self):
         self._report_nav_absent("UI-12", ["Issue explorer", "Issues"], "UI-12-attempt")
+        # D-021 category assertions (phase-10 step-5 regression reads these).
+        probe = self.ui_12_category_probe()
+        entry = self.results.get("UI-12")
+        if entry is not None:
+            entry["category_probe"] = probe
+            summary = "; ".join(
+                f"{s.get('category')}: needle_present={s.get('needle_present')} rows={s.get('row_count')}"
+                for s in probe.get("steps", []))
+            if summary:
+                entry["evidence"] += f" Category-filter probe — {summary}."
 
     def ui_13(self):
         self._report_nav_absent("UI-13", ["URL explorer", "URLs"], "UI-13-attempt")
