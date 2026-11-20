@@ -9,12 +9,15 @@ namespace CrawlForge.Crawler.Fetching;
 /// Emits redirect findings from recorded chains and chain violations
 /// (CAP-A-010/011, CAP-B-049/050/051): <c>redirects.loop</c> (Error),
 /// <c>redirects.chain</c> (Warning for 2+ hops; Error on chain-cap violation),
-/// and <c>redirects.inappropriate</c> (Warning; configurable check set —
-/// documented rule definition pending owner confirmation, see
-/// <see cref="RedirectInappropriatenessChecks"/>). Pure component: facts in,
-/// <see cref="FindingDto"/> drafts out (Id 0); the engine persists them
-/// (WP-09-11 wiring). Evidence carries the full hop chain in the canonical
-/// <see cref="RedirectChainJson"/> shape. Stateless; safe under concurrency.
+/// and the four CR-029 inappropriate-redirect case findings
+/// (<c>redirects.inappropriate-{cross-host,temporary-status,non-indexable-target,
+/// https-downgrade}</c>, Warning; each case an independent configuration
+/// toggle, all on by default — absent/null <see cref="RedirectCheckSettings"/>
+/// = all ON). Every case finding names the case, the triggering hop and the
+/// final target. Pure component: facts in, <see cref="FindingDto"/> drafts out
+/// (Id 0); the engine persists them. Evidence carries the full hop chain in
+/// the canonical <see cref="RedirectChainJson"/> shape. Stateless; safe under
+/// concurrency.
 /// </summary>
 public sealed class RedirectFindingAnalyzer
 {
@@ -32,8 +35,13 @@ public sealed class RedirectFindingAnalyzer
     /// <param name="chain">Recorded hops (empty emits nothing).</param>
     /// <param name="finalUrl">Terminal URL, when known.</param>
     /// <param name="finalStatusCode">Terminal HTTP status, when known.</param>
-    /// <param name="checks">Enabled inappropriateness checks.</param>
-    /// <returns>Finding drafts (chain reporting + inappropriateness).</returns>
+    /// <param name="checks">Enabled inappropriateness checks (map the configuration's
+    /// <see cref="RedirectCheckSettings"/> with
+    /// <see cref="RedirectInappropriatenessChecksExtensions.FromSettings"/>).</param>
+    /// <param name="targetFacts">Optional final-target indexability facts for the
+    /// non-indexable-target case (noindex/robots/canonical). When null, the terminal
+    /// status/URL alone drive the case (non-200 targets still fire).</param>
+    /// <returns>Finding drafts (chain reporting + one finding per fired case).</returns>
     public IReadOnlyList<FindingDto> AnalyzeChain(
         long auditId,
         long urlId,
@@ -41,7 +49,8 @@ public sealed class RedirectFindingAnalyzer
         IReadOnlyList<RedirectHop> chain,
         string? finalUrl = null,
         int? finalStatusCode = null,
-        RedirectInappropriatenessChecks checks = RedirectInappropriatenessChecks.All)
+        RedirectInappropriatenessChecks checks = RedirectInappropriatenessChecks.All,
+        RedirectTargetIndexabilityFacts? targetFacts = null)
     {
         ArgumentNullException.ThrowIfNull(chain);
         var findings = new List<FindingDto>();
@@ -66,19 +75,40 @@ public sealed class RedirectFindingAnalyzer
             }, EvidenceJson)));
         }
 
-        IReadOnlyList<RedirectInappropriatenessReason> reasons = RedirectAppropriatenessEvaluator.Evaluate(ordered, checks);
-        if (reasons.Count > 0)
+        // CR-029 case 3 facts: explicit facts win; otherwise the terminal
+        // status/URL alone still express the CR-024 status semantics. With no
+        // terminal facts at all the case cannot be judged and stays silent.
+        var facts = targetFacts;
+        if (facts is null && (finalUrl is not null || finalStatusCode is not null))
         {
-            findings.Add(Finding(auditId, RedirectRuleKeys.Inappropriate, FindingSeverity.Warning, urlId, JsonSerializer.Serialize(new
+            facts = new RedirectTargetIndexabilityFacts(finalStatusCode, finalUrl);
+        }
+
+        IReadOnlyList<RedirectInappropriatenessReason> reasons = RedirectAppropriatenessEvaluator.Evaluate(ordered, checks, facts);
+        foreach (var caseGroup in reasons.GroupBy(r => r.Check).OrderBy(g => g.Key))
+        {
+            var caseReasons = caseGroup.ToList();
+            var triggering = caseReasons[0];
+            findings.Add(Finding(auditId, RedirectRuleKeys.ForCase(caseGroup.Key), FindingSeverity.Warning, urlId, JsonSerializer.Serialize(new
             {
                 url = originalUrl,
                 urlId,
+                @case = RedirectRuleKeys.CaseName(caseGroup.Key),
                 hopCount = ordered.Count,
                 chain = chainJson,
-                reasons = reasons.Select(r => new
+                finalUrl = finalUrl ?? ordered[^1].ToUrl,
+                finalStatusCode,
+                triggeringHop = new
+                {
+                    hopOrdinal = triggering.HopOrdinal,
+                    fromUrl = triggering.FromUrl,
+                    toUrl = triggering.ToUrl,
+                    statusCode = triggering.StatusCode,
+                },
+                reasons = caseReasons.Select(r => new
                 {
                     hopOrdinal = r.HopOrdinal,
-                    check = CheckName(r.Check),
+                    check = RedirectRuleKeys.CaseName(r.Check),
                     fromUrl = r.FromUrl,
                     toUrl = r.ToUrl,
                     statusCode = r.StatusCode,
@@ -91,15 +121,15 @@ public sealed class RedirectFindingAnalyzer
     }
 
     /// <summary>
-    /// Emits the finding for a recorder chain violation (loop or hop cap),
-    /// retaining the observed hop prefix as evidence.
+    /// Emits the violation finding for a chain that failed mid-fetch
+    /// (loop or chain-cap exceeded).
     /// </summary>
     /// <param name="auditId">Owning audit identifier.</param>
     /// <param name="urlId">Source url_records identifier.</param>
     /// <param name="originalUrl">Source canonical URL.</param>
-    /// <param name="violation">The recorder violation.</param>
-    /// <param name="partialChain">Hops recorded before the violation.</param>
-    /// <returns>A single Error finding draft.</returns>
+    /// <param name="violation">The chain violation.</param>
+    /// <param name="partialChain">Hops recorded before the failure.</param>
+    /// <returns>The violation finding (Error).</returns>
     public FindingDto AnalyzeViolation(
         long auditId,
         long urlId,
@@ -109,22 +139,28 @@ public sealed class RedirectFindingAnalyzer
     {
         ArgumentNullException.ThrowIfNull(violation);
         ArgumentNullException.ThrowIfNull(partialChain);
-        return ViolationFinding(auditId, urlId, originalUrl, violation.Reason, violation.Message, partialChain);
+        var ruleKey = violation.Reason == RedirectChainViolation.Loop ? RedirectRuleKeys.Loop : RedirectRuleKeys.Chain;
+        return Finding(auditId, ruleKey, FindingSeverity.Error, urlId, JsonSerializer.Serialize(new
+        {
+            url = originalUrl,
+            urlId,
+            violation = violation.Reason == RedirectChainViolation.Loop ? "loop" : "chain-cap-exceeded",
+            hopCount = partialChain.Count,
+            chain = JsonSerializer.Deserialize<JsonElement>(RedirectChainJson.SerializeHops(partialChain.OrderBy(h => h.Ordinal).ToList())),
+            message = violation.Message,
+        }, EvidenceJson));
     }
 
     /// <summary>
-    /// Emits the finding for a fetcher-level redirect failure (the fetcher's
-    /// visited-URL guard raises <see cref="FetchFailedException"/> with
-    /// <see cref="FetchFailureKind.RedirectLoop"/> /
-    /// <see cref="FetchFailureKind.RedirectChainExceeded"/> when no recorder
-    /// context is set). Non-redirect failure kinds emit nothing.
+    /// Emits the redirect finding for a fetch that failed with a redirect
+    /// failure kind (loop / chain exceeded surfaced as fetch failures).
     /// </summary>
     /// <param name="auditId">Owning audit identifier.</param>
     /// <param name="urlId">Source url_records identifier.</param>
     /// <param name="originalUrl">Source canonical URL.</param>
-    /// <param name="failure">The classified fetch failure.</param>
-    /// <param name="partialChain">Hops recorded before the failure (may be empty).</param>
-    /// <returns>The finding draft, or null for non-redirect failures.</returns>
+    /// <param name="failure">The fetch failure.</param>
+    /// <param name="partialChain">Hops recorded before the failure.</param>
+    /// <returns>The finding, or null for non-redirect failures.</returns>
     public FindingDto? AnalyzeFetchFailure(
         long auditId,
         long urlId,
@@ -134,42 +170,28 @@ public sealed class RedirectFindingAnalyzer
     {
         ArgumentNullException.ThrowIfNull(failure);
         ArgumentNullException.ThrowIfNull(partialChain);
-        return failure.Kind switch
+        RedirectChainViolation? reason = failure.Kind switch
         {
-            FetchFailureKind.RedirectLoop => ViolationFinding(auditId, urlId, originalUrl, RedirectChainViolation.Loop, failure.Message, partialChain),
-            FetchFailureKind.RedirectChainExceeded => ViolationFinding(auditId, urlId, originalUrl, RedirectChainViolation.ChainCapExceeded, failure.Message, partialChain),
+            FetchFailureKind.RedirectLoop => RedirectChainViolation.Loop,
+            FetchFailureKind.RedirectChainExceeded => RedirectChainViolation.ChainCapExceeded,
             _ => null,
         };
-    }
-
-    private FindingDto ViolationFinding(
-        long auditId,
-        long urlId,
-        string originalUrl,
-        RedirectChainViolation reason,
-        string message,
-        IReadOnlyList<RedirectHop> partialChain)
-    {
-        var ordered = partialChain.OrderBy(h => h.Ordinal).ToList();
-        var ruleKey = reason == RedirectChainViolation.Loop ? RedirectRuleKeys.Loop : RedirectRuleKeys.Chain;
-        var violationName = reason == RedirectChainViolation.Loop ? "loop" : "chain-cap-exceeded";
-        return Finding(auditId, ruleKey, FindingSeverity.Error, urlId, JsonSerializer.Serialize(new
+        if (reason is null)
         {
-            url = originalUrl,
-            urlId,
-            violation = violationName,
-            message,
-            hopCount = ordered.Count,
-            chain = JsonSerializer.Deserialize<JsonElement>(RedirectChainJson.SerializeHops(ordered)),
-        }, EvidenceJson));
-    }
+            return null;
+        }
 
-    private static string CheckName(RedirectInappropriatenessChecks check) => check switch
-    {
-        RedirectInappropriatenessChecks.CrossHost => "cross-host",
-        RedirectInappropriatenessChecks.TemporaryStatus => "temporary-status",
-        _ => check.ToString(),
-    };
+        var ordered = partialChain.OrderBy(h => h.Ordinal).ToList();
+        return Finding(auditId, reason == RedirectChainViolation.Loop ? RedirectRuleKeys.Loop : RedirectRuleKeys.Chain,
+            FindingSeverity.Error, urlId, JsonSerializer.Serialize(new
+            {
+                url = originalUrl,
+                urlId,
+                violation = reason == RedirectChainViolation.Loop ? "loop" : "chain-cap-exceeded",
+                hopCount = ordered.Count,
+                chain = JsonSerializer.Deserialize<JsonElement>(RedirectChainJson.SerializeHops(ordered)),
+            }, EvidenceJson));
+    }
 
     private static FindingDto Finding(long auditId, string ruleKey, FindingSeverity severity, long urlId, string evidenceJson) =>
         new(

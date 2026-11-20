@@ -9,11 +9,13 @@ namespace CrawlForge.Audit.Tests.ContentQuality;
 
 /// <summary>
 /// WP-09-05 image rules (FS-CRAWL-001 §7.4 Images row; CAP-B-056 oversized
-/// payloads, CAP-B-057 format checks). Category Performance per the lead's
-/// locked-enum mapping (the spec's abstract "Images" category has no enum
-/// member — handoff notation note). Real fixture images.html through the real
-/// parser; oversized bytes observable today for data-URI images and via
-/// explicit facts for future capture sources.
+/// payloads, CAP-B-057 format checks). Category Images per D-021 (WP-10-05;
+/// the locked AuditCategory.Images member replaced the phase-09 Performance
+/// mapping). Real fixture images.html through the real parser; oversized
+/// bytes observable for data-URI images, captured NetworkWaterfall artifacts
+/// (CR-031) and explicit facts — unknown sizes report "not measured", never
+/// pass. WP-10-05 assertion updates per coordinator ruling
+/// REPLY-TO-WP-10-05-FINDINGS-2 §1 (five itemized changes, CR-031/D-021).
 /// </summary>
 public class ImageRuleAnalyzerTests
 {
@@ -36,7 +38,7 @@ public class ImageRuleAnalyzerTests
         Assert.All(formats, f =>
         {
             Assert.Equal(FindingSeverity.Notice, f.Severity);
-            Assert.Equal(AuditCategory.Performance, f.Category);
+            Assert.Equal(AuditCategory.Images, f.Category); // D-021 (WP-10-05): image rules moved to the Images category.
             Assert.Equal(ContextFactory.Url().Id, f.UrlId);
         });
 
@@ -48,8 +50,17 @@ public class ImageRuleAnalyzerTests
         Assert.Equal("/assets/banner.jpg", banner.RootElement.GetProperty("src").GetString());
         Assert.Equal("jpeg", banner.RootElement.GetProperty("format").GetString());
 
-        // Byte sizes are not observable for network images in http mode.
-        Assert.DoesNotContain(findings, f => f.RuleKey == ImageRuleKeys.Oversized);
+        // CR-031 (WP-10-05): unmeasured network images are reported as
+        // "not measured" Notices — never a silent pass. The fixture's two
+        // network images have no captured bytes here, so both earn one.
+        var oversized = findings.Where(f => f.RuleKey == ImageRuleKeys.Oversized).ToArray();
+        Assert.Equal(2, oversized.Length);
+        Assert.All(oversized, f =>
+        {
+            Assert.Equal(FindingSeverity.Notice, f.Severity);
+            using JsonDocument evidence = JsonDocument.Parse(f.EvidenceJson);
+            Assert.Equal("not-measured", evidence.RootElement.GetProperty("measurement").GetString());
+        });
     }
 
     /// <summary>Explicit transferred bytes above the threshold emit an
@@ -63,7 +74,7 @@ public class ImageRuleAnalyzerTests
 
         var oversized = Assert.Single(findings, f => f.RuleKey == ImageRuleKeys.Oversized);
         Assert.Equal(FindingSeverity.Warning, oversized.Severity);
-        Assert.Equal(AuditCategory.Performance, oversized.Category);
+        Assert.Equal(AuditCategory.Images, oversized.Category); // D-021 (WP-10-05): Images category.
         using JsonDocument evidence = JsonDocument.Parse(oversized.EvidenceJson);
         Assert.Equal(250_000, evidence.RootElement.GetProperty("bytes").GetInt64());
         Assert.Equal(200_000, evidence.RootElement.GetProperty("threshold").GetInt64());
@@ -120,7 +131,8 @@ public class ImageRuleAnalyzerTests
         Assert.Equal("non-web-format", evidence.RootElement.GetProperty("issue").GetString());
     }
 
-    /// <summary>Modern and vector formats pass silently.</summary>
+    /// <summary>Modern and vector formats earn no format finding; CR-031
+    /// (WP-10-05) still reports the unknown byte size as not measured.</summary>
     [Theory]
     [InlineData("https://example.com/photo.webp")]
     [InlineData("https://example.com/photo.avif")]
@@ -132,7 +144,12 @@ public class ImageRuleAnalyzerTests
 
         var findings = analyzer.EvaluateImages(7, [new ImageFact(src)]);
 
-        Assert.Empty(findings);
+        // CR-031: no format finding, but the unknown size is reported (never pass).
+        var oversized = Assert.Single(findings);
+        Assert.Equal(ImageRuleKeys.Oversized, oversized.RuleKey);
+        Assert.Equal(FindingSeverity.Notice, oversized.Severity);
+        using JsonDocument evidence = JsonDocument.Parse(oversized.EvidenceJson);
+        Assert.Equal("not-measured", evidence.RootElement.GetProperty("measurement").GetString());
     }
 
     /// <summary>Data-URI images contribute decoded payload bytes: an oversized
@@ -167,10 +184,17 @@ public class ImageRuleAnalyzerTests
 
         var findings = await analyzer.AnalyzeAsync(Context(html));
 
-        Assert.Empty(findings); // webp is modern, 3 bytes is small
+        // webp is modern and 3 bytes is small — but the alt-less img earns the
+        // WP-10-05 alt takeover finding (accessibility.image-alt, Error, Images;
+        // coordinator-approved takeover of the accessibility rule).
+        var alt = Assert.Single(findings);
+        Assert.Equal("accessibility.image-alt", alt.RuleKey);
+        Assert.Equal(FindingSeverity.Error, alt.Severity);
+        Assert.Equal(AuditCategory.Images, alt.Category);
     }
 
-    /// <summary>Unknown or absent extensions produce no format finding.</summary>
+    /// <summary>Unknown or absent extensions produce no format finding;
+    /// CR-031 (WP-10-05) still reports the unknown size as not measured.</summary>
     [Theory]
     [InlineData("https://example.com/image")]
     [InlineData("https://example.com/photo.xyz")]
@@ -181,7 +205,12 @@ public class ImageRuleAnalyzerTests
 
         var findings = analyzer.EvaluateImages(7, [new ImageFact(src)]);
 
-        Assert.Empty(findings);
+        // CR-031: no format finding, but the unknown size is reported (never pass).
+        var oversized = Assert.Single(findings);
+        Assert.Equal(ImageRuleKeys.Oversized, oversized.RuleKey);
+        Assert.Equal(FindingSeverity.Notice, oversized.Severity);
+        using JsonDocument evidence = JsonDocument.Parse(oversized.EvidenceJson);
+        Assert.Equal("not-measured", evidence.RootElement.GetProperty("measurement").GetString());
     }
 
     /// <summary>Query strings and fragments do not hide the extension.</summary>

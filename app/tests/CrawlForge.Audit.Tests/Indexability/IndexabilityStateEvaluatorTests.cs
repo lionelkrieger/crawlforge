@@ -266,7 +266,8 @@ public class IndexabilityStateEvaluatorTests
         Assert.False(state.IsIndexable);
         Assert.Equal(
             IndexabilityFlags.NonIndexableStatus | IndexabilityFlags.RobotsBlocked
-            | IndexabilityFlags.Noindex | IndexabilityFlags.Nofollow,
+            | IndexabilityFlags.Noindex | IndexabilityFlags.Nofollow
+            | IndexabilityFlags.CanonicalElsewhere,
             state.Flags);
         Assert.Equal(
             [
@@ -388,6 +389,105 @@ public class IndexabilityStateEvaluatorTests
         var state = IndexabilityStateEvaluator.EvaluateFetch(PageUrl, fetch, RobotsState.Allowed, new AngleSharpDomParser());
 
         Assert.True(state.IsIndexable);
+    }
+
+    // ---- CanonicalElsewhere bit (CR-024 / D-021, WP-10-A1) ------------------
+
+    /// <summary>The locked bit value is 16 (additive WP-10-A1 member).</summary>
+    [Fact]
+    public void CanonicalElsewhereBit_HasLockedValue16() =>
+        Assert.Equal(16, (int)IndexabilityFlags.CanonicalElsewhere);
+
+    /// <summary>A canonical pointing elsewhere sets the CanonicalElsewhere bit
+    /// alongside the reason code; the page stays non-indexable.</summary>
+    [Theory]
+    [InlineData("https://example.com/other")]
+    [InlineData("/other")]
+    [InlineData("https://EXAMPLE.com/other/")]
+    public void CanonicalToOtherUrl_SetsCanonicalElsewhereBit(string href)
+    {
+        var state = IndexabilityStateEvaluator.Evaluate(Input(canonicals: [href]));
+
+        Assert.False(state.IsIndexable);
+        Assert.True(state.Flags.HasFlag(IndexabilityFlags.CanonicalElsewhere));
+        Assert.Contains(IndexabilityStateEvaluator.ReasonCanonicalToOtherUrl, state.Reasons);
+    }
+
+    /// <summary>Self-referencing or absent canonicals never set the bit.</summary>
+    [Theory]
+    [InlineData(null)]
+    [InlineData(PageUrl)]
+    [InlineData("/page")]
+    [InlineData("https://example.com/page/")]
+    public void SelfOrAbsentCanonical_DoesNotSetCanonicalElsewhereBit(string? href)
+    {
+        var state = IndexabilityStateEvaluator.Evaluate(Input(canonicals: href is null ? [] : [href]));
+
+        Assert.True(state.IsIndexable);
+        Assert.False(state.Flags.HasFlag(IndexabilityFlags.CanonicalElsewhere));
+    }
+
+    /// <summary>Conflicting canonicals set the bit when at least one target is
+    /// elsewhere (a self-target among conflicts does not neutralize it).</summary>
+    [Fact]
+    public void MultipleCanonicals_WithElsewhereTarget_SetTheBit()
+    {
+        var state = IndexabilityStateEvaluator.Evaluate(Input(canonicals: [PageUrl, "https://example.com/other"]));
+
+        Assert.False(state.IsIndexable);
+        Assert.True(state.Flags.HasFlag(IndexabilityFlags.CanonicalElsewhere));
+        Assert.Contains(IndexabilityStateEvaluator.ReasonCanonicalMultiple, state.Reasons);
+    }
+
+    /// <summary>Conflicting canonicals that all point elsewhere set the bit.</summary>
+    [Fact]
+    public void MultipleElsewhereCanonicals_SetTheBit()
+    {
+        var state = IndexabilityStateEvaluator.Evaluate(Input(canonicals: ["https://example.com/x", "https://example.com/y"]));
+
+        Assert.False(state.IsIndexable);
+        Assert.True(state.Flags.HasFlag(IndexabilityFlags.CanonicalElsewhere));
+    }
+
+    /// <summary>An invalid/unresolvable canonical disqualifies via reasons but
+    /// does NOT set CanonicalElsewhere (no observable elsewhere target).</summary>
+    [Theory]
+    [InlineData("http://")]
+    [InlineData("ftp://example.com/page")]
+    [InlineData("mailto:seo@example.com")]
+    public void InvalidCanonical_DoesNotSetCanonicalElsewhereBit(string href)
+    {
+        var state = IndexabilityStateEvaluator.Evaluate(Input(canonicals: [href]));
+
+        Assert.False(state.IsIndexable);
+        Assert.False(state.Flags.HasFlag(IndexabilityFlags.CanonicalElsewhere));
+        Assert.Contains(IndexabilityStateEvaluator.ReasonCanonicalInvalid, state.Reasons);
+    }
+
+    /// <summary>The bit composes with the other flags without changing them.</summary>
+    [Fact]
+    public void CanonicalElsewhere_ComposesWithNoindex()
+    {
+        var state = IndexabilityStateEvaluator.Evaluate(Input(
+            meta: [Meta("noindex")],
+            canonicals: ["https://example.com/other"]));
+
+        Assert.False(state.IsIndexable);
+        Assert.Equal(IndexabilityFlags.Noindex | IndexabilityFlags.CanonicalElsewhere, state.Flags);
+    }
+
+    /// <summary>The engine write-path factory carries the bit: a Link-header
+    /// canonical to another URL sets it pre-parse.</summary>
+    [Fact]
+    public void EvaluateFetch_HeaderCanonicalElsewhere_SetsTheBit()
+    {
+        var headers = new Dictionary<string, string> { ["Link"] = "</other>; rel=\"canonical\"" };
+        var fetch = IndexabilityContextFactory.Fetch(headers: headers);
+
+        var state = IndexabilityStateEvaluator.EvaluateFetch(PageUrl, fetch, RobotsState.Allowed);
+
+        Assert.False(state.IsIndexable);
+        Assert.True(state.Flags.HasFlag(IndexabilityFlags.CanonicalElsewhere));
     }
 
     // ---- Determinism / thread safety ---------------------------------------

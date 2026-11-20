@@ -20,7 +20,11 @@ import {
   configurationToUpdateRequest,
   defaultConfigurationForm,
   presetFromUserAgent,
+  REDIRECT_CHECKS_ALL_ENABLED,
+  redirectChecksFromWire,
+  redirectChecksToWire,
   toggleCategory,
+  toggleRedirectCheck,
   userAgentForPreset,
   validateAimd,
   validateLimit,
@@ -70,6 +74,8 @@ describe('configuration editor ↔ REST DTO conformance', () => {
     expect(form.scopeRules.scope.regexTimeoutMs).toBe(250);
     expect(form.scopeRules.userAgentComparison.sampleSize).toBe(50);
     expect(form.enabledCategories).toBeNull();
+    // CR-029: absent redirectChecks document = all four checks ON.
+    expect(form.redirectChecks).toEqual({ crossHost: true, temporaryStatus: true, nonIndexableTarget: true, httpsDowngrade: true });
   });
 
   it('round-trips the wire fields through the update payload', () => {
@@ -108,9 +114,11 @@ describe('configuration editor ↔ REST DTO conformance', () => {
     const payload = configurationToCreateRequest(form);
     const json = JSON.parse(JSON.stringify(payload)) as Record<string, unknown>;
     expect(Object.keys(json).sort()).toEqual([
-      'aimd', 'enabledCategories', 'limits', 'name', 'rendering',
+      'aimd', 'enabledCategories', 'limits', 'name', 'redirectChecks', 'rendering',
       'respectRobotsTxt', 'rewrite', 'scopeRules', 'startUrls', 'virtualRobotsTxt'
     ]);
+    // CR-029: all-enabled collapses to the null sentinel (absent/null = all ON).
+    expect(json.redirectChecks).toBeNull();
     expect(json.name).toBe('Default configuration');
     expect(json.startUrls).toEqual(['http://127.0.0.1:47311/']);
     expect(json.limits).toEqual({ maxUrls: null, maxDepth: null, maxDurationSeconds: null, maxResponseBytes: null });
@@ -181,6 +189,57 @@ describe('validation and conventions', () => {
     expect(presetFromUserAgent(userAgentForPreset('Chrome desktop', baseline))).toBe('Chrome desktop');
     expect(presetFromUserAgent(userAgentForPreset('Googlebot Desktop', baseline))).toBe('Googlebot Desktop');
     expect(presetFromUserAgent({ customUserAgent: 'MyBot/1.0', simulateGooglebot: false })).toBe('Custom');
+  });
+});
+
+describe('CR-029 redirectChecks wire round-trip (WP-10-05)', () => {
+  it('defaults to all four checks ON (form and absent/null wire)', () => {
+    expect(defaultConfigurationForm().redirectChecks).toEqual(REDIRECT_CHECKS_ALL_ENABLED);
+    expect(redirectChecksFromWire(undefined)).toEqual(REDIRECT_CHECKS_ALL_ENABLED);
+    expect(redirectChecksFromWire(null)).toEqual(REDIRECT_CHECKS_ALL_ENABLED);
+    expect(redirectChecksFromWire({})).toEqual(REDIRECT_CHECKS_ALL_ENABLED);
+    // Missing individual fields default ON too (additive wire tolerance).
+    expect(redirectChecksFromWire({ crossHost: false })).toEqual({
+      crossHost: false, temporaryStatus: true, nonIndexableTarget: true, httpsDowngrade: true
+    });
+  });
+
+  it('collapses all-enabled to null and emits explicit documents otherwise', () => {
+    expect(redirectChecksToWire(REDIRECT_CHECKS_ALL_ENABLED)).toBeNull();
+    expect(redirectChecksToWire({ ...REDIRECT_CHECKS_ALL_ENABLED, httpsDowngrade: false })).toEqual({
+      crossHost: true, temporaryStatus: true, nonIndexableTarget: true, httpsDowngrade: false
+    });
+  });
+
+  it('round-trips every single-toggle state through create and update payloads', () => {
+    const cases = ['crossHost', 'temporaryStatus', 'nonIndexableTarget', 'httpsDowngrade'] as const;
+    for (const key of cases) {
+      const form = { ...defaultConfigurationForm('https://example.com/'), redirectChecks: toggleRedirectCheck(REDIRECT_CHECKS_ALL_ENABLED, key, false) };
+      for (const payload of [configurationToCreateRequest(form), configurationToUpdateRequest(form)]) {
+        const json = JSON.parse(JSON.stringify(payload)) as { redirectChecks: Record<string, boolean> };
+        expect(json.redirectChecks).toEqual({ crossHost: true, temporaryStatus: true, nonIndexableTarget: true, httpsDowngrade: true, [key]: false });
+        // Real consumer: the wire document binds back to the same form state.
+        const readBack = configurationFromWire({ ...JSON.parse(PRODUCER_CONFIGURATION_JSON), redirectChecks: json.redirectChecks } as ConfigurationWireDto);
+        expect(readBack.redirectChecks).toEqual(form.redirectChecks);
+        expect(readBack.redirectChecks[key]).toBe(false);
+      }
+    }
+  });
+
+  it('each toggle flips independently and back to the null sentinel', () => {
+    let checks = REDIRECT_CHECKS_ALL_ENABLED;
+    const cases = ['crossHost', 'temporaryStatus', 'nonIndexableTarget', 'httpsDowngrade'] as const;
+    for (const key of cases) {
+      checks = toggleRedirectCheck(checks, key, false);
+      expect(checks[key]).toBe(false);
+      expect(redirectChecksToWire(checks)).not.toBeNull();
+      checks = toggleRedirectCheck(checks, key, true);
+      expect(checks[key]).toBe(true);
+    }
+    expect(redirectChecksToWire(checks)).toBeNull();
+    // All four off is a valid explicit document (never the null sentinel).
+    const allOff = cases.reduce((acc, key) => toggleRedirectCheck(acc, key, false), REDIRECT_CHECKS_ALL_ENABLED);
+    expect(redirectChecksToWire(allOff)).toEqual({ crossHost: false, temporaryStatus: false, nonIndexableTarget: false, httpsDowngrade: false });
   });
 });
 

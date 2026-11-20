@@ -229,9 +229,18 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
         }
 
         var missingRecommended = malformed ? [] : FindMissingRecommended(item.Type, item.Properties);
-        var eligible = errors.Count == 0 && StructuredDataVocabulary.IsRichResultFeature(item.Type);
+
+        // CR-030/D-021: retired/restricted rich-result types are flagged from
+        // the bundled versioned list (never fetched). A retired type is never
+        // rich-result eligible; a restricted type keeps its vocabulary-driven
+        // judgment (site authority is not observable offline) and is reported
+        // through the deprecated-term finding.
+        var deprecatedEntry = DeprecatedRichResultList.Find(item.Type);
+        var eligible = errors.Count == 0
+            && StructuredDataVocabulary.IsRichResultFeature(item.Type)
+            && deprecatedEntry?.IsRetired != true;
         var block = new StructuredDataBlock(item.Format, item.Type, errors.Count == 0, errors, eligible);
-        return new StructuredDataBlockDetail(block, ordinal, missingRequired, missingRecommended, item.NestedEntityTypes);
+        return new StructuredDataBlockDetail(block, ordinal, missingRequired, missingRecommended, item.NestedEntityTypes, deprecatedEntry);
     }
 
     private static Dictionary<string, object?> CollectMicrodataProperties(DomNode item)
@@ -250,7 +259,11 @@ public sealed class StructuredDataValidator : IStructuredDataValidator
                 : ReadMicrodataValue(child);
             foreach (var name in names.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             {
-                AddProperty(properties, name, value);
+                // CR-030/D-021: Microdata itemprop URL and prefixed terms resolve
+                // to their local segment against the bundled vocabulary, exactly
+                // as RDFa property terms do (itemprop="https://schema.org/name"
+                // or "schema:name" → name).
+                AddProperty(properties, StructuredDataVocabulary.LocalName(name), value);
             }
         }
 

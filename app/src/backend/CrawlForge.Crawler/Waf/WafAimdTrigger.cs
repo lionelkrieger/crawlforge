@@ -51,6 +51,12 @@ public static class WafAimdTrigger
     /// max(retry-after, D). Call this instead of recording a hardcoded
     /// <c>IsChallenge:false</c> sample (the G07 defect).
     /// </summary>
+    /// <remarks>
+    /// Low-level primitive: it feeds the observation unconditionally. The
+    /// engine's WAF record path consults <see cref="ResolveAction"/> first and
+    /// uses <see cref="RecordVerdict"/> so hard blocks stop the host instead of
+    /// merely throttling (phase-10 D-021 five-class policy).
+    /// </remarks>
     /// <param name="controller">The per-audit AIMD controller.</param>
     /// <param name="host">Target host of the response.</param>
     /// <param name="fetch">The fetch result.</param>
@@ -66,6 +72,53 @@ public static class WafAimdTrigger
         ArgumentNullException.ThrowIfNull(controller);
         ArgumentException.ThrowIfNullOrWhiteSpace(host);
         controller.RecordResponse(host, BuildObservation(fetch, verdict, observedAt));
+    }
+
+    /// <summary>
+    /// Resolves the five-class politeness response for a verdict (D-021):
+    /// soft blocks (managed-challenge, rate-limit-soft-block) throttle through
+    /// AIMD; hard blocks (captcha, interstitial, botblock) stop the host; a
+    /// non-challenge carries no WAF response.
+    /// </summary>
+    /// <param name="verdict">The WAF verdict.</param>
+    /// <returns>The politeness response the engine must apply.</returns>
+    public static WafBlockResponse ResolveAction(WafEvaluationResult verdict) => WafBlockPolicy.Resolve(verdict);
+
+    /// <summary>
+    /// Class-aware recording for the engine's WAF record path (D-021). Resolves
+    /// the verdict's response and records the AIMD observation for every case
+    /// EXCEPT a hard block: a hard block returns <see cref="WafBlockResponse.HostStop"/>
+    /// without touching the controller — the engine stops the host (no further
+    /// fetches), which takes precedence over throttling. Soft blocks and
+    /// unclassified challenges record the challenge observation (multiplicative
+    /// decrease, waf-soft-block); healthy responses record the normal sample
+    /// (additive increase). The returned response tells the engine whether to
+    /// stop the host.
+    /// </summary>
+    /// <param name="controller">The per-audit AIMD controller.</param>
+    /// <param name="host">Target host of the response.</param>
+    /// <param name="fetch">The fetch result.</param>
+    /// <param name="verdict">The WAF verdict.</param>
+    /// <param name="observedAt">Observation instant (UTC).</param>
+    /// <returns>The resolved response; HostStop means the engine must stop the host.</returns>
+    public static WafBlockResponse RecordVerdict(
+        AimdPolitenessController controller,
+        string host,
+        HttpFetchResult fetch,
+        WafEvaluationResult verdict,
+        DateTimeOffset observedAt)
+    {
+        ArgumentNullException.ThrowIfNull(controller);
+        ArgumentException.ThrowIfNullOrWhiteSpace(host);
+        ArgumentNullException.ThrowIfNull(fetch);
+        ArgumentNullException.ThrowIfNull(verdict);
+        var response = WafBlockPolicy.Resolve(verdict);
+        if (response != WafBlockResponse.HostStop)
+        {
+            controller.RecordResponse(host, BuildObservation(fetch, verdict, observedAt));
+        }
+
+        return response;
     }
 }
 

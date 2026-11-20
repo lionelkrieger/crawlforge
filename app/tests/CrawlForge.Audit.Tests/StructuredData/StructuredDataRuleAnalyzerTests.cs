@@ -323,6 +323,8 @@ public class StructuredDataRuleAnalyzerTests
                 StructuredDataRuleKeys.StructuredDataRichResultIneligible,
                 StructuredDataRuleKeys.StructuredDataValid,
                 StructuredDataRuleKeys.StructuredDataMissingRecommended,
+                // CR-030/D-021: locked deprecated-term key (WP-10-A1 catalog).
+                StructuredDataRuleKeys.StructuredDataDeprecatedTerm,
             },
             _analyzer.SupportedRuleKeys);
     }

@@ -1,14 +1,26 @@
+using CrawlForge.Contracts.Constants;
+
 namespace CrawlForge.Audit.StructuredData;
 
 /// <summary>
 /// Stable finding rule keys for the structured-data area (FS-CRAWL-001 §7.13–§7.15).
 /// Rule keys are open strings (schema catalog: findings.rule_key); the keys below
-/// are owned by this area and never repurposed. All findings use
-/// <see cref="Contracts.Enums.AuditCategory.StructuredData"/>, the locked taxonomy
-/// category covering structured data, i18n, mobile friendliness, and technology checks.
+/// are owned by this area and never repurposed. Structured-data and mobile/technology
+/// findings use <see cref="Contracts.Enums.AuditCategory.StructuredData"/>;
+/// the hreflang/html-lang (i18n) keys moved to
+/// <see cref="Contracts.Enums.AuditCategory.Internationalization"/> in phase 10
+/// (D-021 — the §7.4 Internationalization row). Keys promoted to the locked
+/// <see cref="FindingRuleKeys"/> catalog are aliased here, never re-spelled.
 /// </summary>
 public static class StructuredDataRuleKeys
 {
+    /// <summary>
+    /// A deprecated term or retired/restricted rich-result type was flagged
+    /// from the bundled versioned list (CR-030/D-021). Locked key alias —
+    /// the producer emits <see cref="FindingRuleKeys.StructuredDataDeprecatedTerm"/>.
+    /// </summary>
+    public const string StructuredDataDeprecatedTerm = FindingRuleKeys.StructuredDataDeprecatedTerm;
+
     /// <summary>A structured-data block is malformed (syntax error).</summary>
     public const string StructuredDataMalformedBlock = "structured-data.malformed-block";
 

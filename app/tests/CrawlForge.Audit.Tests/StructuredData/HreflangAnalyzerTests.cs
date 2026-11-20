@@ -35,7 +35,8 @@ public class HreflangAnalyzerTests
         var pass = Assert.Single(findings);
         Assert.Equal(StructuredDataRuleKeys.HreflangValid, pass.RuleKey);
         Assert.Equal(FindingSeverity.Pass, pass.Severity);
-        Assert.Equal(AuditCategory.StructuredData, pass.Category);
+        // D-021: hreflang findings belong to Internationalization (§7.4 row).
+        Assert.Equal(AuditCategory.Internationalization, pass.Category);
         Assert.Equal(1, pass.UrlId);
     }
 

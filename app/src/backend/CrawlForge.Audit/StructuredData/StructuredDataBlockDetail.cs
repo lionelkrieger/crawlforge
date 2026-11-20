@@ -15,12 +15,18 @@ namespace CrawlForge.Audit.StructuredData;
 /// <param name="MissingRequired">Vocabulary-required properties that are absent or empty (named).</param>
 /// <param name="MissingRecommended">Vocabulary-recommended properties that are absent or empty (advisory).</param>
 /// <param name="NestedEntityTypes">Raw type names of direct nested entities (relationships).</param>
+/// <param name="DeprecatedEntry">
+/// Additive (CR-030/D-021): the bundled retired/restricted rich-result list
+/// entry for the block's type, when the type is on the list; null otherwise.
+/// The pipeline rule adapter reports it as <c>structured-data.deprecated-term</c>.
+/// </param>
 public sealed record StructuredDataBlockDetail(
     StructuredDataBlock Block,
     int Ordinal,
     IReadOnlyList<string> MissingRequired,
     IReadOnlyList<string> MissingRecommended,
-    IReadOnlyList<string> NestedEntityTypes);
+    IReadOnlyList<string> NestedEntityTypes,
+    DeprecatedRichResultEntry? DeprecatedEntry = null);
 
 /// <summary>
 /// Detailed structured-data validation result: every parsed block on the page

@@ -62,7 +62,9 @@ public class HreflangReciprocityRuleAnalyzerTests : IAsyncLifetime
 
         var finding = Assert.Single(result.Findings);
         Assert.Equal(StructuredDataRuleKeys.HreflangMissingReciprocity, finding.RuleKey);
-        Assert.Equal(AuditCategory.StructuredData, finding.Category);
+        // D-021 phase-gate stand-in: hreflang-no-return is reported under the
+        // Internationalization category (the UI-12 filter token).
+        Assert.Equal(AuditCategory.Internationalization, finding.Category);
         Assert.Equal(FindingSeverity.Warning, finding.Severity);
         Assert.Equal(enId, finding.UrlId);
         Assert.Equal(1, result.MissingReturnCount);

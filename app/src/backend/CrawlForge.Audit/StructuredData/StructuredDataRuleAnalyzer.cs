@@ -23,7 +23,10 @@ namespace CrawlForge.Audit.StructuredData;
 /// valid rich-result feature → <c>structured-data.valid</c> (Pass);
 /// valid non-feature type → <c>structured-data.rich-result-ineligible</c>
 /// (Notice); missing recommended properties → additive
-/// <c>structured-data.missing-recommended</c> (Notice, CAP-B2-076).
+/// <c>structured-data.missing-recommended</c> (Notice, CAP-B2-076);
+/// retired/restricted rich-result type → locked
+/// <c>structured-data.deprecated-term</c> (Warning, CR-030/D-021) from the
+/// bundled versioned <see cref="DeprecatedRichResultList"/>.
 /// </para>
 /// <para>
 /// The rendered document takes precedence over the raw response when present
@@ -56,6 +59,7 @@ public sealed class StructuredDataRuleAnalyzer : IAuditRuleAnalyzer
         StructuredDataRuleKeys.StructuredDataRichResultIneligible,
         StructuredDataRuleKeys.StructuredDataValid,
         StructuredDataRuleKeys.StructuredDataMissingRecommended,
+        StructuredDataRuleKeys.StructuredDataDeprecatedTerm,
     ];
 
     /// <inheritdoc />
@@ -145,7 +149,9 @@ public sealed class StructuredDataRuleAnalyzer : IAuditRuleAnalyzer
                 ordinal = detail.Ordinal,
                 type = block.Type,
                 richResult = "ineligible",
-                reason = "the type is not a supported search-gallery rich-result feature",
+                reason = detail.DeprecatedEntry?.IsRetired == true
+                    ? "the rich-result feature for this type was retired from the search gallery (CR-030 bundled list)"
+                    : "the type is not a supported search-gallery rich-result feature",
             }, recommendation: true));
         }
 
@@ -159,6 +165,30 @@ public sealed class StructuredDataRuleAnalyzer : IAuditRuleAnalyzer
                 type = block.Type,
                 fields = detail.MissingRecommended,
                 reason = "recommended properties improve rich-result appearance but are not required for eligibility",
+            }, recommendation: true));
+        }
+
+        // CR-030/D-021: deprecated terms and retired/restricted rich-result
+        // types are flagged from the bundled versioned list (never fetched).
+        // Emitted for every listed block, valid or not — the term itself is
+        // the observation. Warning severity: the markup may still be useful
+        // (restricted features, non-Google consumers), so the owner decides.
+        if (detail.DeprecatedEntry is { } deprecated)
+        {
+            findings.Add(Finding(StructuredDataRuleKeys.StructuredDataDeprecatedTerm, FindingSeverity.Warning, urlId, new
+            {
+                url,
+                format = block.Format,
+                ordinal = detail.Ordinal,
+                type = block.Type,
+                status = deprecated.Status,
+                since = deprecated.Since,
+                listVersion = DeprecatedRichResultList.Version,
+                richResultEligible = block.RichResultEligible,
+                note = deprecated.Note,
+                reason = deprecated.IsRetired
+                    ? "the rich-result feature for this type was retired from the search gallery"
+                    : "the rich-result feature for this type is restricted to a narrow site class",
             }, recommendation: true));
         }
     }

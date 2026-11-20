@@ -72,7 +72,9 @@ public sealed class HreflangReciprocityValidator
                 {
                     findings.Add(new FindingDraft(
                         StructuredDataRuleKeys.HreflangMissingReciprocity,
-                        AuditCategory.StructuredData,
+                        // D-021 (phase 10): missing return tags are the §7.4
+                        // Internationalization row (locked WP-10-A1 member).
+                        AuditCategory.Internationalization,
                         FindingSeverity.Warning,
                         page.UrlId,
                         JsonSerializer.Serialize(new

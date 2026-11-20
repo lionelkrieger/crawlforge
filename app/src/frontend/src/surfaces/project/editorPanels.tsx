@@ -8,7 +8,8 @@
  *    wire `respectRobotsTxt` / `virtualRobotsTxt`; rendering controls are
  *    disabled-with-note until the phase-10 rendering engine lands.
  *  - Limits → wire `limits` (null = unlimited) + `aimd` (§3.8 form group).
- *  - Analysis categories → `enabledCategories` (scoring snapshot convention).
+ *  - Analysis categories → `enabledCategories` (scoring snapshot convention)
+ *    + the four CR-029 redirect toggles → wire `redirectChecks` (WP-10-05).
  *  - Click discovery / Consent states → phase 11; Thresholds / Extraction /
  *    zone weights → phase 12 (disabled-with-note, CR-022).
  *
@@ -22,7 +23,9 @@ import {
   ANALYSIS_CATEGORIES,
   CRAWL_AS_PRESETS,
   presetFromUserAgent,
+  REDIRECT_CHECK_CASES,
   toggleCategory,
+  toggleRedirectCheck,
   userAgentForPreset,
   validateAimd
 } from './configurationModel';
@@ -623,6 +626,21 @@ export function CategoriesPanel({ value, onChange }: PanelProps) {
             checked={enabled.has(category.key)}
             onChange={(next) => onChange({ ...value, enabledCategories: toggleCategory(value.enabledCategories, category.key, next) })}
             testid={`config-category-${category.key}`}
+          />
+        ))}
+      </FieldSection>
+      <FieldSection
+        title="Inappropriate redirect checks (CR-029)"
+        note="Four independent cases, all on by default; each emits its own redirects.inappropriate-* finding naming the case, hop and final target. Bound to the configuration's redirectChecks wire document (absent/null = all on)."
+      >
+        {REDIRECT_CHECK_CASES.map((redirectCase) => (
+          <ToggleRow
+            key={redirectCase.key}
+            label={redirectCase.label}
+            description={redirectCase.description}
+            checked={value.redirectChecks[redirectCase.key]}
+            onChange={(next) => onChange({ ...value, redirectChecks: toggleRedirectCheck(value.redirectChecks, redirectCase.key, next) })}
+            testid={`config-redirect-check-${redirectCase.key}`}
           />
         ))}
       </FieldSection>

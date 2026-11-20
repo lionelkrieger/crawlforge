@@ -127,3 +127,46 @@ Coordinator rulings on the report:
    accepted — spec leaves these open; documented in the report.
 7. Queued reply REPLY-TO-WP-10-02-STATUS.md superseded by this acceptance
    (builder completed in line with all rulings; no send-back round needed).
+
+### WP-10-05 — ACCEPTED 2026-11-20T04:30Z (coordinator)
+
+Verification (coordinator canonical re-runs, CF_AGENT_ID unset):
+Audit filter StructuredData|Scoring|IndexabilityStateEvaluator|ImageRuleAnalyzer
+326/326; Crawler filter Waf|RedirectFinding 136/136 (shared project compiles
+again — 01 fixed the CS0050/CS9007 blockers); frontend tests/frontend/project
+56/56 + typecheck exit 0. Lane purity: exactly the owned set + the ONE
+granted extension file; diff reviewed against the itemized five-assertion
+list — exact match, no deletions, no weakening, CR citations present.
+
+Coordinator rulings / observations:
+1. Granted extension applied exactly (FINDINGS-2 §1) — accepted.
+2. Alt takeover reuses internal ImageAltRule + AccessibilityRuleContext
+   (zero drift) — approved design; DI disable is coordinator wiring §4
+   (ONE construction covers full-audit + single-page paths — verified by
+   builder; coordinator re-verifies at wiring).
+3. CR-031 artifact-path convention applied (no contract change); reader
+   accepts the instructed array shape + wrappers; coordinator verifies
+   01's proxy storage shape at wiring.
+4. SecurityAndProtocol: VERIFIED no producer exists anywhere (coordinator
+   grep: no mixed-content/security/protocol analyzer; the mixed-content
+   trap is a TLS trap, not_testable in the HTTP 17/17 walk). Category is
+   scored + wire-ready (conformance test with a representative finding).
+   §7.4 security row = unbuilt future-workpiece scope — observation for
+   the phase report, NOT a phase-10 gap (D-021 requires the category
+   scored, which it is).
+5. Catalog reseed handoff accepted (4 redirect cases Indexability/Warning/
+   60/low; deprecated-term StructuredData/Warning/55/low; image.oversized
+   Images/Warning/60/low; image.format Images/Warning/50/low;
+   accessibility.image-alt Images/Error/85/low; DROP legacy seed; MOVE
+   hreflang seeds + HeaderHtmlEquivalencyAnalyzer:237 + RuleDefinition:84
+   → Internationalization). Coordinator applies at wiring.
+6. WAF asset soft-class entries (managed-challenge/rate-limit-soft-block)
+   = coordinator wiring §4.6 (parse path test-proven).
+7. Engine redirect target-facts wiring: call precedes terminal parse today
+   — coordinator places re-evaluation after parse (status-only fallback
+   until then); WAF RecordVerdict + frontier host stop = coordinator.
+8. Legacy redirects.inappropriate constant retained for compile compat;
+   never emitted; dropped at reseed. redirects.loop/chain stay local (not
+   in FindingRuleKeys) — same owner-item treatment as dual-storage key.
+9. Queued replies REPLY-TO-WP-10-05-ALT-FINDING.md / FINDINGS-2 superseded
+   by this acceptance (all rulings applied by the builder; no send-back).

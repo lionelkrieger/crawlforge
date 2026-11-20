@@ -47,9 +47,9 @@ status_summary:
     unscheduled: 1
   workpieces:
     pending: 36
-    in_progress: 2
+    in_progress: 1
     verifying: 0
-    completed: 20
+    completed: 21
     blocked: 0
   acceptance_criteria:
     pending: 55

@@ -261,6 +261,66 @@ describe('scope + directives + categories bindings', () => {
   });
 });
 
+describe('CR-029 redirect check toggles (WP-10-05, analysis tab)', () => {
+  const CASES = [
+    { key: 'crossHost', testid: 'config-redirect-check-crossHost' },
+    { key: 'temporaryStatus', testid: 'config-redirect-check-temporaryStatus' },
+    { key: 'nonIndexableTarget', testid: 'config-redirect-check-nonIndexableTarget' },
+    { key: 'httpsDowngrade', testid: 'config-redirect-check-httpsDowngrade' }
+  ] as const;
+
+  it('renders all four checks ON by default in the Analysis categories tab', async () => {
+    const { container } = await renderEditor();
+    await clickTab(container, 'Analysis categories');
+    for (const redirectCase of CASES) {
+      const toggle = byTestId(container, redirectCase.testid) as HTMLInputElement;
+      expect(toggle).not.toBeNull();
+      expect(toggle.disabled).toBe(false);
+      expect(toggle.checked).toBe(true);
+    }
+  });
+
+  it('each toggle flips exactly its own case on the wire (its finding on/off)', async () => {
+    const { container, latest } = await renderEditor();
+    await clickTab(container, 'Analysis categories');
+    for (const redirectCase of CASES) {
+      // Flip OFF: only this case's flag goes false on the emitted wire document.
+      click(byTestId(container, redirectCase.testid)!);
+      await flush();
+      expect(latest.current.redirectChecks[redirectCase.key]).toBe(false);
+      expect((byTestId(container, redirectCase.testid) as HTMLInputElement).checked).toBe(false);
+      const payload = configurationToUpdateRequest(latest.current);
+      const document = payload.redirectChecks!;
+      expect(document[redirectCase.key]).toBe(false);
+      for (const other of CASES) {
+        if (other.key !== redirectCase.key) {
+          expect(document[other.key]).toBe(true);
+          expect((byTestId(container, other.testid) as HTMLInputElement).checked).toBe(true);
+        }
+      }
+      // Flip back ON: all-enabled collapses to the null sentinel (all checks on).
+      click(byTestId(container, redirectCase.testid)!);
+      await flush();
+      expect(latest.current.redirectChecks[redirectCase.key]).toBe(true);
+      expect(configurationToUpdateRequest(latest.current).redirectChecks).toBeNull();
+    }
+  });
+
+  it('loads an explicit wire document with one case disabled', async () => {
+    const initial = {
+      ...defaultConfigurationForm('https://example.com/'),
+      redirectChecks: { crossHost: true, temporaryStatus: true, nonIndexableTarget: true, httpsDowngrade: false }
+    };
+    const { container, latest } = await renderEditor(initial);
+    await clickTab(container, 'Analysis categories');
+    expect((byTestId(container, 'config-redirect-check-httpsDowngrade') as HTMLInputElement).checked).toBe(false);
+    expect((byTestId(container, 'config-redirect-check-crossHost') as HTMLInputElement).checked).toBe(true);
+    // The create payload preserves the disabled case verbatim.
+    const payload = configurationToCreateRequest(latest.current);
+    expect(payload.redirectChecks).toEqual({ crossHost: true, temporaryStatus: true, nonIndexableTarget: true, httpsDowngrade: false });
+  });
+});
+
 describe('real REST DTO round-trip (producer → consumer)', () => {
   it('loads the Api wire shape and emits it back with the cookie flip', async () => {
     const form = configurationFromWire(configurationWireFixture);

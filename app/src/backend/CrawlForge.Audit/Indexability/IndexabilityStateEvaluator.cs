@@ -32,12 +32,13 @@ public sealed record IndexabilityStateInput(
 /// (04/01 §7.4, D-020). Fetchability is a separate state carried by the crawl
 /// status class; this verdict answers whether a search engine may index the
 /// URL. <see cref="Flags"/> composes the locked <see cref="IndexabilityFlags"/>
-/// bits; canonical defects have no flag bit in the locked enum and are carried
-/// by <see cref="Reasons"/> (additive enum members require a contract
-/// amendment — recorded as a WP-09-05 handoff note).
+/// bits. Amendment WP-10-A1 (D-021/CR-024) added the
+/// <see cref="IndexabilityFlags.CanonicalElsewhere"/> bit (16): it is set when
+/// the page's canonical points to a different URL. The remaining canonical
+/// defects (multiple targets, invalid URL) stay carried by <see cref="Reasons"/>.
 /// </summary>
 /// <param name="IsIndexable">True only when final status is 200, robots allows crawling, no noindex directive exists in meta robots OR X-Robots-Tag, and the canonical is self-referencing or absent.</param>
-/// <param name="Flags">Observed indexability flags (Noindex, Nofollow, RobotsBlocked, NonIndexableStatus).</param>
+/// <param name="Flags">Observed indexability flags (Noindex, Nofollow, RobotsBlocked, NonIndexableStatus, CanonicalElsewhere).</param>
 /// <param name="Reasons">Stable reason codes for every disqualifying observation, in evaluation order; empty for a clean indexable URL.</param>
 public sealed record IndexabilityState(
     bool IsIndexable,
@@ -107,7 +108,11 @@ public sealed record IndexabilityState(
 /// <see cref="IndexabilityAnalyzer"/>'s canonical checks. (6) When a rendered
 /// document exists, <see cref="FromContext"/> reads directives from it
 /// (rendered-first, CR-009 philosophy; §7.18 treats rendered-only noindex as
-/// critical).
+/// critical). (7) WP-10-A1/CR-024/D-021: a canonical resolving to a different
+/// URL additionally sets the locked <see cref="IndexabilityFlags.CanonicalElsewhere"/>
+/// bit (16); conflicting canonical targets set it when at least one target is
+/// elsewhere. The bit never changes the IsIndexable judgment — it carries the
+/// observation on the URL record's flags.
 /// </para>
 /// </remarks>
 public static class IndexabilityStateEvaluator
@@ -178,7 +183,7 @@ public static class IndexabilityStateEvaluator
         }
 
         // 4. Canonical must be self-referencing or absent.
-        var canonicalOk = EvaluateCanonical(input, reasons);
+        var canonicalOk = EvaluateCanonical(input, reasons, ref flags);
 
         var isIndexable = input.FinalStatusCode == 200
             && !input.RobotsBlocked
@@ -297,7 +302,7 @@ public static class IndexabilityStateEvaluator
         string.Equals(token, "noindex", StringComparison.OrdinalIgnoreCase)
         || string.Equals(token, "none", StringComparison.OrdinalIgnoreCase);
 
-    private static bool EvaluateCanonical(IndexabilityStateInput input, List<string> reasons)
+    private static bool EvaluateCanonical(IndexabilityStateInput input, List<string> reasons, ref IndexabilityFlags flags)
     {
         if (input.CanonicalHrefs.Count == 0)
         {
@@ -334,6 +339,14 @@ public static class IndexabilityStateEvaluator
             // Distinct canonical targets are an unresolved conflict (§15.4:
             // never auto-resolve); the URL is not reliably search-indexable.
             reasons.Add(ReasonCanonicalMultiple);
+            // CR-024/D-021: at least one declared canonical consolidates
+            // indexing away from this page (a self-target among conflicting
+            // targets does not neutralize the elsewhere targets).
+            if (targets.Any(target => !string.Equals(target, Normalize(pageUri.AbsoluteUri), StringComparison.OrdinalIgnoreCase)))
+            {
+                flags |= IndexabilityFlags.CanonicalElsewhere;
+            }
+
             return false;
         }
 
@@ -341,6 +354,10 @@ public static class IndexabilityStateEvaluator
         if (!string.Equals(canonical, Normalize(pageUri.AbsoluteUri), StringComparison.OrdinalIgnoreCase))
         {
             reasons.Add(ReasonCanonicalToOtherUrl);
+            // CR-024/D-021 (WP-10-A1): the canonical points to a different URL
+            // — the page stays crawlable but is not search-indexable; the
+            // locked CanonicalElsewhere bit (16) carries the observation.
+            flags |= IndexabilityFlags.CanonicalElsewhere;
             return false;
         }
 

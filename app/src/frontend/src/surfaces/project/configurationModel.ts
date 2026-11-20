@@ -14,6 +14,11 @@
  *  - `enabledCategories`: the scoring snapshot convention
  *    (`AuditScoringService.ParseEnabledCategories`): absent/null = all
  *    categories enabled; otherwise the enabled enum-name keys.
+ *  - `redirectChecks` (WP-10-05, CR-029): the four inappropriate-redirect
+ *    toggles, bound to the LIVE wire field `redirectChecks` (WP-10-A1
+ *    CaptureConfigurationFields; REST binding applied by the coordinator).
+ *    Absent/null = all four checks ON; the form normalizes to required
+ *    booleans and collapses all-enabled back to null on emit.
  *
  * Both additive fields are emitted on create/update payloads and tolerated on
  * read. Until WP-09-06/lead wires them through the Api DTO they are ignored by
@@ -31,6 +36,7 @@ import type {
   ConsentSettings,
   ContentScopeSettings,
   CrawlLimits,
+  RedirectCheckSettings,
   RenderingSettings,
   RewriteSettings,
   ZoneWeightSettings
@@ -161,6 +167,77 @@ export const DEFAULT_SCOPE_RULES: ScopeRulesDocument = {
  * engine documents. `limits` members are null = unlimited (03/01 §4.3
  * sentinel — never a magic large number, never clamped).
  */
+// ── CR-029 inappropriate-redirect checks (WP-10-05, UI-04 analysis tab) ──────
+
+/**
+ * Form-level redirect-check toggles: the four CR-029 cases as REQUIRED
+ * booleans (the wire document's fields are optional; absent/null/missing
+ * field = enabled). Mirrors the locked `RedirectCheckSettings` wire document
+ * one-for-one; the engine maps it onto `RedirectInappropriatenessChecks`.
+ */
+export interface RedirectChecksFormValue {
+  readonly crossHost: boolean;
+  readonly temporaryStatus: boolean;
+  readonly nonIndexableTarget: boolean;
+  readonly httpsDowngrade: boolean;
+}
+
+/** All four checks enabled — the CR-029 default (absent/null on the wire). */
+export const REDIRECT_CHECKS_ALL_ENABLED: RedirectChecksFormValue = {
+  crossHost: true,
+  temporaryStatus: true,
+  nonIndexableTarget: true,
+  httpsDowngrade: true
+};
+
+/** The four cases in report order (labels match the §7.4 rule definition). */
+export const REDIRECT_CHECK_CASES: readonly {
+  key: keyof RedirectChecksFormValue;
+  label: string;
+  description: string;
+}[] = [
+  { key: 'crossHost', label: 'Cross-host redirects', description: 'A hop redirects to a different host.' },
+  { key: 'temporaryStatus', label: 'Temporary redirect status', description: 'A hop uses 302/303/307 where a permanent move is intended.' },
+  { key: 'nonIndexableTarget', label: 'Non-indexable final target', description: 'The redirect target is not search-indexable per CR-024 (status, robots, noindex, canonical elsewhere).' },
+  { key: 'httpsDowngrade', label: 'HTTPS-to-HTTP downgrade', description: 'An HTTPS URL redirects to HTTP.' }
+];
+
+/** Normalizes a wire document (absent/null/missing fields = all ON). */
+export function redirectChecksFromWire(wire: RedirectCheckSettings | null | undefined): RedirectChecksFormValue {
+  return {
+    crossHost: wire?.crossHost ?? true,
+    temporaryStatus: wire?.temporaryStatus ?? true,
+    nonIndexableTarget: wire?.nonIndexableTarget ?? true,
+    httpsDowngrade: wire?.httpsDowngrade ?? true
+  };
+}
+
+/**
+ * Emits the wire document: all-enabled collapses to null (the CR-029
+ * absent/null = all-ON convention, mirroring `enabledCategories`); any
+ * disabled case emits an explicit four-field document.
+ */
+export function redirectChecksToWire(form: RedirectChecksFormValue): RedirectCheckSettings | null {
+  if (form.crossHost && form.temporaryStatus && form.nonIndexableTarget && form.httpsDowngrade) {
+    return null;
+  }
+  return {
+    crossHost: form.crossHost,
+    temporaryStatus: form.temporaryStatus,
+    nonIndexableTarget: form.nonIndexableTarget,
+    httpsDowngrade: form.httpsDowngrade
+  };
+}
+
+/** Toggles one redirect case (immutable). */
+export function toggleRedirectCheck(
+  current: RedirectChecksFormValue,
+  key: keyof RedirectChecksFormValue,
+  enabled: boolean
+): RedirectChecksFormValue {
+  return { ...current, [key]: enabled };
+}
+
 export interface ConfigurationFormValue {
   readonly name: string;
   readonly description: string | null;
@@ -173,6 +250,8 @@ export interface ConfigurationFormValue {
   readonly scopeRules: ScopeRulesDocument;
   /** null = all categories enabled (scoring snapshot convention). */
   readonly enabledCategories: readonly string[] | null;
+  /** CR-029 inappropriate-redirect toggles (wire `redirectChecks`; null = all ON). */
+  readonly redirectChecks: RedirectChecksFormValue;
   readonly contentScope?: ContentScopeSettings;
   readonly rewrite?: RewriteSettings;
   readonly consent?: ConsentSettings;
@@ -216,6 +295,7 @@ export function defaultConfigurationForm(seedUrl?: string): ConfigurationFormVal
       scope: { ...DEFAULT_SCOPE_RULES.scope, checkExternalLinks: true }
     },
     enabledCategories: null,
+    redirectChecks: REDIRECT_CHECKS_ALL_ENABLED,
     rewrite: { rules: [], hostMappings: [] }
   };
 }
@@ -270,6 +350,7 @@ export function configurationFromWire(dto: ConfigurationWireDto): ConfigurationF
     virtualRobotsTxt: dto.virtualRobotsTxt ?? null,
     scopeRules: mergeScopeRules(dto.scopeRules),
     enabledCategories: dto.enabledCategories ?? null,
+    redirectChecks: redirectChecksFromWire(dto.redirectChecks),
     ...(dto.contentScope ? { contentScope: dto.contentScope } : {}),
     ...(dto.rewrite ? { rewrite: dto.rewrite } : {}),
     ...(dto.consent ? { consent: dto.consent } : {}),
@@ -296,6 +377,7 @@ export function configurationToCreateRequest(value: ConfigurationFormValue): Con
     virtualRobotsTxt: value.virtualRobotsTxt,
     scopeRules: value.scopeRules,
     enabledCategories: value.enabledCategories,
+    redirectChecks: redirectChecksToWire(value.redirectChecks),
     ...(value.contentScope ? { contentScope: value.contentScope } : {}),
     ...(value.rewrite ? { rewrite: value.rewrite } : {}),
     ...(value.consent ? { consent: value.consent } : {}),
@@ -322,6 +404,7 @@ export function configurationToUpdateRequest(value: ConfigurationFormValue): Con
     virtualRobotsTxt: value.virtualRobotsTxt,
     scopeRules: value.scopeRules,
     enabledCategories: value.enabledCategories,
+    redirectChecks: redirectChecksToWire(value.redirectChecks),
     ...(value.contentScope ? { contentScope: value.contentScope } : {}),
     ...(value.rewrite ? { rewrite: value.rewrite } : {}),
     ...(value.consent ? { consent: value.consent } : {}),

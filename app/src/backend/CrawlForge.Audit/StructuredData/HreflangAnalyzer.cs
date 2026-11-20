@@ -158,8 +158,11 @@ public sealed class HreflangAnalyzer : II18nAnalyzer
         }
     }
 
+    // D-021 (phase 10): hreflang/html-lang findings belong to the §7.4
+    // Internationalization taxonomy row — the locked AuditCategory member
+    // added by WP-10-A1 (wire "internationalization").
     private static FindingDraft Finding(string ruleKey, FindingSeverity severity, long urlId, object evidence) =>
-        new(ruleKey, AuditCategory.StructuredData, severity, urlId, JsonSerializer.Serialize(evidence), null);
+        new(ruleKey, AuditCategory.Internationalization, severity, urlId, JsonSerializer.Serialize(evidence), null);
 
     private static IEnumerable<DomNode> Walk(DomNode node)
     {

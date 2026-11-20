@@ -236,7 +236,12 @@ public sealed class WafSignatureCatalogue : IWafSignatureCatalogue
                 throw new FormatException($"Unknown WAF provider label '{entry.Provider}' in bundled asset.");
             }
 
-            if (!Enum.TryParse<WafChallengeClass>(entry.ChallengeClass, ignoreCase: true, out var challengeClass))
+            // D-021 five-class policy: challenge classes parse through the
+            // single wire authority (EnumWireNames), so the hyphenated new
+            // tokens "managed-challenge" / "rate-limit-soft-block" resolve
+            // alongside the locked lowercase wires (interstitial, botblock).
+            // Case-insensitive: existing PascalCase asset labels keep working.
+            if (!EnumWireNames.TryParse<WafChallengeClass>(entry.ChallengeClass, out var challengeClass))
             {
                 throw new FormatException($"Unknown challenge class '{entry.ChallengeClass}' in bundled asset.");
             }
