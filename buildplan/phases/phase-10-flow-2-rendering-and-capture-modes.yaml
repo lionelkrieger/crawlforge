@@ -93,9 +93,10 @@ workpieces:
   - workpiece_id: "WP-10-02"
     title: "Capture Modes & Rendered Documents in Full Audits — Dual/Adaptive, Raw-vs-Rendered Engine"
     phase_id: "phase-10"
-    status: "in_progress"
+    status: "completed"
     assigned_agent: "cf-wp-10-02"
     started_at: "2026-11-20T03:15:00Z"
+    completed_at: "2026-11-20T04:15:00Z"
     parallel_group: "wave-10A"
     depends_on_workpieces: ["WP-08-03", "WP-09-11"]
     context_files:
