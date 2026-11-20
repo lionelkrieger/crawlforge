@@ -4,8 +4,8 @@
   "configurationId": "2",
   "state": "completed",
   "phase": "finalizing",
-  "startedAt": "2026-11-20T03:09:05.6924149\u002B00:00",
-  "completedAt": "2026-11-20T03:09:06.050316\u002B00:00",
+  "startedAt": "2026-11-20T05:35:15.8694027\u002B00:00",
+  "completedAt": "2026-11-20T05:35:16.4224022\u002B00:00",
   "counters": {
     "queued": 6,
     "fetched": 6,
@@ -13,8 +13,8 @@
     "blocked": 0,
     "wafBlocked": 0
   },
-  "elapsedSeconds": 0.358,
-  "throughputPerSecond": 16.764,
-  "estimatedRemainderSeconds": 0.358,
+  "elapsedSeconds": 0.553,
+  "throughputPerSecond": 10.85,
+  "estimatedRemainderSeconds": 0.553,
   "errorMessage": null
 }

@@ -130,7 +130,9 @@ public sealed class SitemapLiveFixtureTests : IClassFixture<SitemapLiveFixtureTe
         var analyzer = new RedirectFindingAnalyzer();
         IReadOnlyList<Contracts.Entities.FindingDto> findings = analyzer.AnalyzeChain(AuditId, 101, originalUrl, chain, result.FinalUrl, result.StatusCode);
         Assert.Contains(findings, f => f.RuleKey == RedirectRuleKeys.Chain && f.Severity == FindingSeverity.Warning);
-        Assert.Contains(findings, f => f.RuleKey == RedirectRuleKeys.Inappropriate);
+        // WP-10-05 / CR-029: the legacy aggregate redirects.inappropriate key is
+        // superseded by per-case keys; the 302 hop triggers temporary-status.
+        Assert.Contains(findings, f => f.RuleKey == RedirectRuleKeys.InappropriateTemporaryStatus && f.Severity == FindingSeverity.Warning);
 
         // Sitemap correlation: chain-1 is sitemap-listed and redirecting.
         var correlation = new SitemapCorrelationAnalyzer();

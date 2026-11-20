@@ -19,17 +19,18 @@ parallel_waves:
 gated_acceptance_criteria: []
 
 orchestrator_gates:
+  # Gate rhythm v2.1 (D-022): light gates between waves; full suites, conformance and governance run once at the phase gate.
   after_each_wave:
     - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
     - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
     - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
-    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
-    - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
-    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
     - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
     - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
   after_waves:
     wave-12C:
+      - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
+      - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
       - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode dual --traps noindex,duplicate-titles,thin-page,missing-alt,orphan,broken-links,structured-data-errors,consent-banner,script-injected-content"
       - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-05,UI-06,UI-07,UI-08,UI-09,UI-14,UI-15,UI-16,UI-17,UI-19,UI-21,UI-22,UI-23,UI-24"
       - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --tls --traps mixed-content"

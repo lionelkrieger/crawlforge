@@ -1,7 +1,7 @@
 # Criterion #2 — static identity-store proof (NR-01 full tree)
 
 - Scan root: `E:\Crawlforge\app`
-- Files scanned: 636
+- Files scanned: 753
 - NR-01 violations: **0** (required: 0)
 
 NR-01 detects registry/WMI/platform-identity API usage, identity-store

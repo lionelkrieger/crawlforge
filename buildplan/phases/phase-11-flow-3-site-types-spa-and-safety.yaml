@@ -18,17 +18,18 @@ parallel_waves:
 gated_acceptance_criteria: [53, 54]
 
 orchestrator_gates:
+  # Gate rhythm v2.1 (D-022): light gates between waves; full suites, conformance and governance run once at the phase gate.
   after_each_wave:
     - "dotnet build E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Host -c Debug"
     - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
     - "cd E:\\Crawlforge\\app\\src\\electron && npx tsc -p tsconfig.build.json"
-    - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
-    - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
-    - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
     - "python E:\\Crawlforge\\audit-work\\register\\check_traceability.py"
     - "python E:\\Crawlforge\\audit-work\\register\\check_buildplan.py"
   after_waves:
     wave-11C:
+      - "dotnet test E:\\Crawlforge\\app\\CrawlForge.sln"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
+      - "dotnet run --project E:\\Crawlforge\\app\\tools\\governance-analyzer -- --root E:\\Crawlforge\\app\\src --fail-on-violation"
       - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --mode js --traps soft-404-client-route,hash-route,client-side-redirect,postback-links,cookieless-session,large-viewstate,live-websocket,click-only-navigation,never-place-bet,consent-banner,service-worker"
       - "python E:\\Crawlforge\\app\\tests\\fixture-acceptance\\run_fixture_acceptance.py --surfaces UI-04,UI-10,UI-12,UI-13,UI-16"
 

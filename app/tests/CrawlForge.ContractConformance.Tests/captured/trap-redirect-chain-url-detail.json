@@ -58,17 +58,18 @@
     },
     {
       "id": "2",
-      "ruleKey": "redirects.inappropriate",
+      "ruleKey": "redirects.inappropriate-temporary-status",
       "severity": "warning",
       "category": "indexability",
       "urlId": "3",
-      "message": "redirects inappropriate",
+      "message": "redirects inappropriate temporary status",
       "evidence": {
         "snippet": null,
         "selector": null,
         "details": {
           "url": "http://127.0.0.1:47312/redirect/chain-1",
           "urlId": 3,
+          "case": "temporary-status",
           "hopCount": 3,
           "chain": [
             {
@@ -90,6 +91,14 @@
               "statusCode": 301
             }
           ],
+          "finalUrl": "http://127.0.0.1:47312/pages/redirect-target.html",
+          "finalStatusCode": 200,
+          "triggeringHop": {
+            "hopOrdinal": 1,
+            "fromUrl": "http://127.0.0.1:47312/redirect/chain-2",
+            "toUrl": "http://127.0.0.1:47312/redirect/chain-3",
+            "statusCode": 302
+          },
           "reasons": [
             {
               "hopOrdinal": 1,
@@ -97,7 +106,7 @@
               "fromUrl": "http://127.0.0.1:47312/redirect/chain-2",
               "toUrl": "http://127.0.0.1:47312/redirect/chain-3",
               "statusCode": 302,
-              "description": "Hop 1 uses temporary redirect status 302; use 301/308 when the move is permanent."
+              "description": "Case temporary-status: hop 1 uses temporary redirect status 302 towards \u0027http://127.0.0.1:47312/redirect/chain-3\u0027; use 301/308 when the move is permanent."
             }
           ]
         }

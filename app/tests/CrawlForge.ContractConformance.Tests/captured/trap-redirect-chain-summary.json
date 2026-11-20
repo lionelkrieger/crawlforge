@@ -7,8 +7,8 @@
   },
   "countsBySeverity": {
     "warning": 370,
-    "error": 6,
-    "notice": 742,
+    "error": 7,
+    "notice": 744,
     "pass": 131
   },
   "countsByCategory": {
@@ -17,20 +17,21 @@
     "linking": 1,
     "accessibility": 259,
     "content": 452,
-    "structureddata": 265,
-    "performance": 2
+    "structureddata": 263,
+    "images": 5,
+    "internationalization": 2
   },
   "crawlHealth": {
     "totalUrls": 134,
     "fetched": 132,
     "errorCount": 1,
     "blockedCount": 0,
-    "averageTtfbMs": 0.584
+    "averageTtfbMs": 0.795
   },
   "waf": null,
   "throttle": {
     "throttledHostCount": 1,
-    "meanEffectiveRate": 6.25,
-    "adjustmentCount": 16
+    "meanEffectiveRate": 2.108,
+    "adjustmentCount": 22
   }
 }

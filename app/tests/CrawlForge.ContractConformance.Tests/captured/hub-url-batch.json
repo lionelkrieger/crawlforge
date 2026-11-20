@@ -1,6 +1,6 @@
 [
   {
-    "receivedAt": "2026-11-20T03:08:27.4568759\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:28.0860165\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -13,7 +13,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:28.5947756\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:29.2121796\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -36,7 +36,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:29.7989644\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:30.4193444\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -59,7 +59,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:31.2049301\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:32.42129\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -77,7 +77,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:32.2076679\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:32.8243201\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -100,7 +100,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:33.3818076\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:34.027151\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -128,7 +128,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:34.4592988\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:35.0948571\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -156,7 +156,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:35.6754884\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:36.2952839\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -189,7 +189,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:36.7118176\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:37.3379918\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -222,7 +222,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:37.7279688\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:38.5476945\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -255,7 +255,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:38.8428174\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:39.740584\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -273,7 +273,15 @@
           "urlId": "40",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:40.9405057\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "41",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026sort=name",
@@ -293,7 +301,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:39.8726815\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:42.1426112\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -311,7 +319,15 @@
           "urlId": "46",
           "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/12",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:43.3444565\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "47",
           "canonicalUrl": "http://127.0.0.1:47312/pages/hreflang-fr.html",
@@ -331,7 +347,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:40.9507477\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:44.5433092\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -344,7 +360,15 @@
           "urlId": "51",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:46.148337\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "52",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026sort=name",
@@ -354,7 +378,15 @@
           "urlId": "53",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:47.7472184\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "54",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2",
@@ -364,25 +396,33 @@
           "urlId": "55",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:49.3514749\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "56",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=s",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "57",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m",
           "statusClass": "2xx"
         }
       ]
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:42.0123137\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:50.9513561\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
-        {
-          "urlId": "57",
-          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m",
-          "statusClass": "2xx"
-        },
         {
           "urlId": "58",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=l",
@@ -392,7 +432,15 @@
           "urlId": "59",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:52.5387357\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "60",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026sort=name",
@@ -402,7 +450,15 @@
           "urlId": "61",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:54.1379594\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "62",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2",
@@ -412,25 +468,33 @@
           "urlId": "63",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:55.7426182\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "64",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=s\u0026sort=price",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "65",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=s\u0026sort=name",
           "statusClass": "2xx"
         }
       ]
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:43.1110671\u002B00:00",
+    "receivedAt": "2026-11-20T05:33:57.3424265\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
-        {
-          "urlId": "65",
-          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=s\u0026sort=name",
-          "statusClass": "2xx"
-        },
         {
           "urlId": "66",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026size=s",
@@ -440,7 +504,15 @@
           "urlId": "67",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026size=s",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:58.7701386\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "68",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026size=s",
@@ -450,7 +522,15 @@
           "urlId": "69",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=m\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:33:59.9140858\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "70",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=m\u0026sort=name",
@@ -460,7 +540,15 @@
           "urlId": "71",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026size=m",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:01.5779628\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "72",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026size=m",
@@ -475,7 +563,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:44.2112084\u002B00:00",
+    "receivedAt": "2026-11-20T05:34:02.7128787\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -483,47 +571,119 @@
           "urlId": "74",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=l\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:03.8504544\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "75",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026size=l\u0026sort=name",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:05.0002229\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "76",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026size=l",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:06.14238\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "77",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026size=l",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:07.2825695\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "78",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026size=l",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:08.4347434\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "79",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:09.5669856\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "80",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:10.7217447\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "81",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:11.8655845\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "82",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=1\u0026sort=name",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:13.0095207\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "83",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=2\u0026sort=name",
@@ -533,7 +693,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:45.3129431\u002B00:00",
+    "receivedAt": "2026-11-20T05:34:14.1421003\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -541,17 +701,41 @@
           "urlId": "84",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=red\u0026page=3\u0026sort=name",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:15.2847178\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "85",
           "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/9",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:16.4231385\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "86",
           "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/1",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:17.8763039\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "87",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=s\u0026sort=price",
@@ -561,7 +745,15 @@
           "urlId": "88",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=s\u0026sort=name",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:19.3449971\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "89",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026size=s",
@@ -571,7 +763,15 @@
           "urlId": "90",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026size=s",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:20.597209\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "91",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026size=s",
@@ -581,7 +781,15 @@
           "urlId": "92",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=m\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:21.66503\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "93",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=m\u0026sort=name",
@@ -596,7 +804,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:46.397607\u002B00:00",
+    "receivedAt": "2026-11-20T05:34:22.7379293\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -609,7 +817,15 @@
           "urlId": "96",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026size=m",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:24.422655\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "97",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026size=l\u0026sort=price",
@@ -624,7 +840,15 @@
           "urlId": "99",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026size=l",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:26.0891787\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "100",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026size=l",
@@ -634,7 +858,15 @@
           "urlId": "101",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026size=l",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:27.7868739\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "102",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=1\u0026sort=price",
@@ -644,7 +876,15 @@
           "urlId": "103",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=2\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:29.5126783\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "104",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026sort=price",
@@ -659,7 +899,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:47.3980213\u002B00:00",
+    "receivedAt": "2026-11-20T05:34:31.9947856\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -672,42 +912,106 @@
           "urlId": "107",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=blue\u0026page=3\u0026sort=name",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:33.6773289\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "108",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=s\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:35.3911305\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "109",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=s\u0026sort=name",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:37.0449178\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "110",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026size=s",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:38.7307395\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "111",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026size=s",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:40.4160658\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "112",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026size=s",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:42.1091726\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "113",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:43.7797514\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "114",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=m\u0026sort=name",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:45.4701174\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "115",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026size=m",
@@ -717,7 +1021,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:48.5171951\u002B00:00",
+    "receivedAt": "2026-11-20T05:34:47.1580285\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
@@ -725,12 +1029,28 @@
           "urlId": "116",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026size=m",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:48.8738738\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "117",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026size=m",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:50.66801\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "118",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=l\u0026sort=price",
@@ -740,7 +1060,15 @@
           "urlId": "119",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026size=l\u0026sort=name",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:52.4951333\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "120",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026size=l",
@@ -750,7 +1078,15 @@
           "urlId": "121",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026size=l",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:54.030635\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "122",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026size=l",
@@ -760,7 +1096,15 @@
           "urlId": "123",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:55.2980233\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "124",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026sort=price",
@@ -770,25 +1114,33 @@
           "urlId": "125",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026sort=price",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:56.5601874\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "126",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=1\u0026sort=name",
+          "statusClass": "2xx"
+        },
+        {
+          "urlId": "127",
+          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026sort=name",
           "statusClass": "2xx"
         }
       ]
     }
   },
   {
-    "receivedAt": "2026-11-20T03:08:49.3060505\u002B00:00",
+    "receivedAt": "2026-11-20T05:34:57.9809401\u002B00:00",
     "payload": {
       "auditId": "1",
       "urls": [
-        {
-          "urlId": "127",
-          "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=2\u0026sort=name",
-          "statusClass": "2xx"
-        },
         {
           "urlId": "128",
           "canonicalUrl": "http://127.0.0.1:47312/trap/filter?color=green\u0026page=3\u0026sort=name",
@@ -803,7 +1155,15 @@
           "urlId": "130",
           "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/2",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:59.3156049\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "131",
           "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/7",
@@ -818,7 +1178,15 @@
           "urlId": "133",
           "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2026/6",
           "statusClass": "2xx"
-        },
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-11-20T05:34:59.6990737\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "urls": [
         {
           "urlId": "134",
           "canonicalUrl": "http://127.0.0.1:47312/trap/calendar/2027/4",

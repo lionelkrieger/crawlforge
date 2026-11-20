@@ -2,7 +2,7 @@
 
 Lifecycle covered: first launch → idle → reporting → diagnostics listing.
 
-- Assemblies observed loaded: 198
+- Assemblies observed loaded: 208
 - WMI/directory/automation assemblies loaded: **0** (required: 0)
 - Registry-assembly loads attributed to product code: **0** (required: 0)
 - Product assemblies loaded at monitor start (module init): 3
@@ -33,15 +33,15 @@ usage or native imports.
    at Microsoft.Extensions.Hosting.GenericHostWebHostBuilderExtensions.ConfigureWebHost(IHostBuilder builder, Func`3 createWebHostBuilder, Action`1 configure, Action`1 configureWebHostBuilder)
    at Microsoft.AspNetCore.Builder.WebApplicationBuilder..ctor(WebApplicationOptions options, Action`1 configureDefaults)
    at Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(String[] args)
-   at CrawlForge.Host.CrawlForgeBackend.StartAsync(String[] args, Action`1 configureBuilder, CancellationToken cancellationToken) in E:\Crawlforge\app\src\backend\CrawlForge.Host\CrawlForgeBackend.cs:line 77
+   at CrawlForge.Host.CrawlForgeBackend.StartAsync(String[] args, Action`1 configureBuilder, CancellationToken cancellationToken) in E:\Crawlforge\app\src\backend\CrawlForge.Host\CrawlForgeBackend.cs:line 80
    at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
    at CrawlForge.Host.CrawlForgeBackend.StartAsync(String[] args, Action`1 configureBuilder, CancellationToken cancellationToken)
    at CrawlForge.Boundary.Tests.Harness.BackendFixture.StartAsync() in E:\Crawlforge\app\tests\CrawlForge.Boundary.Tests\Harness\BackendFixture.cs:line 39
    at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
    at CrawlForge.Boundary.Tests.Harness.BackendFixture.StartAsync()
-   at CrawlForge.Boundary.Tests.Diagnostics.MetricsBoundaryTests.Metrics_HaveNoIdentityDimensions_AndAreNeverPushed() in E:\Crawlforge\app\tests\CrawlForge.Boundary.Tests\Diagnostics\MetricsBoundaryTests.cs:line 19
+   at CrawlForge.Boundary.Tests.AirGap.IdleZeroOutboundTests.IdleAndReporting_WithNoDestinations_ProduceZeroOutbound() in E:\Crawlforge\app\tests\CrawlForge.Boundary.Tests\AirGap\IdleZeroOutboundTests.cs:line 20
    at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
-   at CrawlForge.Boundary.Tests.Diagnostics.MetricsBoundaryTests.Metrics_HaveNoIdentityDimensions_AndAreNeverPushed()
+   at CrawlForge.Boundary.Tests.AirGap.IdleZeroOutboundTests.IdleAndReporting_WithNoDestinations_ProduceZeroOutbound()
    at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
    at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
@@ -137,6 +137,7 @@ usage or native imports.
 
 ## Loaded assemblies
 - AngleSharp
+- AngleSharp.XPath
 - Anonymously Hosted DynamicMethods Assembly
 - CrawlForge.Api
 - CrawlForge.Audit
@@ -215,6 +216,7 @@ usage or native imports.
 - Microsoft.Extensions.Features
 - Microsoft.Extensions.FileProviders.Abstractions
 - Microsoft.Extensions.FileProviders.Physical
+- Microsoft.Extensions.FileSystemGlobbing
 - Microsoft.Extensions.Hosting
 - Microsoft.Extensions.Hosting.Abstractions
 - Microsoft.Extensions.Localization.Abstractions
@@ -239,6 +241,7 @@ usage or native imports.
 - Microsoft.VisualStudio.TestPlatform.ObjectModel
 - Microsoft.Win32.Primitives
 - Microsoft.Win32.Registry
+- MySqlConnector
 - PdfSharp
 - PuppeteerSharp
 - ReactiveExtensionsSharp
@@ -271,6 +274,7 @@ usage or native imports.
 - System.Globalization
 - System.IO
 - System.IO.Compression
+- System.IO.Compression.Brotli
 - System.IO.FileSystem.Watcher
 - System.IO.MemoryMappedFiles
 - System.IO.Pipelines
@@ -281,11 +285,15 @@ usage or native imports.
 - System.Net.Http
 - System.Net.HttpListener
 - System.Net.NameResolution
+- System.Net.NetworkInformation
 - System.Net.Primitives
 - System.Net.Quic
 - System.Net.Requests
 - System.Net.Security
+- System.Net.ServerSentEvents
 - System.Net.Sockets
+- System.Net.WebHeaderCollection
+- System.Net.WebProxy
 - System.Net.WebSockets
 - System.Numerics.Vectors
 - System.ObjectModel
@@ -312,6 +320,7 @@ usage or native imports.
 - System.Security.Cryptography.Primitives
 - System.Security.Principal.Windows
 - System.Text.Encoding
+- System.Text.Encoding.CodePages
 - System.Text.Encoding.Extensions
 - System.Text.Encodings.Web
 - System.Text.Json
@@ -323,6 +332,7 @@ usage or native imports.
 - System.Threading.Tasks.Extensions
 - System.Threading.Thread
 - System.Threading.ThreadPool
+- System.Transactions.Local
 - System.Xml.ReaderWriter
 - System.Xml.XDocument
 - WeCantSpell.Hunspell

@@ -1,0 +1,6 @@
+Wave-10A after_each_wave gate (01 7c4b8ac + 02 690f2ed + 05 dc15529 accepted). MSBUILDDISABLENODEREUSE=1.
+Security DPAPI/SPP stall protocol: if testhost stalls, diagnose scoped instance + canonical --no-build supplement (GATE-INCIDENTS.md).
+01-host-build: exit 0
+02-frontend-build: exit 0
+03-electron-tsc: exit 0
+04-solution-tests: exit 1

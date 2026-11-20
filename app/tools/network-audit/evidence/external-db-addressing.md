@@ -1,6 +1,6 @@
 # Criterion #3 / §2.6 — external-database addressing
 
-- Configured user server (loopback stand-in): 127.0.0.1:54437
+- Configured user server (loopback stand-in): 127.0.0.1:58237
 - TCP connection accepted by the stand-in: True
 - Connection-test verdict: reachable/authenticated reported honestly (authenticated=false)
 - DB-phase connections observed: 0

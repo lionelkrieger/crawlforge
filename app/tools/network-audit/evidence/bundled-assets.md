@@ -15,5 +15,5 @@
 
 - Required catalogs bundled: 10/10
 - AssetLocator: local-only resolution; missing asset throws DirectoryNotFoundException (no fetch fallback); no network API in the resolver source.
-- packaging/ directory present: False (packaging workpiece not yet delivered — reported to orchestrator)
+- packaging/ directory present: True (inspect installer manifests)
 - Governance NR-E2/E4 full-tree scan: zero violations (see governance evidence).

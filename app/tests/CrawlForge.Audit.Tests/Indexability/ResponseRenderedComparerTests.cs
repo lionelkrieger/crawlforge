@@ -40,7 +40,7 @@ public sealed class ResponseRenderedComparerTests
     }
 
     [Fact]
-    public async Task TitleAlteredByScript_EmitsDeltaAndWarning()
+    public async Task TitleAlteredByScript_EmitsDeltaAndError()
     {
         DomDocument raw = SimpleDocument("Original title", "Content", "/link");
         DomDocument rendered = SimpleDocument("Rewritten title", "Content", "/link");
@@ -52,7 +52,9 @@ public sealed class ResponseRenderedComparerTests
         ContentDifference delta = Assert.Single(comparison.Differences, d => d.Field == "title");
         Assert.Equal("Original title", delta.ResponseValue);
         Assert.Equal("Rewritten title", delta.RenderedValue);
-        Assert.Contains(comparison.Findings, f => f.RuleKey == IndexabilityRuleKeys.RenderTitleDelta && f.Severity == FindingSeverity.Warning);
+        // WP-10-02 / FS-CRAWL-001 §7.18: a script-altered title is an Error
+        // (high) — the pre-phase-10 Warning expectation is superseded.
+        Assert.Contains(comparison.Findings, f => f.RuleKey == IndexabilityRuleKeys.RenderTitleDelta && f.Severity == FindingSeverity.Error);
     }
 
     [Fact]

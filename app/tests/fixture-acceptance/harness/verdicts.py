@@ -289,12 +289,63 @@ def t_script_injected_content(ev: Eval, ctx: dict) -> tuple[str, str]:
 
 
 def t_late_meta_change(ev: Eval, ctx: dict) -> tuple[str, str]:
-    # Only reachable when a real dual-capture flow exists; gating above handles
-    # http/js. Kept for completeness when dual support lands.
-    delta = ev.rule(ev.findings, "render.metadata-delta") + ev.rule(ev.findings, "render.title-delta")
-    if delta:
-        return "pass", f"audit {ev.audit_id}: raw-vs-rendered metadata deltas reported ({ev.fbrief(delta, 3)})."
-    return "fail", f"audit {ev.audit_id}: no raw-vs-rendered title/canonical/robots delta findings."
+    # Dual capture only (gating above handles http/js). WP-10-02 comparer
+    # evidence shape: wire evidence.details carries {field, responseValue,
+    # renderedValue} for title/canonical deltas and {critical, direction,
+    # rawNoindex, renderedNoindex, rawDirectives, renderedDirectives} for the
+    # rendered-only noindex case (§7.18: spec CRITICAL maps to the locked
+    # Error severity + critical:true + direction + dual evidence).
+    path = "/pages/late-meta.html"
+    row = ev.row(path)
+    if row is None:
+        return "fail", f"audit {ev.audit_id}: {path} never crawled; late meta change not evaluated."
+    findings = ev.url_findings(path)
+
+    def det(f: dict) -> dict:
+        return ((f.get("evidence") or {}).get("details") or {})
+
+    # 1. Title delta with BOTH capture values.
+    title_hits = ev.rule(findings, "render.title-delta")
+    title_ok = any(
+        "raw title before script" in str(det(f).get("responseValue", "")).lower()
+        and "rendered title after script" in str(det(f).get("renderedValue", "")).lower()
+        for f in title_hits)
+
+    # 2. Canonical change (metadata delta naming the canonical field).
+    meta_hits = ev.rule(findings, "render.metadata-delta")
+    canonical_ok = any(
+        str(det(f).get("field", "")).lower() == "canonical"
+        and "late-meta-other" in str(det(f).get("renderedValue", ""))
+        for f in meta_hits)
+
+    # 3. Rendered-only noindex: critical, direction, dual directive state,
+    #    locked Error severity (no Critical token exists in the vocabulary).
+    noindex_hits = ev.rule(findings, "render.noindex-delta")
+    noindex_ok = any(
+        det(f).get("critical") is True
+        and str(det(f).get("direction", "")) == "rendered-only"
+        and det(f).get("rawNoindex") is False
+        and det(f).get("renderedNoindex") is True
+        and str(f.get("severity", "")).lower() == "error"
+        for f in noindex_hits)
+
+    parts = [f"title-delta={'ok' if title_ok else 'MISSING'}",
+             f"canonical-delta={'ok' if canonical_ok else 'MISSING'}",
+             f"rendered-only-noindex(critical+direction+dual)={'ok' if noindex_ok else 'MISSING'}"]
+    if title_ok and canonical_ok and noindex_ok:
+        return "pass", (
+            f"audit {ev.audit_id}: {path} dual capture proves all three late changes "
+            f"({'; '.join(parts)}); raw title 'Raw title before script' vs rendered "
+            f"'Rendered title after script', canonical -> late-meta-other.html, script-injected "
+            f"noindex flagged critical rendered-only with both captures' directives "
+            f"({ev.fbrief(noindex_hits, 1)}).")
+    if title_hits or meta_hits or noindex_hits:
+        return "partial", (
+            f"audit {ev.audit_id}: {path} has raw-vs-rendered deltas but required evidence is "
+            f"incomplete ({'; '.join(parts)}); findings: {ev.fbrief(findings, 4)}.")
+    return "fail", (
+        f"audit {ev.audit_id}: {path} crawled but no render.title-delta / render.metadata-delta / "
+        f"render.noindex-delta findings (findings: {ev.fbrief(findings, 4)}).")
 
 
 def t_soft_404_server(ev: Eval, ctx: dict) -> tuple[str, str]:

@@ -152,6 +152,21 @@ names, following the existing try/catch-continue pattern (:1569–1572).
 
 ## 5. Rule-catalog registration (gap #21 pattern)
 
+Verified anchors (2026-11-20): NO render.*/phase-10 keys are seeded
+anywhere today. Two seed sites:
+- `AuditRuleCatalog` constructor (Audit/Pipeline/RuleDefinition.cs:50–85,
+  Seed(ruleKey, category, severity, priority, difficulty) helper :101):
+  add the render.*-delta family + render.dual-storage-warning (02's
+  builder-local CaptureRuleKeys) + render.service-worker Notice here;
+  MOVE :84 HreflangHeaderHtmlConflict Indexability→Internationalization.
+- Host `EngineServicesModule.cs:252+` catalog.Register block: REPLACE the
+  legacy RedirectRuleKeys.Inappropriate seed (:270–272) with 05's four
+  case keys; ADD structured-data.deprecated-term, image.oversized,
+  image.format, accessibility.image-alt (exact string; NOT in locked
+  FindingRuleKeys — producer-local constant) per 05 report §4.2; MOVE
+  i18n.hreflang-* seeds → Internationalization (find their current site).
+  Also HeaderHtmlEquivalencyAnalyzer.cs:237 category move (05 handoff).
+
 `AuditRuleCatalog` constructor seeds (`Audit/Pipeline/RuleDefinition.cs`,
 coordinator-owned) += phase-10 definitions:
 
