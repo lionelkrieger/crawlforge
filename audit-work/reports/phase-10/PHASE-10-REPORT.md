@@ -10,7 +10,7 @@ Phase YAML: buildplan/phases/phase-10-flow-2-rendering-and-capture-modes.yaml
 |---|---|---|---|---|
 | 0 | — | criterion #56 UI proof | coordinator | 1e30ab9 |
 | 1 | 10A0 | WP-10-A1 contract amendment | subagent + coordinator integration | 2cb4311, f418243, 0307fe8, f6dde46, dc005d4, 6ea666b (ledger + RE-LOCK) |
-| 2 | 10A | WP-10-01 / WP-10-02 / WP-10-05 | 3 parallel subagents | pending |
+| 2 | 10A | WP-10-01 / WP-10-02 / WP-10-05 | 3 parallel subagents (+1 fix round for 01) | 7c4b8ac (01), 690f2ed (02), dc15529 (05) |
 | 3 | 10B | WP-10-03 | subagent | pending |
 | 4 | 10C | WP-10-04 serial wiring | coordinator | pending |
 | 5 | — | phase gate + criteria #50/51/52 + phase-09 regression | coordinator | pending |
@@ -77,6 +77,52 @@ Phase YAML: buildplan/phases/phase-10-flow-2-rendering-and-capture-modes.yaml
   category assertions (walker category_scores + category_probe evidence).
 - nonGet == [] after every audit; expectations never edited.
 
-## 8. Workpiece acceptance summary (filled at reviews)
+## 8. Workpiece acceptance summary
 
-(pending)
+### WP-10-01 — direct CDP rendering (7c4b8ac, accepted 05:25Z after send-back)
+173/173 Rendering (builder ×2 + coordinator canonical), LabProbeIntegration
+5/5 canonical, build 0/0. D-002 CDP layer replaces PuppeteerSharp (pool
+name/ctor preserved); CR-006 CDP-direct waterfall; CR-009 wait rule;
+D-003 pin manifest + resolver chain (O-006 bundling pending owner);
+CR-031 rendered + proxy bytes; proxy artifacts in the locked
+RenderedNetworkEntry shape verified against 05's reader.
+**Defects found+fixed**: (a) NTP vendor egress — missing about:blank
+startup URL let new-headless Chrome open the New Tab Page, whose search
+preconnect tunneled vendor CONNECTs through the launch proxy; the initial
+"relax the strict assertion" recommendation was REFUTED by coordinator
+evidence (4/5 sibling lab tests pass the same assertion) and retracted;
+fixed with the inert startup tab, assertion unrelaxed. (b) Latent wait-rule
+bug: fractional DOMHighResTimeStamp parsed via TryGetInt64 → long.MaxValue
+→ premature settle under load; fixed TryGetDouble + observer-absent gate.
+**Lessons**: local Chrome is 157 (not the pinned 131 — resolver fallback
+working); PuppeteerSharp HeadlessMode.True emits --headless=new (old
+headless removed since Chrome 132); verify launch-posture hypotheses
+against live process command lines before ruling.
+
+### WP-10-02 — capture modes + comparer (690f2ed, accepted 04:15Z)
+Audit RenderedComparison 25/25 (builder + coordinator canonical);
+CaptureModes 48/48 (identical-source scratch; official command at wave
+gate). Four modes + override precedence; material-change switching;
+dual-storage WARNING never a cap; §7.18 severities (locked vocabulary
+Error/Warning/Notice/Pass — spec CRITICAL maps to Error + critical:true +
+dual evidence); word counts reach scopeDiagnostics (harness ev.words);
+JS-only links; SW informational; isolated Jint snippets; CaptureSource
+through real SQLite; G03 closed at component level. Amendments deferred
+(dual-storage key catalog-registered at wiring + owner item; hreflang-delta
+and SW-fact promotions unnecessary today).
+
+### WP-10-05 — D-021 carryovers (dc15529, accepted 04:30Z)
+Audit 326/326 + Crawler Waf|RedirectFinding 136/136 + frontend project
+56/56 + typecheck 0 (builder + coordinator canonical). Images/
+Internationalization moves incl. zero-drift alt takeover; SecurityAndProtocol
+scored/wire-ready (verified: no producer exists — §7.4 security row is
+future-workpiece scope; mixed-content trap is TLS-only, outside HTTP 17/17);
+five WAF classes soft→AIMD/hard→HostStop; CanonicalElsewhere bit 16;
+CR-029 four toggles (null=all ON, per-toggle flip tests); CR-030 versioned
+bundled list + Microdata LocalName; CR-031 not-measured≠pass via artifact
+reads; AuditScoreWireConformanceTests real producer→score→read-back.
+Granted one-file test extension applied exactly (five itemized assertions).
+
+### Wave-10A gate
+Running (job pwsh-cd53aa29d774472f; 8 commands; MSBUILDDISABLENODEREUSE=1).
+Result appended at completion.

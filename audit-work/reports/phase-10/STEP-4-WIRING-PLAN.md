@@ -54,6 +54,18 @@ Seam: `BuildStoredContextAsync` (`AuditExecutionEngine.cs:2665–2700`).
   `UrlStructureAnalyzer` takes `IReadRepository<UrlRecordDto>`,
   `EngineServicesModule.cs:171–172`). DI update at :183 per 05's handoff.
   `ImageFact.TransferredBytes` already exists (`ImageRuleAnalyzer.cs:37–41`).
+- **Stale-test reconciliation (02 flag, CONFIRMED)**:
+  `Audit.Tests/Indexability/ResponseRenderedComparerTests.cs:43–73` asserts
+  Warning for title/metadata deltas; §7.18 + locked catalog mandate Error.
+  Key strings already match the locked render.* family. Coordinator updates
+  the severity assertions at wiring (Error for the §7.18 family; CRITICAL
+  rendered-only noindex either direction; status-delta stays Warning).
+  Stale-test fix, NOT a spec deviation — record in the phase report.
+- **SW fact interop (02 flag)**: 02 detects service-worker registration via
+  script scan through the locked interface; 01's concrete pool exposes
+  ServiceWorkerRegistrationFact. At wiring, prefer the CDP-level fact when
+  it reaches the stored render artifact; script scan is the fallback.
+  Finding key render.service-worker-registered (informational) either way.
 
 ## 3. Post-crawl passes
 
@@ -72,6 +84,17 @@ names, following the existing try/catch-continue pattern (:1569–1572).
   was the ONLY consumer — verified by grep).
 - Capture-mode component registration per 02's handoff.
 - `ImageRuleAnalyzer` construction :183 per 05's handoff (artifact reads).
+- **D-021 alt-check takeover (05 early finding, APPROVED)**: 05's
+  ImageRuleAnalyzer takes over `accessibility.image-alt` under
+  AuditCategory.Images. The production AccessibilityAnalyzer construction
+  (:176 `new AccessibilityAnalyzer()`) must pass AccessibilityAnalyzerOptions
+  with `RuleOverrides["accessibility.image-alt"] = new(Enabled: false)` —
+  single producer, no double emission (mechanism proven by
+  AccessibilityAnalyzerTests). Check SinglePageTester/ToolsController for a
+  second construction; apply the same override. The key is NOT in locked
+  FindingRuleKeys (producer-local AccessibilityRuleKeys constant) — keep the
+  exact string; harness t_missing_alt matches it. Full reply queued in
+  REPLY-TO-WP-10-05-ALT-FINDING.md (send on 05 completion).
 - WAF evaluator: 05's five-class evaluator replaces/extends the registered
   `WafChallengeEvaluator` (:91–93) per handoff; soft-class AIMD throttle +
   hard-class host stop wire through the existing frontier/AIMD surfaces
@@ -79,6 +102,53 @@ names, following the existing try/catch-continue pattern (:1569–1572).
 - Redirect appropriateness: 05's evaluator/analyzer join the engine's
   redirect-findings path (:1334–1356) per handoff; the four toggles read
   `configuration.RedirectChecks` (null = all ON).
+- **Proxy artifact convention (CR-031 http-mode, ruling #2)**: verify 01
+  persists proxy subresource captures as ContentArtifactKind.NetworkWaterfall
+  artifacts in the locked RenderedNetworkEntry JSON-array shape with
+  TransferredBytes filled; 05's ImageRuleAnalyzer reads the same shape.
+  ProxyCapturedRequest context record unchanged (no byte field — fine).
+- **Catalog reseed (05 handoff)**: drop the legacy redirects.inappropriate
+  seed (constant retained for compile compat until reseed; nothing emits
+  it), add the four locked redirects.inappropriate-* case keys + all other
+  phase-10 keys with 05's category/severity/priority list. Exact list
+  (05 report §4.2): redirects.inappropriate-{cross-host,temporary-status,
+  non-indexable-target,https-downgrade} Indexability/Warning/60/low;
+  structured-data.deprecated-term StructuredData/Warning/55/low;
+  image.oversized Images/Warning/60/low; image.format Images/Warning/50/low;
+  accessibility.image-alt Images/Error/85/low. MOVE hreflang:
+  HeaderHtmlEquivalencyAnalyzer.cs:237 (StructuredData→Internationalization),
+  RuleDefinition.cs:84 HreflangHeaderHtmlConflict (Indexability→
+  Internationalization), i18n.hreflang-* seeds → Internationalization.
+- **01 handoff items**: per-audit RenderingPoolOptions.FromCaptureSettings
+  (snapshot.CaptureSettings); concrete HeadlessRenderingPool.RenderDetailedAsync
+  → CdpRenderResult { Page, ServiceWorkerRegistrations, Browser } for SW
+  facts + browser identity where needed (comparer script-scan remains the
+  contract-safe fallback); remove unused PuppeteerSharp PackageReference
+  from CrawlForge.Crawler.csproj (Audit KEEPS its own — LabRenderingProbe);
+  pre-crawl validation: rendering-dependent capture modes resolve browser,
+  BrowserResolutionException → validation failure, non-JS unaffected;
+  CR-031 http-mode call site: after plain-HTTP fetch through the proxy →
+  proxy.DrainDetailedCapturedAsync() → NetworkWaterfallArtifactWriter.
+  PersistProxyCapturesAsync(store, auditId, urlId, captures, ct) (kind 3,
+  camelCase array, one per URL — matches 05's reader; G09 fetcher proxy
+  wiring remains coordinator).
+- **Missed-surface amendment (executed under WP-10-04 coordinator
+  ownership; documented as WP-10-A2-style in the phase report)**:
+  (a) C# Api RenderTestResponse += optional NetworkWaterfall
+  (IReadOnlyList<RenderedNetworkEntry>? = null, 7th positional) +
+  ToolsController:226 mapper from page.NetworkWaterfall — the TS mirror
+  ALREADY carries networkWaterfall (A1, tools.ts:142) and
+  FrontendMirrorParityTests:169 asserts only the TS side, so this is
+  wire-completion, not a lock break; extend the render-test conformance
+  test to feed real producer output. (b) UI-21 browser section: NEW
+  additive REST surface (SettingsController GET browser) bound to
+  HeadlessRenderingPool.ResolveBrowserInfo()/TryLoadPinManifest()
+  (ResolvedBrowser { ExecutablePath, Source, Product, Version,
+  PinnedVersion }); new TS mirror interface + settings surface binding
+  (coordinator-owned surfaces). DEFERRED amendments (no contract change):
+  ProxyCapturedRequest.TransferredBytes (artifact path covers CR-031),
+  RenderedPage.ServiceWorkerRegistrations/browser identity (concrete
+  RenderDetailedAsync covers; 02 script-scan fallback).
 
 ## 5. Rule-catalog registration (gap #21 pattern)
 
@@ -122,21 +192,51 @@ coordinator-owned) += phase-10 definitions:
 
 ## 7. Harness conversion (python — safe to edit during gate runs)
 
-`run_fixture_acceptance.py`:
+`run_fixture_acceptance.py` — replace `wire_probe_run` (:366–404) with
+`ui_capture_mode_audit(mode, ...)` for js/dual/adaptive (dispatch :969):
 
-- `wire_probe_run` (:366–404) → real UI-started capture-mode audits for
-  dual/adaptive (and js): create project/config via REST with
-  `captureMode` (binding LIVE), open UI-04 editor over CDP, select the mode
-  in the capture tab (testids from 02's handoff), save, read back, start the
-  audit from the hub UI (`ui_entry_audit` pattern :179+), pull data,
-  evaluate the trap matrix. Keep the wire-probe evidence as a historical
-  note only.
-- `t_late_meta_change` (verdicts.py): strengthen for rendered-only noindex
-  CRITICAL dual evidence once 02's comparer evidence shape is known.
-- UI-11/UI-12 walkers (ui_walker.py): add category assertions (Images /
-  Internationalization scores present; missing-alt under Images;
-  hreflang-no-return under Internationalization) for the phase-09
-  regression at step 5.
+1. UI New project dialog (reuse the ui_entry_audit :188–231 flow verbatim:
+   nav-hub → new-project-button → create-project-modal → fill name/url/
+   description → create-project-submit → evidence-poll POST /api/projects
+   + REST name match, never a fixed sleep). Name: "Fixture harness {mode}
+   {ts}".
+2. REST PUT limits bounding (bound_configuration_limits, BULK_LIMITS) —
+   same as ui_entry_audit :239 (UI has no limit controls; recorded).
+3. **Mode selection IN THE UI (criterion requirement)**: open the config
+   editor over CDP (project overview → Configurations → open config;
+   editor testids config-editor-tabs / config-tab-crawl-as), set
+   `config-capture-mode` to the mode token (02's handoff testid; native
+   select → React value-setter + bubbling change eval, same technique as
+   the walker's _set_category_filter; Mantine Select → click + option).
+   Mode != non-js implies rendering.enabled=true in the product binding
+   (coordinator UI implementation decision); verify via REST read-back
+   captureMode == mode AND rendering.enabled == true. Adaptive: also set
+   config-capture-adaptive-sample-size if a non-default is needed (default
+   4 is fine). Screenshot the capture tab per mode (UI-04 evidence).
+4. Save through the UI if the editor requires it (config save testid —
+   verify at implementation), then start the audit IN THE UI (same
+   start-audit-button / project-start-audit-button + confirmation flow
+   :246–300, incl. the disabled-button configuration-snapshot race
+   recovery — never REST-start).
+5. Poll to terminal (600s cap), pull_audit_data, safety_check nonGet==[],
+   evaluate_matrix(traps, mode, ctx, data, selected) with REAL evidence
+   (t_js_only_link: target row + render.links-delta; t_script_injected_
+   content: render.text-delta ev.words≥100; t_late_meta_change:
+   render.metadata-delta/title-delta; t_service_worker: informational).
+6. UI-10 inspection + capture-mode indicator evidence (coordinator defines
+   the indicator testid at wiring; record it here when implemented).
+7. Keep the old wire-probe JSON shape as a historical note field only.
+
+`verdicts.py` — strengthen `t_late_meta_change` (:~430): assert the DUAL
+evidence values (raw title 'Raw title before script' vs rendered 'Rendered
+title after script'; canonical change) and the rendered-only noindex case
+(Error + critical:true + direction, locked vocabulary — §7.18 CRITICAL
+maps to Error+critical flag). Evidence shape per 02's report §2.7:
+raw+rendered directives, meta AND X-Robots-Tag, direction field.
+
+`ui_walker.py` — DONE (commit e654361): ui_11 category_scores evidence +
+ui_12 category_probe (images→accessibility.image-alt, internationalization→
+hreflang). Step-5 regression asserts on those extra fields.
 
 ## 8. Pre-crawl validation
 
