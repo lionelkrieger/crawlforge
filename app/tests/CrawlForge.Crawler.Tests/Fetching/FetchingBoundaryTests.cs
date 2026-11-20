@@ -99,9 +99,15 @@ public sealed class FetchingBoundaryTests
     {
         string[] transportTokens = { "HttpClient", "WebProxy", "Socket", "IPAddress", "HttpListener" };
 
+        // Transport construction is confined to the fetcher and the dedicated
+        // crawl-target transport factory (WP-09-11 follow-up: the factory is
+        // the approved NET-02 boundary-scope construction point the execution
+        // engine composes; every OTHER fetching source stays transport-free).
+        string[] transportFiles = { "HttpFetcher.cs", "CrawlTargetTransportFactory.cs" };
+
         foreach (string file in FetchingSourceFiles())
         {
-            if (string.Equals(Path.GetFileName(file), "HttpFetcher.cs", StringComparison.Ordinal))
+            if (transportFiles.Contains(Path.GetFileName(file), StringComparer.Ordinal))
             {
                 continue;
             }
@@ -111,7 +117,7 @@ public sealed class FetchingBoundaryTests
             {
                 Assert.False(
                     source.Contains(token, StringComparison.Ordinal),
-                    $"Transport token '{token}' outside HttpFetcher.cs: {Path.GetFileName(file)}.");
+                    $"Transport token '{token}' outside HttpFetcher.cs/CrawlTargetTransportFactory.cs: {Path.GetFileName(file)}.");
             }
         }
     }
