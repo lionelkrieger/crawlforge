@@ -35,6 +35,9 @@ import { CodeBlock } from '../../tools/shared/CodeBlock';
 import { useToolCall } from '../../tools/shared/useToolCall';
 import { SelectorPicker } from '../../tools/picker/SelectorPicker';
 import { ExtractionDraftsPanel, type ExtractionRuleDraft } from '../../tools/picker/ExtractionDrafts';
+import { NetworkWaterfallViewer } from '../explorers/rendered/NetworkWaterfallViewer';
+import { ConsoleLogViewer } from '../explorers/rendered/ConsoleLogViewer';
+import { RenderedDomViewer } from '../explorers/rendered/RenderedDomViewer';
 import type { Finding } from '../../contracts/api/audits';
 import type { SinglePageAnalysisResponse } from '../../contracts/api/content';
 import type { RenderTestResponse } from '../../contracts/api/tools';
@@ -372,6 +375,13 @@ export function SinglePageAnalyzer() {
                         ))}
                       </Group>
                     ) : null}
+                    {/* WP-10-03 (UI-18): real rendered output from the live CDP
+                        pool — network waterfall (WP-10-A1 additive field;
+                        null/absent = baseline render with no waterfall),
+                        console log and the post-render DOM source. */}
+                    <NetworkWaterfallViewer entries={artifact.networkWaterfall ?? null} testId="sp-waterfall" />
+                    <ConsoleLogViewer messages={artifact.consoleMessages} testId="sp-console" />
+                    <RenderedDomViewer html={artifact.renderedHtml} testId="sp-dom" />
                     <ExtractionDraftsPanel drafts={drafts} onChange={setDrafts} testId="sp-drafts" />
                   </Stack>
                 ) : (
