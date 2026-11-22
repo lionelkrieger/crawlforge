@@ -26,7 +26,7 @@ import {
 } from '@mantine/core';
 import { useShell, useStoreSelector } from './ShellContext';
 import { selectSettings } from '../store/selectors';
-import type { AppSettings, DiagnosticArtifact } from '../contracts/api/system';
+import type { AppSettings, BrowserInfo, DiagnosticArtifact } from '../contracts/api/system';
 import { IconDatabase, IconPlug, IconShield, IconSettings, IconRefresh, IconX } from '../theme/icons';
 import { formatBytes, formatDateTime } from './format';
 import { ExportDestinationsSection } from '../surfaces/export/ExportDestinationsSection';
@@ -52,6 +52,7 @@ export function SettingsSurface() {
   const [artifacts, setArtifacts] = useState<readonly DiagnosticArtifact[]>([]);
   const [workingSetAdvisory, setWorkingSetAdvisory] = useState<number>(2 * 1024 ** 3);
   const [walAdvisory, setWalAdvisory] = useState<number>(256 * 1024 ** 2);
+  const [browserInfo, setBrowserInfo] = useState<BrowserInfo | null>(null);
 
   useEffect(() => {
     if (settings?.statusBar) {
@@ -117,6 +118,19 @@ export function SettingsSurface() {
       setArtifacts(envelope.data as readonly DiagnosticArtifact[]);
     }
   }, [services]);
+
+  // WP-10-04 (UI-21 browser section, §5.6.3): local rendering-browser identity.
+  const loadBrowserInfo = useCallback(async () => {
+    if (!services.api) return;
+    const envelope = await services.api.request('settings.browser', { query: {} });
+    if (!envelope.error && envelope.data) {
+      setBrowserInfo(envelope.data);
+    }
+  }, [services]);
+
+  useEffect(() => {
+    void loadBrowserInfo();
+  }, [loadBrowserInfo]);
 
   const purgeArtifacts = useCallback(async () => {
     if (!services.api) return;
@@ -281,6 +295,36 @@ export function SettingsSurface() {
             ? `Enabled · ${settings.proxy.host ?? '—'}:${settings.proxy.port ?? '—'} (credentials masked)`
             : 'Disabled — direct connections.'}
         </Text>
+      </Section>
+
+      {/* WP-10-04 (UI-21 browser section, §5.6.3): local-only rendering-browser
+          resolution identity — bundled pinned CfT → user path → Chrome → Edge.
+          No runtime download exists (D-003). */}
+      <Section title="Rendering browser" icon={<IconSettings size={16} color="var(--mantine-color-cyan-4)" />}>
+        <Stack gap="sm" data-testid="settings-browser-section">
+          {browserInfo === null ? (
+            <Text size="sm" c="dimmed" data-testid="settings-browser-status">Browser information unavailable — backend disconnected.</Text>
+          ) : browserInfo.available ? (
+            <>
+              <Group gap="sm">
+                <Badge variant="light" color="cyan" size="lg" data-testid="settings-browser-status">{browserInfo.product ?? 'Browser'} {browserInfo.version ?? ''}</Badge>
+                <Badge variant="light" color="steel" size="sm">{browserInfo.source ?? 'unknown'}</Badge>
+              </Group>
+              <Text size="xs" c="dimmed" ff="monospace" data-testid="settings-browser-path">{browserInfo.executablePath ?? '—'}</Text>
+              {browserInfo.pinnedVersion || browserInfo.pinManifestVersion ? (
+                <Text size="xs" c="dimmed" data-testid="settings-browser-pin">
+                  Pinned Chrome for Testing: {browserInfo.pinnedVersion ?? browserInfo.pinManifestVersion}
+                  {!browserInfo.pinnedVersion && browserInfo.pinManifestVersion ? ' (manifest present; binary not yet bundled)' : ''}
+                </Text>
+              ) : null}
+            </>
+          ) : (
+            <Text size="sm" c="dimmed" data-testid="settings-browser-status">{browserInfo.message ?? 'No local browser resolved.'}</Text>
+          )}
+          <Button size="xs" variant="light" color="cyan" onClick={() => void loadBrowserInfo()} data-testid="settings-browser-refresh">
+            Refresh
+          </Button>
+        </Stack>
       </Section>
 
       {/* WP-09-11 (UI-21): user-owned export delivery targets, off by default. */}

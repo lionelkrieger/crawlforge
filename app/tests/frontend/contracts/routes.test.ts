@@ -1,9 +1,9 @@
 /**
  * Route catalog contract tests: the frozen catalog must mirror the REST
- * spec exactly — 88 route groups (51 baseline rows of FS-CRAWL-001 §10.2 +
- * 37 additive rows of FS-CRAWL-002 Appendix B), expanding to 108
+ * spec exactly — 89 route groups (51 baseline rows of FS-CRAWL-001 §10.2 +
+ * 38 additive rows of FS-CRAWL-002 Appendix B), expanding to 109
  * method+path operations. Expected paths below are transcribed verbatim
- * from the spec tables.
+ * from the spec tables. WP-10-04 (UI-21 amendment) added settings.browser.
  */
 
 import { describe, expect, it } from 'vitest';
@@ -101,7 +101,7 @@ const BASELINE_OPERATIONS: readonly string[] = [
   'DELETE /api/queries'
 ];
 
-/** Additive method+path pairs — FS-CRAWL-002 Appendix B (37 rows). */
+/** Additive method+path pairs — FS-CRAWL-002 Appendix B (38 rows). */
 const ADDITIVE_OPERATIONS: readonly string[] = [
   'GET /api/audits/{id}/waf-blocks',
   'GET /api/audits/{id}/waf-blocks/summary',
@@ -134,6 +134,7 @@ const ADDITIVE_OPERATIONS: readonly string[] = [
   'GET /api/audits/{id}/semantics/link-opportunities',
   'GET /api/audits/{id}/semantics/clusters',
   'POST /api/settings/embedding/test',
+  'GET /api/settings/browser',
   'GET /api/audits/{id}/geo/llms-txt',
   'GET /api/audits/{id}/geo/governance',
   'POST /api/tools/llms-generate',
@@ -145,11 +146,11 @@ const ADDITIVE_OPERATIONS: readonly string[] = [
 const routeKeys = Object.keys(API_ROUTES) as ApiRouteKey[];
 const operationOf = (key: ApiRouteKey): string => `${API_ROUTES[key].method} ${API_ROUTES[key].path}`;
 
-describe('route catalog coverage (88 routes: 51 baseline + 37 additive)', () => {
-  it('expands to exactly 108 unique method+path operations', () => {
-    expect(routeKeys).toHaveLength(108);
+describe('route catalog coverage (89 routes: 51 baseline + 38 additive)', () => {
+  it('expands to exactly 109 unique method+path operations', () => {
+    expect(routeKeys).toHaveLength(109);
     const operations = routeKeys.map(operationOf);
-    expect(new Set(operations).size).toBe(108);
+    expect(new Set(operations).size).toBe(109);
   });
 
   it('mirrors every baseline operation verbatim', () => {
@@ -160,11 +161,11 @@ describe('route catalog coverage (88 routes: 51 baseline + 37 additive)', () => 
 
   it('mirrors every additive operation verbatim', () => {
     const additive = routeKeys.filter((key) => API_ROUTES[key].additive).map(operationOf);
-    expect(additive).toHaveLength(37);
+    expect(additive).toHaveLength(38);
     expect(new Set(additive)).toEqual(new Set(ADDITIVE_OPERATIONS));
   });
 
-  it('groups operations into exactly 88 spec rows (51 baseline + 37 additive)', () => {
+  it('groups operations into exactly 89 spec rows (51 baseline + 38 additive)', () => {
     const baselineGroups = new Set(
       routeKeys.filter((key) => !API_ROUTES[key].additive).map((key) => API_ROUTES[key].group)
     );
@@ -172,12 +173,12 @@ describe('route catalog coverage (88 routes: 51 baseline + 37 additive)', () => 
       routeKeys.filter((key) => API_ROUTES[key].additive).map((key) => API_ROUTES[key].group)
     );
     expect(baselineGroups.size).toBe(51);
-    expect(additiveGroups.size).toBe(37);
+    expect(additiveGroups.size).toBe(38);
     // No group mixes baseline and additive operations.
     for (const group of additiveGroups) {
       expect(baselineGroups.has(group)).toBe(false);
     }
-    expect(baselineGroups.size + additiveGroups.size).toBe(88);
+    expect(baselineGroups.size + additiveGroups.size).toBe(89);
   });
 
   it('marks exactly the two non-JSON routes as non-enveloped', () => {

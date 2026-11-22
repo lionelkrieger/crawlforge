@@ -142,6 +142,29 @@ public sealed record EmbeddingTestRequest(string Endpoint, string? Model);
 /// <param name="Message">Human-readable verdict detail.</param>
 public sealed record EmbeddingTestResponse(bool IsLoopback, bool Reachable, bool ModelAvailable, string? Message);
 
+/// <summary>GET /api/settings/browser — UI-21 browser section (WP-10-04,
+/// FS-CRAWL-001 §5.6.3). Local-only resolution identity: bundled pinned Chrome
+/// for Testing → user-configured path → local Chrome → local Edge. No runtime
+/// download exists (D-003); the pin-manifest version is reported even before
+/// the binary is physically bundled (owner packaging item O-006).</summary>
+/// <param name="Available">Whether a local browser resolved.</param>
+/// <param name="ExecutablePath">Absolute local executable path, when resolved.</param>
+/// <param name="Source">Resolution source wire key: bundled / user-configured / local-chrome / local-edge.</param>
+/// <param name="Product">Browser product label.</param>
+/// <param name="Version">Resolved browser version.</param>
+/// <param name="PinnedVersion">The manifest pin when a bundled build resolved, else null.</param>
+/// <param name="PinManifestVersion">Bundled pin-manifest version when present (even if the binary is not yet bundled).</param>
+/// <param name="Message">Actionable guidance when no browser resolved.</param>
+public sealed record BrowserInfoWire(
+    bool Available,
+    string? ExecutablePath,
+    string? Source,
+    string? Product,
+    string? Version,
+    string? PinnedVersion,
+    string? PinManifestVersion,
+    string? Message);
+
 /// <summary>
 /// Settings surface (FS-CRAWL-001 §10.2, criterion #8): local-only toggles with
 /// guaranteed defaults; outbound credentials are encrypted at rest and never
@@ -351,6 +374,35 @@ public sealed class SettingsController : ApiControllerBase
     }
 
     private static string BundledModelDirectory => Path.Combine(AppContext.BaseDirectory, "assets", "onnx-model");
+
+    /// <summary>Reads the local rendering-browser identity for the UI-21
+    /// browser section (§5.6.3). Filesystem probes only — no network, no
+    /// registry/WMI, no runtime download (D-003/CR-007).</summary>
+    /// <returns>Browser info envelope.</returns>
+    [HttpGet("browser")]
+    public ObjectResult GetBrowserInfo()
+    {
+        var manifest = Crawler.Rendering.BrowserProvisioning.TryLoadPinManifest();
+        var browser = Crawler.Rendering.BrowserProvisioning.TryResolve();
+        if (browser is null)
+        {
+            return OkEnvelope(new BrowserInfoWire(
+                false, null, null, null, null, null, manifest?.Version,
+                "No local browser resolved. Install Chrome or Edge, or configure a browser executable path. CrawlForge never downloads a browser at runtime."));
+        }
+
+        var source = browser.Source switch
+        {
+            Crawler.Rendering.BrowserSource.Bundled => "bundled",
+            Crawler.Rendering.BrowserSource.UserConfigured => "user-configured",
+            Crawler.Rendering.BrowserSource.LocalChrome => "local-chrome",
+            Crawler.Rendering.BrowserSource.LocalEdge => "local-edge",
+            _ => "unknown",
+        };
+        return OkEnvelope(new BrowserInfoWire(
+            true, browser.ExecutablePath, source, browser.Product, browser.Version,
+            browser.PinnedVersion, manifest?.Version, null));
+    }
 
     private async Task<ApplicationSettingsDto> LoadSettingsAsync(CancellationToken cancellationToken)
     {

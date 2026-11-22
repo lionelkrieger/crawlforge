@@ -1,3 +1,4 @@
+using CrawlForge.Audit.StructuredData;
 using CrawlForge.Contracts.Constants;
 using CrawlForge.Contracts.Enums;
 
@@ -81,7 +82,38 @@ public sealed class AuditRuleCatalog
         Seed(FindingRuleKeys.DescriptionPixelTruncation, AuditCategory.Content, FindingSeverity.Notice, priority: 40, "low");
         Seed(FindingRuleKeys.IndexabilityHeaderHtmlConflict, AuditCategory.Indexability, FindingSeverity.Warning, priority: 70, "low");
         Seed(FindingRuleKeys.CanonicalHeaderHtmlConflict, AuditCategory.Indexability, FindingSeverity.Warning, priority: 75, "low");
-        Seed(FindingRuleKeys.HreflangHeaderHtmlConflict, AuditCategory.Indexability, FindingSeverity.Warning, priority: 65, "low");
+        Seed(FindingRuleKeys.HreflangHeaderHtmlConflict, AuditCategory.Internationalization, FindingSeverity.Error, priority: 65, "low");
+
+        // Phase 10 (WP-10-02/05 wiring): the rendered-capture delta family
+        // (FS-CRAWL-001 §7.18). Categories/severities match the accepted
+        // producers verbatim; the rendered-only noindex case rides Error +
+        // critical:true evidence (the locked vocabulary has no Critical token).
+        Seed(FindingRuleKeys.RenderStatusDelta, AuditCategory.Indexability, FindingSeverity.Warning, priority: 70, "low");
+        Seed(FindingRuleKeys.RenderTitleDelta, AuditCategory.Indexability, FindingSeverity.Error, priority: 85, "low");
+        Seed(FindingRuleKeys.RenderCanonicalDelta, AuditCategory.Indexability, FindingSeverity.Error, priority: 85, "low");
+        Seed(FindingRuleKeys.RenderMetaRobotsDelta, AuditCategory.Indexability, FindingSeverity.Error, priority: 90, "low");
+        Seed(FindingRuleKeys.RenderMetadataDelta, AuditCategory.Indexability, FindingSeverity.Warning, priority: 70, "low");
+        Seed(FindingRuleKeys.RenderNoindexDelta, AuditCategory.Indexability, FindingSeverity.Error, priority: 95, "medium");
+        Seed(FindingRuleKeys.RenderTextDelta, AuditCategory.Indexability, FindingSeverity.Notice, priority: 40, "low");
+        Seed(FindingRuleKeys.RenderLinksDelta, AuditCategory.Indexability, FindingSeverity.Notice, priority: 40, "low");
+        Seed(FindingRuleKeys.RenderStructuredDataDelta, AuditCategory.StructuredData, FindingSeverity.Notice, priority: 35, "low");
+        Seed(FindingRuleKeys.RenderResourcesDelta, AuditCategory.Performance, FindingSeverity.Notice, priority: 30, "low");
+        Seed(FindingRuleKeys.RenderServiceWorkerRegistered, AuditCategory.Indexability, FindingSeverity.Notice, priority: 20, "low");
+        Seed(FindingRuleKeys.ContentJavascriptDependentTemplate, AuditCategory.Content, FindingSeverity.Warning, priority: 60, "medium");
+        // Builder-local key (WP-10-02 CaptureRuleKeys) registered here at
+        // wiring per the coordinator ruling; FindingRuleKeys promotion is an
+        // owner item. Dual-storage WARNING is advisory — never a cap.
+        Seed("render.dual-storage-warning", AuditCategory.Crawl, FindingSeverity.Warning, priority: 50, "low");
+
+        // D-021 (WP-10-05): hreflang family lives under Internationalization.
+        // The producers already stamp that category; these seeds complete the
+        // catalog metadata (no prior seeds existed to move).
+        Seed(StructuredDataRuleKeys.HreflangInvalidCode, AuditCategory.Internationalization, FindingSeverity.Warning, priority: 55, "low");
+        Seed(StructuredDataRuleKeys.HreflangMissingSelfReference, AuditCategory.Internationalization, FindingSeverity.Warning, priority: 50, "low");
+        Seed(StructuredDataRuleKeys.HreflangDuplicate, AuditCategory.Internationalization, FindingSeverity.Warning, priority: 50, "low");
+        Seed(StructuredDataRuleKeys.HreflangConflict, AuditCategory.Internationalization, FindingSeverity.Warning, priority: 65, "low");
+        Seed(StructuredDataRuleKeys.HreflangMissingReciprocity, AuditCategory.Internationalization, FindingSeverity.Warning, priority: 65, "low");
+        Seed(StructuredDataRuleKeys.HreflangValid, AuditCategory.Internationalization, FindingSeverity.Pass, priority: 0);
     }
 
     /// <summary>Registers (or replaces) a rule definition additively.</summary>

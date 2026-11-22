@@ -234,7 +234,9 @@ public sealed class HeaderHtmlEquivalencyAnalyzer : IHeaderHtmlEquivalencyAnalyz
 
             findings.Add(new FindingDraft(
                 FindingRuleKeys.HreflangHeaderHtmlConflict,
-                AuditCategory.StructuredData,
+                // D-021 (WP-10-05 wiring): hreflang findings live under
+                // Internationalization, not StructuredData.
+                AuditCategory.Internationalization,
                 agree ? FindingSeverity.Pass : FindingSeverity.Error,
                 urlId,
                 JsonSerializer.Serialize(new

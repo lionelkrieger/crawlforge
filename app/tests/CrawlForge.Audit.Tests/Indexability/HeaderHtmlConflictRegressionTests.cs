@@ -157,7 +157,7 @@ public class HeaderHtmlConflictRegressionTests
 
         var conflict = Assert.Single(findings, f => f.RuleKey == FindingRuleKeys.HreflangHeaderHtmlConflict);
         Assert.Equal(FindingSeverity.Error, conflict.Severity);
-        Assert.Equal(AuditCategory.StructuredData, conflict.Category);
+        Assert.Equal(AuditCategory.Internationalization, conflict.Category); // D-021: hreflang -> Internationalization
         using JsonDocument evidence = JsonDocument.Parse(conflict.EvidenceJson);
         Assert.Equal("de", evidence.RootElement.GetProperty("hreflang").GetString());
         Assert.Equal("/de/page", evidence.RootElement.GetProperty("htmlValue").GetString());

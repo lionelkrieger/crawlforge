@@ -8,6 +8,12 @@
  *
  * The preview sandbox loads ONLY the crawled target's rendered artifact.
  *
+ * UI-19 real rendered output (WP-10-03): after a successful `tools.renderTest`
+ * the locked `RenderedOutputPanel` (default testid `rendered-output`) mounts
+ * below the legacy artifact views and binds the full response — screenshot,
+ * network waterfall, console messages, rendered DOM and the post-render WAF
+ * verdict. The legacy views stay: their testids are pinned by existing tests.
+ *
  * @module tools/RenderTesterTool
  */
 
@@ -32,6 +38,7 @@ import { VerdictBadge } from './shared/VerdictBadge';
 import { useToolCall } from './shared/useToolCall';
 import { SelectorPicker } from './picker/SelectorPicker';
 import { ExtractionDraftsPanel, type ExtractionRuleDraft } from './picker/ExtractionDrafts';
+import { RenderedOutputPanel } from '../surfaces/explorers/rendered/RenderedOutputPanel';
 import type { ConsoleMessage, RenderTestResponse } from '../contracts/api/tools';
 
 export type { ExtractionRuleDraft } from './picker/ExtractionDrafts';
@@ -182,6 +189,12 @@ export function RenderTesterTool() {
                 )}
               </Stack>
             </Group>
+
+            {/* UI-19 real rendered output (WP-10-03 RenderedOutputPanel): the
+                full locked response — screenshot, network waterfall, console
+                messages, rendered DOM and the WAF verdict. The legacy views
+                above keep their testids (pinned by existing tests). */}
+            <RenderedOutputPanel result={result} />
 
             {pickerEnabled && result.pickerActive !== false ? (
               <Paper withBorder p="sm">

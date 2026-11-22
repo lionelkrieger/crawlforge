@@ -31,6 +31,8 @@
 import type {
   AimdSettings,
   AuditConfiguration,
+  CapturePatternOverride,
+  CaptureSettings,
   ConfigurationCreateRequest,
   ConfigurationUpdateRequest,
   ConsentSettings,
@@ -41,6 +43,7 @@ import type {
   RewriteSettings,
   ZoneWeightSettings
 } from '../../contracts/api/projects';
+import type { CaptureModeWire } from '../../contracts/api/vocabulary';
 
 // ── Engine scope-rules document (CrawlScopeConfigParser shape) ──────────────
 
@@ -238,6 +241,65 @@ export function toggleRedirectCheck(
   return { ...current, [key]: enabled };
 }
 
+// ── Capture mode + settings (WP-10-04 wiring, §5.6.1; WP-10-02 handoff §5.6) ──
+
+/**
+ * Capture-settings form group. The material-change threshold is edited as a
+ * PERCENT (20) and mapped to the wire fraction (0.20); every other knob maps
+ * 1:1. Defaults reproduce CrawlForge.Contracts.Crawl.CaptureSettings.Default.
+ */
+export interface CaptureSettingsFormValue {
+  /** Adaptive sample size per URL-pattern group (spec range 3–5). */
+  readonly adaptiveSampleSize: number;
+  /** Material-change visible word-count threshold, percent (wire fraction ×100). */
+  readonly materialThresholdPercent: number;
+  /** Dual-mode stored-capture warning threshold in bytes — warn only, no hard cap. */
+  readonly dualStorageThresholdBytes: number;
+  readonly renderWaitQuietMs: number;
+  readonly renderWaitHardCapMs: number;
+  /** null = auto (half logical processors, minimum 2). */
+  readonly renderingPoolSize: number | null;
+  readonly patternOverrides: readonly CapturePatternOverride[];
+}
+
+export const DEFAULT_CAPTURE_SETTINGS: CaptureSettingsFormValue = {
+  adaptiveSampleSize: 4,
+  materialThresholdPercent: 20,
+  dualStorageThresholdBytes: 1073741824,
+  renderWaitQuietMs: 500,
+  renderWaitHardCapMs: 20000,
+  renderingPoolSize: null,
+  patternOverrides: []
+};
+
+/** Normalizes a wire document (absent/null/missing fields = engine defaults). */
+export function captureSettingsFromWire(wire: CaptureSettings | null | undefined): CaptureSettingsFormValue {
+  return {
+    adaptiveSampleSize: wire?.adaptiveSampleSizePerGroup ?? DEFAULT_CAPTURE_SETTINGS.adaptiveSampleSize,
+    materialThresholdPercent: wire?.materialChangeWordCountThreshold !== undefined
+      ? Math.round(wire.materialChangeWordCountThreshold * 100)
+      : DEFAULT_CAPTURE_SETTINGS.materialThresholdPercent,
+    dualStorageThresholdBytes: wire?.dualStorageWarningThresholdBytes ?? DEFAULT_CAPTURE_SETTINGS.dualStorageThresholdBytes,
+    renderWaitQuietMs: wire?.renderWaitQuietMs ?? DEFAULT_CAPTURE_SETTINGS.renderWaitQuietMs,
+    renderWaitHardCapMs: wire?.renderWaitHardCapMs ?? DEFAULT_CAPTURE_SETTINGS.renderWaitHardCapMs,
+    renderingPoolSize: wire?.renderingPoolSize ?? null,
+    patternOverrides: [...(wire?.patternOverrides ?? [])]
+  };
+}
+
+/** Emits the explicit wire document (percent → fraction; empty overrides → []). */
+export function captureSettingsToWire(form: CaptureSettingsFormValue): CaptureSettings {
+  return {
+    adaptiveSampleSizePerGroup: form.adaptiveSampleSize,
+    materialChangeWordCountThreshold: form.materialThresholdPercent / 100,
+    dualStorageWarningThresholdBytes: form.dualStorageThresholdBytes,
+    renderWaitQuietMs: form.renderWaitQuietMs,
+    renderWaitHardCapMs: form.renderWaitHardCapMs,
+    renderingPoolSize: form.renderingPoolSize,
+    patternOverrides: form.patternOverrides.length > 0 ? [...form.patternOverrides] : []
+  };
+}
+
 export interface ConfigurationFormValue {
   readonly name: string;
   readonly description: string | null;
@@ -252,6 +314,10 @@ export interface ConfigurationFormValue {
   readonly enabledCategories: readonly string[] | null;
   /** CR-029 inappropriate-redirect toggles (wire `redirectChecks`; null = all ON). */
   readonly redirectChecks: RedirectChecksFormValue;
+  /** §5.6.1 capture mode (wire `captureMode`; absent/null = non-js). */
+  readonly captureMode: CaptureModeWire;
+  /** §5.6.1/§5.6.2 capture knobs (wire `captureSettings`). */
+  readonly captureSettings: CaptureSettingsFormValue;
   readonly contentScope?: ContentScopeSettings;
   readonly rewrite?: RewriteSettings;
   readonly consent?: ConsentSettings;
@@ -296,6 +362,8 @@ export function defaultConfigurationForm(seedUrl?: string): ConfigurationFormVal
     },
     enabledCategories: null,
     redirectChecks: REDIRECT_CHECKS_ALL_ENABLED,
+    captureMode: 'non-js',
+    captureSettings: { ...DEFAULT_CAPTURE_SETTINGS, patternOverrides: [] },
     rewrite: { rules: [], hostMappings: [] }
   };
 }
@@ -351,6 +419,8 @@ export function configurationFromWire(dto: ConfigurationWireDto): ConfigurationF
     scopeRules: mergeScopeRules(dto.scopeRules),
     enabledCategories: dto.enabledCategories ?? null,
     redirectChecks: redirectChecksFromWire(dto.redirectChecks),
+    captureMode: dto.captureMode ?? 'non-js',
+    captureSettings: captureSettingsFromWire(dto.captureSettings),
     ...(dto.contentScope ? { contentScope: dto.contentScope } : {}),
     ...(dto.rewrite ? { rewrite: dto.rewrite } : {}),
     ...(dto.consent ? { consent: dto.consent } : {}),
@@ -378,6 +448,8 @@ export function configurationToCreateRequest(value: ConfigurationFormValue): Con
     scopeRules: value.scopeRules,
     enabledCategories: value.enabledCategories,
     redirectChecks: redirectChecksToWire(value.redirectChecks),
+    captureMode: value.captureMode,
+    captureSettings: captureSettingsToWire(value.captureSettings),
     ...(value.contentScope ? { contentScope: value.contentScope } : {}),
     ...(value.rewrite ? { rewrite: value.rewrite } : {}),
     ...(value.consent ? { consent: value.consent } : {}),
@@ -405,6 +477,8 @@ export function configurationToUpdateRequest(value: ConfigurationFormValue): Con
     scopeRules: value.scopeRules,
     enabledCategories: value.enabledCategories,
     redirectChecks: redirectChecksToWire(value.redirectChecks),
+    captureMode: value.captureMode,
+    captureSettings: captureSettingsToWire(value.captureSettings),
     ...(value.contentScope ? { contentScope: value.contentScope } : {}),
     ...(value.rewrite ? { rewrite: value.rewrite } : {}),
     ...(value.consent ? { consent: value.consent } : {}),

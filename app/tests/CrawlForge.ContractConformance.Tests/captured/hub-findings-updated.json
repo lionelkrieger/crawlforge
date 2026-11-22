@@ -1,6 +1,6 @@
 [
   {
-    "receivedAt": "2026-11-20T07:36:29.5698498\u002B00:00",
+    "receivedAt": "2026-11-22T17:23:20.7644016\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -12,7 +12,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T07:36:32.812426\u002B00:00",
+    "receivedAt": "2026-11-22T17:23:24.3664454\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -25,7 +25,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T07:36:35.422496\u002B00:00",
+    "receivedAt": "2026-11-22T17:23:27.8337668\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -37,7 +37,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T07:36:38.6705656\u002B00:00",
+    "receivedAt": "2026-11-22T17:23:34.6822255\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -49,7 +49,7 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:20.8607288\u002B00:00",
+    "receivedAt": "2026-11-22T17:23:56.1863771\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -64,62 +64,79 @@
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:21.8669659\u002B00:00",
+    "receivedAt": "2026-11-22T17:23:57.2235711\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
         "error": 1,
-        "warning": 39,
-        "notice": 96,
-        "pass": 19
+        "warning": 35,
+        "notice": 86,
+        "pass": 17
       },
       "categoryDeltas": {
-        "indexability": 39,
-        "content": 41,
-        "accessibility": 37,
-        "structureddata": 38
+        "indexability": 35,
+        "content": 37,
+        "accessibility": 33,
+        "structureddata": 34
       }
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:22.8985575\u002B00:00",
+    "receivedAt": "2026-11-22T17:23:58.3072329\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
-        "error": 4,
-        "warning": 37,
-        "notice": 85,
-        "pass": 17
+        "error": 3,
+        "warning": 41,
+        "notice": 95,
+        "pass": 19
       },
       "categoryDeltas": {
-        "indexability": 32,
-        "structureddata": 35,
-        "accessibility": 32,
+        "indexability": 36,
+        "structureddata": 39,
         "images": 5,
-        "content": 38,
+        "content": 42,
+        "accessibility": 35,
         "internationalization": 1
       }
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:23.9386296\u002B00:00",
+    "receivedAt": "2026-11-22T17:23:59.401694\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
-        "warning": 28,
+        "warning": 31,
+        "notice": 55,
+        "pass": 11
+      },
+      "categoryDeltas": {
+        "indexability": 22,
+        "structureddata": 22,
+        "content": 31,
+        "accessibility": 22
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-22T17:24:00.4226618\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 30,
         "notice": 50,
         "pass": 10
       },
       "categoryDeltas": {
         "indexability": 20,
         "structureddata": 20,
-        "accessibility": 20,
-        "content": 28
+        "content": 30,
+        "accessibility": 20
       }
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:25.0118209\u002B00:00",
+    "receivedAt": "2026-11-22T17:24:01.4846163\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -130,13 +147,13 @@
       "categoryDeltas": {
         "indexability": 22,
         "structureddata": 22,
-        "accessibility": 22,
-        "content": 33
+        "content": 33,
+        "accessibility": 22
       }
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:26.0831551\u002B00:00",
+    "receivedAt": "2026-11-22T17:24:02.5318726\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -147,13 +164,30 @@
       "categoryDeltas": {
         "indexability": 22,
         "structureddata": 22,
-        "accessibility": 22,
-        "content": 33
+        "content": 33,
+        "accessibility": 22
       }
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:27.1232461\u002B00:00",
+    "receivedAt": "2026-11-22T17:24:03.6201421\u002B00:00",
+    "payload": {
+      "auditId": "1",
+      "severityDeltas": {
+        "warning": 37,
+        "notice": 65,
+        "pass": 13
+      },
+      "categoryDeltas": {
+        "indexability": 26,
+        "structureddata": 26,
+        "content": 37,
+        "accessibility": 26
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-11-22T17:24:04.6900254\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -164,30 +198,13 @@
       "categoryDeltas": {
         "indexability": 22,
         "structureddata": 22,
-        "accessibility": 22,
-        "content": 33
+        "content": 33,
+        "accessibility": 22
       }
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:28.1987969\u002B00:00",
-    "payload": {
-      "auditId": "1",
-      "severityDeltas": {
-        "warning": 34,
-        "notice": 60,
-        "pass": 12
-      },
-      "categoryDeltas": {
-        "indexability": 24,
-        "structureddata": 24,
-        "accessibility": 24,
-        "content": 34
-      }
-    }
-  },
-  {
-    "receivedAt": "2026-11-20T07:37:29.2596026\u002B00:00",
+    "receivedAt": "2026-11-22T17:24:05.7327015\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -198,13 +215,13 @@
       "categoryDeltas": {
         "indexability": 22,
         "structureddata": 22,
-        "accessibility": 22,
-        "content": 33
+        "content": 33,
+        "accessibility": 22
       }
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:30.3032333\u002B00:00",
+    "receivedAt": "2026-11-22T17:24:06.7960333\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
@@ -215,42 +232,25 @@
       "categoryDeltas": {
         "indexability": 22,
         "structureddata": 22,
-        "accessibility": 22,
-        "content": 33
+        "content": 33,
+        "accessibility": 22
       }
     }
   },
   {
-    "receivedAt": "2026-11-20T07:37:31.3596738\u002B00:00",
+    "receivedAt": "2026-11-22T17:24:07.4990638\u002B00:00",
     "payload": {
       "auditId": "1",
       "severityDeltas": {
-        "warning": 33,
-        "notice": 55,
-        "pass": 11
+        "warning": 24,
+        "notice": 117,
+        "pass": 6
       },
       "categoryDeltas": {
-        "indexability": 22,
-        "structureddata": 22,
-        "accessibility": 22,
-        "content": 33
-      }
-    }
-  },
-  {
-    "receivedAt": "2026-11-20T07:37:32.041135\u002B00:00",
-    "payload": {
-      "auditId": "1",
-      "severityDeltas": {
-        "warning": 27,
-        "notice": 122,
-        "pass": 7
-      },
-      "categoryDeltas": {
-        "indexability": 14,
-        "structureddata": 14,
-        "accessibility": 14,
-        "content": 113,
+        "indexability": 12,
+        "structureddata": 12,
+        "content": 110,
+        "accessibility": 12,
         "internationalization": 1
       }
     }

@@ -5,8 +5,11 @@
   <ItemGroup>
     <ProjectReference Include="..\CrawlForge.Contracts\CrawlForge.Contracts.csproj" />
   </ItemGroup>
+  <!-- WP-10-01/04: the PuppeteerSharp driver was replaced by the direct CDP
+       control layer (D-002). CrawlForge.Audit keeps its own reference for the
+       accepted LabRenderingProbe (G04). Logging.Abstractions was previously
+       transitive via PuppeteerSharp; now explicit (WP-10-04 amendment). -->
   <ItemGroup>
-    <!-- WP-02-D1: rendering driver (WP-02-06). Local browser binary resolution only. -->
-    <PackageReference Include="PuppeteerSharp" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 </Project>

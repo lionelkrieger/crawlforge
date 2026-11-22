@@ -1,5 +1,7 @@
 using CrawlForge.Contracts.Crawl;
+using CrawlForge.Contracts.Enums;
 using CrawlForge.Crawler.Fetching;
+using CrawlForge.Crawler.Rendering;
 using CrawlForge.Crawler.Tests.Fetching.TestSupport;
 using Xunit;
 
@@ -190,13 +192,152 @@ public sealed class PreCrawlValidatorTests
         Assert.Contains("loop", result.Issues[0], StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData(CaptureMode.Js)]
+    [InlineData(CaptureMode.Dual)]
+    [InlineData(CaptureMode.Adaptive)]
+    public async Task Validate_RenderingModeWithoutBrowser_SurfacesLocalBlocker(CaptureMode mode)
+    {
+        var handler = new ScriptedHttpMessageHandler()
+            .Enqueue(ScriptedHttpMessageHandler.Response(200, "<html>home</html>"));
+        var resolver = new FakeBrowserResolver { Failure = new BrowserResolutionException("no local browser found") };
+        PreCrawlValidator validator = CreateValidator(handler, browserResolver: resolver);
+
+        PreCrawlValidationResult result = await validator.ValidateAsync(
+            "http://target.example.com/", mode, CaptureSettings.Default);
+
+        Assert.False(result.IsValid);
+        Assert.Single(result.Issues);
+        string issue = result.Issues[0];
+        Assert.Contains("no local browser found", issue, StringComparison.Ordinal);
+        Assert.Contains("bundled", issue, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("user-configured", issue, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Chrome", issue, StringComparison.Ordinal);
+        Assert.Contains("Edge", issue, StringComparison.Ordinal);
+        Assert.Contains("Non-JS capture remains available", issue, StringComparison.Ordinal);
+        Assert.Equal(1, resolver.Calls);
+        Assert.Null(result.FinalUrl);
+        Assert.Empty(handler.Requests);
+    }
+
+    [Fact]
+    public async Task Validate_RenderingModeWithResolvableBrowser_NoIssue()
+    {
+        var handler = new ScriptedHttpMessageHandler()
+            .Enqueue(ScriptedHttpMessageHandler.Response(200, "<html>home</html>"));
+        var resolver = new FakeBrowserResolver();
+        PreCrawlValidator validator = CreateValidator(handler, browserResolver: resolver);
+
+        PreCrawlValidationResult result = await validator.ValidateAsync(
+            "http://target.example.com/", CaptureMode.Js, CaptureSettings.Default);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Issues);
+        Assert.Equal(200, result.StatusCode);
+        Assert.Equal(1, resolver.Calls);
+    }
+
+    [Fact]
+    public async Task Validate_NonJsMode_NeverTouchesBrowserResolution()
+    {
+        var handler = new ScriptedHttpMessageHandler()
+            .Enqueue(ScriptedHttpMessageHandler.Response(200, "<html>home</html>"));
+        var resolver = new FakeBrowserResolver { Failure = new BrowserResolutionException("no local browser found") };
+        PreCrawlValidator validator = CreateValidator(handler, browserResolver: resolver);
+
+        PreCrawlValidationResult result = await validator.ValidateAsync(
+            "http://target.example.com/", CaptureMode.NonJs, CaptureSettings.Default);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Issues);
+        Assert.Equal(0, resolver.Calls);
+    }
+
+    [Fact]
+    public async Task Validate_RenderedPatternOverrideOnNonJs_RequiresBrowser()
+    {
+        // §5.6.1: an explicit rendered per-URL-pattern override renders matching
+        // URLs on top of every capture mode, so it is rendering-dependent too.
+        var handler = new ScriptedHttpMessageHandler()
+            .Enqueue(ScriptedHttpMessageHandler.Response(200, "<html>home</html>"));
+        var resolver = new FakeBrowserResolver { Failure = new BrowserResolutionException("no local browser found") };
+        PreCrawlValidator validator = CreateValidator(handler, browserResolver: resolver);
+        var settings = new CaptureSettings(
+            PatternOverrides: [new CapturePatternOverride("/blog/*", PatternCaptureMode.Rendered)]);
+
+        PreCrawlValidationResult result = await validator.ValidateAsync(
+            "http://target.example.com/", CaptureMode.NonJs, settings);
+
+        Assert.False(result.IsValid);
+        Assert.Single(result.Issues);
+        Assert.Contains("Non-JS capture remains available", result.Issues[0], StringComparison.Ordinal);
+        Assert.Equal(1, resolver.Calls);
+    }
+
+    [Fact]
+    public async Task Validate_NonRenderedPatternOverrideOnNonJs_NeverTouchesBrowserResolution()
+    {
+        var handler = new ScriptedHttpMessageHandler()
+            .Enqueue(ScriptedHttpMessageHandler.Response(200, "<html>home</html>"));
+        var resolver = new FakeBrowserResolver { Failure = new BrowserResolutionException("no local browser found") };
+        PreCrawlValidator validator = CreateValidator(handler, browserResolver: resolver);
+        var settings = new CaptureSettings(
+            PatternOverrides: [new CapturePatternOverride("/blog/*", PatternCaptureMode.NonRendered)]);
+
+        PreCrawlValidationResult result = await validator.ValidateAsync(
+            "http://target.example.com/", CaptureMode.NonJs, settings);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Issues);
+        Assert.Equal(0, resolver.Calls);
+    }
+
+    [Fact]
+    public async Task Validate_ConfiglessCall_NeverTouchesBrowserResolution()
+    {
+        // The locked IPreCrawlValidator surface carries no capture configuration,
+        // so the config-less call is validated as non-rendering (§5.6.3 checks
+        // run through the capture-aware overload only).
+        var handler = new ScriptedHttpMessageHandler()
+            .Enqueue(ScriptedHttpMessageHandler.Response(200, "<html>home</html>"));
+        var resolver = new FakeBrowserResolver { Failure = new BrowserResolutionException("no local browser found") };
+        PreCrawlValidator validator = CreateValidator(handler, browserResolver: resolver);
+
+        PreCrawlValidationResult result = await validator.ValidateAsync("http://target.example.com/");
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Issues);
+        Assert.Equal(0, resolver.Calls);
+    }
+
+    /// <summary>Scripted browser resolver: counts calls, never launches anything.</summary>
+    private sealed class FakeBrowserResolver : IPreCrawlBrowserResolver
+    {
+        public int Calls { get; private set; }
+
+        public Exception? Failure { get; init; }
+
+        public ResolvedBrowser ResolveBrowser()
+        {
+            Calls++;
+            if (Failure is not null)
+            {
+                throw Failure;
+            }
+
+            return new ResolvedBrowser(
+                @"C:\fake\chrome.exe", BrowserSource.Bundled, "Chrome for Testing", "120.0.0.0", "120.0.0.0");
+        }
+    }
+
     private static PreCrawlValidator CreateValidator(
         ScriptedHttpMessageHandler handler,
         HttpFetcherOptions? options = null,
-        FakeWafChallengeEvaluator? challengeEvaluator = null)
+        FakeWafChallengeEvaluator? challengeEvaluator = null,
+        IPreCrawlBrowserResolver? browserResolver = null)
     {
         var client = new HttpClient(handler);
         var fetcher = new HttpFetcher(options ?? new HttpFetcherOptions(retryBackoffBaseMilliseconds: 1), client);
-        return new PreCrawlValidator(fetcher, challengeEvaluator);
+        return new PreCrawlValidator(fetcher, challengeEvaluator, browserResolver);
     }
 }

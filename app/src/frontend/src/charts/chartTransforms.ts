@@ -10,6 +10,7 @@
  */
 
 import type { EChartsOption } from 'echarts';
+import { AUDIT_CATEGORY_LABELS } from '../contracts/api/vocabulary';
 import type {
   AuditDashboardSummary,
   AuditScores,
@@ -30,6 +31,7 @@ import {
   statusColors,
   palette
 } from './chartTheme';
+import { AUDIT_CATEGORY_LABELS } from '../contracts/api/vocabulary';
 
 /** One summary card model (presentational; rendered by the dashboard). */
 export interface SummaryCardModel {
@@ -192,6 +194,11 @@ export function severityDistributionOption(counts: Readonly<Record<string, numbe
   };
 }
 
+/** Display label for an audit-category wire token; unknown tokens pass through. */
+export function categoryDisplayLabel(token: string): string {
+  return AUDIT_CATEGORY_LABELS[token as keyof typeof AUDIT_CATEGORY_LABELS] ?? token;
+}
+
 /** Category horizontal bar (descending count; stable tie order by key). */
 export function categoryDistributionOption(counts: Readonly<Record<string, number>>): EChartsOption {
   const entries = sortedCountEntries(counts).sort(([a, va], [b, vb]) => vb - va || (a < b ? -1 : 1));
@@ -203,10 +210,11 @@ export function categoryDistributionOption(counts: Readonly<Record<string, numbe
     xAxis: valueXAxis('findings'),
     yAxis: {
       type: 'category',
+      // Data stays on wire tokens (the dashboard click handler filters on params.name); only the visible label maps.
       data: entries.map(([name]) => name).reverse(),
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { color: '#8892a8', fontSize: 11 }
+      axisLabel: { color: '#8892a8', fontSize: 11, formatter: (value: string) => categoryDisplayLabel(value) }
     },
     series: [
       {

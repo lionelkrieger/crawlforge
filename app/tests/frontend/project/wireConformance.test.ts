@@ -114,11 +114,23 @@ describe('configuration editor ↔ REST DTO conformance', () => {
     const payload = configurationToCreateRequest(form);
     const json = JSON.parse(JSON.stringify(payload)) as Record<string, unknown>;
     expect(Object.keys(json).sort()).toEqual([
-      'aimd', 'enabledCategories', 'limits', 'name', 'redirectChecks', 'rendering',
+      'aimd', 'captureMode', 'captureSettings', 'enabledCategories', 'limits', 'name', 'redirectChecks', 'rendering',
       'respectRobotsTxt', 'rewrite', 'scopeRules', 'startUrls', 'virtualRobotsTxt'
     ]);
     // CR-029: all-enabled collapses to the null sentinel (absent/null = all ON).
     expect(json.redirectChecks).toBeNull();
+    // WP-10-04 (§5.6.1): new configurations default to non-js; the capture
+    // settings document carries the engine defaults explicitly.
+    expect(json.captureMode).toBe('non-js');
+    expect(json.captureSettings).toEqual({
+      adaptiveSampleSizePerGroup: 4,
+      materialChangeWordCountThreshold: 0.2,
+      dualStorageWarningThresholdBytes: 1073741824,
+      renderWaitQuietMs: 500,
+      renderWaitHardCapMs: 20000,
+      renderingPoolSize: null,
+      patternOverrides: []
+    });
     expect(json.name).toBe('Default configuration');
     expect(json.startUrls).toEqual(['http://127.0.0.1:47311/']);
     expect(json.limits).toEqual({ maxUrls: null, maxDepth: null, maxDurationSeconds: null, maxResponseBytes: null });
@@ -240,6 +252,60 @@ describe('CR-029 redirectChecks wire round-trip (WP-10-05)', () => {
     // All four off is a valid explicit document (never the null sentinel).
     const allOff = cases.reduce((acc, key) => toggleRedirectCheck(acc, key, false), REDIRECT_CHECKS_ALL_ENABLED);
     expect(redirectChecksToWire(allOff)).toEqual({ crossHost: false, temporaryStatus: false, nonIndexableTarget: false, httpsDowngrade: false });
+  });
+});
+
+describe('capture mode + settings wire round-trip (WP-10-04, §5.6.1)', () => {
+  it('absent/null capture fields normalize to non-js + engine defaults', () => {
+    const form = configurationFromWire({ name: 'c', startUrls: [] } as unknown as ConfigurationWireDto);
+    expect(form.captureMode).toBe('non-js');
+    expect(form.captureSettings.adaptiveSampleSize).toBe(4);
+    expect(form.captureSettings.materialThresholdPercent).toBe(20);
+    expect(form.captureSettings.dualStorageThresholdBytes).toBe(1073741824);
+    expect(form.captureSettings.renderWaitQuietMs).toBe(500);
+    expect(form.captureSettings.renderWaitHardCapMs).toBe(20000);
+    expect(form.captureSettings.renderingPoolSize).toBeNull();
+    expect(form.captureSettings.patternOverrides).toEqual([]);
+  });
+
+  it('round-trips every knob through create and update payloads (percent ↔ fraction)', () => {
+    const form = {
+      ...defaultConfigurationForm('https://example.com/'),
+      captureMode: 'adaptive' as const,
+      captureSettings: {
+        adaptiveSampleSize: 5,
+        materialThresholdPercent: 35,
+        dualStorageThresholdBytes: 2147483648,
+        renderWaitQuietMs: 750,
+        renderWaitHardCapMs: 30000,
+        renderingPoolSize: 3,
+        patternOverrides: [{ pattern: '/blog/*', capture: 'rendered' as const }, { pattern: '/assets/*', capture: 'non-rendered' as const }]
+      }
+    };
+    for (const payload of [configurationToCreateRequest(form), configurationToUpdateRequest(form)]) {
+      const json = JSON.parse(JSON.stringify(payload)) as Record<string, unknown>;
+      expect(json.captureMode).toBe('adaptive');
+      expect(json.captureSettings).toEqual({
+        adaptiveSampleSizePerGroup: 5,
+        materialChangeWordCountThreshold: 0.35,
+        dualStorageWarningThresholdBytes: 2147483648,
+        renderWaitQuietMs: 750,
+        renderWaitHardCapMs: 30000,
+        renderingPoolSize: 3,
+        patternOverrides: [{ pattern: '/blog/*', capture: 'rendered' }, { pattern: '/assets/*', capture: 'non-rendered' }]
+      });
+      // Real consumer: the wire document binds back to the same form state.
+      const readBack = configurationFromWire(json as unknown as ConfigurationWireDto);
+      expect(readBack.captureMode).toBe('adaptive');
+      expect(readBack.captureSettings).toEqual(form.captureSettings);
+    }
+  });
+
+  it('dual mode emits the storage warning threshold; pool size null stays auto', () => {
+    const form = { ...defaultConfigurationForm(), captureMode: 'dual' as const };
+    const json = JSON.parse(JSON.stringify(configurationToCreateRequest(form))) as { captureSettings: { renderingPoolSize: unknown; dualStorageWarningThresholdBytes: number } };
+    expect(json.captureSettings.renderingPoolSize).toBeNull();
+    expect(json.captureSettings.dualStorageWarningThresholdBytes).toBe(1073741824);
   });
 });
 

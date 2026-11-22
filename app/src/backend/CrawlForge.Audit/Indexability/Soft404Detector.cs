@@ -62,6 +62,61 @@ public sealed class Soft404Detector : ISoft404Detector
         string text = context.ScopedText?.Text ?? DomTraversal.VisibleText(context.Document);
         int wordCount = context.ScopedText?.WordCount ?? CountWords(text);
 
+        var (matches, confidence) = EvaluateErrorSignals(title, text, wordCount);
+
+        bool isSoft404 = confidence >= _options.ConfidenceThreshold;
+        string reason = isSoft404
+            ? (matches.Count > 0 ? "error-phrase-match" : "structural-heuristic")
+            : "no-error-signal";
+        string source = "raw";
+        string? rawTitle = null;
+
+        // WP-10-04 (phase-10 done_when): client-route soft 404. A SPA shell
+        // can serve a clean 200 document whose RENDERED tree shows the error
+        // page ("Page not found" for unknown routes). When the raw document
+        // carries no error signal but a rendered document exists, evaluate
+        // the SAME heuristics over the rendered title/text. The pipeline's
+        // dedicated detector step stays the sole emitter (WP-09-05 dedup):
+        // one indexability.soft-404 per URL, evidence names the source.
+        if (!isSoft404 && context.RenderedDocument is not null)
+        {
+            string renderedTitle = DomTraversal.Title(context.RenderedDocument) ?? string.Empty;
+            string renderedText = DomTraversal.VisibleText(context.RenderedDocument);
+            int renderedWordCount = CountWords(renderedText);
+            var (renderedMatches, renderedConfidence) = EvaluateErrorSignals(renderedTitle, renderedText, renderedWordCount);
+            if (renderedConfidence >= _options.ConfidenceThreshold)
+            {
+                isSoft404 = true;
+                confidence = renderedConfidence;
+                matches = renderedMatches;
+                reason = "rendered-client-route";
+                source = "rendered";
+                rawTitle = title;
+                title = renderedTitle;
+                wordCount = renderedWordCount;
+            }
+        }
+
+        return Task.FromResult(new Soft404Verdict(
+            isSoft404,
+            confidence,
+            SerializeEvidence(new EvidencePayload(
+                context.Url.StatusClass.ToString(),
+                context.Url.FinalStatusCode,
+                title,
+                wordCount,
+                matches,
+                confidence,
+                _options.ConfidenceThreshold,
+                reason,
+                source,
+                rawTitle))));
+    }
+
+    /// <summary>Shared error-signal heuristics (phrase matches + thin-page
+    /// structural tokens) over one capture's title/text/word count.</summary>
+    private (List<PhraseMatch> Matches, double Confidence) EvaluateErrorSignals(string title, string text, int wordCount)
+    {
         var matches = new List<PhraseMatch>();
         double confidence = 0;
 
@@ -97,23 +152,7 @@ public sealed class Soft404Detector : ISoft404Detector
             confidence = Math.Max(confidence, 0.5);
         }
 
-        bool isSoft404 = confidence >= _options.ConfidenceThreshold;
-        string reason = isSoft404
-            ? (matches.Count > 0 ? "error-phrase-match" : "structural-heuristic")
-            : "no-error-signal";
-
-        return Task.FromResult(new Soft404Verdict(
-            isSoft404,
-            confidence,
-            SerializeEvidence(new EvidencePayload(
-                context.Url.StatusClass.ToString(),
-                context.Url.FinalStatusCode,
-                title,
-                wordCount,
-                matches,
-                confidence,
-                _options.ConfidenceThreshold,
-                reason))));
+        return (matches, confidence);
     }
 
     private static bool ContainsErrorToken(string text)
@@ -152,7 +191,9 @@ public sealed class Soft404Detector : ISoft404Detector
         IReadOnlyList<PhraseMatch> MatchedPhrases,
         double Confidence,
         double Threshold,
-        string Reason);
+        string Reason,
+        string Source = "raw",
+        string? RawTitle = null);
 
     private sealed record PhraseMatch(string Phrase, string Location);
 }

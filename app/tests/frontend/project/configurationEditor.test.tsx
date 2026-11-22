@@ -205,11 +205,34 @@ describe('later-phase controls (CR-022 disabled-with-note)', () => {
     expect((byTestId(container, 'config-extraction-rules') as HTMLTextAreaElement).disabled).toBe(true);
   });
 
-  it('rendering controls are disabled with a phase-10 note while UA controls work', async () => {
+  it('capture controls are live (WP-10-04): mode select drives rendering.enabled; UA controls work', async () => {
     const { container, latest } = await renderEditor();
     await clickTab(container, 'Crawl as and capture');
-    expect(byTestId(container, 'config-rendering-section-note')!.textContent).toContain('engine lands in phase 10');
-    expect((byTestId(container, 'config-rendering-enabled') as HTMLInputElement).disabled).toBe(true);
+    // WP-10-04 reconciliation: the phase-10 disabled-with-note block was
+    // replaced by the live §5.6.1 capture controls (WP-10-02 handoff §5.6).
+    // The section keeps its stable testid; the mode select is a NATIVE select
+    // (the CDP acceptance harness drives it through the value setter).
+    expect(byTestId(container, 'config-rendering-section')).not.toBeNull();
+    const select = byTestId(container, 'config-capture-mode') as HTMLSelectElement;
+    expect(select.value).toBe('non-js');
+    const setValue = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')!.set!;
+    setValue.call(select, 'dual');
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await flush();
+    expect(latest.current.captureMode).toBe('dual');
+    expect(latest.current.rendering.enabled).toBe(true);
+    expect(byTestId(container, 'config-capture-dual-storage-threshold')).not.toBeNull();
+    setValue.call(select, 'adaptive');
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await flush();
+    expect(latest.current.captureMode).toBe('adaptive');
+    expect(byTestId(container, 'config-capture-adaptive-sample-size')).not.toBeNull();
+    expect(byTestId(container, 'config-capture-material-threshold')).not.toBeNull();
+    setValue.call(select, 'non-js');
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await flush();
+    expect(latest.current.captureMode).toBe('non-js');
+    expect(latest.current.rendering.enabled).toBe(false);
     // UA controls are engine-delivered and functional.
     const simulate = byTestId(container, 'config-simulate-googlebot') as HTMLInputElement;
     expect(simulate.disabled).toBe(false);

@@ -13,6 +13,7 @@ import type { ChartRendererFactory } from '../../charts/chartPorts';
 import type { ChartSelection } from '../../charts/crossFilter';
 import { EChart } from '../../charts/EChart';
 import {
+  categoryDisplayLabel,
   categoryDistributionOption,
   crawlHealthOption,
   severityDistributionOption,
@@ -118,7 +119,7 @@ export function AuditDashboard({ summary, factory, onCrossFilter }: AuditDashboa
                   onClick={crossFilter({ kind: 'category', category })}
                   style={{ background: 'none', border: 'none', color: '#66d9e8', cursor: 'pointer', padding: 0, fontSize: 12 }}
                 >
-                  {category}
+                  {categoryDisplayLabel(category)}
                 </button>
                 <span style={{ color: '#8892a8' }}> · {count} findings — click to filter the issue explorer</span>
               </li>

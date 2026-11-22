@@ -1,6 +1,6 @@
 {
-  "operations": 108,
-  "routeGroups": 88,
+  "operations": 109,
+  "routeGroups": 89,
   "violations": [],
   "results": [
     {
@@ -911,6 +911,16 @@
       "contentType": "application/json",
       "enveloped": true,
       "expectedSuccess": false,
+      "outcome": "conformant"
+    },
+    {
+      "key": "settings.browser",
+      "method": "GET",
+      "path": "/api/settings/browser",
+      "status": 200,
+      "contentType": "application/json",
+      "enveloped": true,
+      "expectedSuccess": true,
       "outcome": "conformant"
     },
     {

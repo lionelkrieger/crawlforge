@@ -83,13 +83,18 @@ public sealed record ConsoleMessageWire(string Level, string Text, string? Times
 /// <param name="FinalUrl">Final URL after navigation.</param>
 /// <param name="PostRenderWafVerdict">Additive post-render WAF verdict, when detected.</param>
 /// <param name="PickerEnabled">Whether the selector picker is enabled.</param>
+/// <param name="NetworkWaterfall">Additive (WP-10-A1/A2 wire-completion, D-021):
+/// network waterfall captured during this render (FS-CRAWL-001 §5.6.2, CR-006
+/// direct CDP capture). Null/absent = no waterfall captured (baseline renders).
+/// Mirrors the locked TS RenderTestResponse.networkWaterfall.</param>
 public sealed record RenderTestResponse(
     string ScreenshotBase64,
     string RenderedHtml,
     IReadOnlyList<ConsoleMessageWire> ConsoleMessages,
     string? FinalUrl,
     WafDetectionWire? PostRenderWafVerdict,
-    bool PickerEnabled);
+    bool PickerEnabled,
+    IReadOnlyList<Contracts.Crawl.RenderedNetworkEntry>? NetworkWaterfall = null);
 
 /// <summary>POST /api/tools/sitemap-generate request.</summary>
 /// <param name="AuditId">Audit whose eligible URLs feed the sitemap.</param>

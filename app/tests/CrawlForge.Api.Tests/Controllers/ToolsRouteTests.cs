@@ -259,6 +259,65 @@ public sealed class ToolsRouteTests
     }
 
     [Fact]
+    public async Task RenderTest_NetworkWaterfall_MapsCapturedEntries()
+    {
+        // WP-10-A2-style wire-completion (WP-10-04): the C# response + mapper
+        // complete the locked TS mirror's networkWaterfall field (WP-10-A1).
+        // Real producer output (RenderedPage.NetworkWaterfall) feeds the real
+        // consumer (RenderTestResponse deserialization) — camelCase wire.
+        await using var host = await ControllerTestHost.CreateAsync();
+        host.Fakes.Rendering.Page = new RenderedPage(
+            "https://example.com/rendered",
+            "<html><body>rendered</body></html>",
+            new byte[] { 1 },
+            [],
+            null)
+        {
+            NetworkWaterfall =
+            [
+                new RenderedNetworkEntry(
+                    "https://example.com/img/logo.png", "image", "GET", 200,
+                    MimeType: "image/png", TransferredBytes: 524288, EncodedDataLength: 524288),
+                new RenderedNetworkEntry(
+                    "https://example.com/app.js", "script", "GET", 200,
+                    MimeType: "text/javascript", TransferredBytes: 1024, FromCache: true),
+            ],
+        };
+
+        var response = await host.Client.PostAsJsonAsync("/api/tools/render-test", new { url = "https://example.com/" });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.ReadDataAsync<RenderTestResponse>();
+        Assert.NotNull(result.NetworkWaterfall);
+        Assert.Equal(2, result.NetworkWaterfall!.Count);
+        var image = result.NetworkWaterfall[0];
+        Assert.Equal("https://example.com/img/logo.png", image.Url);
+        Assert.Equal("image", image.ResourceType);
+        Assert.Equal("GET", image.Method);
+        Assert.Equal(200, image.StatusCode);
+        Assert.Equal("image/png", image.MimeType);
+        Assert.Equal(524288, image.TransferredBytes);
+        Assert.True(result.NetworkWaterfall[1].FromCache);
+    }
+
+    [Fact]
+    public async Task RenderTest_BaselineRender_NetworkWaterfallNull()
+    {
+        await using var host = await ControllerTestHost.CreateAsync();
+        host.Fakes.Rendering.Page = new RenderedPage(
+            "https://example.com/rendered",
+            "<html></html>",
+            new byte[] { 1 },
+            [],
+            null);
+
+        var result = await (await host.Client.PostAsJsonAsync("/api/tools/render-test", new { url = "https://example.com/" }))
+            .ReadDataAsync<RenderTestResponse>();
+
+        Assert.Null(result.NetworkWaterfall);
+    }
+
+    [Fact]
     public async Task SitemapGenerate_DelegatesToExportEngine_WithEligibleCount()
     {
         await using var host = await ControllerTestHost.CreateAsync();

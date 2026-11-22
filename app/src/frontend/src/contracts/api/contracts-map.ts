@@ -14,6 +14,7 @@ import type { ApiRouteKey } from './routes';
 
 import type {
   AppSettings,
+  BrowserInfo,
   DatabaseTestRequest,
   DatabaseTestResponse,
   DiagnosticArtifact,
@@ -200,7 +201,7 @@ export interface RouteContract<
 /** Path parameters for routes addressing a single entity by id. */
 export type IdParams = { readonly id: string };
 
-/** Complete route-key -> DTO contract mapping (108 operations / 88 spec rows). */
+/** Complete route-key -> DTO contract mapping (109 operations / 89 spec rows). */
 export interface ApiRouteContracts {
   // Baseline — system
   'health.get': RouteContract<EmptyRequest, HealthResponse>;
@@ -325,6 +326,8 @@ export interface ApiRouteContracts {
   'semantics.linkOpportunities': RouteContract<LinkOpportunityQuery, readonly LinkOpportunity[], IdParams>;
   'semantics.clusters': RouteContract<SemanticClusterQuery, readonly SemanticCluster[], IdParams>;
   'settings.embeddingTest': RouteContract<EmbeddingTestRequest, EmbeddingTestResponse>;
+  // Additive — UI-21 browser section (WP-10-04 amendment, §5.6.3)
+  'settings.browser': RouteContract<EmptyRequest, BrowserInfo>;
   // Additive — GEO (§13.5)
   'geo.llmsTxt': RouteContract<LlmsTxtListQuery, readonly LlmsTxtValidation[], IdParams>;
   'geo.governance': RouteContract<BotGovernanceQuery, readonly BotGovernanceRow[], IdParams>;

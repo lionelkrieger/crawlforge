@@ -31,7 +31,8 @@ public sealed class RestEnvelopeConformanceTests
     public async Task EveryCatalogOperation_ConformsToUniformEnvelope()
     {
         var catalog = RouteCatalog.ParseFrozenCatalog();
-        Assert.Equal(108, catalog.Count);
+        // WP-10-04 (UI-21 amendment): +settings.browser (GET /api/settings/browser).
+        Assert.Equal(109, catalog.Count);
 
         // Disposable entities created BY this sweep (only these are deleted).
         var sweepProject = await Rest.PostDataAsync(_fixture.Http, "/api/projects", new
@@ -486,6 +487,7 @@ public sealed class RestEnvelopeConformanceTests
             case "health.get":
             case "version.get":
             case "settings.get":
+            case "settings.browser":
             case "diagnostics.listArtifacts":
             case "projects.list":
             case "configurations.list":

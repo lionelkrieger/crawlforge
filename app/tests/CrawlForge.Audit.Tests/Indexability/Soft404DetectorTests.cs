@@ -186,4 +186,70 @@ public sealed class Soft404DetectorTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new Soft404Detector(new Soft404Options { ConfidenceThreshold = 1.5 }));
         Assert.Throws<ArgumentOutOfRangeException>(() => new Soft404Detector(new Soft404Options { ThinContentWordThreshold = -1 }));
     }
+
+    // ── WP-10-04: client-route soft 404 (rendered document evidence) ─────────
+
+    [Fact]
+    public async Task ClientRoute_RawShellClean_RenderedErrorPage_ClassifiedFromRendered()
+    {
+        // SPA shell: clean 200 document, no error signal in the raw markup.
+        DomDocument raw = DomBuilder.Document(
+            IndexabilityContextFactory.PageUrl,
+            DomBuilder.Page("SPA application", null, new[] { DomBuilder.Text("div", "Loading application shell.") }));
+        // Rendered unknown route: the client router shows the error page.
+        DomDocument rendered = DomBuilder.Document(
+            IndexabilityContextFactory.PageUrl,
+            DomBuilder.Page("Page not found", null, new[] { DomBuilder.Text("h1", "Page not found") }));
+        var detector = new Soft404Detector();
+
+        Soft404Verdict verdict = await detector.DetectAsync(
+            IndexabilityContextFactory.Context(document: raw, renderedDocument: rendered));
+
+        Assert.True(verdict.IsSoft404);
+        Assert.True(verdict.Confidence >= 0.9);
+        using JsonDocument evidence = JsonDocument.Parse(verdict.EvidenceJson);
+        Assert.Equal("rendered-client-route", evidence.RootElement.GetProperty("reason").GetString());
+        Assert.Equal("rendered", evidence.RootElement.GetProperty("source").GetString());
+        Assert.Equal("Page not found", evidence.RootElement.GetProperty("title").GetString());
+        Assert.Equal("SPA application", evidence.RootElement.GetProperty("rawTitle").GetString());
+    }
+
+    [Fact]
+    public async Task ClientRoute_RawAlreadyError_KeepsRawClassification()
+    {
+        // Dedup guard: when the raw document already carries the error signal,
+        // the rendered pass must not re-label or double-classify it.
+        DomDocument raw = DomBuilder.Document(
+            IndexabilityContextFactory.PageUrl,
+            DomBuilder.Page("404 - Page Not Found", null, null));
+        DomDocument rendered = DomBuilder.Document(
+            IndexabilityContextFactory.PageUrl,
+            DomBuilder.Page("Page not found", null, null));
+        var detector = new Soft404Detector();
+
+        Soft404Verdict verdict = await detector.DetectAsync(
+            IndexabilityContextFactory.Context(document: raw, renderedDocument: rendered));
+
+        Assert.True(verdict.IsSoft404);
+        using JsonDocument evidence = JsonDocument.Parse(verdict.EvidenceJson);
+        Assert.Equal("error-phrase-match", evidence.RootElement.GetProperty("reason").GetString());
+        Assert.Equal("raw", evidence.RootElement.GetProperty("source").GetString());
+    }
+
+    [Fact]
+    public async Task ClientRoute_BothCapturesHealthy_NotFlagged()
+    {
+        DomDocument raw = DomBuilder.Document(
+            IndexabilityContextFactory.PageUrl,
+            DomBuilder.Page("SPA application", null, new[] { DomBuilder.Text("div", "Loading application shell.") }));
+        DomDocument rendered = DomBuilder.Document(
+            IndexabilityContextFactory.PageUrl,
+            DomBuilder.Page("Product dashboard", null, new[] { DomBuilder.Text("p", "Welcome back — your products and orders are listed below.") }));
+        var detector = new Soft404Detector();
+
+        Soft404Verdict verdict = await detector.DetectAsync(
+            IndexabilityContextFactory.Context(document: raw, renderedDocument: rendered));
+
+        Assert.False(verdict.IsSoft404);
+    }
 }

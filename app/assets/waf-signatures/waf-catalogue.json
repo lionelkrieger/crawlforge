@@ -1,6 +1,6 @@
 {
   "version": "2026.1",
-  "revision": "r1",
+  "revision": "r2",
   "signatures": [
     {
       "key": "cloudflare-interstitial",
@@ -65,6 +65,30 @@
       "headerMarkers": [],
       "cookieMarkers": [],
       "bodyMarkers": [ "verify you are human|0.5", "are you a robot|0.5", "unusual traffic|0.5", "bot detection|0.4", "captcha|0.3" ]
+    },
+    {
+      "key": "cloudflare-managed-challenge",
+      "provider": "Cloudflare",
+      "challengeClass": "managed-challenge",
+      "headerMarkers": [ "cf-mitigated~challenge|0.6", "server~cloudflare|0.5" ],
+      "cookieMarkers": [ "__cf_bm|0.5" ],
+      "bodyMarkers": [ "challenge-platform|0.6", "cf-chl-|0.5", "Checking your browser|0.5", "Verify you are human|0.4" ]
+    },
+    {
+      "key": "cloudflare-rate-limit",
+      "provider": "Cloudflare",
+      "challengeClass": "rate-limit-soft-block",
+      "headerMarkers": [ "server~cloudflare|0.5", "retry-after|0.4" ],
+      "cookieMarkers": [],
+      "bodyMarkers": [ "Error 1015|0.7", "rate limited|0.5", "You are being rate limited|0.6" ]
+    },
+    {
+      "key": "generic-rate-limit-soft-block",
+      "provider": "Other",
+      "challengeClass": "rate-limit-soft-block",
+      "headerMarkers": [ "retry-after|0.5", "x-ratelimit-remaining~0|0.6" ],
+      "cookieMarkers": [],
+      "bodyMarkers": [ "too many requests|0.6", "rate limit exceeded|0.6", "slow down|0.4" ]
     }
   ]
 }

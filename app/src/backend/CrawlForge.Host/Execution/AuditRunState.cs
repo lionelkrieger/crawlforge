@@ -91,6 +91,14 @@ public sealed class AuditRunState : IDisposable
     /// <summary>Live per-audit AIMD controller, once the crawl phase built it.</summary>
     public AimdPolitenessController? Aimd { get; set; }
 
+    /// <summary>
+    /// WP-10-04 (D-021 WAF five-class response): hosts stopped by a hard WAF
+    /// block (captcha/interstitial/bot-block). Queued entries for a stopped
+    /// host are skipped at dequeue — the blocked URL is never re-fetched and
+    /// no further fetches target the host for this run.
+    /// </summary>
+    public HashSet<string> StoppedHosts { get; } = new(StringComparer.OrdinalIgnoreCase);
+
     /// <summary>Bounded-history throttle recorder of the live crawl (flush at checkpoints).</summary>
     public HostThrottleEventRecorder? ThrottleRecorder { get; set; }
 

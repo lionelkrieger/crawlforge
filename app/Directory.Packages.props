@@ -16,6 +16,14 @@
          for WP-02-06. Browser binary resolved LOCALLY only (packaged assets / user-configured
          path / local Edge-Chrome install); runtime browser download is prohibited. -->
     <PackageVersion Include="PuppeteerSharp" Version="25.17.1" />
+    <!-- WP-10-04 (serialized dependency amendment, orchestrator): WP-10-01 replaced the
+         PuppeteerSharp driver with the direct CDP control layer (D-002) and the Crawler
+         project dropped its PuppeteerSharp reference. Microsoft.Extensions.Logging.Abstractions
+         was previously supplied TRANSITIVELY by PuppeteerSharp (8.0.x line); the Crawler's
+         ILogger usage now references it explicitly. 8.0.3 = cached, patched (>= 8.0.2
+         CVE-2024-43485 fix), netstandard2.0-compatible with net10. Audit keeps PuppeteerSharp
+         (accepted LabRenderingProbe, G04). -->
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
     <!-- WP-03-D1 (serialized dependency amendment, orchestrator; requested cf-wp-00-02/WP-03-01):
          tolerant HTML5 parser + native CSS selectors, XPath extension for mixed CSS+XPath
          content scoping. Pure managed, offline, no native binaries.

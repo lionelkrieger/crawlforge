@@ -10,6 +10,7 @@ import type { EChartsOption } from 'echarts';
 import {
   analyticsCoverageOption,
   botFamilyOption,
+  categoryDisplayLabel,
   categoryDistributionOption,
   categoryScoresOption,
   consentCoverageOption,
@@ -34,6 +35,7 @@ import {
   wafProviderOption
 } from '../../../src/frontend/src/charts/chartTransforms';
 import { severityColors, statusColors } from '../../../src/frontend/src/charts/chartTheme';
+import { AUDIT_CATEGORY_LABELS } from '../../../src/frontend/src/contracts/api/vocabulary';
 import {
   consentFixture,
   coverageFixture,
@@ -175,6 +177,21 @@ describe('categoryDistributionOption', () => {
     const option = categoryDistributionOption({ zeta: 5, alpha: 5 });
     const yAxis = option.yAxis as { data: string[] };
     expect(yAxis.data).toEqual(['zeta', 'alpha']);
+  });
+
+  it('keeps wire tokens in yAxis data and maps display labels only in the formatter', () => {
+    const option = categoryDistributionOption({ securityandprotocol: 3, internationalization: 2, images: 1 });
+    const yAxis = option.yAxis as {
+      data: string[];
+      axisLabel: { formatter: (value: string) => string };
+    };
+    expect(yAxis.data).toEqual(['images', 'internationalization', 'securityandprotocol']);
+    for (const token of ['images', 'internationalization', 'securityandprotocol'] as const) {
+      expect(yAxis.axisLabel.formatter(token)).toBe(AUDIT_CATEGORY_LABELS[token]);
+    }
+    expect(categoryDisplayLabel('securityandprotocol')).toBe(AUDIT_CATEGORY_LABELS.securityandprotocol);
+    expect(yAxis.axisLabel.formatter('securityandprotocol')).not.toBe('securityandprotocol');
+    expect(yAxis.axisLabel.formatter('mystery')).toBe('mystery');
   });
 });
 

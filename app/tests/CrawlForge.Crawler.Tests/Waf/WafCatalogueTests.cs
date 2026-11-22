@@ -10,6 +10,10 @@ namespace CrawlForge.Crawler.Tests.Waf;
 /// Effective catalogue behavior: the bundled local asset (no runtime fetch),
 /// user-local entries persisted in waf_user_signatures, key shadowing, and
 /// bundled-default restoration on delete.
+/// WP-10-04 coordinator reconciliation: the bundled asset revision bumped
+/// r1 → r2 when the D-021 soft-class signatures (managed-challenge,
+/// rate-limit-soft-block) were added per WP-10-05 handoff §4.6; the revision
+/// assertions below track the bundled asset, not a fixed historical value.
 /// </summary>
 public class WafCatalogueTests : IAsyncLifetime
 {
@@ -30,7 +34,7 @@ public class WafCatalogueTests : IAsyncLifetime
         Assert.True(File.Exists(WafTestDatabase.BundledAssetPath));
         var snapshot = await _db.Catalogue.GetEffectiveCatalogueAsync();
         Assert.Equal("2026.1", snapshot.BundledVersion);
-        Assert.Equal("r1", snapshot.Revision);
+        Assert.Equal("r2", snapshot.Revision);
         Assert.All(snapshot.Signatures, s => Assert.True(s.IsBundled));
         var providers = snapshot.Signatures.Select(s => s.Provider).Distinct().ToList();
         Assert.Contains(WafProvider.Cloudflare, providers);
@@ -53,7 +57,7 @@ public class WafCatalogueTests : IAsyncLifetime
         Assert.False(shadowed.IsBundled);
         Assert.Equal(WafProvider.Other, shadowed.Provider);
         Assert.Equal(WafChallengeClass.BotBlock, shadowed.ChallengeClass);
-        Assert.Equal("r1+u1", snapshot.Revision);
+        Assert.Equal("r2+u1", snapshot.Revision);
     }
 
     /// <summary>Deleting a user entry restores the bundled default with the same key.</summary>
@@ -68,7 +72,7 @@ public class WafCatalogueTests : IAsyncLifetime
         var restored = snapshot.Signatures.Single(s => s.Key == "cloudflare-interstitial");
         Assert.True(restored.IsBundled);
         Assert.Equal(WafProvider.Cloudflare, restored.Provider);
-        Assert.Equal("r1", snapshot.Revision);
+        Assert.Equal("r2", snapshot.Revision);
 
         Assert.False(await _db.Catalogue.DeleteUserSignatureAsync("cloudflare-interstitial"));
     }
@@ -81,7 +85,7 @@ public class WafCatalogueTests : IAsyncLifetime
         await _db.Catalogue.UpsertUserSignatureAsync(user);
         var snapshot = await _db.Catalogue.GetEffectiveCatalogueAsync();
         Assert.DoesNotContain(snapshot.Signatures, s => s.Key == "user-disabled");
-        Assert.Equal("r1", snapshot.Revision);
+        Assert.Equal("r2", snapshot.Revision);
     }
 
     /// <summary>User entries round-trip through the database with stable identity and timestamps.</summary>

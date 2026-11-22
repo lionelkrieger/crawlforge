@@ -100,6 +100,24 @@ public sealed class EngineServicesModule : IHostModule
         services.AddSingleton<IRenderingPool>(p => new HeadlessRenderingPool(
             contentStore: p.GetRequiredService<IContentStore>(),
             wafEvaluator: p.GetRequiredService<IWafChallengeEvaluator>()));
+        // WP-10-02 capture-mode wiring: capture-time snippet executor over the
+        // locked Jint runner + the per-audit coordinator factory (adaptive
+        // group state lives for exactly one run).
+        services.AddSingleton<Crawler.Capture.ICaptureSnippetExecutor>(p =>
+            new Crawler.Capture.CaptureSnippetExecutor(p.GetRequiredService<IJsSnippetRunner>()));
+        services.AddSingleton<Crawler.Capture.ICaptureModeCoordinatorFactory>(p =>
+            new Crawler.Capture.CaptureModeCoordinatorFactory(
+                p.GetRequiredService<IRenderingPool>(),
+                p.GetRequiredService<ITolerantDomParser>(),
+                p.GetRequiredService<IContentStore>(),
+                p.GetRequiredService<IReadRepository<UrlRecordDto>>(),
+                p.GetRequiredService<IWriteRepository<UrlRecordDto>>(),
+                p.GetRequiredService<Crawler.Capture.ICaptureSnippetExecutor>(),
+                // WP-10-04: rendering-dependent audits build a per-audit pool from
+                // RenderingPoolOptions.FromCaptureSettings(snapshot.CaptureSettings)
+                // (WP-10-01 handoff §4.1) with the same WAF hook as the shared
+                // pool; the shared singleton stays the tools/single-page path.
+                wafEvaluator: p.GetRequiredService<IWafChallengeEvaluator>()));
         services.AddSingleton<IPreCrawlValidator>(p => new PreCrawlValidator(
             p.GetRequiredService<IHttpFetcher>(),
             p.GetRequiredService<IWafChallengeEvaluator>()));
@@ -173,14 +191,29 @@ public sealed class EngineServicesModule : IHostModule
         services.AddSingleton<IAuditRuleAnalyzer>(p =>
         {
             var scopeResolver = p.GetRequiredService<IContentScopeResolver>();
-            var accessibility = new AccessibilityAnalyzer();
+            // D-021 alt takeover (WP-10-05): the accessibility image-alt rule is
+            // disabled here so ImageRuleAnalyzer emits it EXACTLY ONCE under
+            // Images. This single construction covers the full-audit AND
+            // single-page paths (shared IAuditPipeline -> AuditRuleHost).
+            var accessibility = new AccessibilityAnalyzer(new AccessibilityAnalyzerOptions
+            {
+                RuleOverrides = new Dictionary<string, AccessibilityRuleOverride>(StringComparer.Ordinal)
+                {
+                    [AccessibilityRuleKeys.ImageAlt] = new(Enabled: false),
+                },
+            });
             var contentQuality = p.GetRequiredService<ContentQualityAnalyzer>();
             var hreflang = new HreflangAnalyzer();
             var mobile = new MobileFriendlinessAnalyzer();
             var ngrams = p.GetRequiredService<NGramRuleAnalyzer>();
             var structuredData = new StructuredDataRuleAnalyzer(
                 p.GetRequiredService<StructuredDataValidator>());
-            var images = new ImageRuleAnalyzer();
+            // CR-031 (WP-10-05): artifact services let the analyzer measure
+            // network image bytes from stored NetworkWaterfall artifacts;
+            // without them network images stay honestly "not measured".
+            var images = new ImageRuleAnalyzer(
+                artifacts: p.GetRequiredService<IReadRepository<ContentArtifactDto>>(),
+                contentStore: p.GetRequiredService<IContentStore>());
             var urlStructure = p.GetRequiredService<UrlStructureAnalyzer>();
             var hreflangReciprocity = p.GetRequiredService<HreflangReciprocityRuleAnalyzer>();
             return new AuditRuleHost(
@@ -267,9 +300,37 @@ public sealed class EngineServicesModule : IHostModule
             catalog.Register(new RuleDefinition(RedirectRuleKeys.Loop,
                 Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Error,
                 RecommendationKeys.ForRule(RedirectRuleKeys.Loop), 90, "medium"));
-            catalog.Register(new RuleDefinition(RedirectRuleKeys.Inappropriate,
+            // CR-029 (WP-10-05): the legacy aggregate redirects.inappropriate
+            // seed is superseded by the four per-case keys (all toggleable,
+            // default all-on). The legacy constant stays in RedirectRuleKeys
+            // for compile compat; nothing emits it.
+            catalog.Register(new RuleDefinition(RedirectRuleKeys.InappropriateCrossHost,
                 Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
-                RecommendationKeys.ForRule(RedirectRuleKeys.Inappropriate), 60, "low"));
+                RecommendationKeys.ForRule(RedirectRuleKeys.InappropriateCrossHost), 60, "low"));
+            catalog.Register(new RuleDefinition(RedirectRuleKeys.InappropriateTemporaryStatus,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(RedirectRuleKeys.InappropriateTemporaryStatus), 60, "low"));
+            catalog.Register(new RuleDefinition(RedirectRuleKeys.InappropriateNonIndexableTarget,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(RedirectRuleKeys.InappropriateNonIndexableTarget), 60, "low"));
+            catalog.Register(new RuleDefinition(RedirectRuleKeys.InappropriateHttpsDowngrade,
+                Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(RedirectRuleKeys.InappropriateHttpsDowngrade), 60, "low"));
+            // D-021 / CR-030 / CR-031 (WP-10-05) phase-10 keys.
+            catalog.Register(new RuleDefinition(Contracts.Constants.FindingRuleKeys.StructuredDataDeprecatedTerm,
+                Contracts.Enums.AuditCategory.StructuredData, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(Contracts.Constants.FindingRuleKeys.StructuredDataDeprecatedTerm), 55, "low"));
+            catalog.Register(new RuleDefinition(Contracts.Constants.FindingRuleKeys.ImageOversized,
+                Contracts.Enums.AuditCategory.Images, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(Contracts.Constants.FindingRuleKeys.ImageOversized), 60, "low"));
+            catalog.Register(new RuleDefinition(Contracts.Constants.FindingRuleKeys.ImageFormat,
+                Contracts.Enums.AuditCategory.Images, Contracts.Enums.FindingSeverity.Warning,
+                RecommendationKeys.ForRule(Contracts.Constants.FindingRuleKeys.ImageFormat), 50, "low"));
+            // Exact producer string (NOT in locked FindingRuleKeys — D-021 alt
+            // takeover emits it under Images; harness t_missing_alt matches it).
+            catalog.Register(new RuleDefinition(AccessibilityRuleKeys.ImageAlt,
+                Contracts.Enums.AuditCategory.Images, Contracts.Enums.FindingSeverity.Error,
+                RecommendationKeys.ForRule(AccessibilityRuleKeys.ImageAlt), 85, "low"));
             catalog.Register(new RuleDefinition(RedirectRuleKeys.Chain,
                 Contracts.Enums.AuditCategory.Indexability, Contracts.Enums.FindingSeverity.Warning,
                 RecommendationKeys.ForRule(RedirectRuleKeys.Chain), 50, "low"));

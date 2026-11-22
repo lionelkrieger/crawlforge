@@ -17,7 +17,7 @@
  * @module surfaces/explorers/urls/UrlExplorer
  */
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useShell, useStoreSelector } from '../../../shell/ShellContext';
 import { selectActiveAudit } from '../../../store/selectors';
 import type { LoopbackApiClient } from '../../../contracts/api/client';
@@ -40,6 +40,16 @@ export interface UrlExplorerProps {
   readonly onOpenUrl?: (target: UrlOpenTarget) => void;
   /** Initial advanced-filter state (deep links / saved views). */
   readonly initialFilters?: UrlExplorerFilters;
+  /**
+   * External drill-down target (report handoffs such as the rendered
+   * comparison pane): opens the detail drawer for this URL id through the
+   * same `openDetail` path row activation uses, once the client is available.
+   * The handoff carries the id only, so the drawer label falls back to the id
+   * until the detail wire loads its canonicalUrl.
+   */
+  readonly openUrlId?: string | null;
+  /** Change token so a request for the SAME url id can re-open the drawer. */
+  readonly openUrlKey?: number | null;
 }
 
 const STATUS_CLASSES: readonly HttpStatusClass[] = ['1xx', '2xx', '3xx', '4xx', '5xx'];
@@ -71,7 +81,7 @@ function hasActiveFilters(filters: UrlExplorerFilters): boolean {
 }
 
 /** The URL explorer surface. */
-export function UrlExplorer({ auditId: auditIdOverride, api: apiOverride, onOpenUrl, initialFilters }: UrlExplorerProps) {
+export function UrlExplorer({ auditId: auditIdOverride, api: apiOverride, onOpenUrl, initialFilters, openUrlId, openUrlKey }: UrlExplorerProps) {
   const shell = useShell();
   const activeAudit = useStoreSelector(selectActiveAudit);
   const auditId = auditIdOverride !== undefined ? auditIdOverride : activeAudit?.id ?? null;
@@ -129,6 +139,23 @@ export function UrlExplorer({ auditId: auditIdOverride, api: apiOverride, onOpen
     if (!auditId) return;
     openDetail({ auditId, urlId: row.id, canonicalUrl: row.canonicalUrl });
   }, [auditId, openDetail]);
+
+  // ── External drill-down (openUrlId handoff, WP-10-04 mounting) ─────────
+  // Opens the requested URL's detail through the SAME openDetail mechanism as
+  // row activation. The token guard opens each request exactly once (the
+  // effect also re-fires when openDetail's identity changes), and openUrlKey
+  // lets the same url id be requested again — e.g. re-activating the same
+  // comparison row after the drawer was closed. The handoff carries only the
+  // id, so the target's canonicalUrl is left empty (the drawer label falls
+  // back to the id) and the panel shows the real URL from the detail wire.
+  const handledOpenRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!openUrlId || !auditId || !api) return;
+    const token = openUrlKey === null || openUrlKey === undefined ? openUrlId : `${openUrlId}#${openUrlKey}`;
+    if (handledOpenRef.current === token) return;
+    handledOpenRef.current = token;
+    openDetail({ auditId, urlId: openUrlId, canonicalUrl: '' });
+  }, [openUrlId, openUrlKey, auditId, api, openDetail]);
 
   // ── Server-windowed source (advanced filters ride the locked query) ────
   const baseQuery = useMemo<Record<string, unknown>>(() => {
@@ -327,7 +354,7 @@ export function UrlExplorer({ auditId: auditIdOverride, api: apiOverride, onOpen
 
       {/* Drill-down drawer */}
       {openTarget ? (
-        <aside className="cf-url-detail-drawer" role="dialog" aria-label={`URL detail: ${openTarget.canonicalUrl}`} data-testid="url-explorer-detail">
+        <aside className="cf-url-detail-drawer" role="dialog" aria-label={`URL detail: ${openTarget.canonicalUrl || openTarget.urlId}`} data-testid="url-explorer-detail">
           {detailLoading ? (
             <p className="cf-url-detail-loading" role="status" data-testid="url-detail-loading">Loading URL detail…</p>
           ) : null}

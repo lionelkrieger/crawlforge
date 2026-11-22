@@ -229,7 +229,12 @@ public sealed class ToolsController : ApiControllerBase
             console,
             page.FinalUrl,
             page.PostRenderWafVerdict is { IsChallenge: true } verdict ? AuditWireMapper.ToWafVerdict(verdict) : null,
-            request.Picker ?? false));
+            request.Picker ?? false,
+            // WP-10-A2-style wire-completion (WP-10-04): the locked TS mirror
+            // already carries networkWaterfall (WP-10-A1); the C# response +
+            // mapper complete the pair. CR-006: rendered traffic is captured
+            // directly by the CDP layer, never the loopback proxy.
+            page.NetworkWaterfall));
     }
 
     /// <summary>Generates an XML sitemap from an audit's eligible URLs (local file).</summary>

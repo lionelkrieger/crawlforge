@@ -53,10 +53,12 @@ import './issues.css';
 /** Severity wire keys (lowercase enum names, ApiEnumConverter). */
 export const SEVERITY_WIRE_KEYS = ['error', 'warning', 'notice', 'pass'] as const;
 
-/** Category wire keys (lowercase AuditCategory enum names). */
+/** Category wire keys (lowercase AuditCategory enum names). WP-10-04 (D-021):
+ * the three additive §7.4 categories append to the locked baseline list. */
 export const CATEGORY_WIRE_KEYS = [
   'indexability', 'content', 'linking', 'structureddata', 'accessibility',
-  'performance', 'crawl', 'custom', 'logintelligence', 'aisearchgeo', 'analyticstagging'
+  'performance', 'crawl', 'custom', 'logintelligence', 'aisearchgeo', 'analyticstagging',
+  'images', 'securityandprotocol', 'internationalization'
 ] as const;
 
 /** Issue explorer props. */

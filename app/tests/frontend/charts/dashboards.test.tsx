@@ -26,6 +26,7 @@ import {
 } from '../../../src/frontend/src/surfaces/dashboards/dashboardData';
 import type { ChartSelection } from '../../../src/frontend/src/charts/crossFilter';
 import { statusColors, depthColor } from '../../../src/frontend/src/charts/chartTheme';
+import { AUDIT_CATEGORY_LABELS } from '../../../src/frontend/src/contracts/api/vocabulary';
 import {
   byTestId,
   changeValue,
@@ -164,6 +165,19 @@ describe('AuditDashboard', () => {
     );
     click(byTestId(view.container, 'cf-category-crawl')!);
     expect(selections).toEqual([{ kind: 'category', category: 'crawl' }]);
+    view.unmount();
+  });
+
+  it('labels the category breakdown button with the display label while keeping the wire-token test id', async () => {
+    const charts = createMockChartFactory();
+    const view = await render(
+      <AuditDashboard
+        summary={{ ...summaryFixture, countsByCategory: { securityandprotocol: 2 } }}
+        factory={charts.factory}
+      />
+    );
+    const button = byTestId(view.container, 'cf-category-securityandprotocol');
+    expect(button?.textContent).toBe(AUDIT_CATEGORY_LABELS.securityandprotocol);
     view.unmount();
   });
 

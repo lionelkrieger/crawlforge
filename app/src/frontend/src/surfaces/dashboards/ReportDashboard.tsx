@@ -31,6 +31,7 @@ import type {
   Finding
 } from '../../contracts/api/audits';
 import type { LoopbackApiClient } from '../../contracts/api/client';
+import { AUDIT_CATEGORY_LABELS } from '../../contracts/api/vocabulary';
 import type { ChartRendererFactory } from '../../charts/chartPorts';
 import type { ChartSelection } from '../../charts/crossFilter';
 import { Badge, severityTone } from '../explorers/cells';
@@ -199,7 +200,9 @@ export function ReportDashboard({
                 </div>
                 {scores.categories.map((entry) => (
                   <div className="cf-dashboard-score-row" key={entry.category} data-testid={`dashboard-score-row-${entry.category}`}>
-                    <span className="cf-dashboard-score-category">{entry.category}</span>
+                    {/* WP-10-04 (D-021): human-readable labels for all 14 wire
+                        categories; testids stay token-based (walker stability). */}
+                    <span className="cf-dashboard-score-category">{AUDIT_CATEGORY_LABELS[entry.category as keyof typeof AUDIT_CATEGORY_LABELS] ?? entry.category}</span>
                     <span className="cf-dashboard-score-track" aria-hidden>
                       <span
                         className="cf-dashboard-score-fill"

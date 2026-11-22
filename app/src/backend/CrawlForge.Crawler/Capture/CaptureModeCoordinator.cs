@@ -6,6 +6,7 @@ using CrawlForge.Contracts.Crawl;
 using CrawlForge.Contracts.Entities;
 using CrawlForge.Contracts.Enums;
 using CrawlForge.Contracts.Persistence;
+using CrawlForge.Crawler.Rendering;
 using Microsoft.Extensions.Logging;
 
 namespace CrawlForge.Crawler.Capture;
@@ -19,8 +20,13 @@ namespace CrawlForge.Crawler.Capture;
 /// capture. Manual per-pattern overrides win over adaptive switching and apply
 /// on top of every mode. Render failures are isolated (§5.6.2); the dual-storage
 /// threshold warns only — never a hard cap (exclusion #8).
+/// <para>
+/// WP-10-04: when the coordinator OWNS its pool (per-audit pool built from the
+/// frozen CaptureSettings snapshot), it disposes that pool at audit end through
+/// <see cref="DisposeAsync"/>; the shared singleton pool is never disposed here.
+/// </para>
 /// </summary>
-public sealed class CaptureModeCoordinator : ICaptureModeCoordinator
+public sealed class CaptureModeCoordinator : ICaptureModeCoordinator, IAsyncDisposable
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -35,8 +41,10 @@ public sealed class CaptureModeCoordinator : ICaptureModeCoordinator
     private readonly int _sampleSize;
     private readonly Dictionary<string, AdaptiveGroupState> _groups = new(StringComparer.Ordinal);
     private readonly List<FindingDraft> _auditFindings = [];
+    private readonly bool _ownsPool;
     private long _dualStoredBytes;
     private bool _dualStorageWarned;
+    private bool _poolDisposed;
 
     /// <inheritdoc />
     public CaptureMode Mode { get; }
@@ -51,6 +59,9 @@ public sealed class CaptureModeCoordinator : ICaptureModeCoordinator
     /// <param name="urlWrites">Optional URL write repository (CaptureSource stamping).</param>
     /// <param name="snippetExecutor">Optional capture-time snippet executor (§7.17).</param>
     /// <param name="logger">Optional local-only logger.</param>
+    /// <param name="ownsPool">True when the pool is a per-audit instance this
+    /// coordinator must dispose at audit end (WP-10-04); the shared singleton
+    /// pool is never owned.</param>
     public CaptureModeCoordinator(
         CaptureMode mode,
         CaptureSettings? settings,
@@ -60,7 +71,8 @@ public sealed class CaptureModeCoordinator : ICaptureModeCoordinator
         IReadRepository<UrlRecordDto>? urlReads = null,
         IWriteRepository<UrlRecordDto>? urlWrites = null,
         ICaptureSnippetExecutor? snippetExecutor = null,
-        ILogger? logger = null)
+        ILogger? logger = null,
+        bool ownsPool = false)
     {
         ArgumentNullException.ThrowIfNull(pool);
         ArgumentNullException.ThrowIfNull(parser);
@@ -75,6 +87,7 @@ public sealed class CaptureModeCoordinator : ICaptureModeCoordinator
         _urlWrites = urlWrites;
         _snippetExecutor = snippetExecutor;
         _logger = logger;
+        _ownsPool = ownsPool;
     }
 
     /// <inheritdoc />
@@ -233,6 +246,26 @@ public sealed class CaptureModeCoordinator : ICaptureModeCoordinator
         var drained = _auditFindings.ToArray();
         _auditFindings.Clear();
         return drained;
+    }
+
+    /// <summary>
+    /// Disposes the per-audit rendering pool this coordinator owns (WP-10-04).
+    /// The shared singleton pool (non-JS audits, single-page analyzer, tools) is
+    /// never disposed here. Idempotent; disposal failures surface to the caller,
+    /// which logs them without failing the audit.
+    /// </summary>
+    public async ValueTask DisposeAsync()
+    {
+        if (!_ownsPool || _poolDisposed)
+        {
+            return;
+        }
+
+        _poolDisposed = true;
+        if (_pool is IAsyncDisposable disposable)
+        {
+            await disposable.DisposeAsync().ConfigureAwait(false);
+        }
     }
 
     private CaptureDecision DecideAdaptive(string groupKey)
@@ -447,6 +480,15 @@ public sealed class CaptureModeCoordinator : ICaptureModeCoordinator
 /// pool, tolerant parser, content store and URL repositories. Registered as a
 /// singleton (see the WP-10-02 wiring handoff); the engine creates one
 /// coordinator per audit so adaptive group state lives for exactly one run.
+/// <para>
+/// WP-10-04 (WP-10-01 handoff §4.1): rendering-dependent audits get a
+/// PER-AUDIT pool whose options are composed from the frozen CaptureSettings
+/// snapshot via <see cref="RenderingPoolOptions.FromCaptureSettings"/> (pool
+/// size + render-wait rules apply to that audit only) and disposed at audit
+/// end. Non-JS audits never launch a browser: they share the singleton pool
+/// (single-page analyzer + tools path; also serves the rare override-forced
+/// render) and own nothing to dispose.
+/// </para>
 /// </summary>
 public sealed class CaptureModeCoordinatorFactory : ICaptureModeCoordinatorFactory
 {
@@ -457,15 +499,21 @@ public sealed class CaptureModeCoordinatorFactory : ICaptureModeCoordinatorFacto
     private readonly IWriteRepository<UrlRecordDto>? _urlWrites;
     private readonly ICaptureSnippetExecutor? _snippetExecutor;
     private readonly ILogger<CaptureModeCoordinatorFactory>? _logger;
+    private readonly Func<RenderingPoolOptions, IRenderingPool>? _renderingPoolFactory;
+    private readonly IWafChallengeEvaluator? _wafEvaluator;
 
     /// <summary>Creates the factory. Dependencies arrive via constructor composition.</summary>
-    /// <param name="pool">Locked rendering pool.</param>
+    /// <param name="pool">Shared rendering pool (tools path + non-JS fallback).</param>
     /// <param name="parser">Tolerant DOM parser.</param>
     /// <param name="contentStore">Artifact store.</param>
     /// <param name="urlReads">Optional URL read repository.</param>
     /// <param name="urlWrites">Optional URL write repository.</param>
     /// <param name="snippetExecutor">Optional capture-time snippet executor.</param>
     /// <param name="logger">Optional local-only logger.</param>
+    /// <param name="renderingPoolFactory">Optional per-audit pool composition seam
+    /// (WP-10-04; component tests observe the composed options). Null builds the
+    /// real CDP pool over the shared content store + WAF evaluator.</param>
+    /// <param name="wafEvaluator">Optional WAF evaluator for the default per-audit pool.</param>
     public CaptureModeCoordinatorFactory(
         IRenderingPool pool,
         ITolerantDomParser parser,
@@ -473,7 +521,9 @@ public sealed class CaptureModeCoordinatorFactory : ICaptureModeCoordinatorFacto
         IReadRepository<UrlRecordDto>? urlReads = null,
         IWriteRepository<UrlRecordDto>? urlWrites = null,
         ICaptureSnippetExecutor? snippetExecutor = null,
-        ILogger<CaptureModeCoordinatorFactory>? logger = null)
+        ILogger<CaptureModeCoordinatorFactory>? logger = null,
+        Func<RenderingPoolOptions, IRenderingPool>? renderingPoolFactory = null,
+        IWafChallengeEvaluator? wafEvaluator = null)
     {
         ArgumentNullException.ThrowIfNull(pool);
         ArgumentNullException.ThrowIfNull(parser);
@@ -485,21 +535,49 @@ public sealed class CaptureModeCoordinatorFactory : ICaptureModeCoordinatorFacto
         _urlWrites = urlWrites;
         _snippetExecutor = snippetExecutor;
         _logger = logger;
+        _renderingPoolFactory = renderingPoolFactory;
+        _wafEvaluator = wafEvaluator;
     }
 
     /// <inheritdoc />
     public ICaptureModeCoordinator Create(CrawlConfigurationDto configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
+        CaptureMode mode = configuration.CaptureMode ?? CaptureMode.NonJs;
+
+        // Non-JS audits never launch a browser: no per-audit pool is built and
+        // the shared singleton is passed through unowned (an explicit rendered
+        // pattern override still renders through it, §5.6.1 override semantics).
+        if (mode == CaptureMode.NonJs)
+        {
+            return new CaptureModeCoordinator(
+                mode,
+                configuration.CaptureSettings,
+                _pool,
+                _parser,
+                _contentStore,
+                _urlReads,
+                _urlWrites,
+                _snippetExecutor,
+                _logger,
+                ownsPool: false);
+        }
+
+        // WP-10-01 handoff §4.1: per-audit options from the frozen snapshot.
+        RenderingPoolOptions options = RenderingPoolOptions.FromCaptureSettings(configuration.CaptureSettings);
+        IRenderingPool auditPool = _renderingPoolFactory is not null
+            ? _renderingPoolFactory(options)
+            : new HeadlessRenderingPool(options, contentStore: _contentStore, wafEvaluator: _wafEvaluator);
         return new CaptureModeCoordinator(
-            configuration.CaptureMode ?? CaptureMode.NonJs,
+            mode,
             configuration.CaptureSettings,
-            _pool,
+            auditPool,
             _parser,
             _contentStore,
             _urlReads,
             _urlWrites,
             _snippetExecutor,
-            _logger);
+            _logger,
+            ownsPool: true);
     }
 }

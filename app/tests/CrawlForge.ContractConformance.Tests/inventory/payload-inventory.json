@@ -9,8 +9,8 @@
     "storage": "architecture/02-data-and-persistence/02-complete-schema-catalog.md §9.2 + Appendix A; app/src/backend/CrawlForge.Data.Repositories/SchemaNames.cs + EntityMapping.cs"
   },
   "rest": {
-    "expectedGroups": 88,
-    "expectedOperations": 108,
+    "expectedGroups": 89,
+    "expectedOperations": 109,
     "operations": [
       {
         "key": "health.get",
@@ -1153,6 +1153,17 @@
         "method": "POST",
         "path": "/api/settings/embedding/test",
         "group": "embedding-test",
+        "additive": true,
+        "enveloped": true,
+        "coveredBy": [
+          "RestEnvelopeConformanceTests.EveryCatalogOperation_ConformsToUniformEnvelope"
+        ]
+      },
+      {
+        "key": "settings.browser",
+        "method": "GET",
+        "path": "/api/settings/browser",
+        "group": "settings-browser",
         "additive": true,
         "enveloped": true,
         "coveredBy": [

@@ -23,62 +23,45 @@ namespace CrawlForge.Host.Tests;
 /// persists WAF verdicts through the accepted Crawler recording surfaces —
 /// detection row + blocked classification + per-URL finding, suspected-challenge
 /// Notice for single-facet hits, and the site-wide block-rate diagnostic.
+/// D-021 (WP-10-04): a hard challenge class stops its host for the rest of the
+/// audit (WafBlockPolicy -> WafBlockResponse.HostStop -> AuditRunState.StoppedHosts),
+/// so the challenge page and the single-facet suspected page are served from two
+/// different loopback host names — the suspected notice must not depend on the
+/// stopped host.
 /// </summary>
 public sealed class WafWiringTests
 {
     [Fact]
     public async Task ChallengeAudit_PersistsDetection_Findings_AndBlockRateDiagnostic()
     {
-        // Loopback origin: clean index → one corroborated Cloudflare challenge
-        // page and one single-facet suspected page.
-        var probe = new TcpListener(IPAddress.Loopback, 0);
-        probe.Start();
-        var port = ((IPEndPoint)probe.LocalEndpoint).Port;
-        probe.Stop();
-        var baseUrl = $"http://127.0.0.1:{port}/";
-        using var listener = new HttpListener();
-        listener.Prefixes.Add(baseUrl);
-        listener.Start();
-        var serve = Task.Run(async () =>
+        // Two loopback origins (D-021): the challenge host serves a clean index
+        // that links one corroborated Cloudflare challenge page and one
+        // still-queued /late-page; the second host serves the single-facet
+        // suspected page. The hard interstitial on /challenge stops the
+        // challenge host (its Host key is 127.0.0.1 — a second port would share
+        // the key, a second host name does not), so /suspected must live on the
+        // other host. /late-page, declared after /challenge on the index,
+        // proves the stop: the frontier dequeues in link order (FIFO within a
+        // host queue) and drains the queued entry without any request.
+        using var challengeSite = new LoopbackSite("127.0.0.1", new Dictionary<string, SitePage>
         {
-            while (listener.IsListening)
-            {
-                HttpListenerContext context;
-                try
-                {
-                    context = await listener.GetContextAsync();
-                }
-                catch (Exception)
-                {
-                    return;
-                }
-
-                var path = context.Request.Url?.AbsolutePath ?? "/";
-                string body;
-                switch (path)
-                {
-                    case "/robots.txt":
-                        body = "User-agent: *\nAllow: /\n";
-                        context.Response.ContentType = "text/plain";
-                        break;
-                    case "/challenge":
-                        body = "<html><head><title>Challenge</title></head><body><div>challenge-platform</div></body></html>";
-                        context.Response.Headers["cf-mitigated"] = "challenge";
-                        break;
-                    case "/suspected":
-                        body = "<html><head><title>Suspected</title></head><body><p>Just a moment — please wait.</p></body></html>";
-                        break;
-                    default:
-                        body = "<html><head><title>Index</title></head><body>" +
-                            "<a href=\"/challenge\">challenge</a> <a href=\"/suspected\">suspected</a></body></html>";
-                        break;
-                }
-
-                var bytes = Encoding.UTF8.GetBytes(body);
-                context.Response.ContentLength64 = bytes.Length;
-                await context.Response.OutputStream.WriteAsync(bytes);
-                context.Response.Close();
-            }
+            ["/robots.txt"] = new SitePage("User-agent: *\nAllow: /\n", ContentType: "text/plain"),
+            ["/challenge"] = new SitePage(
+                "<html><head><title>Challenge</title></head><body><div>challenge-platform</div></body></html>",
+                CfMitigated: "challenge"),
+            ["/late-page"] = new SitePage(
+                "<html><head><title>Late</title></head><body>queued after the hard block</body></html>"),
+            ["/"] = new SitePage(
+                "<html><head><title>Index</title></head><body>" +
+                "<a href=\"/challenge\">challenge</a> <a href=\"/late-page\">late</a></body></html>"),
+        });
+        using var suspectedSite = new LoopbackSite("localhost", new Dictionary<string, SitePage>
+        {
+            ["/robots.txt"] = new SitePage("User-agent: *\nAllow: /\n", ContentType: "text/plain"),
+            ["/suspected"] = new SitePage(
+                "<html><head><title>Suspected</title></head><body><p>Just a moment — please wait.</p></body></html>"),
+            ["/"] = new SitePage(
+                "<html><head><title>Index</title></head><body><a href=\"/suspected\">suspected</a></body></html>"),
         });
 
         var dataDirectory = Path.Combine(Path.GetTempPath(), "crawlforge-host-tests", Guid.NewGuid().ToString("N"));
@@ -93,7 +76,8 @@ public sealed class WafWiringTests
                 0, "WAF Wiring", null, null, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, null, false));
             var configurations = backend.App.Services.GetRequiredService<IWriteRepository<CrawlConfigurationDto>>();
             var configuration = await configurations.CreateAsync(new CrawlConfigurationDto(
-                0, project.Id, "default", JsonSerializer.Serialize(new[] { baseUrl }),
+                0, project.Id, "default",
+                JsonSerializer.Serialize(new[] { challengeSite.BaseUrl, suspectedSite.BaseUrl }),
                 null, null, null, RenderMode.None, null, null, null, null, null,
                 DateTimeOffset.UtcNow, DateTimeOffset.UtcNow));
 
@@ -165,21 +149,21 @@ public sealed class WafWiringTests
             // The same flush cadence produces url-batch and findings-updated.
             Assert.Contains(channel.Events, e => e.Name == HubEventCatalog.UrlBatch);
             Assert.Contains(channel.Events, e => e.Name == HubEventCatalog.FindingsUpdated);
+
+            // D-021: hard WAF class stops the host
+            // After the hard-blocked /challenge fetch no further request reaches
+            // the challenge host — the linked /late-page stays queued and is
+            // drained at dequeue without any request.
+            var challengeRequests = challengeSite.Requests.ToList();
+            var blockIndex = challengeRequests.FindIndex(path => path == "/challenge");
+            Assert.True(
+                blockIndex >= 0 && blockIndex == challengeRequests.Count - 1,
+                "the challenge host must receive no request after the hard-blocked /challenge fetch; requests: "
+                + string.Join(", ", challengeRequests));
         }
         finally
         {
             await backend.StopAsync();
-            listener.Stop();
-            listener.Close();
-            try
-            {
-                await serve.WaitAsync(TimeSpan.FromSeconds(5));
-            }
-            catch (Exception)
-            {
-                // Shutdown race.
-            }
-
             try
             {
                 Directory.Delete(dataDirectory, recursive: true);
@@ -190,6 +174,87 @@ public sealed class WafWiringTests
             }
         }
     }
+
+    /// <summary>
+    /// One loopback test site: a fixed path map served over an HttpListener
+    /// plus a request log (the D-021 host-stop proof reads it). Unknown paths
+    /// serve the "/" page, matching the original single-site fixture.
+    /// </summary>
+    private sealed class LoopbackSite : IDisposable
+    {
+        private readonly HttpListener _listener = new();
+        private readonly IReadOnlyDictionary<string, SitePage> _pages;
+        private readonly ConcurrentQueue<string> _requests = new();
+        private readonly Task _serve;
+
+        public LoopbackSite(string hostName, IReadOnlyDictionary<string, SitePage> pages)
+        {
+            _pages = pages;
+            var probe = new TcpListener(IPAddress.Loopback, 0);
+            probe.Start();
+            var port = ((IPEndPoint)probe.LocalEndpoint).Port;
+            probe.Stop();
+            BaseUrl = $"http://{hostName}:{port}/";
+            _listener.Prefixes.Add(BaseUrl);
+            _listener.Start();
+            _serve = Task.Run(ServeAsync);
+        }
+
+        public string BaseUrl { get; }
+
+        /// <summary>Absolute path of every request this site received, in arrival order.</summary>
+        public IReadOnlyList<string> Requests => _requests.ToList();
+
+        private async Task ServeAsync()
+        {
+            while (_listener.IsListening)
+            {
+                HttpListenerContext context;
+                try
+                {
+                    context = await _listener.GetContextAsync();
+                }
+                catch (Exception)
+                {
+                    return;
+                }
+
+                var path = context.Request.Url?.AbsolutePath ?? "/";
+                _requests.Enqueue(path);
+                var page = _pages.TryGetValue(path, out var mapped) ? mapped : _pages["/"];
+                if (page.ContentType is not null)
+                {
+                    context.Response.ContentType = page.ContentType;
+                }
+
+                if (page.CfMitigated is not null)
+                {
+                    context.Response.Headers["cf-mitigated"] = page.CfMitigated;
+                }
+
+                var bytes = Encoding.UTF8.GetBytes(page.Body);
+                context.Response.ContentLength64 = bytes.Length;
+                await context.Response.OutputStream.WriteAsync(bytes);
+                context.Response.Close();
+            }
+        }
+
+        public void Dispose()
+        {
+            _listener.Stop();
+            _listener.Close();
+            try
+            {
+                _serve.Wait(TimeSpan.FromSeconds(5));
+            }
+            catch (Exception)
+            {
+                // Shutdown race.
+            }
+        }
+    }
+
+    private sealed record SitePage(string Body, string? ContentType = null, string? CfMitigated = null);
 
     private sealed class RecordingHubChannel : IHubClientChannel
     {

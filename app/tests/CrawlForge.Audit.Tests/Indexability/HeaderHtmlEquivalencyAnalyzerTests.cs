@@ -169,7 +169,7 @@ public sealed class HeaderHtmlEquivalencyAnalyzerTests
 
         FindingDraft conflict = Assert.Single(findings, f => f.RuleKey == FindingRuleKeys.HreflangHeaderHtmlConflict);
         Assert.Equal(FindingSeverity.Error, conflict.Severity);
-        Assert.Equal(AuditCategory.StructuredData, conflict.Category);
+        Assert.Equal(AuditCategory.Internationalization, conflict.Category); // D-021: hreflang -> Internationalization
         using JsonDocument evidence = JsonDocument.Parse(conflict.EvidenceJson);
         Assert.Equal("en", evidence.RootElement.GetProperty("hreflang").GetString());
         Assert.Equal("https://example.com/en", evidence.RootElement.GetProperty("resolvedHeader").GetString());

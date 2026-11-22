@@ -17,13 +17,14 @@ public sealed class PayloadInventoryTests
 {
     private static readonly PayloadInventory Inventory = PayloadInventory.Load();
 
-    /// <summary>REST inventory matches the frozen frontend catalog exactly (108 ops / 88 groups).</summary>
+    /// <summary>REST inventory matches the frozen frontend catalog exactly (109 ops / 89 groups;
+    /// WP-10-04 UI-21 amendment added settings.browser).</summary>
     [Fact]
-    public void RestCatalog_Has88GroupsAnd108Operations()
+    public void RestCatalog_Has89GroupsAnd109Operations()
     {
         var frozen = RouteCatalog.ParseFrozenCatalog();
-        Assert.Equal(108, frozen.Count);
-        Assert.Equal(88, frozen.Select(o => o.Group).Distinct().Count());
+        Assert.Equal(109, frozen.Count);
+        Assert.Equal(89, frozen.Select(o => o.Group).Distinct().Count());
         Assert.Equal(Inventory.Rest.ExpectedOperations, frozen.Count);
         Assert.Equal(Inventory.Rest.ExpectedGroups, frozen.Select(o => o.Group).Distinct().Count());
 

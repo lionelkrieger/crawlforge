@@ -16,8 +16,12 @@
  * @module surfaces/explorers/urls/UrlDetailPanel
  */
 
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
+import { MantineContext } from '@mantine/core';
 import type { LinkEdge } from '../../../contracts/api/audits';
+import type { LoopbackApiClient } from '../../../contracts/api/client';
+import { useShell } from '../../../shell/ShellContext';
+import { RenderedTab } from '../rendered';
 import {
   analyzeSerp,
   DESKTOP_BUDGET,
@@ -38,10 +42,45 @@ export interface UrlDetailPanelProps {
   readonly detail: UrlDetailWireView;
   /** Owning audit (drill-down handoff identity). */
   readonly auditId: string;
+  /**
+   * Loopback client for the UI-13 rendered tab (WP-10-03). Optional: when
+   * omitted the shell's client is used (the production mount passes none);
+   * with neither, the rendered tab shows its honest offline state.
+   */
+  readonly api?: LoopbackApiClient | null;
   /** Drill-down callback for internal link targets. */
   readonly onOpenUrl?: (target: UrlOpenTarget) => void;
   /** Close affordance (drawer host). */
   readonly onClose?: () => void;
+}
+
+/**
+ * Resolves the client and mountability for the UI-13 rendered tab.
+ *
+ * The panel is also mounted bare in the accepted url-detail proofs (no
+ * ShellProvider, no MantineProvider) and under a shell without Mantine in the
+ * URL explorer proofs, so:
+ *  - the explicit `api` prop wins, else the shell's loopback client (the
+ *    production parent, UrlExplorer, passes no api);
+ *  - RenderedTab is Mantine-based, so it mounts only inside a Mantine tree;
+ *    outside one the section renders a dependency-free note.
+ *
+ * `useShell` is useContext plus a guard that throws outside ShellProvider —
+ * catching that guard keeps the hook count stable across provider-less mounts
+ * (the useContext call itself always runs).
+ */
+function useRenderedTabMount(override: LoopbackApiClient | null | undefined): {
+  readonly client: LoopbackApiClient | null;
+  readonly mountable: boolean;
+} {
+  let shellClient: LoopbackApiClient | null = null;
+  try {
+    shellClient = useShell().services.api;
+  } catch {
+    shellClient = null;
+  }
+  const mountable = useContext(MantineContext) !== null;
+  return { client: override !== undefined ? override : shellClient, mountable };
 }
 
 type SerpDevice = 'desktop' | 'mobile';
@@ -85,8 +124,9 @@ function LinkRow({ edge, auditId, onOpenUrl, direction }: {
 }
 
 /** The URL detail panel. */
-export function UrlDetailPanel({ detail, auditId, onOpenUrl, onClose }: UrlDetailPanelProps) {
+export function UrlDetailPanel({ detail, auditId, api, onOpenUrl, onClose }: UrlDetailPanelProps) {
   const [device, setDevice] = useState<SerpDevice>('desktop');
+  const rendered = useRenderedTabMount(api);
 
   const chain = useMemo(
     () => normalizeRedirectChain(detail.redirectChain, {
@@ -392,6 +432,18 @@ export function UrlDetailPanel({ detail, auditId, onOpenUrl, onClose }: UrlDetai
             ({detail.serpMetrics.descriptionTruncated ? 'truncated' : 'fits'}).
           </p>
         ) : null}
+      </section>
+
+      {/* ── Rendered vs raw (UI-13 rendered tab, WP-10-03 mounting) ───── */}
+      <section className="cf-url-detail-section" data-testid="url-detail-rendered" aria-label="Rendered vs raw">
+        <h4>Rendered vs raw</h4>
+        {rendered.mountable ? (
+          <RenderedTab api={rendered.client} auditId={auditId} urlId={detail.id} />
+        ) : (
+          <p className="cf-url-detail-empty" data-testid="url-detail-rendered-unavailable">
+            Rendered capture is unavailable in this view.
+          </p>
+        )}
       </section>
 
       {/* ── Findings ──────────────────────────────────────────────────── */}

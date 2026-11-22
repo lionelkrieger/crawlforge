@@ -5,8 +5,9 @@
  *  - Scope / Rules / Directives / Resources / Authentication and cookies →
  *    `scopeRules` document (CrawlScopeConfigParser, scope_rules_json).
  *  - Crawl as and capture → `scopeRules.userAgent` + `userAgentComparison`,
- *    wire `respectRobotsTxt` / `virtualRobotsTxt`; rendering controls are
- *    disabled-with-note until the phase-10 rendering engine lands.
+ *    wire `respectRobotsTxt` / `virtualRobotsTxt`, and the LIVE §5.6.1 capture
+ *    controls → wire `captureMode` / `captureSettings` (WP-10-04 wiring;
+ *    rendering.enabled follows the mode).
  *  - Limits → wire `limits` (null = unlimited) + `aimd` (§3.8 form group).
  *  - Analysis categories → `enabledCategories` (scoring snapshot convention)
  *    + the four CR-029 redirect toggles → wire `redirectChecks` (WP-10-05).
@@ -17,8 +18,9 @@
  */
 
 import { useState } from 'react';
-import { ActionIcon, Button, Group, NumberInput, Select, Stack, Switch, Text, Textarea, TextInput } from '@mantine/core';
-import type { ConfigurationFormValue, ScopeRulesDocument } from './configurationModel';
+import { ActionIcon, Button, Group, NativeSelect, NumberInput, Select, Stack, Switch, Text, Textarea, TextInput } from '@mantine/core';
+import type { CaptureModeWire, PatternCaptureWire } from '../../contracts/api/vocabulary';
+import type { CaptureSettingsFormValue, ConfigurationFormValue, ScopeRulesDocument } from './configurationModel';
 import {
   ANALYSIS_CATEGORIES,
   CRAWL_AS_PRESETS,
@@ -128,6 +130,9 @@ export function CrawlAsPanel({ value, onChange }: PanelProps) {
   const userAgent = value.scopeRules.userAgent;
   const comparison = value.scopeRules.userAgentComparison;
   const rendering = value.rendering;
+  const captureSettings = value.captureSettings;
+  const setCaptureSettings = (patch: Partial<CaptureSettingsFormValue>) =>
+    onChange({ ...value, captureSettings: { ...captureSettings, ...patch } });
   return (
     <Stack gap="md" data-testid="config-panel-crawl-as">
       <FieldSection title="Crawl identity" note="Presets bundle the user agent (§8.8); the custom string wins over the preset.">
@@ -188,36 +193,152 @@ export function CrawlAsPanel({ value, onChange }: PanelProps) {
           overrideDefault={50}
         />
       </FieldSection>
-      <LaterPhaseSection title="Capture mode" phase={10} feature="Headless rendering and capture modes" testid="config-rendering-section">
-        <ToggleRow
-          label="Enable rendering"
-          checked={rendering.enabled}
-          onChange={(next) => onChange({ ...value, rendering: { ...rendering, enabled: next } })}
-          testid="config-rendering-enabled"
-          disabled
+      <FieldSection
+        title="Capture mode"
+        note="§5.6.1 — how each in-scope page is captured. Non-JS fetches plain HTTP; JS renders every page; dual stores both captures and compares; adaptive samples per URL-pattern group and switches on material change."
+        testid="config-rendering-section"
+      >
+        <NativeSelect
+          label="Capture mode"
+          value={value.captureMode}
+          data={[
+            { value: 'non-js', label: 'Non-JS (plain HTTP)' },
+            { value: 'js', label: 'JS (render every page)' },
+            { value: 'dual', label: 'Dual (raw + rendered)' },
+            { value: 'adaptive', label: 'Adaptive (sampled rendering)' }
+          ]}
+          onChange={(event) => {
+            const mode = event.currentTarget.value as CaptureModeWire;
+            // Rendering-dependent modes enable the rendering pipeline; the
+            // engine pre-flight resolves a local browser before crawling.
+            onChange({ ...value, captureMode: mode, rendering: { ...rendering, enabled: mode !== 'non-js' } });
+          }}
+          data-testid="config-capture-mode"
         />
+        {value.captureMode === 'adaptive' && (
+          <>
+            <NumberInput
+              label="Adaptive sample size"
+              description="URLs sampled per URL-path-pattern group (spec range 3–5)."
+              value={captureSettings.adaptiveSampleSize}
+              min={3}
+              max={5}
+              onChange={(next) => setCaptureSettings({ adaptiveSampleSize: typeof next === 'number' ? next : 4 })}
+              data-testid="config-capture-adaptive-sample-size"
+            />
+            <NumberInput
+              label="Material-change threshold (%)"
+              description="Visible word-count change fraction that switches a group to rendered capture."
+              value={captureSettings.materialThresholdPercent}
+              min={1}
+              max={100}
+              onChange={(next) => setCaptureSettings({ materialThresholdPercent: typeof next === 'number' ? next : 20 })}
+              data-testid="config-capture-material-threshold"
+            />
+          </>
+        )}
+        {value.captureMode === 'dual' && (
+          <NumberInput
+            label="Dual storage warning threshold (bytes)"
+            description="Warn only — no hard cap. Stored captures above this total raise a warning finding."
+            value={captureSettings.dualStorageThresholdBytes}
+            min={0}
+            step={1048576}
+            onChange={(next) => setCaptureSettings({ dualStorageThresholdBytes: typeof next === 'number' ? next : 1073741824 })}
+            data-testid="config-capture-dual-storage-threshold"
+          />
+        )}
+        <NumberInput
+          label="Render wait quiet period (ms)"
+          description="Network/DOM quiet window before a render is considered settled."
+          value={captureSettings.renderWaitQuietMs}
+          min={0}
+          onChange={(next) => setCaptureSettings({ renderWaitQuietMs: typeof next === 'number' ? next : 500 })}
+          data-testid="config-capture-render-wait-quiet-ms"
+        />
+        <NumberInput
+          label="Render wait hard cap (ms)"
+          description="Maximum render duration regardless of activity."
+          value={captureSettings.renderWaitHardCapMs}
+          min={1000}
+          onChange={(next) => setCaptureSettings({ renderWaitHardCapMs: typeof next === 'number' ? next : 20000 })}
+          data-testid="config-capture-render-wait-hard-cap-ms"
+        />
+        <NumberInput
+          label="Rendering pool size"
+          description="Concurrent Chromium contexts. Empty = auto (half logical processors, minimum 2)."
+          value={captureSettings.renderingPoolSize ?? ''}
+          min={1}
+          onChange={(next) => setCaptureSettings({ renderingPoolSize: typeof next === 'number' ? next : null })}
+          data-testid="config-capture-rendering-pool-size"
+        />
+        <Stack gap="xs" data-testid="config-capture-pattern-overrides">
+          <Text size="sm" fw={500}>Per-pattern overrides</Text>
+          <Text size="xs" c="dimmed">Explicit pattern rules win over adaptive switching and apply on top of every mode.</Text>
+          {captureSettings.patternOverrides.map((override, index) => (
+            <Group key={index} gap="xs" align="flex-end" wrap="nowrap">
+              <TextInput
+                label="Pattern"
+                placeholder="/blog/*"
+                value={override.pattern}
+                onChange={(event) => setCaptureSettings({
+                  patternOverrides: captureSettings.patternOverrides.map((row, i) => i === index ? { ...row, pattern: event.currentTarget.value } : row)
+                })}
+                data-testid={`config-capture-override-pattern-${index}`}
+                style={{ flex: 1 }}
+              />
+              <NativeSelect
+                label="Capture"
+                value={override.capture}
+                data={[
+                  { value: 'rendered', label: 'Rendered' },
+                  { value: 'non-rendered', label: 'Non-rendered' }
+                ]}
+                onChange={(event) => setCaptureSettings({
+                  patternOverrides: captureSettings.patternOverrides.map((row, i) => i === index ? { ...row, capture: event.currentTarget.value as PatternCaptureWire } : row)
+                })}
+                data-testid={`config-capture-override-capture-${index}`}
+              />
+              <Button
+                variant="subtle"
+                color="red"
+                onClick={() => setCaptureSettings({ patternOverrides: captureSettings.patternOverrides.filter((_, i) => i !== index) })}
+                data-testid={`config-capture-override-remove-${index}`}
+              >
+                Remove
+              </Button>
+            </Group>
+          ))}
+          <Button
+            variant="light"
+            onClick={() => setCaptureSettings({ patternOverrides: [...captureSettings.patternOverrides, { pattern: '', capture: 'rendered' }] })}
+            data-testid="config-capture-override-add"
+          >
+            Add override
+          </Button>
+        </Stack>
         <TextInput
           label="Device profile"
+          description="desktop, mobile, or tablet — the emulated viewport/identity for rendered captures."
           value={rendering.deviceProfile ?? ''}
           onChange={(event) => onChange({ ...value, rendering: { ...rendering, deviceProfile: event.currentTarget.value || null } })}
           data-testid="config-rendering-device"
-          disabled
         />
         <ToggleRow
           label="Infinite scroll"
+          description="Drive scroll-to-bottom loading before capture."
           checked={rendering.infiniteScroll ?? false}
           onChange={(next) => onChange({ ...value, rendering: { ...rendering, infiniteScroll: next } })}
           testid="config-rendering-infinite-scroll"
-          disabled
         />
         <ToggleRow
           label="Capture console"
+          description="Record browser console messages during renders."
           checked={rendering.captureConsole ?? false}
           onChange={(next) => onChange({ ...value, rendering: { ...rendering, captureConsole: next } })}
           testid="config-rendering-capture-console"
-          disabled
         />
-      </LaterPhaseSection>
+      </FieldSection>
     </Stack>
   );
 }

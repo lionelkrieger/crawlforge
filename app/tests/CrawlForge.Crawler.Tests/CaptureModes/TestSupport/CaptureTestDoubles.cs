@@ -7,9 +7,10 @@ namespace CrawlForge.Crawler.Tests.CaptureModes.TestSupport;
 /// <summary>
 /// Fake rendering pool (WP-10-01 builds the real CDP pool in parallel). Returns
 /// registered post-render HTML per URL, records every request, and can inject
-/// failures or a network waterfall. No browser, no network.
+/// failures or a network waterfall. No browser, no network. Disposal is tracked
+/// (WP-10-04 per-audit pool lifetime proofs).
 /// </summary>
-internal sealed class FakeRenderingPool : IRenderingPool
+internal sealed class FakeRenderingPool : IRenderingPool, IAsyncDisposable
 {
     private readonly Dictionary<string, RenderedPage> _pages = new(StringComparer.Ordinal);
 
@@ -18,6 +19,9 @@ internal sealed class FakeRenderingPool : IRenderingPool
     public HashSet<string> FailUrls { get; } = new(StringComparer.Ordinal);
 
     public IReadOnlyList<RenderedNetworkEntry>? Waterfall { get; set; }
+
+    /// <summary>Number of times the pool was disposed (0 = never owned/disposed).</summary>
+    public int DisposeCount { get; private set; }
 
     public FakeRenderingPool Register(string url, string html)
     {
@@ -55,6 +59,12 @@ internal sealed class FakeRenderingPool : IRenderingPool
             Array.Empty<ConsoleMessage>(),
             null)
         { NetworkWaterfall = Waterfall });
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        DisposeCount++;
+        return ValueTask.CompletedTask;
     }
 }
 

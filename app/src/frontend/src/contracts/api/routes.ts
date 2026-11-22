@@ -2,7 +2,7 @@
  * Frozen loopback REST route catalog — the contract lock for all 88 route
  * groups of the REST contract (51 baseline rows of FS-CRAWL-001 §10.2 +
  * 37 additive rows of FS-CRAWL-002 Appendix B). Multi-method spec rows
- * expand to one entry per method+path operation (108 operations total).
+ * expand to one entry per method+path operation (109 operations total).
  *
  * This catalog is declarative contract metadata (no behavior): it locks the
  * exact method/path surface and feeds the typed client contract map.
@@ -136,6 +136,7 @@ export const API_ROUTES = {
   'semantics.linkOpportunities': { method: 'GET', path: '/api/audits/{id}/semantics/link-opportunities', group: 'semantics-link-opportunities', additive: true, enveloped: true },
   'semantics.clusters': { method: 'GET', path: '/api/audits/{id}/semantics/clusters', group: 'semantics-clusters', additive: true, enveloped: true },
   'settings.embeddingTest': { method: 'POST', path: '/api/settings/embedding/test', group: 'embedding-test', additive: true, enveloped: true },
+  'settings.browser': { method: 'GET', path: '/api/settings/browser', group: 'settings-browser', additive: true, enveloped: true },
   'geo.llmsTxt': { method: 'GET', path: '/api/audits/{id}/geo/llms-txt', group: 'geo-llms-txt', additive: true, enveloped: true },
   'geo.governance': { method: 'GET', path: '/api/audits/{id}/geo/governance', group: 'geo-governance', additive: true, enveloped: true },
   'tools.llmsGenerate': { method: 'POST', path: '/api/tools/llms-generate', group: 'tools-llms-generate', additive: true, enveloped: true },

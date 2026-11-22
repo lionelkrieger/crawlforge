@@ -127,6 +127,8 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
     private readonly LinkZoneInventoryService _linkInventory;
     private readonly LinkGraphEnrichmentPass _linkGraphEnrichment;
     private readonly AuditCrawlComponents _crawl;
+    private readonly Crawler.Capture.ICaptureModeCoordinatorFactory _captureFactory;
+    private readonly IRenderingPool _renderingPool;
     private readonly ILogger<AuditExecutionEngine> _logger;
     private readonly ConcurrentDictionary<long, AuditRunState> _runs = new();
     private readonly ConcurrentDictionary<long, Task> _runTasks = new();
@@ -180,6 +182,8 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         LinkZoneInventoryService linkInventory,
         LinkGraphEnrichmentPass linkGraphEnrichment,
         AuditCrawlComponents crawlComponents,
+        Crawler.Capture.ICaptureModeCoordinatorFactory captureFactory,
+        IRenderingPool renderingPool,
         ILogger<AuditExecutionEngine> logger)
     {
         _provider = provider;
@@ -229,6 +233,8 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         _linkInventory = linkInventory;
         _linkGraphEnrichment = linkGraphEnrichment;
         _crawl = crawlComponents;
+        _captureFactory = captureFactory;
+        _renderingPool = renderingPool;
         _logger = logger;
     }
 
@@ -602,6 +608,7 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
     private async Task RunAuditAsync(long auditId, AuditRunState state)
     {
         var ct = state.CancellationTokenSource.Token;
+        Crawler.Capture.ICaptureModeCoordinator? capture = null;
         try
         {
             var audit = await RequireAuditAsync(auditId, ct);
@@ -610,7 +617,13 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
                 ?? throw new InvalidOperationException("Audit configuration snapshot is unreadable.");
 
             state.StartedAt = audit.StartedAt;
-            await CrawlPhaseAsync(auditId, audit.ProjectId, configuration, state, ct);
+            // WP-10-02: one capture coordinator per audit — adaptive group state
+            // lives for exactly this run (created from the frozen snapshot).
+            // WP-10-04: created HERE (not inside the crawl phase) so the audit's
+            // finally path can dispose its per-audit rendering pool even when a
+            // later phase fails; non-JS audits never launch a browser.
+            capture = _captureFactory.Create(configuration);
+            await CrawlPhaseAsync(auditId, audit.ProjectId, configuration, state, capture, ct);
 
             // Observe terminal transitions before analysis (cancel during crawl).
             var current = await RequireAuditAsync(auditId, ct);
@@ -648,6 +661,22 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         }
         finally
         {
+            // WP-10-04: dispose the per-audit capture coordinator — it owns the
+            // per-audit rendering pool (CaptureSettings-derived options) when the
+            // capture mode renders. A disposal failure is logged and never fails
+            // the audit or masks its outcome.
+            if (capture is IAsyncDisposable captureLifetime)
+            {
+                try
+                {
+                    await captureLifetime.DisposeAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Audit {AuditId}: per-audit capture coordinator disposal failed.", auditId);
+                }
+            }
+
             _runs.TryRemove(auditId, out _);
             _runTasks.TryRemove(auditId, out _);
             state.Dispose();
@@ -695,6 +724,7 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         long projectId,
         CrawlConfigurationDto configuration,
         AuditRunState state,
+        Crawler.Capture.ICaptureModeCoordinator capture,
         CancellationToken ct)
     {
         var limits = configuration.LimitOverrides;
@@ -771,6 +801,44 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         var throttleCoalescer = new CoalescingHostThrottleSink(new HubHostThrottleSink(_hub));
         var frontier = new PriorityFrontier(new AimdPolitenessController(aimdOptions));
         state.Frontier = frontier;
+        // §5.6.3 rendering pre-flight: ONE code path with the pre-crawl
+        // validator (PreCrawlValidator.ResolveRenderingBrowser) — a rendering-
+        // dependent capture configuration (js/dual/adaptive or a rendered
+        // per-pattern override) must resolve a LOCAL browser before any crawl
+        // work (bundled CfT → user path → Chrome → Edge; never a runtime
+        // download). Failure carries the validator's pre-crawl validation
+        // message verbatim and fails the audit; non-JS is unaffected and never
+        // touches resolution.
+        if (_renderingPool is Crawler.Rendering.HeadlessRenderingPool headlessPool)
+        {
+            var (browser, browserIssue) = PreCrawlValidator.ResolveRenderingBrowser(
+                configuration.CaptureMode,
+                configuration.CaptureSettings,
+                new PoolBrowserResolver(headlessPool));
+            if (browserIssue is not null)
+            {
+                throw new InvalidOperationException(browserIssue);
+            }
+
+            if (browser is not null)
+            {
+                _logger.LogInformation(
+                    "Audit {AuditId}: rendering pre-flight resolved {Product} {Version} ({Source})",
+                    auditId, browser.Product, browser.Version, browser.Source);
+            }
+        }
+        var renderingBehavior = behavior?["rendering"] as System.Text.Json.Nodes.JsonObject;
+        var captureDevice = (renderingBehavior?["deviceProfile"]?.GetValue<string>() ?? "desktop").ToLowerInvariant() switch
+        {
+            "mobile" => new DeviceProfile("mobile", 390, 844, "CrawlForge-Render-Mobile", IsMobile: true),
+            "tablet" => new DeviceProfile("tablet", 768, 1024, "CrawlForge-Render-Tablet", IsMobile: true),
+            _ => Crawler.Capture.CaptureDefaults.DesktopDevice,
+        };
+        var captureInfiniteScroll = renderingBehavior?["infiniteScroll"]?.GetValue<bool>() ?? false;
+        var captureConsole = renderingBehavior?["captureConsole"]?.GetValue<bool>() ?? true;
+        // CR-029: the four inappropriate-redirect checks are individually
+        // toggleable; a null settings document means all four ON (default).
+        var redirectChecks = RedirectInappropriatenessChecksExtensions.FromSettings(configuration.RedirectChecks);
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var seedHosts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var seedUrls = new List<string>();
@@ -1070,6 +1138,14 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
                 continue;
             }
 
+            // D-021 hard WAF block: a stopped host is never fetched again this
+            // run (queued entries drain without I/O; the blocked URL is not
+            // re-fetched). Host stop takes precedence over AIMD throttling.
+            if (state.StoppedHosts.Contains(entry.Host))
+            {
+                continue;
+            }
+
             // Robots evaluation through the per-host cache (virtual overrides,
             // TTL, crawl-delay floor via the AIMD delay source). A disallowed
             // URL is recorded NotCrawled/Disallowed with a robots-blocked
@@ -1327,16 +1403,30 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
                 await _wafRecorder.RecordSuspectedNoticeAsync(auditId, urlId, waf, ct);
             }
 
-            // Redirect findings + durable chain outcome (terminal facts, flags).
+            // D-021 five-class WAF response (WP-10-04 wiring): soft blocks
+            // (managed challenge / rate-limit soft block) feed the AIMD
+            // controller's multiplicative decrease through the existing
+            // waf-soft-block throttle-event shape; hard blocks stop the host.
+            // Detection/reporting above stays unchanged.
+            if (state.Aimd is not null)
+            {
+                var wafResponse = WafAimdTrigger.ResolveAction(waf);
+                if (wafResponse == WafBlockResponse.HostStop && state.StoppedHosts.Add(entry.Host))
+                {
+                    _logger.LogWarning(
+                        "Audit {AuditId}: hard WAF block ({ChallengeClass}) on host {Host} — host stopped for this run",
+                        auditId,
+                        waf.ChallengeClass,
+                        entry.Host);
+                }
+            }
+
+            // Redirect durable chain outcome (terminal facts, flags). The
+            // finding analysis runs AFTER the body parse below so case 3
+            // (non-indexable target, CR-024 parity) can see the terminal
+            // page's parsed directives when the chain terminates here.
             if (chain.Count > 0)
             {
-                var redirectFindings = ctx.RedirectFindings.AnalyzeChain(
-                    auditId, urlId, entry.Url, chain, outcome.FinalUrl, outcome.FinalStatusCode);
-                if (redirectFindings.Count > 0)
-                {
-                    await RecordCrawlFindingsAsync(auditId, projectId, redirectFindings, ct);
-                }
-
                 // Cookieless redirect-loop diagnostic (§5.11): when the jar is
                 // off and the site gated behind Set-Cookie + self-redirect, the
                 // loop becomes an actionable finding instead of a bare failure.
@@ -1362,14 +1452,76 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
 
             // Link discovery over the stored body (configured scope).
             DomDocument? document = null;
+            RedirectTargetIndexabilityFacts? redirectTargetFacts = null;
             if (statusClass == CrawlStatusClass.Success && IsHtml(urlRecord.ContentType))
             {
                 document = _parser.Parse(System.Text.Encoding.UTF8.GetString(bodyBytes), entry.Url);
                 await DiscoverLinksAsync(auditId, urlId, entry, document, seen, frontier, state, maxDepth, ctx, ct);
 
+                // WP-10-02 capture-mode dispatch (FS-CRAWL-001 §5.6.1): one
+                // coordinator per audit decides raw/rendered per mode + manual
+                // overrides + adaptive group state, renders through the CDP
+                // pool when due, persists RenderedDom/Waterfall/Screenshot
+                // artifacts and stamps CaptureSource. Render failures are
+                // isolated — the URL keeps its raw capture (§5.6.2). Rendered
+                // traffic is CDP-direct (CR-006); the proxy stays non-rendered.
+                var captureOutcome = await capture.CaptureAsync(new Crawler.Capture.RenderedCaptureRequest(
+                    auditId, urlId, urlRecord.CanonicalUrl, urlRecord.Path, entry.Depth,
+                    document, bodyBytes.Length, configuration,
+                    captureDevice, captureInfiniteScroll, captureConsole), ct);
+                if (captureOutcome.Rendered && captureOutcome.RenderedDocument is not null)
+                {
+                    // JS-only links become discovered-by-render rows; `seen`
+                    // dedupes against raw discovery so only genuinely
+                    // render-only targets carry DiscoverySource.Render.
+                    await DiscoverLinksAsync(auditId, urlId, entry, captureOutcome.RenderedDocument,
+                        seen, frontier, state, maxDepth, ctx, ct, DiscoverySource.Render);
+                }
+                if (captureOutcome.Findings.Count > 0)
+                {
+                    await RecordCrawlDraftsAsync(auditId, projectId, captureOutcome.Findings, ct);
+                }
+
                 // Crawler-trap content observation (§5.14): normalized visible
                 // text hash per fetched page; detections drain at crawl end.
                 ctx.Traps.ObserveContent(entry.Url, CrawlerTrapDetector.HashText(NormalizedVisibleText(document)));
+
+                // CR-029 case 3 (CR-024 parity): when the redirect chain
+                // terminates at THIS page, the parsed directives complete the
+                // target facts. Non-200 terminals never reach this branch, so
+                // the status-only fallback below cannot double-fire case 3.
+                if (chain.Count > 0
+                    && string.Equals(outcome.FinalUrl, urlRecord.CanonicalUrl, StringComparison.OrdinalIgnoreCase))
+                {
+                    var htmlDirectives = HtmlDirectiveExtractor.Extract(document);
+                    var headerDirectives = HeaderDirectiveParser.Parse(fetch.Headers);
+                    var canonicalHrefs = htmlDirectives.Canonicals.Select(link => link.Href)
+                        .Concat(headerDirectives.Links
+                            .Where(link => string.Equals(link.Relation, "canonical", StringComparison.OrdinalIgnoreCase))
+                            .Select(link => link.Target))
+                        .ToList();
+                    redirectTargetFacts = new RedirectTargetIndexabilityFacts(
+                        outcome.FinalStatusCode,
+                        outcome.FinalUrl,
+                        RobotsBlocked: urlRecord.RobotsState == RobotsState.Disallowed,
+                        MetaRobotsNoindex: indexability.Reasons.Contains(IndexabilityStateEvaluator.ReasonNoindexMetaRobots),
+                        HeaderRobotsNoindex: indexability.Reasons.Contains(IndexabilityStateEvaluator.ReasonNoindexXRobotsTag),
+                        CanonicalHrefs: canonicalHrefs);
+                }
+            }
+
+            // Redirect findings (CR-029 per-case checks; case 3 uses the
+            // parsed terminal facts when available, else the built-in
+            // terminal-status fallback inside the analyzer).
+            if (chain.Count > 0)
+            {
+                var redirectFindings = ctx.RedirectFindings.AnalyzeChain(
+                    auditId, urlId, entry.Url, chain, outcome.FinalUrl, outcome.FinalStatusCode,
+                    checks: redirectChecks, targetFacts: redirectTargetFacts);
+                if (redirectFindings.Count > 0)
+                {
+                    await RecordCrawlFindingsAsync(auditId, projectId, redirectFindings, ct);
+                }
             }
 
             fetchesSinceCheckpoint++;
@@ -1387,6 +1539,22 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         // detections into site-wide findings, and log throttle signals (the
         // detector already throttled admission of flagged patterns).
         await FlushRunEventsAsync(auditId, state, force: true, ct);
+        // WP-10-02: audit-level capture findings (adaptive template switches +
+        // the dual-storage WARNING) flow through the suppression-aware recorder.
+        // WP-10-04: the drain is isolated like RunPostCrawlPassesAsync — a
+        // failure here must never fail the audit (cancellation still propagates).
+        try
+        {
+            var captureAuditFindings = capture.DrainAuditFindings();
+            if (captureAuditFindings.Count > 0)
+            {
+                await RecordCrawlDraftsAsync(auditId, projectId, captureAuditFindings, ct);
+            }
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogWarning(ex, "Audit-level capture findings drain failed for audit {AuditId}; the audit continues.", auditId);
+        }
         var detections = ctx.Traps.DrainDetections();
         if (detections.Count > 0)
         {
@@ -2502,7 +2670,8 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
         AuditRunState state,
         int maxDepth,
         CrawlRunContext ctx,
-        CancellationToken ct)
+        CancellationToken ct,
+        DiscoverySource discoverySource = DiscoverySource.Link)
     {
         var baseUri = new Uri(source.Url);
         // D15: zone-aware link inventory — every anchor carries its visible
@@ -2556,7 +2725,7 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
             if (verdict.Disposition == CrawlScopeDisposition.CheckExternalStatus && seen.Add(canonical))
             {
                 var externalEntry = new FrontierEntry(
-                    canonical, new Uri(canonical).Host, source.Depth + 1, 0.5, DiscoverySource.Link);
+                    canonical, new Uri(canonical).Host, source.Depth + 1, 0.5, discoverySource);
                 await GetOrCreateUrlRowAsync(auditId, externalEntry, ct);
                 state.Counters.Discovered++;
             }
@@ -2573,7 +2742,7 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
             }
 
             var targetHost = new Uri(canonical).Host;
-            var entry = new FrontierEntry(canonical, targetHost, source.Depth + 1, 0.5, DiscoverySource.Link);
+            var entry = new FrontierEntry(canonical, targetHost, source.Depth + 1, 0.5, discoverySource);
             var admission = ctx.Admission.Admit(entry);
             if (!admission.Admit)
             {
@@ -2665,8 +2834,10 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
     private async Task<PageAuditContext?> BuildStoredContextAsync(
         long auditId, UrlRecordDto url, CrawlConfigurationDto configuration, CancellationToken ct)
     {
+        // WP-10-02: page size 20 so Body + RenderedDom + NetworkWaterfall +
+        // Screenshot are all visible to the analysis context.
         var artifacts = await _artifactReads.ListAsync(
-            new ListQuery(0, 10, new Dictionary<string, string>
+            new ListQuery(0, 20, new Dictionary<string, string>
             {
                 ["auditId"] = auditId.ToString(),
                 ["urlId"] = url.Id.ToString()
@@ -2696,7 +2867,26 @@ public sealed class AuditExecutionEngine : IAuditExecutionService, IAuditLifecyc
             timing.Ttfb,
             timing.Total);
         var document = _parser.Parse(System.Text.Encoding.UTF8.GetString(bytes), url.CanonicalUrl);
-        return new PageAuditContext(auditId, url, configuration, fetch, document, null, null, null);
+
+        // WP-10-02: the rendered document the capture coordinator persisted
+        // reaches analysis — AuditPipeline compares raw vs rendered (§7.18)
+        // and analyzes the rendered tree as effective; content_scope then
+        // carries the rendered fullWordCount (harness ev.words source).
+        DomDocument? renderedDocument = null;
+        var renderedDom = artifacts.Items.FirstOrDefault(a => a.Kind == ContentArtifactKind.RenderedDom);
+        if (renderedDom is not null)
+        {
+            await using var renderedStream = await _contentStore.OpenReadAsync(renderedDom.StorageKey, ct);
+            if (renderedStream is not null)
+            {
+                using var renderedMemory = new MemoryStream();
+                await renderedStream.CopyToAsync(renderedMemory, ct);
+                renderedDocument = _parser.Parse(
+                    System.Text.Encoding.UTF8.GetString(renderedMemory.ToArray()), url.CanonicalUrl);
+            }
+        }
+
+        return new PageAuditContext(auditId, url, configuration, fetch, document, renderedDocument, null, null);
     }
 
     private static (TimeSpan Ttfb, TimeSpan Total, IReadOnlyDictionary<string, string> Headers) ParseTiming(string? timingJson)

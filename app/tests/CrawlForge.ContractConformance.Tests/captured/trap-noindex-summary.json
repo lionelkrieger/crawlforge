@@ -7,7 +7,7 @@
   },
   "countsBySeverity": {
     "warning": 370,
-    "error": 7,
+    "error": 6,
     "notice": 744,
     "pass": 131
   },
@@ -15,7 +15,7 @@
     "indexability": 269,
     "crawl": 1,
     "linking": 1,
-    "accessibility": 259,
+    "accessibility": 258,
     "content": 452,
     "structureddata": 263,
     "images": 5,
@@ -26,12 +26,12 @@
     "fetched": 132,
     "errorCount": 1,
     "blockedCount": 0,
-    "averageTtfbMs": 0.8
+    "averageTtfbMs": 0.599
   },
   "waf": null,
   "throttle": {
     "throttledHostCount": 1,
-    "meanEffectiveRate": 3.2292,
-    "adjustmentCount": 18
+    "meanEffectiveRate": 5.3864,
+    "adjustmentCount": 22
   }
 }

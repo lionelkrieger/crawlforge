@@ -9,7 +9,7 @@
  * @module shell/AuditViews
  */
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Badge,
   Button,
@@ -24,6 +24,7 @@ import {
 } from '@mantine/core';
 import { useShell, useStoreSelector } from './ShellContext';
 import { useLiveProgress } from '../store/liveProgress';
+import type { CaptureModeWire } from '../contracts/api/vocabulary';
 import { selectActiveAudit, selectAudits, selectHostStates } from '../store/selectors';
 import { STATE_COLORS } from './HubDashboard';
 import { formatMs } from './format';
@@ -41,11 +42,12 @@ import { formatBytes, formatCount, formatDuration, formatRate, formatDateTime } 
 import { ReportDashboard } from '../surfaces/dashboards/ReportDashboard';
 import { IssueExplorer } from '../surfaces/explorers/issues/IssueExplorer';
 import { UrlExplorer } from '../surfaces/explorers/urls/UrlExplorer';
+import { CaptureModeIndicator, RenderedComparisonSurface } from '../surfaces/explorers/rendered';
 import { ExportDialog } from '../surfaces/export/ExportDialog';
 import { applyChartCrossFilter, selectionToFindingQuery, type ChartSelection } from '../charts/crossFilter';
 
 /** Report workspace panes (WP-09-11 mounting; exact nav labels per UI map). */
-type ReportPane = 'dashboard' | 'issues' | 'urls';
+type ReportPane = 'dashboard' | 'issues' | 'urls' | 'rendered';
 
 /** Lifecycle control for the active audit (real API calls). */
 function LifecycleControls({ auditId, state }: { auditId: string; state: string }) {
@@ -177,11 +179,55 @@ export function ReportView() {
   const [pane, setPane] = useState<ReportPane>('dashboard');
   const [refreshKey, setRefreshKey] = useState(0);
   const [exportOpen, setExportOpen] = useState(false);
+  const [openUrlId, setOpenUrlId] = useState<string | null>(null);
+  const [openUrlKey, setOpenUrlKey] = useState(0);
+  // UI-10 capture mode: undefined = configuration not loaded (loading or the
+  // read failed) → NO indicator at all; null/known mode = loaded (below).
+  const [captureMode, setCaptureMode] = useState<CaptureModeWire | null | undefined>(undefined);
 
+  // UI-16 drill-down (WP-10-04 mounting): hand the URL to the urls pane, which
+  // opens its detail drawer through the same openDetail mechanism as row
+  // activation (UrlExplorer openUrlId). The key token lets the same URL id be
+  // requested again (e.g. re-activating the same comparison row).
   const openUrl = useCallback((urlId: string) => {
-    void urlId;
+    setOpenUrlId(urlId);
+    setOpenUrlKey((key) => key + 1);
     setPane('urls');
   }, []);
+
+  // UI-10 (WP-10-03/WP-10-04): the run's capture mode. The audit wire carries
+  // no configuration snapshot, so this reads the CURRENT capture mode of the
+  // audit's configuration (locked `configurations.get`) — NOT a frozen
+  // snapshot of the mode the run started with. The indicator renders only once
+  // the configuration has loaded; while loading or when the read fails it
+  // renders nothing, never a possibly-wrong mode. No contract fields added.
+  const configurationId = audit?.configurationId ?? null;
+  useEffect(() => {
+    const api = services.api;
+    if (!api || !configurationId) {
+      setCaptureMode(undefined);
+      return;
+    }
+    const controller = new AbortController();
+    setCaptureMode(undefined);
+    void (async () => {
+      try {
+        const envelope = await api.request('configurations.get', {
+          params: { id: configurationId },
+          signal: controller.signal
+        });
+        if (controller.signal.aborted) return;
+        if (envelope.error || !envelope.data) {
+          setCaptureMode(undefined);
+        } else {
+          setCaptureMode(envelope.data.captureMode ?? null);
+        }
+      } catch {
+        if (!controller.signal.aborted) setCaptureMode(undefined);
+      }
+    })();
+    return () => controller.abort();
+  }, [services.api, configurationId]);
 
   const crossFilter = useCallback(
     (selection: ChartSelection) => {
@@ -222,6 +268,9 @@ export function ReportView() {
             <Badge variant="light" color={STATE_COLORS[audit.state] ?? 'steel'} data-testid="report-state">
               {audit.state.toUpperCase()}
             </Badge>
+            {/* UI-10: shown only once the configuration's mode is known
+                (see the capture-mode effect above). */}
+            {captureMode !== undefined ? <CaptureModeIndicator mode={captureMode} /> : null}
           </Group>
           <Text size="sm" c="dimmed">
             Phase {crawl?.phase ?? audit.phase} · started {formatDateTime(audit.startedAt)}
@@ -367,6 +416,15 @@ export function ReportView() {
           </Button>
           <Button
             size="compact-xs"
+            variant={pane === 'rendered' ? 'light' : 'subtle'}
+            color="signal"
+            onClick={() => setPane('rendered')}
+            data-testid="report-nav-rendered"
+          >
+            Rendered comparison
+          </Button>
+          <Button
+            size="compact-xs"
             variant="subtle"
             color="ember"
             onClick={() => setExportOpen(true)}
@@ -395,7 +453,10 @@ export function ReportView() {
           />
         ) : null}
         {pane === 'urls' ? (
-          <UrlExplorer auditId={audit.id} api={services.api} />
+          <UrlExplorer auditId={audit.id} api={services.api} openUrlId={openUrlId} openUrlKey={openUrlKey} />
+        ) : null}
+        {pane === 'rendered' ? (
+          <RenderedComparisonSurface api={services.api} auditId={audit.id} onOpenUrl={openUrl} />
         ) : null}
       </Paper>
 

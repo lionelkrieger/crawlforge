@@ -129,6 +129,29 @@ export interface AppSettings {
 /** PUT /api/settings — any subset of settings fields; returns the updated object. */
 export type SettingsUpdateRequest = DeepPartial<AppSettings>;
 
+/**
+ * GET /api/settings/browser — UI-21 browser section (WP-10-04 amendment,
+ * FS-CRAWL-001 §5.6.3). Mirrors CrawlForge.Api.Controllers.BrowserInfoWire:
+ * local-only rendering-browser resolution identity (bundled pinned Chrome for
+ * Testing → user-configured path → local Chrome → local Edge). No runtime
+ * download exists (D-003); pinManifestVersion is reported even before the
+ * binary is physically bundled (owner packaging item O-006).
+ */
+export interface BrowserInfo {
+  readonly available: boolean;
+  readonly executablePath?: string | null;
+  /** Resolution source wire key. */
+  readonly source?: 'bundled' | 'user-configured' | 'local-chrome' | 'local-edge' | 'unknown' | null;
+  readonly product?: string | null;
+  readonly version?: string | null;
+  /** Manifest pin when a bundled build resolved, else null. */
+  readonly pinnedVersion?: string | null;
+  /** Bundled pin-manifest version when present (binary may not be bundled yet). */
+  readonly pinManifestVersion?: string | null;
+  /** Actionable guidance when no browser resolved. */
+  readonly message?: string | null;
+}
+
 /** POST /api/settings/database/test — provider selection and connection fields. */
 export interface DatabaseTestRequest {
   readonly provider: DatabaseProvider;
