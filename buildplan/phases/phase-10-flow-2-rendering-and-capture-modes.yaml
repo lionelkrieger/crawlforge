@@ -152,7 +152,7 @@ workpieces:
   - workpiece_id: "WP-10-03"
     title: "Rendered Comparison UI — Rendered Tab, Comparison Surface, Render Artifacts"
     phase_id: "phase-10"
-    status: "in_progress"
+    status: "verifying"
     assigned_agent: "cf-wp-10-03"
     started_at: "2026-11-20T07:40:00Z"
     parallel_group: "wave-10B"
@@ -196,7 +196,9 @@ workpieces:
   - workpiece_id: "WP-10-04"
     title: "Phase 10 Serial Wiring — Rendering DI, Pipeline Integration & Flow-2 Gate"
     phase_id: "phase-10"
-    status: "pending"
+    status: "in_progress"
+    assigned_agent: "coordinator (claude.ai chat) with LongCat/MiMo builders"
+    started_at: "2026-11-22T14:00:00Z"
     parallel_group: "wave-10C"
     depends_on_workpieces: ["WP-10-01", "WP-10-02", "WP-10-03", "WP-10-05"]
     context_files:
