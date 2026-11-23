@@ -31,7 +31,6 @@ import {
   statusColors,
   palette
 } from './chartTheme';
-import { AUDIT_CATEGORY_LABELS } from '../contracts/api/vocabulary';
 
 /** One summary card model (presentational; rendered by the dashboard). */
 export interface SummaryCardModel {
