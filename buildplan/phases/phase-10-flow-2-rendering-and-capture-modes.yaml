@@ -17,6 +17,8 @@ parallel_waves:
     workpiece_ids: ["WP-10-01", "WP-10-02", "WP-10-05"]
   - wave_id: "wave-10B"
     workpiece_ids: ["WP-10-03"]
+  - wave_id: "wave-10C0"
+    workpiece_ids: ["WP-10-A2"]   # contract amendment, runs alone (AGENT-INSTRUCTIONS §11)
   - wave_id: "wave-10C"
     workpiece_ids: ["WP-10-04"]
 gated_acceptance_criteria: [50, 51, 52]
@@ -200,7 +202,7 @@ workpieces:
     assigned_agent: "coordinator (claude.ai chat) with LongCat/MiMo builders"
     started_at: "2026-11-22T14:00:00Z"
     parallel_group: "wave-10C"
-    depends_on_workpieces: ["WP-10-01", "WP-10-02", "WP-10-03", "WP-10-05"]
+    depends_on_workpieces: ["WP-10-01", "WP-10-02", "WP-10-03", "WP-10-05", "WP-10-A2"]
     context_files:
       - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
       - "E:\\Crawlforge\\architecture\\07-quality-and-verification\\03-fixture-site.md"
@@ -345,3 +347,51 @@ workpieces:
       - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
     done_when: "Contracts tests green including the additive policy; full solution builds; coordinator re-locks contracts before wave 10A is dispatched."
     acceptance_criteria_refs: [49]
+
+  - workpiece_id: "WP-10-A2"
+    title: "Contract Amendment — Per-URL Render-Artifact Read Route and Persisted Browser Identity (D-023)"
+    phase_id: "phase-10"
+    status: "pending"
+    parallel_group: "wave-10C0"
+    depends_on_workpieces: ["WP-10-03"]
+    context_files:
+      - "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+      - "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+      - "E:\\Crawlforge\\audit-work\\reports\\phase-10\\WP-10-03-REPORT.md"
+    architecture_sections:
+      - file: "E:\\Crawlforge\\architecture\\03-crawl-engine\\03-rendering-and-proxy-routing.md"
+        sections: ["5.6.3"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\02-virtualization-and-explorers.md"
+        sections: ["8.2"]
+      - file: "E:\\Crawlforge\\architecture\\06-frontend-shell-and-ui\\04-ui-surface-map.md"
+        sections: ["1", "4"]
+    capabilities:
+      - { id: "CAP-A-035", baseline_state: "unwired" }
+      - { id: "CAP-A-X11", baseline_state: "partial" }
+    ui_surfaces: ["UI-13"]
+    fixture_traps: ["late-meta-change", "script-injected-content"]
+    contract_tests:
+      - payload: "GET /api/audits/{id}/urls/{urlId}/artifacts (rendered DOM, screenshot, console messages, network waterfall, browser identity) from stored artifacts through the real read path"
+        test: "UrlArtifactsWireConformanceTests"
+      - payload: "AuditDto/UrlRecordDto browser product+version, ContentArtifactKind.ConsoleLog; audit and URL wire records carry renderBrowser; frontend mirrors match"
+        test: "EnumVocabularyTests; AdditivePolicyTests; FrontendMirrorParityTests"
+    reopens: []
+    owned_paths:
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Contracts\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.Contracts.Tests\\"
+      - "E:\\Crawlforge\\app\\src\\frontend\\src\\contracts\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Data.Migrations\\"
+      - "E:\\Crawlforge\\app\\src\\backend\\CrawlForge.Api\\"
+      - "E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests\\"
+    deliverables:
+      - "Additive contract members: browser product/version on AuditDto and UrlRecordDto, ContentArtifactKind.ConsoleLog, audit and URL wire records += renderBrowser; no member renamed or renumbered"
+      - "Schema v6 (both providers): nullable browser columns on audits and url_records"
+      - "Read-only route audits.getUrlArtifacts with C# and TypeScript mirrors and a conformance test feeding stored artifacts through the real read path"
+    verification_commands:
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.Contracts.Tests"
+      - "dotnet test E:\\Crawlforge\\app\\tests\\CrawlForge.ContractConformance.Tests"
+      - "dotnet build E:\\Crawlforge\\app\\CrawlForge.sln -c Debug"
+      - "cd E:\\Crawlforge\\app\\src\\frontend && npm run build"
+    done_when: "Contracts, migration, repository and conformance tests green including the additive policy; full solution and frontend build; coordinator re-locks contracts; the WP-10-04 phase-gate UI walk shows the rendered DOM, screenshot, console and waterfall for /pages/late-meta.html and the resolved browser on the audit and URL records."
+    acceptance_criteria_refs: [50, 51]
